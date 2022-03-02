@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NewProjectWindow</class>
+ <widget class="QWidget" name="NewProjectWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>487</width>
+    <height>299</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>487</width>
+    <height>299</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>487</width>
+    <height>299</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>New Project</string>
+  </property>
+  <layout class="QGridLayout" name="NewProjectWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="NewProjectLayout">
+     <item>
+      <layout class="QHBoxLayout" name="NewProjectNameLayout">
+       <item>
+        <widget class="QLabel" name="NewProjectNameLabel">
+         <property name="text">
+          <string>Project Name:     </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="NewProjectNameInput"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="NewProjectLocationLayout">
+       <item>
+        <widget class="QLabel" name="NewProjectLocationLabel">
+         <property name="text">
+          <string>Project Location:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="NewProjectLocationInput"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="NewProjectLocationBrowse">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="NewProjectScenariosLayout">
+       <item>
+        <widget class="QLabel" name="NewProjectScenariosLabel">
+         <property name="text">
+          <string>Maximum Scenario Units:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="NewProjectScenariosDropdown"/>
+       </item>
+       <item>
+        <spacer name="NewProjectScenariosSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="NewProjectButtonsLayout">
+       <item>
+        <widget class="QPushButton" name="NewProjectCreateButton">
+         <property name="text">
+          <string>Create</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="NewProjectCancelButton">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
