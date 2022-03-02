@@ -203,3 +203,13 @@ class Ui_MainWindow(object):
         self.ImportButton_MainWindow.setText(_translate("MainWindow", "Import"))
         self.ExportButton_MainWindow.setToolTip(_translate("MainWindow", "Export Project"))
         self.ExportButton_MainWindow.setText(_translate("MainWindow", "Export"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUiMain(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
