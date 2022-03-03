@@ -83,60 +83,60 @@
              </layout>
             </item>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout">
+             <layout class="QVBoxLayout" name="ServicesLayout_MainWindow">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <layout class="QHBoxLayout" name="CORESDSServiceLayout_MainWindow">
                 <item>
-                 <widget class="QLabel" name="label_4">
+                 <widget class="QLabel" name="CORESDSServiceLabel_MainWindow">
                   <property name="text">
                    <string>CORE SDS Service:   </string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_4"/>
+                 <widget class="QLineEdit" name="CORESDSServiceInput_MainWindow"/>
                 </item>
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <layout class="QHBoxLayout" name="COREPortLayout_MainWindow">
                 <item>
-                 <widget class="QLabel" name="label_3">
+                 <widget class="QLabel" name="COREPortLabel_MainWindow">
                   <property name="text">
                    <string>CORE Port Number:  </string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_2"/>
+                 <widget class="QLineEdit" name="COREPortInput_MainWindow"/>
                 </item>
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <layout class="QHBoxLayout" name="SDSVMServiceLayout_MainWindow">
                 <item>
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="SDSVMServiceLabel_MainWindow">
                   <property name="text">
                    <string>SDS VM Service:       </string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_3"/>
+                 <widget class="QLineEdit" name="SDSVMServiceInput_MainWindow"/>
                 </item>
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <layout class="QHBoxLayout" name="SDSDockerServiceLayout_MainWindow">
                 <item>
-                 <widget class="QLabel" name="label">
+                 <widget class="QLabel" name="SDSDockerServiceLabel_MainWindow">
                   <property name="text">
                    <string>SDS Docker Service:</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit"/>
+                 <widget class="QLineEdit" name="SDSDockerServiceInput_MainWindow"/>
                 </item>
                </layout>
               </item>
