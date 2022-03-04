@@ -1,5 +1,7 @@
+from random import random
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Helpers import DatabaseHelper as DatabaseHelper
+import random
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -214,6 +216,13 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
 
-    SDSdb = DatabaseHelper.SDSDatabaseHelper()
+
+    # example of how to insert a document into mongo
+    # SDSdb = DatabaseHelper.SDSDatabaseHelper()
+    # tempObjectToInsert = {}
+    # tempObjectToInsert['name'] = 'Test'
+    # tempObjectToInsert['type'] = 'test type'
+    # tempObjectToInsert['_id'] = random.randint(1, 100)
+    # SDSdb.insertObject(tempObjectToInsert)
 
     sys.exit(app.exec_())
