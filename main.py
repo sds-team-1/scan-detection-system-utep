@@ -62,10 +62,13 @@ class Ui_MainWindow(object):
 
         self.NewButton_MainWindow.clicked.connect(self.add_tab)
 
+        self.SaveButton_MainWindow.setEnabled(False)
+        self.ExportButton_MainWindow.setEnabled(False)
+
     def add_tab(self):
         _translate = QtCore.QCoreApplication.translate
 
-        for i in range(5):
+        for i in range(2):
             s = str(i + 1)
             s = 'Scenario ' + s
             self.Tab_MainWindow = QtWidgets.QWidget()
