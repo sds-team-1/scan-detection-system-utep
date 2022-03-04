@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from Helpers import DatabaseHelper as DatabaseHelper
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -212,4 +213,7 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
+
+    SDSdb = DatabaseHelper.SDSDatabaseHelper()
+
     sys.exit(app.exec_())

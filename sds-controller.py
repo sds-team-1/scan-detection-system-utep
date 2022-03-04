@@ -1,5 +1,6 @@
 from enum import Enum, unique
 from msilib.schema import Error
+from Helpers.DatabaseHelper import SDSDatabaseHelper
 
 @unique
 class SDSStateEnum(Enum):
@@ -17,7 +18,6 @@ class SDSStateEnum(Enum):
     FILE_MANAGER_EXPORT_DIALOGUE = 12
 
 class SDSController:
-
 
     def __init__(self) -> None:
         self._cap_manager = None
@@ -161,5 +161,3 @@ class SDSController:
 
     '''The following methods are developed by the protocols by the GUI Lead
     Mauricio.'''
-
-    
