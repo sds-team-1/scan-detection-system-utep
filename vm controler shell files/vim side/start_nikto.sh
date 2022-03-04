@@ -1,3 +1,2 @@
 #!/bin/sh
-*any start up needed*
 > isrunning.txt
