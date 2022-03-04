@@ -5,9 +5,11 @@ import random
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(985, 700)
         MainWindow.setMinimumSize(QtCore.QSize(812, 580))
+
         self.CentralLayout_MainWindow = QtWidgets.QWidget(MainWindow)
         self.CentralLayout_MainWindow.setObjectName("CentralLayout_MainWindow")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.CentralLayout_MainWindow)
@@ -209,6 +211,7 @@ class Ui_MainWindow(object):
                                                  _translate("MainWindow", s))
 
 if __name__ == "__main__":
+
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
