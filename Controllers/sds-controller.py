@@ -2,7 +2,7 @@ from enum import Enum, unique
 from msilib.schema import Error
 import re
 from typing import List
-from Helpers.DatabaseHelper import SDSDatabaseHelper
+from Database.DatabaseHelper import SDSDatabaseHelper
 
 @unique
 class SDSStateEnum(Enum):
@@ -26,7 +26,7 @@ class SDSController:
     def __init__(self) -> None:
         self._cap_manager = None
         self._a_manager = None
-        self._db_connection = None 
+        self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
         self._worklace_id: int = -1
         self._project_id: int = -1
@@ -55,6 +55,7 @@ class SDSController:
             return [] 
         else:
             #Do work here
+            self._db_connection.getObjects()
             pass
 
     def list_all_projects(self, workplace_name: str) -> List[str]:
