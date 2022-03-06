@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>985</width>
+    <height>700</height>
+   </rect>
+  </property>
+
+  <property name="minimumSize">
+   <size>
+    <width>812</width>
+    <height>580</height>
+   </size>
+  </property>
+
+  <property name="windowTitle">
+   <string>Scan Detection System</string>
+  </property>
+  
+  <widget class="QWidget" name="CentralLayout_MainWindow">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="1" column="0">
+     <layout class="QVBoxLayout" name="TabWidgetLayout_MainWindow">
+      <item>
+       <widget class="QTabWidget" name="TabWidget_MainWindow">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="Tab_MainWindow">
+         <attribute name="title">
+          <string>Scenario 1</string>
+         </attribute>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="TabLayout_MainWindow">
+            <item>
+             <layout class="QHBoxLayout" name="ScenarioButtonsLayout_MainWindow">
+              <item>
+               <widget class="QPushButton" name="StartScenarioButton_MainWindow">
+                <property name="toolTip">
+                 <string>Start Scenario</string>
+                </property>
+                <property name="text">
+                 <string>  Start  </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="StopScenarioButton_MainWindow">
+                <property name="toolTip">
+                 <string>Stop Scenario</string>
+                </property>
+                <property name="text">
+                 <string>  Stop  </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="RestoreScenarioButton_MainWindow">
+                <property name="toolTip">
+                 <string>Restore Scenario</string>
+                </property>
+                <property name="text">
+                 <string>Restore</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="ScenarioButtonsHorizontalSpacer_MainWindow">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="ServicesLayout_MainWindow">
+              <item>
+               <layout class="QHBoxLayout" name="CORESDSServiceLayout_MainWindow">
+                <item>
+                 <widget class="QLabel" name="CORESDSServiceLabel_MainWindow">
+                  <property name="text">
+                   <string>CORE SDS Service:   </string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="CORESDSServiceInput_MainWindow"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="COREPortLayout_MainWindow">
+                <item>
+                 <widget class="QLabel" name="COREPortLabel_MainWindow">
+                  <property name="text">
+                   <string>CORE Port Number:  </string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="COREPortInput_MainWindow"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="SDSVMServiceLayout_MainWindow">
+                <item>
+                 <widget class="QLabel" name="SDSVMServiceLabel_MainWindow">
+                  <property name="text">
+                   <string>SDS VM Service:       </string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="SDSVMServiceInput_MainWindow"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="SDSDockerServiceLayout_MainWindow">
+                <item>
+                 <widget class="QLabel" name="SDSDockerServiceLabel_MainWindow">
+                  <property name="text">
+                   <string>SDS Docker Service:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="SDSDockerServiceInput_MainWindow"/>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTreeWidget" name="NodesTreeWidget_MainWindow">
+              <column>
+               <property name="text">
+                <string>Listening</string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Type                                               </string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Name                                                                                                                                          </string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>MAC Address  </string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>IP Address</string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Port Number</string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Scan/Victim Node</string>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                 <weight>50</weight>
+                 <bold>false</bold>
+                </font>
+               </property>
+              </column>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="ScenarioBottomSectionLayout_MainWindow">
+              <item>
+               <widget class="QLabel" name="ScenarioStatusLabel_MainWindow">
+                <property name="text">
+                 <string>Scenario Status:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="ScenarioStatus_MainWindow">
+                <property name="text">
+                 <string>Active</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="ScenarioBottomSectionHorizontalSpacer_MainWindow">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ScenarioAddNodeButton_MainWindow">
+                <property name="toolTip">
+                 <string>Add New Node</string>
+                </property>
+                <property name="text">
+                 <string>  Add Node  </string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="Tab2">
+         <attribute name="title">
+          <string>Scenario 2</string>
+         </attribute>
+         <widget class="QPushButton" name="TestButton">
+          <property name="geometry">
+           <rect>
+            <x>490</x>
+            <y>150</y>
+            <width>113</width>
+            <height>32</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="ButtonsLayout_MainWindow">
+      <item>
+       <widget class="QPushButton" name="NewButton_MainWindow">
+        <property name="toolTip">
+         <string>New Project</string>
+        </property>
+        <property name="text">
+         <string>  New  </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="OpenButton_MainWindow">
+        <property name="toolTip">
+         <string>Open Project</string>
+        </property>
+        <property name="text">
+         <string>  Open  </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="SaveButton_MainWindow">
+        <property name="toolTip">
+         <string>Save Project</string>
+        </property>
+        <property name="text">
+         <string>  Save  </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ImportButton_MainWindow">
+        <property name="toolTip">
+         <string>Import Project</string>
+        </property>
+        <property name="text">
+         <string>Import</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ExportButton_MainWindow">
+        <property name="toolTip">
+         <string>Export Project</string>
+        </property>
+        <property name="text">
+         <string>Export</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="ButtonsLayoutHorizontalSpacer_MainWindow">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

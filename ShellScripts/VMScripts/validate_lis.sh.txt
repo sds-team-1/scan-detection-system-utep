@@ -1,0 +1,2 @@
+#!/bin/sh
+>isvalid.txt

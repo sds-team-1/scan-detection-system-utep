@@ -1,6 +1,6 @@
 from enum import Enum, unique
 from msilib.schema import Error
-import re
+from Helpers.DatabaseHelper import SDSDatabaseHelper
 
 @unique
 class SDSStateEnum(Enum):
@@ -19,11 +19,6 @@ class SDSStateEnum(Enum):
 
 class SDSController:
 
-<<<<<<< HEAD
-    directory_regex_pattern = '/^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g'
-
-=======
->>>>>>> main
     def __init__(self) -> None:
         self._cap_manager = None
         self._a_manager = None
@@ -50,64 +45,25 @@ class SDSController:
 
     ''' The following methods are made by synthesizing a state diagram for the 
     project.'''
-
-    def list_all_workplaces(self) -> dict:
-        #Gets all the workplaces available from MongoDB
-        if self._db_connection is not None:
-            # Do operation
-            pass
-        else:
-            return {}
-
-    def list_all_projects(self, workplace_name: str) -> dict:
-        #Gets all the projects within the workplace
-        if self._db_connection is not None:
-            # Do operation
-            pass
-        else:
-            return {}
-
-    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> dict:
-        #Gets all scenario_units of specified instance
-        if self._db_connection is not None:
-            # Do operation
-            pass
-        else:
-            return {}
-
-    def list_all_nodes(self, workplace_name: str, project_name: str, 
-        scenario_unit_id: str) -> dict:
-        if self._db_connection is not None:
-            # Do operation
-            pass
-        else:
-            return {}
-
     def start_new_workplace(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_SYSTEM:
             # Do work here
             self._state = SDSStateEnum.WORKPLACE_CONSTRUCTION
 
-    def specify_directory(self, directory_name: str) -> bool:
+    def specify_directory(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
             # Do Work here
-            match = re.fullmatch(self.directory_regex_pattern, directory_name)            
-            if match is not None:
-                self._state = SDSStateEnum.INIT_WORKPLACE
-                return True
-            else:
-                return False
-        return False
+            self._state = SDSStateEnum.INIT_WORKPLACE
 
-    def open_workplace(self, workplace_name: str) -> bool:
+    def open_workplace(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_SYSTEM:
             # Do work here
             self._state = SDSStateEnum.INIT_WORKPLACE
 
-    def import_project(self, project_name: str) -> bool:
+    def import_project(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             # Do work here
@@ -117,16 +73,14 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             # Do work here
-            ''' Create new directory or only new entry in mongodb?'''
             self._state = SDSStateEnum.PROJECT_CONSTRUCTION
 
-    def specify_project_name(self, project_name: str):
+    def specify_project_name(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
             # State doesn't change.
-            self._project_name = project_name
-            # Insert into directory/entry
+            pass
 
     def specify_num_parrallel_units(self):
         self._ensure_subsystems()
