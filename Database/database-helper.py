@@ -1,12 +1,6 @@
 # DatabaseHelper 
-
-
-import json
-from debugpy import connect
-from numpy import delete
-from pymongo import MongoClient
 from pprint import pprint
-
+from pymongo import MongoClient
 
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"
@@ -14,8 +8,8 @@ class SDSDatabaseHelper:
     def __init__(self):
         client = MongoClient(self.url)
         db = client.SDS
-        serverStatusResult=db.command("serverStatus")
-        # pprint(serverStatusResult)
+        serverStatusResult = db.command("serverStatus")
+        pprint(serverStatusResult)
 
     def insertObject(self, id, object):
         object["_id"] = id
