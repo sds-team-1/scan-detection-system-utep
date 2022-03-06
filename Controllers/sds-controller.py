@@ -1,6 +1,8 @@
 from enum import Enum, unique
 from msilib.schema import Error
 import re
+from typing import List
+from Helpers.DatabaseHelper import SDSDatabaseHelper
 
 @unique
 class SDSStateEnum(Enum):
@@ -19,16 +21,15 @@ class SDSStateEnum(Enum):
 
 class SDSController:
 
-<<<<<<< HEAD
     directory_regex_pattern = '/^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g'
 
-=======
->>>>>>> main
     def __init__(self) -> None:
         self._cap_manager = None
         self._a_manager = None
         self._db_connection = None 
         self._state = SDSStateEnum.INIT_SYSTEM
+        self._worklace_id: int = -1
+        self._project_id: int = -1
 
     def add_capture_manager(self, capture_manager):
         if self._cap_manager == None:
@@ -48,40 +49,37 @@ class SDSController:
         assert(self._a_manager)
         assert(self._db_connection)
 
-    ''' The following methods are made by synthesizing a state diagram for the 
-    project.'''
-
-    def list_all_workplaces(self) -> dict:
+    def list_all_workplaces(self) -> List[str]:
         #Gets all the workplaces available from MongoDB
-        if self._db_connection is not None:
-            # Do operation
-            pass
+        if self._db_connection is None:
+            return [] 
         else:
-            return {}
+            #Do work here
+            pass
 
-    def list_all_projects(self, workplace_name: str) -> dict:
+    def list_all_projects(self, workplace_name: str) -> List[str]:
         #Gets all the projects within the workplace
-        if self._db_connection is not None:
-            # Do operation
-            pass
+        if self._db_connection is None:
+            return []
         else:
-            return {}
+            #Do work here
+            pass
 
-    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> dict:
+    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
         #Gets all scenario_units of specified instance
-        if self._db_connection is not None:
-            # Do operation
-            pass
+        if self._db_connection is None:
+            return []
         else:
-            return {}
+            #Do work here
+            pass
 
     def list_all_nodes(self, workplace_name: str, project_name: str, 
-        scenario_unit_id: str) -> dict:
-        if self._db_connection is not None:
-            # Do operation
-            pass
+        scenario_unit_id: str) -> List[str]:
+        if self._db_connection is None:
+            return []
         else:
-            return {}
+            #Do work here
+            pass
 
     def start_new_workplace(self):
         self._ensure_subsystems()
