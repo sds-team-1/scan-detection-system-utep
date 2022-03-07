@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewProjectWindow</class>
- <widget class="QWidget" name="NewProjectWindow">
+ <class>newProject_window</class>
+ <widget class="QWidget" name="newProject_window">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -10,19 +10,19 @@
     <x>0</x>
     <y>0</y>
     <width>487</width>
-    <height>299</height>
+    <height>135</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>487</width>
-    <height>299</height>
+    <height>135</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>487</width>
-    <height>299</height>
+    <height>135</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -30,56 +30,35 @@
   </property>
   <layout class="QGridLayout" name="NewProjectWindowLayout">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="NewProjectLayout">
+    <layout class="QVBoxLayout" name="mainLayout_newProjectWindow">
      <item>
-      <layout class="QHBoxLayout" name="NewProjectNameLayout">
+      <layout class="QHBoxLayout" name="newProjectNameLayout_newProjectWindow">
        <item>
-        <widget class="QLabel" name="NewProjectNameLabel">
+        <widget class="QLabel" name="newProjectNameLabel_newProjectWindow">
          <property name="text">
           <string>Project Name:     </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="NewProjectNameInput"/>
+        <widget class="QLineEdit" name="newProjectNameInput_newProjectWindow"/>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="NewProjectLocationLayout">
+      <layout class="QHBoxLayout" name="newProjectMaxUnitsLayout_newProjectWindow">
        <item>
-        <widget class="QLabel" name="NewProjectLocationLabel">
-         <property name="text">
-          <string>Project Location:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="NewProjectLocationInput"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="NewProjectLocationBrowse">
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="NewProjectScenariosLayout">
-       <item>
-        <widget class="QLabel" name="NewProjectScenariosLabel">
+        <widget class="QLabel" name="newProjectMaxLabel_newProjectWindow">
          <property name="text">
           <string>Maximum Scenario Units:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="NewProjectScenariosDropdown"/>
+        <widget class="QSpinBox" name="newProjectMaxUnitsSpinbox_newProjectWindow"/>
        </item>
        <item>
-        <spacer name="NewProjectScenariosSpacer">
+        <spacer name="newProjectMaxUnitsSpacer_newProjectWindow">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -94,16 +73,16 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="NewProjectButtonsLayout">
+      <layout class="QHBoxLayout" name="newProjectButtonsLayout_newProjectWindow">
        <item>
-        <widget class="QPushButton" name="NewProjectCreateButton">
+        <widget class="QPushButton" name="newProjectCreateButton_newProjectWindow">
          <property name="text">
           <string>Create</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="NewProjectCancelButton">
+        <widget class="QPushButton" name="newProjectCancelButton_newProjectWindow">
          <property name="text">
           <string>Cancel</string>
          </property>

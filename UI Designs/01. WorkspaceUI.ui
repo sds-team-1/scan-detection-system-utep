@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>workspace_window</class>
+ <widget class="QWidget" name="workspace_window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>500</height>
+    <width>780</width>
+    <height>463</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>780</width>
+    <height>463</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>780</width>
+    <height>463</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Scan Detection System</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="mainLayout_workspaceWindow">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="workspacesLayout_workspaceWindow">
        <item>
-        <widget class="QTreeWidget" name="treeWidget">
+        <widget class="QTreeWidget" name="workspacesList_workspaceWindow">
          <column>
           <property name="text">
            <string>Workspaces</string>
@@ -45,16 +57,26 @@
            </property>
           </item>
          </item>
+         <item>
+          <property name="text">
+           <string>Name 3</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>C:/Documents</string>
+           </property>
+          </item>
+         </item>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="createWorkspaceLayout_workspaceWindow">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <layout class="QHBoxLayout" name="logoLayout_workspaceWindow">
          <item>
-          <spacer name="horizontalSpacer">
+          <spacer name="logoSpacer1_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -67,14 +89,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="logoLabel_workspaceWindow">
            <property name="text">
             <string>LOGO</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_6">
+          <spacer name="logoSpacer2_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -89,9 +111,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="SDSLayout_workspaceWindow">
          <item>
-          <spacer name="horizontalSpacer_2">
+          <spacer name="SDSSpacer1_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -104,14 +126,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="SDSLabel_workspaceWindow">
            <property name="text">
             <string>Scan Detection System</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3">
+          <spacer name="SDSSpacer2_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -126,9 +148,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="versionLayout_workspaceWindow">
          <item>
-          <spacer name="horizontalSpacer_4">
+          <spacer name="versionSpacer1_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -141,14 +163,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="versionLabel_workspaceWindow">
            <property name="text">
             <string>Version 2022.1.0</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_5">
+          <spacer name="versionSpacer2_workspaceWindow">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -163,7 +185,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="createWorkspaceButton_workspaceWindow">
          <property name="text">
           <string>Create New Workspace</string>
          </property>
