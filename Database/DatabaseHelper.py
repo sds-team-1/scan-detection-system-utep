@@ -22,16 +22,23 @@ class SDSDatabaseHelper:
             return False
         return True
 
-    def create_project(self, workspace_name: str, project_name: str, 
-        par_units: int = 1, scenario_units: List = []) -> bool:
+    def create_project(self, workspace_name: str, project_name: str = '', 
+        par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
         client = MongoClient(self.url)
         db = client['SDS']
         collection = db['projects']
-        try:
-            collection.insert_one({'_id': project_name, 'parallel_units': par_units,
-            'scenario_units': scenario_units})
-        except:
-            return False
+        if not project:
+            try:
+                collection.insert_one({'_id': project_name, 'parallel_units': par_units,
+                'scenario_units': scenario_units})
+            except:
+                return False
+        else:
+            try:
+                collection.insert_one(project)
+                project_name = project['_id']
+            except:
+                return False
         collection = db['workspaces']
         query = {'workspace_name': workspace_name}
         update = {'$addToSet': {'projects': project_name}}
