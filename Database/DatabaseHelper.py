@@ -22,19 +22,16 @@ class SDSDatabaseHelper:
             return False
         return True
 
-    def create_project(self, workspace_name: str, project_name: str) -> bool:
-        return self.create_project(workspace_name, project_name, 1, [])
-
-    def create_project(self, workspace_name: str, project_name: str, par_units: int):
-        return self.create_project(workspace_name, project_name, par_units, [])
-
     def create_project(self, workspace_name: str, project_name: str, 
-        par_units: int, scenario_units: List) -> bool:
+        par_units: int = 1, scenario_units: List = []) -> bool:
         client = MongoClient(self.url)
         db = client['SDS']
         collection = db['projects']
-        collection.insert_one({'_id': project_name, 'parallel_units': par_units,
+        try:
+            collection.insert_one({'_id': project_name, 'parallel_units': par_units,
             'scenario_units': scenario_units})
+        except:
+            return False
         collection = db['workspaces']
         query = {'workspace_name': workspace_name}
         update = {'$addToSet': {'projects': project_name}}
@@ -50,11 +47,28 @@ class SDSDatabaseHelper:
     def retrieve_projects(self, workspace_name: str) -> List[str]:
         client = MongoClient(self.url)
         db = client['SDS']
-        collection = db['workplaces']
+        collection = db['projects']
         return collection.find()
 
     """Import Project"""
+    """Export Project"""
+    def retrieve_project(self, project_name: str) -> dict:
+        client = MongoClient(self.url)
+        db = client['SDS']
+        collection = db['projects']
+        data = collection.find_one({'_id': project_name})
+        return data if data else {}
 
     """Save Project"""
-
-    """Export Project"""
+    def save_project(self, project_name: str, new_data: dict) -> bool:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['projects']
+        try:
+            result = collection.delete_one({'_id': project_name})
+            v = True if result.matched_count is 1 else False
+            if v: 
+                collection.insert_one(new_data)
+        except:
+            v = False
+        return v 
