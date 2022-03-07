@@ -1,5 +1,15 @@
-from Database import SDSDatabaseHelper
+import sys
 
-database = SDSDatabaseHelper()
+sys.path.insert(0, '../')
 
-database.insertObject('workspaceA')
+from Database import DatabaseHelper
+
+database = DatabaseHelper.SDSDatabaseHelper()
+
+database.create_workspace('test_workspace')
+
+print(database.retrieve_workspaces())
+
+database.create_project('test_workplace', 'test_project')
+
+print(database.retrieve_projects())
