@@ -1,4 +1,3 @@
 PyQt5
 pymongo
 virtualbox
-vboxapi

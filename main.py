@@ -1,6 +1,5 @@
 from random import random
 from PyQt5 import QtCore, QtGui, QtWidgets
-from Helpers import DatabaseHelper as DatabaseHelper
 import random
 
 class Ui_MainWindow(object):
