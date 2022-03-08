@@ -13,9 +13,7 @@ from views.mainWindow import Ui_MainWindow
 from views.newProject import Ui_newProject_window
 from views.workspace import Ui_workspace_window
 
-client = MongoClient("mongodb+srv://admin:sp22SEP@sds.p5j7n.mongodb.net/SDS?retryWrites=true&w=majority")
-
-db = client.test
+client = MongoClient("mongodb://localhost:27017/")
 
 dbs = client.list_database_names()
 
@@ -40,9 +38,10 @@ mainWindowUI.setupMainWindowUI(mainWindow_Window)
 newProjectWindowUI.setupNewProject(newProject_Window)
 
 workspace_path = ''
+workspace_name = ''
 
 if 'SDS_DB' not in dbs:
-    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': {}}
+    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
     workspaces_DB.insert_one(workspace)
 
 else:
@@ -60,11 +59,16 @@ def createWorkspaceWindow():
 
 
 def createWorkspace():
+    global workspace_name, workspace_path
     first_query = workspaces_DB.find_one()
+
     if first_query['Name'] == '':
         new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
                               'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
         workspaces_DB.update_one(first_query, new_query)
+
+        workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+
     else:
         current_id = workspaces_DB.find().sort('_id', -1).limit(1)
         for doc in current_id:
@@ -73,11 +77,13 @@ def createWorkspace():
         new_query = {'_id': int(current_id + 1),
                      'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
                      'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
-                     'Projects': {}}
+                     'Projects': []}
 
         workspaces_DB.insert_one(new_query)
 
     os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
+
+    workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
 
     mainWindow_Window.show()
     createWorkspace_Window.close()
@@ -88,6 +94,34 @@ def createProjectWindow():
     newProject_Window.show()
 
 
+def createProject():
+    global workspace_name, workspace_path
+    p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
+    value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
+    scenarios = {}
+
+    os.makedirs(os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text()))
+
+    project_path = os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text())
+
+    for i in range(0, value):
+        scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
+        scenarios['Scenario ' + str(i + 1)] = ''
+        p.addChild(scenario)
+        os.makedirs(os.path.join(project_path, 'Scenario ' + str(i + 1)))
+
+    mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+
+    project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
+
+    for q in workspaces_DB.find():
+        if q['Name'] == workspace_name:
+            workspaces_DB.update_one({'Projects': q['Projects']},
+                                     {'$push': {'Projects': project}})
+
+    newProject_Window.close()
+
+
 def define_workspace_path():
     global workspace_path
     dialog = QFileDialog()
@@ -95,21 +129,45 @@ def define_workspace_path():
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
 
 
-def item_selected():
+def item_workspace_selected():
     if workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].parent() is None:
-        print(workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0))
+        global workspace_name
         time.sleep(1)
+        workspace_name = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
+        mainWindow_Window.setWindowTitle(workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0) +
+                                         ' - Scan Detection System')
         mainWindow_Window.show()
         workspace_Window.close()
 
+        for q in workspaces_DB.find():
+            if q['Name'] == workspace_name:
+                for p in q['Projects']:
+                    projectName = QtWidgets.QTreeWidgetItem([p[0]])
+                    for k, v in p[1].items():
+                        scenarioName = QTreeWidgetItem([k])
+                        projectName.addChild(scenarioName)
+                        mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
+
+
+def item_project_selected():
+    if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+        mainWindowUI.exportButton_mainWindow.setEnabled(True)
+    else:
+        mainWindowUI.exportButton_mainWindow.setEnabled(False)
+
 
 workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+workspaceUI.workspacesList_workspaceWindow.itemSelectionChanged.connect(item_workspace_selected)
 
 createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
 createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
 createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+
 mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
-workspaceUI.workspacesList_workspaceWindow.itemSelectionChanged.connect(item_selected)
+mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+
+newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
 
 workspace_Window.show()
 

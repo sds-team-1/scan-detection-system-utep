@@ -118,6 +118,7 @@ class Ui_MainWindow(object):
         self.centralSectionLayout_mainWindow.addLayout(self.scenarioLayout_mainWindow)
         self.gridLayout_2.addLayout(self.centralSectionLayout_mainWindow, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.CentralLayout_mainWindow)
+        self.exportButton_mainWindow.setEnabled(False)
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
