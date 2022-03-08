@@ -15,12 +15,6 @@ class Ui_workspace_window(object):
         self.workspacesLayout_workspaceWindow.setObjectName("workspacesLayout_workspaceWindow")
         self.workspacesList_workspaceWindow = QtWidgets.QTreeWidget(workspace_window)
         self.workspacesList_workspaceWindow.setObjectName("workspacesList_workspaceWindow")
-        item_0 = QtWidgets.QTreeWidgetItem(self.workspacesList_workspaceWindow)
-        item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        item_0 = QtWidgets.QTreeWidgetItem(self.workspacesList_workspaceWindow)
-        item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        item_0 = QtWidgets.QTreeWidgetItem(self.workspacesList_workspaceWindow)
-        item_1 = QtWidgets.QTreeWidgetItem(item_0)
         self.workspacesLayout_workspaceWindow.addWidget(self.workspacesList_workspaceWindow)
         self.mainLayout_workspaceWindow.addLayout(self.workspacesLayout_workspaceWindow)
         self.createWorkspaceLayout_workspaceWindow = QtWidgets.QVBoxLayout()
@@ -68,15 +62,6 @@ class Ui_workspace_window(object):
         self.workspacesList_workspaceWindow.headerItem().setText(0, _translate("workspace_window", "Workspaces"))
         __sortingEnabled = self.workspacesList_workspaceWindow.isSortingEnabled()
         self.workspacesList_workspaceWindow.setSortingEnabled(False)
-        self.workspacesList_workspaceWindow.topLevelItem(0).setText(0, _translate("workspace_window", "Name 1"))
-        self.workspacesList_workspaceWindow.topLevelItem(0).child(0).setText(0, _translate("workspace_window",
-                                                                                           "C:/Documents"))
-        self.workspacesList_workspaceWindow.topLevelItem(1).setText(0, _translate("workspace_window", "Name 2"))
-        self.workspacesList_workspaceWindow.topLevelItem(1).child(0).setText(0, _translate("workspace_window",
-                                                                                           "C:/Downloads"))
-        self.workspacesList_workspaceWindow.topLevelItem(2).setText(0, _translate("workspace_window", "Name 3"))
-        self.workspacesList_workspaceWindow.topLevelItem(2).child(0).setText(0, _translate("workspace_window",
-                                                                                           "C:/Documents"))
         self.workspacesList_workspaceWindow.setSortingEnabled(__sortingEnabled)
         self.logoLabel_workspaceWindow.setText(_translate("workspace_window", "LOGO"))
         self.SDSLabel_workspaceWindow.setText(_translate("workspace_window", "Scan Detection System"))

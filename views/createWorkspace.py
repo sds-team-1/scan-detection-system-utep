@@ -29,6 +29,7 @@ class Ui_newWorkspace_window(object):
         self.newWorkspaceLocationLayout_newWorkspaceWindow.addWidget(self.workspaceLocationLabel_newWorkspaceWindow)
         self.workspaceLocationInput_newWorkspaceWindow = QtWidgets.QLineEdit(newWorkspace_window)
         self.workspaceLocationInput_newWorkspaceWindow.setObjectName("workspaceLocationInput_newWorkspaceWindow")
+        self.workspaceLocationInput_newWorkspaceWindow.setReadOnly(True)
         self.newWorkspaceLocationLayout_newWorkspaceWindow.addWidget(self.workspaceLocationInput_newWorkspaceWindow)
         self.browseWorkspaceButton_newWorkspaceWindow = QtWidgets.QPushButton(newWorkspace_window)
         self.browseWorkspaceButton_newWorkspaceWindow.setObjectName("browseWorkspaceButton_newWorkspaceWindow")
