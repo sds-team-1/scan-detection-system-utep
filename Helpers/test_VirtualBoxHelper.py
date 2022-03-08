@@ -1,9 +1,16 @@
 import virtualbox
-print("TESTING")
 vbox = virtualbox.VirtualBox()
 session = virtualbox.Session()
-print("TESTING")
+
+print("Searching for machines")
+for machine_name in vbox.machines:
+    print(machine_name)
+
+# this machine name input must be the same as the name you give it in virtualbox
 machine = vbox.find_machine("ubuntu")
-progress = machine.launch_vm_process(session, "gui", []);
-print("TESTING")
-progress.wait_for_completion()
+try:
+    print("Starting machine")
+    progress = machine.launch_vm_process(session, "gui", [])
+    progress.wait_for_completion()
+except Exception as e:
+    print("Virtual machine already running")
