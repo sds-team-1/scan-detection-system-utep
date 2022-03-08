@@ -27,5 +27,5 @@ To this
 `vboxDest = os.environ.get("VBOX_MSI_INSTALL_PATH", "/usr/lib/virtualbox")`
 
 Once done, run the following command and you should have virtualbox installed
-sudo python3 vboxapisetup.py install
+`sudo python3 vboxapisetup.py install`
 
