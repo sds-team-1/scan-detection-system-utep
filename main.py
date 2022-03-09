@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+import json
 
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
@@ -12,6 +13,28 @@ from views.createWorkspace import Ui_newWorkspace_window
 from views.mainWindow import Ui_MainWindow
 from views.newProject import Ui_newProject_window
 from views.workspace import Ui_workspace_window
+
+
+class Workspace:
+    def __init__(self, name, location, projects):
+        self.name = name
+        self.location = location
+        self.projects = projects
+
+
+class Project:
+    def __init__(self, name, location, scenarios):
+        self.name = name
+        self.location = location
+        self.scenarios = scenarios
+
+
+class Scenario:
+    def __init__(self, name, location, nodes):
+        self.name = name
+        self.location = location
+        self.nodes = nodes
+
 
 client = MongoClient("mongodb://localhost:27017/")
 
@@ -39,6 +62,7 @@ newProjectWindowUI.setupNewProject(newProject_Window)
 
 workspace_path = ''
 workspace_name = ''
+workspace_object = Workspace('', '', [])
 
 if 'SDS_DB' not in dbs:
     workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
@@ -59,7 +83,7 @@ def createWorkspaceWindow():
 
 
 def createWorkspace():
-    global workspace_name, workspace_path
+    global workspace_name, workspace_path, workspace_object
     first_query = workspaces_DB.find_one()
 
     if first_query['Name'] == '':
@@ -85,6 +109,10 @@ def createWorkspace():
 
     workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
 
+    workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+    workspace_object.location = workspace_path
+    workspace_object.projects = []
+
     mainWindow_Window.show()
     createWorkspace_Window.close()
     workspace_Window.close()
@@ -100,24 +128,37 @@ def createProject():
     value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
     scenarios = {}
 
-    os.makedirs(os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text()))
+    project_object = Project('', '', [])
+
+    project_object.name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
 
     project_path = os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text())
+
+    project_object.location = project_path
 
     for i in range(0, value):
         scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
         scenarios['Scenario ' + str(i + 1)] = ''
         p.addChild(scenario)
-        os.makedirs(os.path.join(project_path, 'Scenario ' + str(i + 1)))
+        scenario_object = Scenario('', '', '')
+        scenario_object.name = 'Scenario ' + str(i + 1)
+        scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
+        scenario_object.nodes = ''
+        project_object.scenarios.append(scenario_object)
 
     mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
     project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
 
+    workspace_object.projects.append(project_object)
+
     for q in workspaces_DB.find():
         if q['Name'] == workspace_name:
             workspaces_DB.update_one({'Projects': q['Projects']},
                                      {'$push': {'Projects': project}})
+
+    newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
+    newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
 
     newProject_Window.close()
 
@@ -156,6 +197,48 @@ def item_project_selected():
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
 
 
+def save_workspace():
+    for project in workspace_object.projects:
+        os.makedirs(os.path.join(workspace_object.location,
+                                 project.name))
+
+        for scenario in project.scenarios:
+            os.makedirs(os.path.join(project.location,
+                                     scenario.name))
+
+
+def export_project():
+    scenarios = {}
+    project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    project_path = ''
+    projects = workspace_object.projects
+    for project in projects:
+        if project.name == project_name:
+
+            project_path = project.location
+            for scenario in project.scenarios:
+                scenarios[scenario.name] = ''
+
+    json_project = [project_name, scenarios]
+
+    json_string = json.dumps(json_project)
+
+    with open(project_path + '.json', 'w') as outfile:
+        outfile.write(json_string)
+
+
+def import_project():
+    dialog = QFileDialog()
+    json_path = dialog.getOpenFileName(mainWindow_Window, 'Select JSON File')
+    with open(json_path[0]) as json_file:
+        project = json.load(json_file)
+        p = QtWidgets.QTreeWidgetItem([project[0]])
+        for x in project[1]:
+            s = QTreeWidgetItem([x])
+            p.addChild(s)
+        mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+
+
 workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
 workspaceUI.workspacesList_workspaceWindow.itemSelectionChanged.connect(item_workspace_selected)
 
@@ -165,6 +248,9 @@ createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(defin
 
 mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
 mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
+mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
+mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
 
 newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
 newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
