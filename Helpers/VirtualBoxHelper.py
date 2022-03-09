@@ -1,13 +1,14 @@
-import virtualbox
+from .Python27Helper import Functions as python27_functions
+import os
 
-def start_virtual_box(vm_name):
-    vbox = virtualbox.VirtualBox()
-    session = virtualbox.Session()
-
-    try:
-        print("Attempting to start Virtual Box")
-        progress = vbox.find_machine(vm_name).launch_vm_process(session, "gui", [])
-        progress.wait_for_completion()
-        print("Virtual Box started!")
-    except Exception as e:
-        print("Virtual Box already running")
+class VirtualBoxHelper:
+    def start_virtual_box(vm_name):
+        directory_path = os.getcwd()
+        folder_name = os.path.basename(directory_path)
+        print("Current folder is " + folder_name)
+        python27_functions.call_python_version(
+            "2.7",
+            "py_27_virtual_box_tool",
+            "start_virtual_box",
+            [vm_name]
+        )
