@@ -16,21 +16,3 @@ class Functions:
         """ % (Module, Function))
         channel.send(ArgumentList)
         return channel.receive()
-
-    def call_code_as_string():
-        gw = execnet.makegateway("popen//python=python")
-        channel = gw.remote_exec("""
-            import virtualbox
-
-            vbox = virtualbox.VirtualBox()
-            session = virtualbox.Session()
-
-            try:
-                progress = vbox.find_machine(vm_name).launch_vm_process(session, "gui", [])
-                progress.wait_for_completion()
-            except Exception as e:
-                print(e)
-
-            channel.send(True)
-        """)
-        return channel.receive()
