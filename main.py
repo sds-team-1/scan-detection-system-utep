@@ -1,233 +1,268 @@
-from random import random
-from PyQt5 import QtCore, QtGui, QtWidgets
-import random
+# from Helpers import DatabaseHelper as DatabaseHelper
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+import os
+import sys
+import time
+import json
 
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(985, 700)
-        MainWindow.setMinimumSize(QtCore.QSize(812, 580))
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
+from pymongo import MongoClient
 
-        self.CentralLayout_MainWindow = QtWidgets.QWidget(MainWindow)
-        self.CentralLayout_MainWindow.setObjectName("CentralLayout_MainWindow")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.CentralLayout_MainWindow)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-
-        self.TabWidgetLayout_MainWindow = QtWidgets.QVBoxLayout()
-        self.TabWidgetLayout_MainWindow.setObjectName("TabWidgetLayout_MainWindow")
-
-        self.TabWidget_MainWindow = QtWidgets.QTabWidget(self.CentralLayout_MainWindow)
-        self.TabWidget_MainWindow.setObjectName("TabWidget_MainWindow")
-
-        self.TabWidgetLayout_MainWindow.addWidget(self.TabWidget_MainWindow)
-        self.gridLayout_2.addLayout(self.TabWidgetLayout_MainWindow, 1, 0, 1, 1)
-
-        self.ButtonsLayout_MainWindow = QtWidgets.QHBoxLayout()
-        self.ButtonsLayout_MainWindow.setObjectName("ButtonsLayout_MainWindow")
-        self.NewButton_MainWindow = QtWidgets.QPushButton(self.CentralLayout_MainWindow)
-        self.NewButton_MainWindow.setObjectName("NewButton_MainWindow")
-        self.ButtonsLayout_MainWindow.addWidget(self.NewButton_MainWindow)
-        self.OpenButton_MainWindow = QtWidgets.QPushButton(self.CentralLayout_MainWindow)
-        self.OpenButton_MainWindow.setObjectName("OpenButton_MainWindow")
-        self.ButtonsLayout_MainWindow.addWidget(self.OpenButton_MainWindow)
-        self.SaveButton_MainWindow = QtWidgets.QPushButton(self.CentralLayout_MainWindow)
-        self.SaveButton_MainWindow.setObjectName("SaveButton_MainWindow")
-        self.ButtonsLayout_MainWindow.addWidget(self.SaveButton_MainWindow)
-        self.ImportButton_MainWindow = QtWidgets.QPushButton(self.CentralLayout_MainWindow)
-        self.ImportButton_MainWindow.setObjectName("ImportButton_MainWindow")
-        self.ButtonsLayout_MainWindow.addWidget(self.ImportButton_MainWindow)
-        self.ExportButton_MainWindow = QtWidgets.QPushButton(self.CentralLayout_MainWindow)
-        self.ExportButton_MainWindow.setObjectName("ExportButton_MainWindow")
-        self.ButtonsLayout_MainWindow.addWidget(self.ExportButton_MainWindow)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.ButtonsLayout_MainWindow.addItem(spacerItem2)
-        self.gridLayout_2.addLayout(self.ButtonsLayout_MainWindow, 0, 0, 1, 1)
-        MainWindow.setCentralWidget(self.CentralLayout_MainWindow)
-
-        self.retranslateUi(MainWindow)
-        self.TabWidget_MainWindow.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Scan Detection System"))
-
-        self.NewButton_MainWindow.setToolTip(_translate("MainWindow", "New Project"))
-        self.NewButton_MainWindow.setText(_translate("MainWindow", "  New  "))
-        self.OpenButton_MainWindow.setToolTip(_translate("MainWindow", "Open Project"))
-        self.OpenButton_MainWindow.setText(_translate("MainWindow", "  Open  "))
-        self.SaveButton_MainWindow.setToolTip(_translate("MainWindow", "Save Project"))
-        self.SaveButton_MainWindow.setText(_translate("MainWindow", "  Save  "))
-        self.ImportButton_MainWindow.setToolTip(_translate("MainWindow", "Import Project"))
-        self.ImportButton_MainWindow.setText(_translate("MainWindow", "Import"))
-        self.ExportButton_MainWindow.setToolTip(_translate("MainWindow", "Export Project"))
-        self.ExportButton_MainWindow.setText(_translate("MainWindow", "Export"))
-
-        self.NewButton_MainWindow.clicked.connect(self.add_tab)
-
-        self.SaveButton_MainWindow.setEnabled(False)
-        self.ExportButton_MainWindow.setEnabled(False)
-
-    def add_tab(self):
-        _translate = QtCore.QCoreApplication.translate
-
-        for i in range(2):
-            s = str(i + 1)
-            s = 'Scenario ' + s
-            self.Tab_MainWindow = QtWidgets.QWidget()
-            self.Tab_MainWindow.setObjectName("Tab_MainWindow")
-            self.gridLayout = QtWidgets.QGridLayout(self.Tab_MainWindow)
-            self.gridLayout.setObjectName("gridLayout")
-            self.TabLayout_MainWindow = QtWidgets.QVBoxLayout()
-            self.TabLayout_MainWindow.setObjectName("TabLayout_MainWindow")
-            self.ScenarioButtonsLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.ScenarioButtonsLayout_MainWindow.setObjectName("ScenarioButtonsLayout_MainWindow")
-            self.StartScenarioButton_MainWindow = QtWidgets.QPushButton(self.Tab_MainWindow)
-            self.StartScenarioButton_MainWindow.setObjectName("StartScenarioButton_MainWindow")
-            self.ScenarioButtonsLayout_MainWindow.addWidget(self.StartScenarioButton_MainWindow)
-            self.StopScenarioButton_MainWindow = QtWidgets.QPushButton(self.Tab_MainWindow)
-            self.StopScenarioButton_MainWindow.setObjectName("StopScenarioButton_MainWindow")
-            self.ScenarioButtonsLayout_MainWindow.addWidget(self.StopScenarioButton_MainWindow)
-            self.RestoreScenarioButton_MainWindow = QtWidgets.QPushButton(self.Tab_MainWindow)
-            self.RestoreScenarioButton_MainWindow.setObjectName("RestoreScenarioButton_MainWindow")
-            self.ScenarioButtonsLayout_MainWindow.addWidget(self.RestoreScenarioButton_MainWindow)
-            spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-            self.ScenarioButtonsLayout_MainWindow.addItem(spacerItem)
-            self.TabLayout_MainWindow.addLayout(self.ScenarioButtonsLayout_MainWindow)
-            self.ServicesLayout_MainWindow = QtWidgets.QVBoxLayout()
-            self.ServicesLayout_MainWindow.setObjectName("ServicesLayout_MainWindow")
-            self.CORESDSServiceLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.CORESDSServiceLayout_MainWindow.setObjectName("CORESDSServiceLayout_MainWindow")
-            self.CORESDSServiceLabel_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.CORESDSServiceLabel_MainWindow.setObjectName("CORESDSServiceLabel_MainWindow")
-            self.CORESDSServiceLayout_MainWindow.addWidget(self.CORESDSServiceLabel_MainWindow)
-            self.CORESDSServiceInput_MainWindow = QtWidgets.QLineEdit(self.Tab_MainWindow)
-            self.CORESDSServiceInput_MainWindow.setObjectName("CORESDSServiceInput_MainWindow")
-            self.CORESDSServiceLayout_MainWindow.addWidget(self.CORESDSServiceInput_MainWindow)
-            self.ServicesLayout_MainWindow.addLayout(self.CORESDSServiceLayout_MainWindow)
-            self.COREPortLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.COREPortLayout_MainWindow.setObjectName("COREPortLayout_MainWindow")
-            self.COREPortLabel_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.COREPortLabel_MainWindow.setObjectName("COREPortLabel_MainWindow")
-            self.COREPortLayout_MainWindow.addWidget(self.COREPortLabel_MainWindow)
-            self.COREPortInput_MainWindow = QtWidgets.QLineEdit(self.Tab_MainWindow)
-            self.COREPortInput_MainWindow.setObjectName("COREPortInput_MainWindow")
-            self.COREPortLayout_MainWindow.addWidget(self.COREPortInput_MainWindow)
-            self.ServicesLayout_MainWindow.addLayout(self.COREPortLayout_MainWindow)
-            self.SDSVMServiceLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.SDSVMServiceLayout_MainWindow.setObjectName("SDSVMServiceLayout_MainWindow")
-            self.SDSVMServiceLabel_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.SDSVMServiceLabel_MainWindow.setObjectName("SDSVMServiceLabel_MainWindow")
-            self.SDSVMServiceLayout_MainWindow.addWidget(self.SDSVMServiceLabel_MainWindow)
-            self.SDSVMServiceInput_MainWindow = QtWidgets.QLineEdit(self.Tab_MainWindow)
-            self.SDSVMServiceInput_MainWindow.setObjectName("SDSVMServiceInput_MainWindow")
-            self.SDSVMServiceLayout_MainWindow.addWidget(self.SDSVMServiceInput_MainWindow)
-            self.ServicesLayout_MainWindow.addLayout(self.SDSVMServiceLayout_MainWindow)
-            self.SDSDockerServiceLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.SDSDockerServiceLayout_MainWindow.setObjectName("SDSDockerServiceLayout_MainWindow")
-            self.SDSDockerServiceLabel_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.SDSDockerServiceLabel_MainWindow.setObjectName("SDSDockerServiceLabel_MainWindow")
-            self.SDSDockerServiceLayout_MainWindow.addWidget(self.SDSDockerServiceLabel_MainWindow)
-            self.SDSDockerServiceInput_MainWindow = QtWidgets.QLineEdit(self.Tab_MainWindow)
-            self.SDSDockerServiceInput_MainWindow.setObjectName("SDSDockerServiceInput_MainWindow")
-            self.SDSDockerServiceLayout_MainWindow.addWidget(self.SDSDockerServiceInput_MainWindow)
-            self.ServicesLayout_MainWindow.addLayout(self.SDSDockerServiceLayout_MainWindow)
-            self.TabLayout_MainWindow.addLayout(self.ServicesLayout_MainWindow)
-            self.NodesTreeWidget_MainWindow = QtWidgets.QTreeWidget(self.Tab_MainWindow)
-            self.NodesTreeWidget_MainWindow.setObjectName("NodesTreeWidget_MainWindow")
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            font.setBold(False)
-            font.setWeight(50)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(0, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            font.setBold(False)
-            font.setWeight(50)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(1, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            font.setBold(False)
-            font.setWeight(50)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(2, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(3, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(4, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            font.setBold(False)
-            font.setWeight(50)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(5, font)
-            font = QtGui.QFont()
-            font.setPointSize(14)
-            font.setBold(False)
-            font.setWeight(50)
-            self.NodesTreeWidget_MainWindow.headerItem().setFont(6, font)
-            self.TabLayout_MainWindow.addWidget(self.NodesTreeWidget_MainWindow)
-            self.ScenarioBottomSectionLayout_MainWindow = QtWidgets.QHBoxLayout()
-            self.ScenarioBottomSectionLayout_MainWindow.setObjectName("ScenarioBottomSectionLayout_MainWindow")
-            self.ScenarioStatusLabel_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.ScenarioStatusLabel_MainWindow.setObjectName("ScenarioStatusLabel_MainWindow")
-            self.ScenarioBottomSectionLayout_MainWindow.addWidget(self.ScenarioStatusLabel_MainWindow)
-            self.ScenarioStatus_MainWindow = QtWidgets.QLabel(self.Tab_MainWindow)
-            self.ScenarioStatus_MainWindow.setObjectName("ScenarioStatus_MainWindow")
-            self.ScenarioBottomSectionLayout_MainWindow.addWidget(self.ScenarioStatus_MainWindow)
-            spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-            self.ScenarioBottomSectionLayout_MainWindow.addItem(spacerItem1)
-            self.ScenarioAddNodeButton_MainWindow = QtWidgets.QPushButton(self.Tab_MainWindow)
-            self.ScenarioAddNodeButton_MainWindow.setObjectName("ScenarioAddNodeButton_MainWindow")
-            self.ScenarioBottomSectionLayout_MainWindow.addWidget(self.ScenarioAddNodeButton_MainWindow)
-            self.TabLayout_MainWindow.addLayout(self.ScenarioBottomSectionLayout_MainWindow)
-            self.gridLayout.addLayout(self.TabLayout_MainWindow, 0, 0, 1, 1)
-
-            self.TabWidget_MainWindow.addTab(self.Tab_MainWindow, s)
-
-            self.StartScenarioButton_MainWindow.setToolTip(_translate("MainWindow", "Start Scenario"))
-            self.StartScenarioButton_MainWindow.setText(_translate("MainWindow", "  Start  "))
-            self.StopScenarioButton_MainWindow.setToolTip(_translate("MainWindow", "Stop Scenario"))
-            self.StopScenarioButton_MainWindow.setText(_translate("MainWindow", "  Stop  "))
-            self.RestoreScenarioButton_MainWindow.setToolTip(_translate("MainWindow", "Restore Scenario"))
-            self.RestoreScenarioButton_MainWindow.setText(_translate("MainWindow", "Restore"))
-            self.CORESDSServiceLabel_MainWindow.setText(_translate("MainWindow", "CORE SDS Service:   "))
-            self.COREPortLabel_MainWindow.setText(_translate("MainWindow", "CORE Port Number:  "))
-            self.SDSVMServiceLabel_MainWindow.setText(_translate("MainWindow", "SDS VM Service:       "))
-            self.SDSDockerServiceLabel_MainWindow.setText(_translate("MainWindow", "SDS Docker Service:"))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(0, _translate("MainWindow", "Listening"))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(1, _translate("MainWindow",
-                                                                               "Type                                               "))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(2, _translate("MainWindow",
-                                                                               "Name                                                                                                                                          "))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(3, _translate("MainWindow", "MAC Address  "))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(4, _translate("MainWindow", "IP Address"))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(5, _translate("MainWindow", "Port Number"))
-            self.NodesTreeWidget_MainWindow.headerItem().setText(6, _translate("MainWindow", "Scan/Victim Node"))
-            self.ScenarioStatusLabel_MainWindow.setText(_translate("MainWindow", "Scenario Status:"))
-            self.ScenarioStatus_MainWindow.setText(_translate("MainWindow", "Active"))
-            self.ScenarioAddNodeButton_MainWindow.setToolTip(_translate("MainWindow", "Add New Node"))
-            self.ScenarioAddNodeButton_MainWindow.setText(_translate("MainWindow", "  Add Node  "))
-            self.TabWidget_MainWindow.setTabText(self.TabWidget_MainWindow.indexOf(self.Tab_MainWindow),
-                                                 _translate("MainWindow", s))
-
-if __name__ == "__main__":
-
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+from views.createWorkspace import Ui_newWorkspace_window
+from views.mainWindow import Ui_MainWindow
+from views.newProject import Ui_newProject_window
+from views.workspace import Ui_workspace_window
 
 
-    # example of how to insert a document into mongo
-    # SDSdb = DatabaseHelper.SDSDatabaseHelper()
-    # tempObjectToInsert = {}
-    # tempObjectToInsert['name'] = 'Test'
-    # tempObjectToInsert['type'] = 'test type'
-    # tempObjectToInsert['_id'] = random.randint(1, 100)
-    # SDSdb.insertObject(tempObjectToInsert)
+class Workspace:
+    def __init__(self, name, location, projects):
+        self.name = name
+        self.location = location
+        self.projects = projects
 
-    sys.exit(app.exec_())
+
+class Project:
+    def __init__(self, name, location, scenarios):
+        self.name = name
+        self.location = location
+        self.scenarios = scenarios
+
+
+class Scenario:
+    def __init__(self, name, location, nodes):
+        self.name = name
+        self.location = location
+        self.nodes = nodes
+
+
+client = MongoClient("mongodb://localhost:27017/")
+
+dbs = client.list_database_names()
+
+SDS_DB = client['SDS_DB']
+workspaces_DB = SDS_DB['workspaces']
+
+app = QtWidgets.QApplication(sys.argv)
+
+workspace_Window = QtWidgets.QDialog()
+createWorkspace_Window = QtWidgets.QDialog()
+mainWindow_Window = QtWidgets.QMainWindow()
+newProject_Window = QtWidgets.QDialog()
+
+workspaceUI = Ui_workspace_window()
+createWorkspaceUI = Ui_newWorkspace_window()
+mainWindowUI = Ui_MainWindow()
+newProjectWindowUI = Ui_newProject_window()
+
+workspaceUI.setupWorkspaceUI(workspace_Window)
+createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
+mainWindowUI.setupMainWindowUI(mainWindow_Window)
+newProjectWindowUI.setupNewProject(newProject_Window)
+
+workspace_path = ''
+workspace_name = ''
+workspace_object = Workspace('', '', [])
+
+if 'SDS_DB' not in dbs:
+    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
+    workspaces_DB.insert_one(workspace)
+
+else:
+    query = workspaces_DB.find_one()
+    if query['Name'] != '':
+        for query in workspaces_DB.find():
+            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
+            l1_child = QTreeWidgetItem([query['Location']])
+            l1.addChild(l1_child)
+            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
+
+def createWorkspaceWindow():
+    createWorkspace_Window.show()
+
+
+def createWorkspace():
+    global workspace_name, workspace_path, workspace_object
+    first_query = workspaces_DB.find_one()
+
+    if first_query['Name'] == '':
+        new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
+                              'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
+        workspaces_DB.update_one(first_query, new_query)
+
+        workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+
+    else:
+        current_id = workspaces_DB.find().sort('_id', -1).limit(1)
+        for doc in current_id:
+            current_id = doc['_id']
+
+        new_query = {'_id': int(current_id + 1),
+                     'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
+                     'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
+                     'Projects': []}
+
+        workspaces_DB.insert_one(new_query)
+
+    os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
+
+    workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
+
+    workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+    workspace_object.location = workspace_path
+    workspace_object.projects = []
+
+    mainWindow_Window.show()
+    createWorkspace_Window.close()
+    workspace_Window.close()
+
+
+def createProjectWindow():
+    newProject_Window.show()
+
+
+def createProject():
+    global workspace_name, workspace_path
+    p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
+    value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
+    scenarios = {}
+
+    project_object = Project('', '', [])
+
+    project_object.name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
+
+    project_path = os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text())
+
+    project_object.location = project_path
+
+    for i in range(0, value):
+        scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
+        scenarios['Scenario ' + str(i + 1)] = ''
+        p.addChild(scenario)
+        scenario_object = Scenario('', '', '')
+        scenario_object.name = 'Scenario ' + str(i + 1)
+        scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
+        scenario_object.nodes = ''
+        project_object.scenarios.append(scenario_object)
+
+    mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+
+    project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
+
+    workspace_object.projects.append(project_object)
+
+    for q in workspaces_DB.find():
+        if q['Name'] == workspace_name:
+            workspaces_DB.update_one({'Projects': q['Projects']},
+                                     {'$push': {'Projects': project}})
+
+    newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
+    newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
+
+    newProject_Window.close()
+
+
+def define_workspace_path():
+    global workspace_path
+    dialog = QFileDialog()
+    workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
+    createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
+
+
+def item_workspace_selected():
+    if workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].parent() is None:
+        global workspace_name
+        time.sleep(1)
+        workspace_name = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
+        mainWindow_Window.setWindowTitle(workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0) +
+                                         ' - Scan Detection System')
+        mainWindow_Window.show()
+        workspace_Window.close()
+
+        for q in workspaces_DB.find():
+            if q['Name'] == workspace_name:
+                for p in q['Projects']:
+                    projectName = QtWidgets.QTreeWidgetItem([p[0]])
+                    for k, v in p[1].items():
+                        scenarioName = QTreeWidgetItem([k])
+                        projectName.addChild(scenarioName)
+                        mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
+
+
+def item_project_selected():
+    if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+        mainWindowUI.exportButton_mainWindow.setEnabled(True)
+    else:
+        mainWindowUI.exportButton_mainWindow.setEnabled(False)
+
+
+def save_workspace():
+    for project in workspace_object.projects:
+        os.makedirs(os.path.join(workspace_object.location,
+                                 project.name))
+
+        for scenario in project.scenarios:
+            os.makedirs(os.path.join(project.location,
+                                     scenario.name))
+
+
+def export_project():
+    scenarios = {}
+    project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    project_path = ''
+    projects = workspace_object.projects
+    for project in projects:
+        if project.name == project_name:
+
+            project_path = project.location
+            for scenario in project.scenarios:
+                scenarios[scenario.name] = ''
+
+    json_project = [project_name, scenarios]
+
+    json_string = json.dumps(json_project)
+
+    with open(project_path + '.json', 'w') as outfile:
+        outfile.write(json_string)
+
+
+def import_project():
+    dialog = QFileDialog()
+    json_path = dialog.getOpenFileName(mainWindow_Window, 'Select JSON File')
+    with open(json_path[0]) as json_file:
+        project = json.load(json_file)
+        p = QtWidgets.QTreeWidgetItem([project[0]])
+        for x in project[1]:
+            s = QTreeWidgetItem([x])
+            p.addChild(s)
+        mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+
+
+workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+workspaceUI.workspacesList_workspaceWindow.itemSelectionChanged.connect(item_workspace_selected)
+
+createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
+createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
+createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+
+mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
+mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
+mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
+mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
+
+newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+
+workspace_Window.show()
+
+sys.exit(app.exec_())
+
+# example of how to insert a document into mongo
+# SDSdb = DatabaseHelper.SDSDatabaseHelper()
+# tempObjectToInsert = {}
+# tempObjectToInsert['name'] = 'Test'
+# tempObjectToInsert['type'] = 'test type'
+# tempObjectToInsert['_id'] = random.randint(1, 100)
+# SDSdb.insertObject(tempObjectToInsert)

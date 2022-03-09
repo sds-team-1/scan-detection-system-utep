@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1131</width>
+    <height>747</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>812</width>
+    <height>580</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Scan Detection System</string>
+  </property>
+  <widget class="QWidget" name="CentralLayout_mainWindow">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="buttonsLayout_mainWindow">
+      <item>
+       <widget class="QPushButton" name="newButton_mainWindow">
+        <property name="toolTip">
+         <string>New Project</string>
+        </property>
+        <property name="text">
+         <string>  New  </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="saveButton_mainWindow">
+        <property name="toolTip">
+         <string>Save Project</string>
+        </property>
+        <property name="text">
+         <string>  Save  </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="importButton_mainWindow">
+        <property name="toolTip">
+         <string>Import Project</string>
+        </property>
+        <property name="text">
+         <string>Import</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="exportButton_mainWindow">
+        <property name="toolTip">
+         <string>Export Project</string>
+        </property>
+        <property name="text">
+         <string>Export</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="buttonsLayoutHorizontalSpacer_mainWindow">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="centralSectionLayout_mainWindow">
+      <item>
+       <widget class="QTreeWidget" name="projectsList_mainWindow">
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>220</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <column>
+         <property name="text">
+          <string>Projects</string>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>Project 1</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Scenario 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 3</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>Project 2</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Scenario 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 2</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>Project 3</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Scenario 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Scenario 4</string>
+          </property>
+         </item>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="scenarioLayout_mainWindow">
+        <item>
+         <layout class="QHBoxLayout" name="scenarioRunLayout_mainWindow">
+          <item>
+           <widget class="QLabel" name="scenarioIterationsLabel_mainWindow">
+            <property name="text">
+             <string>Scenario Iterations:   </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="scenarioIterationsSpinbox_mainWindow"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="startScenarioButton_mainWindow">
+            <property name="text">
+             <string>   Start   </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="stopScenarioButton_mainWindow">
+            <property name="text">
+             <string>   Stop   </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="restoreScenarioButton_mainWindow">
+            <property name="text">
+             <string> Restore </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="scenarioRunHorizontal_mainWindow">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="servicesLayout_mainWindow">
+          <item>
+           <layout class="QHBoxLayout" name="coreSdsServiceLayout_mainWindow">
+            <item>
+             <widget class="QLabel" name="coreSdsServiceLabel_mainWindow">
+              <property name="text">
+               <string>CORE SDS Service:   </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="coreSdsServiceInput_mainWindow"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="corePortNumberLayout_mainWindow">
+            <item>
+             <widget class="QLabel" name="corePortNumberLabel_mainWindow">
+              <property name="text">
+               <string>CORE Port Number:  </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="corePortNumberInput_mainWindow"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="vmSdsServiceLayout_mainWindow">
+            <item>
+             <widget class="QLabel" name="vmSdsServiceLabel_mainWindow">
+              <property name="text">
+               <string>SDS VM Service:       </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="vmSdsServiceInput_mainWindow"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="dockerSdsServiceLayout_mainWindow">
+            <item>
+             <widget class="QLabel" name="dockerSdsServiceLabel_mainWindow">
+              <property name="text">
+               <string>SDS Docker Service:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="dockerSdsServiceInput_mainWindow"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="nodesList_mainWindow">
+          <column>
+           <property name="text">
+            <string>Listening</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>MAC</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>IP</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Port</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Scan/Victim</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="nodeLayout_mainWindow">
+          <item>
+           <widget class="QLabel" name="scenarioStatusLabel_mainWindow">
+            <property name="text">
+             <string>Status:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="scenarioStatus_mainWindow">
+            <property name="text">
+             <string>Active</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="nodeSpacer_mainWindow">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addNodeButton_mainWindow">
+            <property name="text">
+             <string>    Add Node    </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="setupScenarioButton_mainWindow">
+            <property name="text">
+             <string>Set up Scenario</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

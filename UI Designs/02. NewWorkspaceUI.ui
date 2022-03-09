@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>newWorkspace_window</class>
+ <widget class="QWidget" name="newWorkspace_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>487</width>
+    <height>170</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>487</width>
+    <height>170</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>487</width>
+    <height>170</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>New Workspace</string>
+  </property>
+  <layout class="QGridLayout" name="NewProjectWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="newWorkspaceLayout">
+     <item>
+      <layout class="QHBoxLayout" name="newWorkspaceNameLayout_newWorkspaceWindow">
+       <item>
+        <widget class="QLabel" name="workspaceNameLabel_newWorkspaceWindow">
+         <property name="text">
+          <string>Workspace Name:     </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="workspaceNameInput_newWorkspaceWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="newWorkspaceLocationLayout_newWorkspaceWindow">
+       <item>
+        <widget class="QLabel" name="workspaceLocationLabel_newWorkspaceWindow">
+         <property name="text">
+          <string>Workspace Location:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="workspaceLocationInput_newWorkspaceWindow"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="browseWorkspaceButton_newWorkspaceWindow">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="newWorkspaceButtonsLayout_newWorkspaceWindow">
+       <item>
+        <widget class="QPushButton" name="createWorkspaceButton_newWorkspaceWindow">
+         <property name="text">
+          <string>Create</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cancelWorkspaceButton_newWorkspaceWindow">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
