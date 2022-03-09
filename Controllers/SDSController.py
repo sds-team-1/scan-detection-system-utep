@@ -1,8 +1,8 @@
 from enum import Enum, unique
-from msilib.schema import Error
+import json
 import re
 from typing import List
-from Helpers.DatabaseHelper import SDSDatabaseHelper
+from Database.DatabaseHelper import SDSDatabaseHelper
 
 @unique
 class SDSStateEnum(Enum):
@@ -26,10 +26,11 @@ class SDSController:
     def __init__(self) -> None:
         self._cap_manager = None
         self._a_manager = None
-        self._db_connection = None 
+        self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
-        self._worklace_id: int = -1
-        self._project_id: int = -1
+        self._worklace_name: str = ''
+        self._project_name: str = ''
+        self._project_construction: dict = {}
 
     def add_capture_manager(self, capture_manager):
         if self._cap_manager == None:
@@ -45,8 +46,8 @@ class SDSController:
 
     # Make sure that methods can execute. 
     def _ensure_subsystems(self):
-        assert(self._cap_manager)
-        assert(self._a_manager)
+        #assert(self._cap_manager)
+        #assert(self._a_manager)
         assert(self._db_connection)
 
     def list_all_workplaces(self) -> List[str]:
@@ -55,15 +56,14 @@ class SDSController:
             return [] 
         else:
             #Do work here
-            pass
+            return self._db_connection.retrieve_workspaces()
 
     def list_all_projects(self, workplace_name: str) -> List[str]:
         #Gets all the projects within the workplace
         if self._db_connection is None:
             return []
         else:
-            #Do work here
-            pass
+            return self._db_connection.retrieve_projects(workplace_name)
 
     def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
         #Gets all scenario_units of specified instance
@@ -87,17 +87,20 @@ class SDSController:
             # Do work here
             self._state = SDSStateEnum.WORKPLACE_CONSTRUCTION
 
-    def specify_directory(self, directory_name: str) -> bool:
+    def specify_workplace_name(self, workspace_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
-            # Do Work here
-            match = re.fullmatch(self.directory_regex_pattern, directory_name)            
-            if match is not None:
+            self._worklace_name = workspace_name
+
+    def finish_workplace_construction(self) -> bool:
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
+            try:
+                self._db_connection.create_workspace(self._worklace_name)
                 self._state = SDSStateEnum.INIT_WORKPLACE
                 return True
-            else:
+            except:
                 return False
-        return False
 
     def open_workplace(self, workplace_name: str) -> bool:
         self._ensure_subsystems()
@@ -105,44 +108,96 @@ class SDSController:
             # Do work here
             self._state = SDSStateEnum.INIT_WORKPLACE
 
-    def import_project(self, project_name: str) -> bool:
+    def import_project(self, workspace_name: str, project: dict) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
-            # Do work here
-            self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+            if self._db_connection.create_project(workspace_name, project):
+                self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+                return True
+        return False
 
-    def add_new_project(self):
+    def start_new_project_phase(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             # Do work here
-            ''' Create new directory or only new entry in mongodb?'''
             self._state = SDSStateEnum.PROJECT_CONSTRUCTION
 
     def specify_project_name(self, project_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
-            # State doesn't change.
             self._project_name = project_name
-            # Insert into directory/entry
+            if not self._project_construction:
+                self._project_construction = {'_id': self._project_name, 
+                    'scenario_units': []}
+            else:
+                self._project_construction['_id'] = self._project_name
+            # State doesn't change.
 
-    def specify_num_parrallel_units(self):
+    def specify_num_parrallel_units(self, n: int):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
-            # State doesn't change
-            pass
+            self._project_construction['parallel_units'] = n
 
     def finish_project_construction(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
+            self._db_connection.create_project(self._worklace_name, self._project_construction)
             self._state = SDSStateEnum.INIT_PROJECT
 
-    def export_project(self):
+    def export_project(self, project_name: str, directory: str) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
-            # Do work here
+            try:
+                data = self._db_connection.retrieve_project(project_name)
+                _file = open(directory, 'w')
+                #Write dictionary to json file
+                json.dump(data, _file)
+                self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
+                return True
+            except Exception as e:
+                print(e)
+                print('Could not save')
+                return False
+
+    def _enfore_state(self, state: str):
+        #INIT_SYSTEM = 1
+        if state == 'init_system':
+            self._state = SDSStateEnum.INIT_SYSTEM
+        #WORKPLACE_CONSTRUCTION = 2
+        if state == 'workplace_construction':
+            self._state = SDSStateEnum.WORKPLACE_CONSTRUCTION
+        #INIT_WORKPLACE = 3
+        if state == 'init_workplace':
+            self._state = SDSStateEnum.INIT_WORKPLACE
+        #FILE_MANAGER_IMPORT_DIALOGUE = 4
+        if state == 'file_manager_import_dialogue':
+            self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+        #PROJECT_CONSTRUCTION = 5
+        if state == 'project_construction':
+            self._state = SDSStateEnum.PROJECT_CONSTRUCTION
+        #INIT_PROJECT = 6
+        if state == 'init_project':
+            self._state = SDSStateEnum.INIT_PROJECT
+        #LAUNCHING_CORE_UNITS = 7
+        if state == 'launching_core_units':
+            self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
+        #SCENARIO_UNIT_CONSTRUCTION = 8
+        if state == 'scenario_unit_construction':
+            self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
+        #INIT_CAPTURE_NETWORK = 9
+        if state == 'init_capture_network':
+            self._state = SDSStateEnum.INIT_CAPTURE_NETWORK
+        #NETWORK_RUNNING = 10
+        if state == 'network_running':
+            self._state = SDSStateEnum.NETWORK_RUNNING
+        #NETWORK_STOPPED = 11
+        if state == 'network_stopped':
+            self._state = SDSStateEnum.NETWORK_STOPPED
+        #FILE_MANAGER_EXPORT_DIALOGUE = 12
+        if state == 'file_manager_export_dialogue':
             self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
 
     def add_scenario_unit(self):
