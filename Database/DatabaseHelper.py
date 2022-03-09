@@ -73,9 +73,10 @@ class SDSDatabaseHelper:
         collection = db['projects']
         try:
             result = collection.delete_one({'_id': project_name})
-            v = True if result.matched_count is 1 else False
+            v = True if result.deleted_count is 1 else False
             if v: 
                 collection.insert_one(new_data)
-        except:
+        except Exception as e:
+            print(e)
             v = False
         return v 

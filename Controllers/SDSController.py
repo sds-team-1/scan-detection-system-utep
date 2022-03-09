@@ -1,6 +1,5 @@
 from enum import Enum, unique
 import json
-from msilib.schema import Error
 import re
 from typing import List
 from Database.DatabaseHelper import SDSDatabaseHelper
@@ -158,9 +157,48 @@ class SDSController:
                 json.dump(data, _file)
                 self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
                 return True
-            except:
+            except Exception as e:
+                print(e)
                 print('Could not save')
                 return False
+
+    def _enfore_state(self, state: str):
+        #INIT_SYSTEM = 1
+        if state == 'init_system':
+            self._state = SDSStateEnum.INIT_SYSTEM
+        #WORKPLACE_CONSTRUCTION = 2
+        if state == 'workplace_construction':
+            self._state = SDSStateEnum.WORKPLACE_CONSTRUCTION
+        #INIT_WORKPLACE = 3
+        if state == 'init_workplace':
+            self._state = SDSStateEnum.INIT_WORKPLACE
+        #FILE_MANAGER_IMPORT_DIALOGUE = 4
+        if state == 'file_manager_import_dialogue':
+            self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+        #PROJECT_CONSTRUCTION = 5
+        if state == 'project_construction':
+            self._state = SDSStateEnum.PROJECT_CONSTRUCTION
+        #INIT_PROJECT = 6
+        if state == 'init_project':
+            self._state = SDSStateEnum.INIT_PROJECT
+        #LAUNCHING_CORE_UNITS = 7
+        if state == 'launching_core_units':
+            self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
+        #SCENARIO_UNIT_CONSTRUCTION = 8
+        if state == 'scenario_unit_construction':
+            self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
+        #INIT_CAPTURE_NETWORK = 9
+        if state == 'init_capture_network':
+            self._state = SDSStateEnum.INIT_CAPTURE_NETWORK
+        #NETWORK_RUNNING = 10
+        if state == 'network_running':
+            self._state = SDSStateEnum.NETWORK_RUNNING
+        #NETWORK_STOPPED = 11
+        if state == 'network_stopped':
+            self._state = SDSStateEnum.NETWORK_STOPPED
+        #FILE_MANAGER_EXPORT_DIALOGUE = 12
+        if state == 'file_manager_export_dialogue':
+            self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
 
     def add_scenario_unit(self):
         self._ensure_subsystems()
