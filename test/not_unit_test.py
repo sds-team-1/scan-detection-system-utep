@@ -42,5 +42,6 @@ controller = SDSController.SDSController()
 controller.add_mongo_connection(database)
 
 controller._enfore_state('init_project')
+# TODO: Not have this hardcoded
 controller.export_project('new_project', 
     '/home/jesoto4/Development/scan-detection-system-utep/test/export_new_project.json')
