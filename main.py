@@ -10,6 +10,7 @@ from pymongo import MongoClient
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
 from views.mainWindow import Ui_MainWindow
+from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
 from views.workspace import Ui_workspace_window
 
@@ -70,18 +71,21 @@ createWorkspace_Window = QtWidgets.QDialog()
 mainWindow_Window = QtWidgets.QMainWindow()
 newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
+missingFields_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
 mainWindowUI = Ui_MainWindow()
 newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
+missingFieldsWindowUI = Ui_missingFields_window()
 
 workspaceUI.setupWorkspaceUI(workspace_Window)
 createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
 mainWindowUI.setupMainWindowUI(mainWindow_Window)
 newProjectWindowUI.setupNewProject(newProject_Window)
 addNodeWindowUI.setupAddNode(addNode_Window)
+missingFieldsWindowUI.setupMissingFields(missingFields_Window)
 
 workspace_path = ''
 workspace_name = ''
@@ -289,6 +293,8 @@ newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newPr
 
 addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
 addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
 workspace_Window.show()
 
