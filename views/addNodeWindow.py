@@ -175,6 +175,7 @@ class Ui_addNode_window(object):
             self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
             self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
             self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+
         else:
 
             addNode_window.resize(487, 240)

@@ -274,6 +274,11 @@ def import_project():
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
 
+def addNodeCheckboxStateChanged():
+    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+
 workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
 workspaceUI.workspacesList_workspaceWindow.itemSelectionChanged.connect(item_workspace_selected)
 
@@ -293,6 +298,8 @@ newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newPr
 
 addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
 addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
 
 missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
