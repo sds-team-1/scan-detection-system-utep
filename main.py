@@ -1,5 +1,3 @@
-# from Helpers import DatabaseHelper as DatabaseHelper
-
 import os
 import sys
 import time
@@ -9,6 +7,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
 from pymongo import MongoClient
 
+from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
 from views.mainWindow import Ui_MainWindow
 from views.newProject import Ui_newProject_window
@@ -36,6 +35,27 @@ class Scenario:
         self.nodes = nodes
 
 
+class Node:
+    def __init__(self, listening, node_type, name, IP, port, MAC, scanner):
+        self.listening = listening
+        self.type = node_type
+        self.name = name
+        self.IP = IP
+        self.port = port
+        self.MAC = MAC
+        self.scanner = scanner
+
+
+class ScannerNode:
+    def __init__(self, us_pas, scanner_binary, arguments, iterations, max_parallel_runs, end_condition):
+        self.us_pas = us_pas
+        self.scanner_binary = scanner_binary
+        self.arguments = arguments
+        self.iterations = iterations
+        self.max_parallel_runs = max_parallel_runs
+        self.end_condition = end_condition
+
+
 client = MongoClient("mongodb://localhost:27017/")
 
 dbs = client.list_database_names()
@@ -49,16 +69,19 @@ workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 mainWindow_Window = QtWidgets.QMainWindow()
 newProject_Window = QtWidgets.QDialog()
+addNode_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
 mainWindowUI = Ui_MainWindow()
 newProjectWindowUI = Ui_newProject_window()
+addNodeWindowUI = Ui_addNode_window()
 
 workspaceUI.setupWorkspaceUI(workspace_Window)
 createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
 mainWindowUI.setupMainWindowUI(mainWindow_Window)
 newProjectWindowUI.setupNewProject(newProject_Window)
+addNodeWindowUI.setupAddNode(addNode_Window)
 
 workspace_path = ''
 workspace_name = ''
@@ -122,6 +145,10 @@ def createProjectWindow():
     newProject_Window.show()
 
 
+def addNodeWindow():
+    addNode_Window.show()
+
+
 def createProject():
     global workspace_name, workspace_path
     p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
@@ -161,6 +188,10 @@ def createProject():
     newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
 
     newProject_Window.close()
+
+
+def addNode():
+    addNode_Window.close()
 
 
 def define_workspace_path():
@@ -251,18 +282,14 @@ mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_s
 mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
 mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
 mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
+mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
 
 newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
 newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
 
+addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
 workspace_Window.show()
 
 sys.exit(app.exec_())
-
-# example of how to insert a document into mongo
-# SDSdb = DatabaseHelper.SDSDatabaseHelper()
-# tempObjectToInsert = {}
-# tempObjectToInsert['name'] = 'Test'
-# tempObjectToInsert['type'] = 'test type'
-# tempObjectToInsert['_id'] = random.randint(1, 100)
-# SDSdb.insertObject(tempObjectToInsert)

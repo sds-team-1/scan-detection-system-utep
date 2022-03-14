@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>addNode_window</class>
+ <widget class="QWidget" name="addNode_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>487</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>487</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>487</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Add New Node</string>
+  </property>
+  <layout class="QGridLayout" name="AddNodeWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="mainLayout_addNodeWindow">
+     <item>
+      <layout class="QHBoxLayout" name="nodeTypeLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeTypeLabel_addNodeWindow">
+         <property name="text">
+          <string>Type:                     </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="nodeTypeComboBox_addNodeWindow"/>
+       </item>
+       <item>
+        <spacer name="nodeTypeSpacer_addNodeWindow">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeNameLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeNameLabel_addNodeWindow">
+         <property name="text">
+          <string>Node Name:          </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeNameInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeMACAddressLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeMACAddressLabel_addNodeWindow">
+         <property name="text">
+          <string>MAC Address:       </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeMACAddressInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeIPAddressLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeIPAddressLabel_addNodeWindow">
+         <property name="text">
+          <string>IP Address:            </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeIPAddressInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeScannerNodeLayout_addNodeWindow">
+       <item>
+        <spacer name="nodeScannerNodeSpacer_addNodeWindow">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="nodeScannerNodeCheckBox_addNodeWindow">
+         <property name="text">
+          <string>Scanner Node</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeUserPassLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeUserPassLabel_addNodeWindow">
+         <property name="text">
+          <string>User/Pass:             </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeUserPassInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeScannerBinaryLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeScannerBinaryLabel_addNodeWindow">
+         <property name="text">
+          <string>Scanner-Binary:    </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeScannerBinaryInput_addNodeWindow"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="nodeScannerBinaryBrowseButton_addNodeWindow">
+         <property name="text">
+          <string>Browse...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeArgumentsLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeArgumentsLabel_addNodeWindow">
+         <property name="text">
+          <string>Arguments:            </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeArgumentsInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeNumIterationsLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeNumIterationsLabel_addNodeWindow">
+         <property name="text">
+          <string>Number-Iterations:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="nodeNumIterationsSpinBox_addNodeWindow"/>
+       </item>
+       <item>
+        <spacer name="nodeNumIterationsSpacer_addNodeWindow">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeMaxParallelRunsLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeMaxParallelRunsLabel_addNodeWindow">
+         <property name="text">
+          <string>Max-Parallel-Runs:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="nodeMaxParallelRunsSpinBox_addNodeWindow"/>
+       </item>
+       <item>
+        <spacer name="nodeMaxParallelRunsSpacer_addNodeWindow">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeEndConditionLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="nodeEndConditionLabel_addNodeWindow">
+         <property name="text">
+          <string>End-Condition:       </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="nodeEndConditionInput_addNodeWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="addNodeButtonsLayout_addNodeWindow">
+       <item>
+        <widget class="QPushButton" name="addNodeButton_addNodeWindow">
+         <property name="text">
+          <string>Add Node</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="addNodeCancelButton_addNodeWindow">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
