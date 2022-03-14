@@ -116,6 +116,13 @@
         </spacer>
        </item>
        <item>
+        <widget class="QCheckBox" name="nodeLogNetNodeCheckBox_addNodeWindow">
+         <property name="text">
+          <string>Log Network Traffic</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QCheckBox" name="nodeScannerNodeCheckBox_addNodeWindow">
          <property name="text">
           <string>Scanner Node</string>
