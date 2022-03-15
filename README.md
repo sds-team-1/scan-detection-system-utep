@@ -24,7 +24,10 @@ One database and several collections need to be created.
 5. Create the following collections.
 `db.createCollection('workspaces')`
 `db.createCollection('projects')`
-`db.createCollection('scenario units')`
+`db.createCollection('scenarios')`
+`db.createCollection('networks')`
+`db.createCollection('devices')`
+`db.createCollection('links')`
 
 ## install virtualbox for python3
 Taken from here
