@@ -1,70 +1,170 @@
 {
-    scenario_unit:
-        {
-            _id: ObjectID,
-            scenario_name: str,
-            networks: [], 
-            devices: [],
-            links: [],
-        }
-
-        network # Each network is a switch
-        {
-            _id: ObjectID,
-            id: str,
-            name: str,
-            type: str, 
-            position: { #No position if its type RJ45/UNASSIGNED
-                x: str,
-                y: str,
-                lat: str,
-                lon: str,
-                alt: str,
+    "uniquehex97a8998f97e": {
+        "scenario_name": "sample_scenario",
+        "networks": {
+            "uniquehex0114b2gg6": {
+                "id": 1,
+                "name": "s1",
+                "type": "HUB",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "lat": 0.0,
+                    "lon": 0.0,
+                    "alt": 2.0
+                }
+            },
+            "uniquehex9949a0f98d5": {
+                "id": 2,
+                "name": "s2",
+                "type": "HUB",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "lat": 0.0,
+                    "lon": 0.0,
+                    "alt": 2.0
+                }
             }
-        }
-
-        device # PC's and Routers are devices.
-        {
-            _id: ObjectID,
-            id: str,
-            name: str,
-            type: str,
-            class: str,
-            image: str,
-            position: {
-                x: str,
-                y: str,
-                lat: str,
-                lon: str,
-                alt: str
+        },
+        "devices": {
+            "uniquehexa86a986df9af": {
+                "id": 3,
+                "name": "n1",
+                "type": "PC",
+                "class": "",
+                "image": "",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "lat": 0.0,
+                    "lon": 0.0,
+                    "alt": 2.0
+                },
+                "services": ["DefaultRoute"]
+            },
+            "uniquehexa0sdf0a0f80a8": {
+                "id": 4,
+                "name": "n2",
+                "type": "PC",
+                "class": "",
+                "image": "",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "lat": 0.0,
+                    "lon": 0.0,
+                    "alt": 2.0
+                },
+                "services": ["DefaultRoute"]
+            },
+            "uniquehexa97a9sdf97as9": {
+                "id": 5,
+                "name": "r1",
+                "type": "router",
+                "class": "",
+                "image": "",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "lat": 0.0,
+                    "lon": 0.0,
+                    "alt": 2.0
+                },
+                "services": [
+                    "zebra", 
+                    "OSPFv2", 
+                    "OSPFv3", 
+                    "IPForward"
+                ]
             }
-            services: [
-                name: str
-            ]
-        }
-
-        links
-        {
-            node1: str,
-            node2: str,
-            iface1: {} # Only if both nodes are routers. same as iface2
-            iface2: {
-                id: str,
-                name: str,
-                mac: str,
-                ip4: str, # Assigned IP to node2
-                ip4_mask: str,
-                ip6: str,
-                ip6_mask: str,
-            }
-            options: {
-                delay: str,
-                bandwidth: str,
-                loss: str,
-                dup: str,
-                jitter: str,
-                unidirectional: str
+        }, 
+        "links": {
+            "uniquehexa0sd8f087asd0f": {
+                "node1": 1,
+                "node2": 3,
+                "iface2": {
+                    "id": 0,
+                    "name": "eth0",
+                    "mac": "00:00:00:aa:00:00",
+                    "ip4": "10.0.0.20",
+                    "ip4_mask": 24,
+                    "ip6": "2001::20",
+                    "ip6_mask": 64
+                },
+                "options": {
+                    "delay": 0,
+                    "bandwidth": 0,
+                    "loss": 0.0,
+                    "dup": 0,
+                    "jitter": 0,
+                    "unidirectional": 0
+                }
+            },
+            "uniquehex9a7sdf97as23": {
+                "node1": 3,
+                "node2": 5,
+                "iface2": {
+                    "id": 0,
+                    "name": "eth0",
+                    "mac": "00:00:00:aa:00:01",
+                    "ip4": "10.0.0.1",
+                    "ip4_mask": 24,
+                    "ip6": "2001::21",
+                    "ip6_mask": 64
+                },
+                "options": {
+                    "delay": 0,
+                    "bandwidth": 0,
+                    "loss": 0.0,
+                    "dup": 0,
+                    "jitter": 0,
+                    "unidirectional": 0
+                }
+            }, 
+            "uniquehex0a09849a0s60": {
+                "node1": 2,
+                "node2": 4,
+                "iface2": {
+                    "id": 0,
+                    "name": "eth0",
+                    "mac": "00:00:00:aa:00:02",
+                    "ip4": "10.0.1.20",
+                    "ip4_mask": 24,
+                    "ip6": "2001::22",
+                    "ip6_mask": 64
+                },
+                "options": {
+                    "delay": 0,
+                    "bandwidth": 0,
+                    "loss": 0.0,
+                    "dup": 0,
+                    "jitter": 0,
+                    "unidirectional": 0
+                }
+            },
+            "uniquehex09pa8790s87": {
+                "node1": 2,
+                "node2": 5,
+                "iface2": {
+                    "id": 1,
+                    "name": "eth1",
+                    "mac": "00:00:00:aa:00:03",
+                    "ip4": "10.0.1.1",
+                    "ip4_mask": 24,
+                    "ip6": "2001::23",
+                    "ip6_mask": 64
+                },
+                "options": {
+                    "delay": 0,
+                    "bandwidth": 0,
+                    "loss": 0.0,
+                    "dup": 0,
+                    "jitter": 0,
+                    "unidirectional": 0
+                }
             }
         }
     }
 }
+
