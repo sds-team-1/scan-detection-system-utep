@@ -80,3 +80,10 @@ class SDSDatabaseHelper:
             print(e)
             v = False
         return v 
+
+    """Load Scenario Units"""
+    def create_scenario_unit(self, workspace_name, project_name, scenario_unit):
+        """
+        Check out sample_scenarios.json for dictionary form of scenarios.  
+        """
+        pass
