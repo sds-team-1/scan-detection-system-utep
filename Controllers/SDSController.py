@@ -1,7 +1,7 @@
 from enum import Enum, unique
 import json
 import re
-from typing import List
+from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 @unique
@@ -65,13 +65,14 @@ class SDSController:
         else:
             return self._db_connection.retrieve_projects(workplace_name)
 
-    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
+    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[Dict[str, str]]:
         #Gets all scenario_units of specified instance
         if self._db_connection is None:
             return []
         else:
-            #Do work here
-            pass
+            # Get the right project context
+            scenario_ids = self._db_connection.retrieve_project(project_name)['scenario_units']
+            return [{self._db_connection.retrieve_scenario_unit(str(x))['scenario_name'], str(x)} for x in scenario_ids]
 
     def list_all_nodes(self, workplace_name: str, project_name: str, 
         scenario_unit_id: str) -> List[str]:
@@ -205,11 +206,23 @@ class SDSController:
         if self._state is SDSStateEnum.INIT_PROJECT:
             # Do work here
             self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
+
+    def insert_node(self, scenario_id: str, node_name: str = '', 
+    scanning: bool = False, parallel_exec: int = 1, bin_path: str = '', 
+    args: list = [], listening: bool = False, end_condition: str = '', 
+    node_type: str = 'core-node', ip4: str = '', mac: str = '', 
+    subnet_mask: int = 24, user: str = '', password: str = '', 
+    diff_subnet: bool = False):
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
+            # Continue here
+            pass
     
     def finish_scenario_unit_construction(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             # Do work here
+
             self._state = SDSStateEnum.INIT_PROJECT
 
     def set_up_scenario_units(self):

@@ -40,7 +40,7 @@ class SDSDatabaseHelper:
             except:
                 return False
         collection = db['workspaces']
-        query = {'workspace_name': workspace_name}
+        query = {'_id': workspace_name}
         update = {'$addToSet': {'projects': project_name}}
         success = collection.update_one(query, update)
         return False if success == 0 else True
@@ -72,18 +72,70 @@ class SDSDatabaseHelper:
         db = client.SDS
         collection = db['projects']
         try:
-            result = collection.delete_one({'_id': project_name})
-            v = True if result.deleted_count is 1 else False
-            if v: 
-                collection.insert_one(new_data)
+            result = collection.update_one({'_id': project_name}, {'$set': new_data})
+            return True if result.matched_count else False
         except Exception as e:
-            print(e)
-            v = False
-        return v 
+            return False
 
     """Load Scenario Units"""
-    def create_scenario_unit(self, workspace_name, project_name, scenario_unit):
+    def create_scenario_unit(self, project_name: str, scenario_unit_name: str,
+    data: dict = None) -> bool:
         """
         Check out sample_scenarios.json for dictionary form of scenarios.  
         """
+        # Create an empty scenario unit with its keys and insert the data.
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        scenario_objid: str = ''
+        if not data:
+            try:
+                empty_data = {
+                    "scenario_name": scenario_unit_name,
+                    "networks": [],
+                    "devices": [],
+                    "links": []
+                }
+                scenario_objid = collection.insert_one(empty_data).inserted_id
+            except:
+                return False
+        else:
+            try:
+                scenario_objid = collection.insert_one(data)
+            except:
+                return False
+        # Add key to projects scenarios property
+        collection = db['projects']
+        query = {'_id': project_name}
+        update = {'scenario_units': scenario_objid}
+        success = collection.update_one(query, update)
+        return False if success is 0 else True
+
+    def retrieve_scenario_unit(self, scenario_id: str) -> dict:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        data = collection.find_one({'_id': scenario_id})
+        return data if data else {}
+
+    def save_scenario_unit(self, scenario_id: str, data: dict) -> bool:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        try:
+            result = collection.update_one({'_id': scenario_id}, {'$set': data})
+            return True if result.matched_count else False
+        except: 
+            return False
+
+    def create_device(self, scenario_id: str, data: dict) -> bool:
+        #TODO: Make this
+        pass
+
+    def retrieve_device(self, device_id: str) -> dict:
+        #TODO: make this
+        pass
+
+    def save_device(self, device_id: str, new_data: dict) -> dict:
+        #TODO: make this
         pass
