@@ -67,3 +67,4 @@ class Ui_workspace_window(object):
         self.SDSLabel_workspaceWindow.setText(_translate("workspace_window", "Scan Detection System"))
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
         self.createWorkspaceButton_workspaceWindow.setText(_translate("workspace_window", "Create New Workspace"))
+

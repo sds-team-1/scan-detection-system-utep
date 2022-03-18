@@ -5,9 +5,9 @@ class Ui_missingFields_window(object):
     def setupMissingFields(self, missingFields_window):
         missingFields_window.setObjectName("missingFields_window")
         missingFields_window.setEnabled(True)
-        missingFields_window.resize(415, 160)
-        missingFields_window.setMinimumSize(QtCore.QSize(415, 160))
-        missingFields_window.setMaximumSize(QtCore.QSize(415, 160))
+        missingFields_window.resize(425, 160)
+        missingFields_window.setMinimumSize(QtCore.QSize(425, 160))
+        missingFields_window.setMaximumSize(QtCore.QSize(425, 160))
         self.MissingFieldsWindowLayout = QtWidgets.QGridLayout(missingFields_window)
         self.MissingFieldsWindowLayout.setObjectName("MissingFieldsWindowLayout")
         self.mainLayout_missingFieldsWindow = QtWidgets.QVBoxLayout()

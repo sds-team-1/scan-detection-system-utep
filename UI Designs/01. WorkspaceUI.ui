@@ -32,6 +32,9 @@
       <layout class="QHBoxLayout" name="workspacesLayout_workspaceWindow">
        <item>
         <widget class="QTreeWidget" name="workspacesList_workspaceWindow">
+         <property name="contextMenuPolicy">
+          <enum>Qt::DefaultContextMenu</enum>
+         </property>
          <column>
           <property name="text">
            <string>Workspaces</string>
