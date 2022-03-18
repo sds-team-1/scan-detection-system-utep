@@ -20,3 +20,9 @@ def restoreScenario():
     cleanup()
     startScenario()
     startService()
+
+def startVM():
+    os.system(f"VBoxManage startvm \"{vimname}\"")
+
+def startVM(virtual_machine_name):
+    os.system(f"VBoxManage startvm \"{virtual_machine_name}\"")
