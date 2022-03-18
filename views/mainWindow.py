@@ -144,7 +144,7 @@ class Ui_MainWindow(object):
         self.corePortNumberLabel_mainWindow.setText(_translate("MainWindow", "CORE Port Number:  "))
         self.vmSdsServiceLabel_mainWindow.setText(_translate("MainWindow", "SDS VM Service:       "))
         self.dockerSdsServiceLabel_mainWindow.setText(_translate("MainWindow", "SDS Docker Service:"))
-        self.nodesList_mainWindow.headerItem().setText(0, _translate("MainWindow", "Listening"))
+        self.nodesList_mainWindow.headerItem().setText(0, _translate("MainWindow", "Log Net Traffic"))
         self.nodesList_mainWindow.headerItem().setText(1, _translate("MainWindow", "Type"))
         self.nodesList_mainWindow.headerItem().setText(2, _translate("MainWindow", "Name"))
         self.nodesList_mainWindow.headerItem().setText(3, _translate("MainWindow", "MAC"))
