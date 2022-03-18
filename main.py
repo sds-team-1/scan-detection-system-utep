@@ -102,6 +102,12 @@ if 'SDS_DB' not in dbs:
 
 else:
     query = workspaces_DB.find_one()
+    if query is None:
+        workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
+        workspaces_DB.insert_one(workspace)
+
+    query = workspaces_DB.find_one()
+
     if query['Name'] != '':
         for query in workspaces_DB.find():
             l1 = QtWidgets.QTreeWidgetItem([query['Name']])
