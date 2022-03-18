@@ -6,34 +6,19 @@ from Database import DatabaseHelper
 
 database = DatabaseHelper.SDSDatabaseHelper()
 
-print('Creating test_workspace: ' + \
-    str(database.create_workspace('test_workspace')))
-print('Creating workspaceA: ' + \
-    str(database.create_workspace('worspaceA')))
-print('Creating workspaceB: ' + \
-    str(database.create_workspace('workspaceB')))
+database.create_project('test_workspace', 'new_project')
 
-'''workspaces of the same name cannot be created'''
+sample_scenario_unit = {
+    'scenario_name': 'test_scenario', 
+    'networks': {},
+    'devices': {},
+    'links': {}
+}
 
-print('Creating workspaceB: ' + \
-    str(database.create_workspace('workspaceB'))) #Should fail
+scenario_id = database.create_scenario_unit('new_project', sample_scenario_unit)
+print('Scenario ID: ' + scenario_id)
 
-print(database.retrieve_workspaces())
-
-
-database.create_project('test_workplace', 'test_project')
-
-x = database.retrieve_project('test_project')
-print('Retrieving project data: ' + str(x))
-print(database.retrieve_projects('test_workplace'))
-
-new_data = {'_id': 'new_project', 'parallel_units': 2, 'scenario_units': []}
-print('Saving (overwriting) test_project w/ new_project: ' + \
-    str(database.save_project('test_project', new_data)))
-
-x = database.retrieve_project('new_project')
-print(x)
-print(database.retrieve_projects('test_workplace'))
+print(database.retrieve_scenario_unit(scenario_id))
 
 '''Testing exporting'''
 from Controllers import SDSController
@@ -42,6 +27,7 @@ controller = SDSController.SDSController()
 controller.add_mongo_connection(database)
 
 controller._enfore_state('init_project')
-# TODO: Not have this hardcoded
-controller.export_project('new_project', 
-    '/home/jesoto4/Development/scan-detection-system-utep/test/export_new_project.json')
+controller.add_scenario_unit()
+controller.insert_scenario_name('test2_scenario')
+controller.finish_scenario_unit_construction()
+print(controller.list_all_scenario_units('test_workspace', 'new_project'))

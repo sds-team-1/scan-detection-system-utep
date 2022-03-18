@@ -25,6 +25,7 @@ One database and several collections need to be created.
 `db.createCollection('workspaces')`
 `db.createCollection('projects')`
 `db.createCollection('scenarios')`
+`db.scenarios.createIndex({'scenario_name': 1}, {unique: true})`
 `db.createCollection('networks')`
 `db.createCollection('devices')`
 `db.createCollection('links')`
