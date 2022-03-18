@@ -15,7 +15,7 @@ class SDSDatabaseHelper:
     """Create Project scenario"""
     def create_workspace(self, workspace_name) -> bool:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client['SDS_DB']
         collection = db['workspaces']
         try:
             collection.insert_one({'_id': workspace_name, 'projects': []})
@@ -26,7 +26,7 @@ class SDSDatabaseHelper:
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client['SDS_DB']
         collection = db['projects']
         if not project:
             try:
@@ -48,13 +48,13 @@ class SDSDatabaseHelper:
 
     def retrieve_workspaces(self) -> List[str]:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client['SDS_DB']
         collection = db['workspaces']
         return collection.find().distinct('_id')
 
     def retrieve_projects(self, workspace_name: str) -> List[str]:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client['SDS_DB']
         collection = db['projects']
         return collection.find()
 
@@ -62,7 +62,7 @@ class SDSDatabaseHelper:
     """Export Project"""
     def retrieve_project(self, project_name: str) -> dict:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client['SDS_DB']
         collection = db['projects']
         data = collection.find_one({'_id': project_name})
         if data:
