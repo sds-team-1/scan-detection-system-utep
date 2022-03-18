@@ -249,12 +249,14 @@ def item_project_selected():
 
 def save_workspace():
     for project in workspace_object.projects:
-        os.makedirs(os.path.join(workspace_object.location,
-                                 project.name))
+        # first check if the directory exists, if it does delete it
+        if os.path.exists(workspace_object.location + "/" + project.name):
+            os.removedirs(workspace_object.location + "/" + project.name)
+
+        os.makedirs(workspace_object.location + "/" + project.name)
 
         for scenario in project.scenarios:
-            os.makedirs(os.path.join(project.location,
-                                     scenario.name))
+            os.makedirs(workspace_object.location + "/" + project.name + "/" + scenario.name)
 
 
 def export_project():

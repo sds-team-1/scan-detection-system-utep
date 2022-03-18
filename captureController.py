@@ -39,8 +39,17 @@ def restoreScenario():
     startScenario()
     startService()
 
+def add_shared_folder(name, hostpath):
+    os.system(f"VBoxManage sharedfolder add \"{vimname}\" --name {name} --hostpath {hostpath} --automount")
+
 def startVM():
     os.system(f"VBoxManage startvm \"{vimname}\"")
+
+def startVMHeadless():
+    os.system(f"VBoxManage startvm \"{vimname}\" --type headless")
+
+def emergency_stop():
+    os.system(f"VBoxManage startvm \"{vimname}\" --type emergencystop")
 
 
 # add logic in case the file is ran from the command line
@@ -49,6 +58,8 @@ if __name__ == "__main__":
         print("Please provide a command, use -h for help")
     elif sys.argv[1] == "start":
         startVM()
+    elif sys.argv[1] == "start-headless":
+        startVMHeadless()
     elif sys.argv[1] == "start-scenario":
         startScenario()
     elif sys.argv[1] == "start-service":
@@ -57,6 +68,10 @@ if __name__ == "__main__":
         cleanup()
     elif sys.argv[1] == "restore":
         restoreScenario()
+    elif sys.argv[1] == "emergency-stop":
+        emergency_stop()
+    elif sys.argv[1] == "add-shared-folder":
+        add_shared_folder(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == "run":
         print("Attempting to run command: " + sys.argv[2])
         if len(sys.argv) == 3:
