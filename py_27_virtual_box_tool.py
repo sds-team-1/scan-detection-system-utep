@@ -1,4 +1,5 @@
 import virtualbox
+import sys
 
 def start_virtual_box(vm_name):
     vbox = virtualbox.VirtualBox()
