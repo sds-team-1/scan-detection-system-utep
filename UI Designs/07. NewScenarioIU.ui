@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>newScenarioUnit_window</class>
+ <widget class="QWidget" name="newScenarioUnit_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>135</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>513</width>
+    <height>135</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>513</width>
+    <height>135</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>New Scenario Unit</string>
+  </property>
+  <layout class="QGridLayout" name="NewScenarioUnitWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="mainLayout_newScenarioUnitWindow">
+     <item>
+      <layout class="QHBoxLayout" name="newScenarioUnitNameLayout_newScenarioUnitWindow">
+       <item>
+        <widget class="QLabel" name="newScenarioUnitNameLabel_newScenarioUnitWindow">
+         <property name="text">
+          <string>Scenario Unit Name</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="newScenarioUnitNameInput_newScenarioUnitWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="newScenarioUnitNodesLayout_newScenarioUnitWindow">
+       <item>
+        <widget class="QLabel" name="scannerNodesLabel_newScenarioUnitWindow">
+         <property name="text">
+          <string>Scanner Nodes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="scannerNodesSpinbox_newScenarioUnitWindow"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="victimNodesLabel_newScenarioUnitWindow">
+         <property name="text">
+          <string>Victim Nodes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="victimNodesSpinbox_newScenarioUnitWindow"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="setNodesLabel_newScenarioUnitWindow">
+         <property name="text">
+          <string>Victim Nodes Sets:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="setNodesSpinbox_newScenarioUnitWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="newScenarioUnitButtonsLayout_newScenarioUnitWindow">
+       <item>
+        <widget class="QPushButton" name="newScenarioUnitCreateButton_newScenarioUnitWindow">
+         <property name="text">
+          <string>Create</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="newScenarioUnitCancelButton_newScenarioUnitWindow">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
