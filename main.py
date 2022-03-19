@@ -1,3 +1,4 @@
+# Imports
 import os
 import sys
 import time
@@ -16,6 +17,7 @@ from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.workspace import Ui_workspace_window
 
 
+################ CLASSES ################
 class Workspace:
     def __init__(self, name, location, projects):
         self.name = name
@@ -58,16 +60,17 @@ class ScannerNode:
         self.max_parallel_runs = max_parallel_runs
         self.end_condition = end_condition
 
+################ END CLASSES ################
 
+SDS_DATABASE_NAME = 'SDS_DB'
+
+
+# Set up database objects
 client = MongoClient("mongodb://localhost:27017/")
-
-dbs = client.list_database_names()
-
-SDS_DB = client['SDS_DB']
-workspaces_DB = SDS_DB['workspaces']
+SDS_DB = client[SDS_DATABASE_NAME]
+workspace_collection = SDS_DB['workspaces']
 
 app = QtWidgets.QApplication(sys.argv)
-
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 mainWindow_Window = QtWidgets.QMainWindow()
@@ -96,20 +99,24 @@ workspace_path = ''
 workspace_name = ''
 workspace_object = Workspace('', '', [])
 
-if 'SDS_DB' not in dbs:
+
+
+# Check if database exists, if not insert default item to create database and workspace
+databases_list = client.list_database_names()
+if 'SDS_DB' not in databases_list:
     workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-    workspaces_DB.insert_one(workspace)
+    workspace_collection.insert_one(workspace)
 
 else:
-    query = workspaces_DB.find_one()
+    query = workspace_collection.find_one()
     if query is None:
         workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-        workspaces_DB.insert_one(workspace)
+        workspace_collection.insert_one(workspace)
 
-    query = workspaces_DB.find_one()
+    query = workspace_collection.find_one()
 
     if query['Name'] != '':
-        for query in workspaces_DB.find():
+        for query in workspace_collection.find():
             l1 = QtWidgets.QTreeWidgetItem([query['Name']])
             l1_child = QTreeWidgetItem([query['Location']])
             l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
@@ -130,17 +137,17 @@ def createWorkspace():
         missingFields_Window.show()
 
     else:
-        first_query = workspaces_DB.find_one()
+        first_query = workspace_collection.find_one()
 
         if first_query['Name'] == '':
             new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
                                   'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
-            workspaces_DB.update_one(first_query, new_query)
+            workspace_collection.update_one(first_query, new_query)
 
             workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
 
         else:
-            current_id = workspaces_DB.find().sort('_id', -1).limit(1)
+            current_id = workspace_collection.find().sort('_id', -1).limit(1)
             for doc in current_id:
                 current_id = doc['_id']
 
@@ -149,7 +156,7 @@ def createWorkspace():
                          'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
                          'Projects': []}
 
-            workspaces_DB.insert_one(new_query)
+            workspace_collection.insert_one(new_query)
 
         os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
 
@@ -181,12 +188,9 @@ def createProject():
 
     if newProjectWindowUI.newProjectNameInput_newProjectWindow.text() == '' \
             or newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value() == 0:
-
         missingFields_Window.show()
 
-
     else:
-
         p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
         value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
         #scenarios = {}
@@ -304,7 +308,7 @@ def open_workspace(selected_workspace):
     mainWindow_Window.show()
     workspace_Window.close()
 
-    for q in workspaces_DB.find():
+    for q in workspace_collection.find():
         if q['Name'] == workspace_name:
             for p in q['Projects']:
                 projectName = QtWidgets.QTreeWidgetItem([p[0]])
