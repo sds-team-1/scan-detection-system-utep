@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_newWorkspace_window(object):
-    def setupCreateWorkspace(self, newWorkspace_window):
+    def setupCreateWorkspace(self, newWorkspace_window : QtWidgets.QDialog):
         newWorkspace_window.setObjectName("newWorkspace_window")
         newWorkspace_window.setEnabled(True)
         newWorkspace_window.resize(487, 170)

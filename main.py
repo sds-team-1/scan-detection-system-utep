@@ -62,7 +62,10 @@ class ScannerNode:
 
 ################ END CLASSES ################
 
+################ CONSTANTS ################
 SDS_DATABASE_NAME = 'SDS_DB'
+
+################ END CONSTANTS ################
 
 
 # Set up database objects
@@ -98,35 +101,6 @@ newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
 workspace_path = ''
 workspace_name = ''
 workspace_object = Workspace('', '', [])
-
-
-
-# Check if database exists, if not insert default item to create database and workspace
-databases_list = client.list_database_names()
-if 'SDS_DB' not in databases_list:
-    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-    workspace_collection.insert_one(workspace)
-
-else:
-    query = workspace_collection.find_one()
-    if query is None:
-        workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-        workspace_collection.insert_one(workspace)
-
-    query = workspace_collection.find_one()
-
-    if query['Name'] != '':
-        for query in workspace_collection.find():
-            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
-            l1_child = QTreeWidgetItem([query['Location']])
-            l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
-            l1.addChild(l1_child)
-            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
-
-
-def createWorkspaceWindow():
-    createWorkspace_Window.show()
-
 
 def createWorkspace():
     global workspace_name, workspace_path, workspace_object
@@ -230,8 +204,6 @@ def createProject():
         newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
 
         newProject_Window.close()
-
-
 
 def addNode():
     addNode_Window.close()
@@ -381,7 +353,29 @@ def context_menu_project(point):
         return
 
 
-workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+# Check if database exists, if not insert default item to create database and workspace
+databases_list = client.list_database_names()
+if 'SDS_DB' not in databases_list:
+    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
+    workspace_collection.insert_one(workspace)
+
+else:
+    query = workspace_collection.find_one()
+    if query is None:
+        workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
+        workspace_collection.insert_one(workspace)
+
+    query = workspace_collection.find_one()
+
+    if query['Name'] != '':
+        for query in workspace_collection.find():
+            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
+            l1_child = QTreeWidgetItem([query['Location']])
+            l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
+            l1.addChild(l1_child)
+            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
+workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspace_Window.show)
 workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 

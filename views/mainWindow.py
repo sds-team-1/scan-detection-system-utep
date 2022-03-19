@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_MainWindow(object):
-    def setupMainWindowUI(self, MainWindow):
+    def setupMainWindowUI(self, MainWindow : QtWidgets.QMainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1131, 747)
         MainWindow.setMinimumSize(QtCore.QSize(812, 580))

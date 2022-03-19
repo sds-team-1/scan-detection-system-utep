@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_missingFields_window(object):
-    def setupMissingFields(self, missingFields_window):
+    def setupMissingFields(self, missingFields_window : QtWidgets.QDialog):
         missingFields_window.setObjectName("missingFields_window")
         missingFields_window.setEnabled(True)
         missingFields_window.resize(425, 160)
