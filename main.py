@@ -60,6 +60,8 @@ class ScannerNode:
         self.end_condition = end_condition
 
 
+app = QtWidgets.QApplication(sys.argv)
+
 client = MongoClient("mongodb://localhost:27017/")
 
 dbs = client.list_database_names()
@@ -85,71 +87,9 @@ missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 
-
-def setup_ui():
-    workspaceUI.setupWorkspaceUI(workspace_Window)
-    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-    mainWindowUI.setupMainWindowUI(mainWindow_Window)
-    newProjectWindowUI.setupNewProject(newProject_Window)
-    addNodeWindowUI.setupAddNode(addNode_Window)
-    missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
-
-
-def initialize_signals():
-    workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
-    workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
-
-    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-    createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
-
-    mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
-    mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
-    mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
-    mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
-    mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
-    mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
-    mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
-    mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
-
-    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
-
-    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
-
-    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
-
-    missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
-
-    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
-        delete_selection('Selection'))
-    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
-        deleteConfirmation_Window.close)
-
-
 workspace_path = ''
 workspace_name = ''
 workspace_object = Workspace('', '', [])
-
-if 'SDS_DB' not in dbs:
-    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-    workspaces_DB.insert_one(workspace)
-
-else:
-    query = workspaces_DB.find_one()
-    if query['Name'] != '':
-        for query in workspaces_DB.find():
-            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
-            l1_child = QTreeWidgetItem([query['Location']])
-            l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
-            l1.addChild(l1_child)
-            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
 
 
 def createWorkspaceWindow():
@@ -500,16 +440,75 @@ def context_menu_node(point):
     # return
 
 
-def delete_selection(selection):
-    print(selection)
+def delete_selection():
+    pass
+
+
+def setup_ui():
+    workspaceUI.setupWorkspaceUI(workspace_Window)
+    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
+    mainWindowUI.setupMainWindowUI(mainWindow_Window)
+    newProjectWindowUI.setupNewProject(newProject_Window)
+    addNodeWindowUI.setupAddNode(addNode_Window)
+    missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+
+
+def initialize_signals():
+    workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+    workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+
+    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
+    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
+    createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+
+    mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
+    mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+    mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
+    mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
+    mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
+    mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
+    mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
+    mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
+
+    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+
+    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+
+    missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+
+    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        delete_selection)
+    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        deleteConfirmation_Window.close)
 
 
 setup_ui()
 
 initialize_signals()
 
-workspace_Window.show()
+if 'SDS_DB' not in dbs:
+    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
+    workspaces_DB.insert_one(workspace)
 
-app = QtWidgets.QApplication(sys.argv)
+else:
+    query = workspaces_DB.find_one()
+    if query['Name'] != '':
+        for query in workspaces_DB.find():
+            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
+            l1_child = QTreeWidgetItem([query['Location']])
+            l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
+            l1.addChild(l1_child)
+            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
+workspace_Window.show()
 
 sys.exit(app.exec_())
