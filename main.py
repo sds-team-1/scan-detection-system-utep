@@ -9,6 +9,7 @@ from pymongo import MongoClient
 
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
+from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
 from views.mainWindow import Ui_MainWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
@@ -66,8 +67,6 @@ dbs = client.list_database_names()
 SDS_DB = client['SDS_DB']
 workspaces_DB = SDS_DB['workspaces']
 
-app = QtWidgets.QApplication(sys.argv)
-
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 mainWindow_Window = QtWidgets.QMainWindow()
@@ -75,6 +74,7 @@ newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
 missingFields_Window = QtWidgets.QDialog()
 newScenarioUnit_Window = QtWidgets.QDialog()
+deleteConfirmation_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
@@ -83,14 +83,55 @@ newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
 missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
+deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 
-workspaceUI.setupWorkspaceUI(workspace_Window)
-createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-mainWindowUI.setupMainWindowUI(mainWindow_Window)
-newProjectWindowUI.setupNewProject(newProject_Window)
-addNodeWindowUI.setupAddNode(addNode_Window)
-missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+
+def setup_ui():
+    workspaceUI.setupWorkspaceUI(workspace_Window)
+    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
+    mainWindowUI.setupMainWindowUI(mainWindow_Window)
+    newProjectWindowUI.setupNewProject(newProject_Window)
+    addNodeWindowUI.setupAddNode(addNode_Window)
+    missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+
+
+def initialize_signals():
+    workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+    workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+
+    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
+    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
+    createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+
+    mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
+    mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+    mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
+    mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
+    mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
+    mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
+    mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
+    mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
+
+    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+
+    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+
+    missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+
+    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        delete_selection('Selection'))
+    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        deleteConfirmation_Window.close)
+
 
 workspace_path = ''
 workspace_name = ''
@@ -170,6 +211,10 @@ def addNodeWindow():
     addNode_Window.show()
 
 
+def deleteConfirmationWindow():
+    deleteConfirmation_Window.show()
+
+
 def createProject():
     global workspace_name, workspace_path
 
@@ -183,7 +228,7 @@ def createProject():
 
         p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
         value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
-        #scenarios = {}
+        # scenarios = {}
 
         project_object = Project('', '', 0, [])
 
@@ -195,32 +240,59 @@ def createProject():
 
         project_object.max_units = value
 
-        #for i in range(0, value):
-         #   scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
-          #  scenarios['Scenario ' + str(i + 1)] = ''
-           # p.addChild(scenario)
-            #scenario_object = Scenario('', '', '')
-            #scenario_object.name = 'Scenario ' + str(i + 1)
-            #scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
-            #scenario_object.nodes = ''
-            #project_object.scenarios.append(scenario_object)
+        # for i in range(0, value):
+        #   scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
+        #  scenarios['Scenario ' + str(i + 1)] = ''
+        # p.addChild(scenario)
+        # scenario_object = Scenario('', '', '')
+        # scenario_object.name = 'Scenario ' + str(i + 1)
+        # scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
+        # scenario_object.nodes = ''
+        # project_object.scenarios.append(scenario_object)
 
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
-       # project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
+        # project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
 
         workspace_object.projects.append(project_object)
 
-        #for q in workspaces_DB.find():
-          #  if q['Name'] == workspace_name:
-         #       workspaces_DB.update_one({'Projects': q['Projects']},
-           #                              {'$push': {'Projects': project}})
+        # for q in workspaces_DB.find():
+        #  if q['Name'] == workspace_name:
+        #       workspaces_DB.update_one({'Projects': q['Projects']},
+        #                              {'$push': {'Projects': project}})
 
         newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
         newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
 
         newProject_Window.close()
 
+
+def edit_project(selected_project):
+    pass
+
+
+def delete_project(selected_project):
+    pass
+
+
+def load_scenario_unit():
+    pass
+
+
+def edit_scenario_unit(selected_scenario_unit):
+    pass
+
+
+def delete_scenario_unit(selected_scenario_unit):
+    pass
+
+
+def edit_node(selected_node):
+    pass
+
+
+def delete_node(selected_node):
+    pass
 
 
 def addNode():
@@ -306,6 +378,14 @@ def open_workspace(selected_workspace):
                     mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
 
 
+def edit_workspace(selected_workspace):
+    pass
+
+
+def delete_workspace(selected_workspace):
+    pass
+
+
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
 
@@ -325,6 +405,8 @@ def context_menu_workspace(point):
     menu.addAction(action_delete_workspace)
 
     action_open_workspace.triggered.connect(lambda: open_workspace(name))
+    action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+    action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
 
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
 
@@ -342,6 +424,9 @@ def context_menu_project(point):
 
         menu.addAction(action_edit_scenario_unit)
         menu.addAction(action_delete_scenario_unit)
+
+        action_edit_scenario_unit.triggered.connect(lambda: edit_scenario_unit(name))
+        action_delete_scenario_unit.triggered.connect(lambda: delete_scenario_unit(name))
 
         menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
 
@@ -363,39 +448,68 @@ def context_menu_project(point):
         menu.addAction(action_delete_project)
 
         action_add_scenario.triggered.connect(newScenarioUnitWindow)
+        action_load_scenario.triggered.connect(load_scenario_unit)
+        action_edit_project.triggered.connect(lambda: edit_project(name))
+        action_delete_project.triggered.connect(lambda: delete_project(name))
 
         menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
 
         return
 
 
-workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
-workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+def context_menu_node(point):
+    index = mainWindowUI.nodesList_mainWindow.indexAt(point)
 
-createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+    if not index.isValid() or index.parent().isValid():
+        item = mainWindowUI.nodesList_mainWindow.itemAt(point)
+        name = item.text(0)
 
-mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
-mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
-mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
-mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
-mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
-mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
-mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
+        menu = QtWidgets.QMenu()
+        action_edit_node = QAction("Edit Node")
+        action_delete_node = QAction("Delete Node")
 
-newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+        menu.addAction(action_edit_node)
+        menu.addAction(action_delete_node)
 
-addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+        action_edit_node.triggered.connect(lambda: edit_node(name))
+        action_delete_node.triggered.connect(lambda: delete_node(name))
 
-addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+        menu.exec_(mainWindowUI.nodesList_mainWindow.mapToGlobal(point))
 
-missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+        return
+
+    # if not index.isValid() or not index.parent().isValid():
+    # item = mainWindowUI.projectsList_mainWindow.itemAt(point)
+    # name = item.text(0)
+
+    # menu = QtWidgets.QMenu()
+    # action_add_scenario = QAction("Add Scenario Unit")
+    # action_load_scenario = QAction("Load Scenario Unit")
+    # action_edit_project = QAction("Edit Project")
+    # action_delete_project = QAction("Delete Project")
+
+    # menu.addAction(action_add_scenario)
+    # menu.addAction(action_load_scenario)
+    # menu.addAction(action_edit_project)
+    # menu.addAction(action_delete_project)
+
+    # action_add_scenario.triggered.connect(newScenarioUnitWindow)
+
+    # menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
+
+    # return
+
+
+def delete_selection(selection):
+    print(selection)
+
+
+setup_ui()
+
+initialize_signals()
 
 workspace_Window.show()
+
+app = QtWidgets.QApplication(sys.argv)
 
 sys.exit(app.exec_())
