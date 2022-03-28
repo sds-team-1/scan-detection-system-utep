@@ -1,6 +1,5 @@
 # Imports
 import os
-import string
 import sys
 import time
 import json
@@ -65,74 +64,98 @@ class ScannerNode:
 
 ################ CONSTANTS ################
 SDS_DATABASE_NAME = 'SDS_DB'
+
 ################ END CONSTANTS ################
 
-################ GLOBAL VARIABLES ################
-workspace_path : string = ''
-workspace_name : string = ''
-workspace_object = Workspace('', '', [])
-################ END GLOBAL VARIABLES ################
 
+# Set up database objects
+client = MongoClient("mongodb://localhost:27017/")
+SDS_DB = client[SDS_DATABASE_NAME]
+workspace_collection = SDS_DB['workspaces']
+
+app = QtWidgets.QApplication(sys.argv)
+workspace_Window = QtWidgets.QDialog()
+createWorkspace_Window = QtWidgets.QDialog()
+mainWindow_Window = QtWidgets.QMainWindow()
+newProject_Window = QtWidgets.QDialog()
+addNode_Window = QtWidgets.QDialog()
+missingFields_Window = QtWidgets.QDialog()
+newScenarioUnit_Window = QtWidgets.QDialog()
+
+workspaceUI = Ui_workspace_window()
+createWorkspaceUI = Ui_newWorkspace_window()
+mainWindowUI = Ui_MainWindow()
+newProjectWindowUI = Ui_newProject_window()
+addNodeWindowUI = Ui_addNode_window()
+missingFieldsWindowUI = Ui_missingFields_window()
+newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
+
+workspaceUI.setupWorkspaceUI(workspace_Window)
+createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
+mainWindowUI.setupMainWindowUI(mainWindow_Window)
+newProjectWindowUI.setupNewProject(newProject_Window)
+addNodeWindowUI.setupAddNode(addNode_Window)
+missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+
+workspace_path = ''
+workspace_name = ''
+workspace_object = Workspace('', '', [])
 
 def createWorkspace():
     global workspace_name, workspace_path, workspace_object
 
-    # validate inputs
     if createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text() == '' \
             or createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text() == '':
 
         missingFields_Window.show()
-        return
-
-    first_query = workspace_collection.find_one()
-
-    if first_query['Name'] == '':
-        print("Inserting first workspace into db")
-        new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                                'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
-        workspace_collection.update_one(first_query, new_query)
-        workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
 
     else:
-        print("Inserting new workspace into db")
-        current_id = workspace_collection.find().sort('_id', -1).limit(1)
-        for doc in current_id:
-            current_id = doc['_id']
+        first_query = workspace_collection.find_one()
 
-        new_query = {
-                    '_id': int(current_id + 1),
-                    'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                    'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()
-                    }
+        if first_query['Name'] == '':
+            new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
+                                  'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
+            workspace_collection.update_one(first_query, new_query)
 
-        workspace_collection.insert_one(new_query)
+            workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
 
-    # create directory
-    print("Creating directory to with path " + directory_to_make_path)
-    directory_to_make_path : string = str(os.path.join(os.getcwd() , createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
-    os.makedirs(directory_to_make_path)
+        else:
+            current_id = workspace_collection.find().sort('_id', -1).limit(1)
+            for doc in current_id:
+                current_id = doc['_id']
 
-    # set global workspace_path variable value 
-    workspace_path = directory_to_make_path
+            new_query = {'_id': int(current_id + 1),
+                         'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
+                         'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
+                         'Projects': []}
 
-    workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-    workspace_object.location = directory_to_make_path
-    workspace_object.projects = []
+            workspace_collection.insert_one(new_query)
 
-    # update views
-    mainWindow_Window.show()
-    createWorkspace_Window.close()
-    workspace_Window.close()
+        os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
+
+        workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
+
+        workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+        workspace_object.location = workspace_path
+        workspace_object.projects = []
+
+        mainWindow_Window.show()
+        createWorkspace_Window.close()
+        workspace_Window.close()
 
 
 def createProjectWindow():
     newProject_Window.show()
 
+
 def newScenarioUnitWindow():
     newScenarioUnit_Window.show()
 
+
 def addNodeWindow():
     addNode_Window.show()
+
 
 def createProject():
     global workspace_name, workspace_path
@@ -185,17 +208,20 @@ def createProject():
 def addNode():
     addNode_Window.close()
 
+
 def define_workspace_path():
     global workspace_path
     dialog = QFileDialog()
     workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
 
+
 def item_project_selected():
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
     else:
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
+
 
 def save_workspace():
     for project in workspace_object.projects:
@@ -207,6 +233,7 @@ def save_workspace():
 
         for scenario in project.scenarios:
             os.makedirs(workspace_object.location + "/" + project.name + "/" + scenario.name)
+
 
 def export_project():
     scenarios = {}
@@ -227,6 +254,7 @@ def export_project():
     with open(project_path + '.json', 'w') as outfile:
         outfile.write(json_string)
 
+
 def import_project():
     dialog = QFileDialog()
     json_path = dialog.getOpenFileName(mainWindow_Window, 'Select JSON File')
@@ -238,9 +266,11 @@ def import_project():
             p.addChild(s)
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
+
 def addNodeCheckboxStateChanged():
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
 
 def open_workspace(selected_workspace):
     global workspace_name
@@ -258,6 +288,7 @@ def open_workspace(selected_workspace):
                     scenarioName = QTreeWidgetItem([k])
                     projectName.addChild(scenarioName)
                     mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
+
 
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
@@ -280,6 +311,7 @@ def context_menu_workspace(point):
     action_open_workspace.triggered.connect(lambda: open_workspace(name))
 
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
+
 
 def context_menu_project(point):
     index = mainWindowUI.projectsList_mainWindow.indexAt(point)
@@ -321,41 +353,9 @@ def context_menu_project(point):
         return
 
 
-##### MAIN #####
-
-# Set up PyQT and views
-app = QtWidgets.QApplication(sys.argv)
-workspace_Window = QtWidgets.QDialog()
-createWorkspace_Window = QtWidgets.QDialog()
-mainWindow_Window = QtWidgets.QMainWindow()
-newProject_Window = QtWidgets.QDialog()
-addNode_Window = QtWidgets.QDialog()
-missingFields_Window = QtWidgets.QDialog()
-newScenarioUnit_Window = QtWidgets.QDialog()
-
-workspaceUI = Ui_workspace_window()
-createWorkspaceUI = Ui_newWorkspace_window()
-mainWindowUI = Ui_MainWindow()
-newProjectWindowUI = Ui_newProject_window()
-addNodeWindowUI = Ui_addNode_window()
-missingFieldsWindowUI = Ui_missingFields_window()
-newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
-
-workspaceUI.setupWorkspaceUI(workspace_Window)
-createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-mainWindowUI.setupMainWindowUI(mainWindow_Window)
-newProjectWindowUI.setupNewProject(newProject_Window)
-addNodeWindowUI.setupAddNode(addNode_Window)
-missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-
-# Set up database objects
-client = MongoClient("mongodb://localhost:27017/")
-SDS_DB = client[SDS_DATABASE_NAME]
-workspace_collection = SDS_DB['workspaces']
-
 # Check if database exists, if not insert default item to create database and workspace
-if 'SDS_DB' not in client.list_database_names():
+databases_list = client.list_database_names()
+if 'SDS_DB' not in databases_list:
     workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
     workspace_collection.insert_one(workspace)
 
@@ -405,5 +405,3 @@ missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.conne
 workspace_Window.show()
 
 sys.exit(app.exec_())
-
-##### END MAIN #####
