@@ -5,113 +5,187 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 class SDSDatabaseHelper:
-
-    MONGO_DB_URL = "mongodb://localhost:27017"
-    DATABASE_NAME = "SDS_DB"
-
-    DEFAULT_WORKSPACE_COLLECTION_NAME = 'workspaces'
-
-    client = MongoClient(MONGO_DB_URL)
+    url = "mongodb://localhost:27017"
 
     def __init__(self):
-        '''
-        Constructor
-        '''
+        client = MongoClient(self.url)
+        db = client.SDS
+        serverStatusResult = db.command("serverStatus")
+
+    """Create Project scenario"""
+    def create_workspace(self, workspace_name) -> bool:
+        client = MongoClient(self.url)
+        db = client['SDS_DB']
+        collection = db['workspaces']
+        try:
+            collection.insert_one({'_id': workspace_name, 'projects': []})
+        except:
+            return False
+        return True
+
+    def create_project(self, workspace_name: str, project_name: str = '', 
+        par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
+        client = MongoClient(self.url)
+        db = client['SDS_DB']
+        collection = db['projects']
+        if not project:
+            try:
+                collection.insert_one({'_id': project_name, 'parallel_units': par_units,
+                'scenario_units': scenario_units})
+            except:
+                return False
+        else:
+            try:
+                collection.insert_one(project)
+                project_name = project['_id']
+            except:
+                return False
+        collection = db['workspaces']
+        query = {'_id': workspace_name}
+        update = {'$addToSet': {'projects': project_name}}
+        success = collection.update_one(query, update)
+        return False if success == 0 else True
+
+    def retrieve_workspaces(self) -> List[str]:
+        client = MongoClient(self.url)
+        db = client['SDS_DB']
+        collection = db['workspaces']
+        return collection.find().distinct('_id')
+
+    def retrieve_projects(self, workspace_name: str) -> List[str]:
+        client = MongoClient(self.url)
+        db = client['SDS_DB']
+        collection = db['projects']
+        return collection.find()
+
+    """Import Project"""
+    """Export Project"""
+    def retrieve_project(self, project_name: str) -> dict:
+        client = MongoClient(self.url)
+        db = client['SDS_DB']
+        collection = db['projects']
+        data = collection.find_one({'_id': project_name})
+        if data:
+            if type(data['scenario_units']) is ObjectId:
+                data['scenario_units'] = [str(data['scenario_units'])]
+            else:
+                data['scenario_units'] = [str(x) for x in data['scenario_units']]
+            return data
+        return {}
+
+    """Save Project"""
+    def save_project(self, project_name: str, new_data: dict) -> bool:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['projects']
+        try:
+            result = collection.update_one({'_id': project_name}, {'$set': new_data})
+            return True if result.matched_count else False
+        except Exception as e:
+            return False
+
+    """Load Scenario Units
+    The DBHelper is responsible for translating dictionary data to
+    MongoDB relational data. Not the controller.
+    """
+    def create_scenario_unit(self, project_name: str, data: dict) -> str:
+        """
+        Check out sample_scenarios.json for dictionary form of scenarios. 
+        """
+        # Create an empty scenario unit with its keys and insert the data.
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        scenario_objid: str = ''
+        try:
+            #Replace subdata w/ arrays for inserting to db
+            networks = data['networks']
+            data['networks'] = []
+            devices = data['devices']
+            data['devices'] = []
+            links = data['links']
+            data['links'] = []
+
+            #Saves the scenario and retrieves the id
+            scenario_objid = collection.insert_one(data).inserted_id
+
+            network_keys = networks.keys()
+            for k in network_keys:
+                self.create_network(scenario_objid, networks[k])
+            device_keys = devices.keys()
+            for k in device_keys:
+                self.create_device(scenario_objid, devices[k])
+            link_keys = links.keys()
+            for k in link_keys:
+                self.create_link(scenario_objid, links[k])
+        except:
+            print('ERROR:DatabaseHelper -> Duplicate Key. Scenario ID already exists')
+            return ''
+        # Add key to projects scenarios property
+        collection = db['projects']
+        query = {'_id': project_name}
+        update = {'scenario_units': scenario_objid}
+        collection.update_one(query, {'$set': update})
+        return str(scenario_objid)
+
+    def retrieve_scenario_unit(self, scenario_id: str) -> dict:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        # Convert str into object id
+        try:
+            o = ObjectId(scenario_id)
+        except Exception as e:
+            print(e)
+            return {}
+        data = collection.find_one({'_id': o})
+        return data if data else {}
+
+
+        
+        
+    def save_scenario_unit(self, scenario_id: str, data: dict) -> bool:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        try:
+            result = collection.update_one({'_id': scenario_id}, {'$set': data})
+            return True if result.matched_count else False
+        except: 
+            return False
+
+    def create_network(self, scenario_id: str, data: dict) -> bool:
+        #TODO: Make this
         pass
 
-    # DATABASE FUNCTIONS
+    def retrieve_network(self, network_id: str, data: dict) -> dict:
+        #TODO: Make this
+        pass
 
-    def insert_object_into_collection(self, collection_name, object):
-        '''
-        Inserts an object into the specified collection
-        '''
-        if not self.database_exists():
-            self.client.create_database(self.DATABASE_NAME)
+    def save_network(self, network_id: str, data: dict) -> bool:
+        #TODO: Make this
+        pass
 
-        if not self.collection_exists(collection_name):
-            self.client[self.DATABASE_NAME].create_collection(collection_name)
-        
-        db = self.client[self.DATABASE_NAME]
-        db[collection_name].insert_one(object)
+    def create_device(self, scenario_id: str, data: dict) -> bool:
+        #TODO: Make this
+        pass
 
-    def get_all_objects_from_collection(self, collection_name):
-        '''
-        Returns all objects from the specified collection
-        '''
-        db = self.client[self.DATABASE_NAME]
-        return db[collection_name].find()
+    def retrieve_device(self, device_id: str) -> dict:
+        #TODO: make this
+        pass
 
-    def collection_exists(self, collection):
-        '''
-        Checks if the specified collection exists
-        '''
-        db = self.client[self.DATABASE_NAME]
-        collections = db.list_collection_names()
-        return collection in collections
+    def save_device(self, device_id: str, new_data: dict) -> dict:
+        #TODO: make this
+        pass
 
-    def database_exists(self):
-        '''
-        Checks if the database exists
-        '''
-        return self.client.get_database(self.DATABASE_NAME) != None
+    def create_link(self, scenario_id: str, data: dict) -> bool:
+        #TODO: Make this
+        pass
 
+    def retrieve_link(self, device_id: str) -> dict:
+        #TODO: make this
+        pass
 
-    # WORKSPACE FUNCTIONS
-
-    def get_all_workspaces(self):
-        '''
-        Returns all workspaces
-        '''
-        return self.get_all_objects_from_collection(self.DEFAULT_WORKSPACE_COLLECTION_NAME)
-    
-    def insert_workspace(self, workspace_object):
-        '''
-        Inserts a workspace into the database
-        '''
-        self.insert_object_into_collection(self.DEFAULT_WORKSPACE_COLLECTION_NAME, workspace_object)
-
-    def update_workspace(self, workspace_name, workspace_object):
-        '''
-        Updates the workspace with the specified name
-        '''
-        workspaces = self.get_all_workspaces()
-
-        if workspaces is not None:
-            for current_workspace in workspaces:
-                if current_workspace['Name'] == workspace_name:
-                    current_workspace['Name'] = workspace_object['Name']
-                    current_workspace['projects'] = workspace_object['projects']
-                    self.insert_object_into_collection(self.DEFAULT_WORKSPACE_COLLECTION_NAME, current_workspace)
-                    return
-        return
-
-
-    # PROJECT FUNCTIONS
-
-    def get_all_projects_from_workspace(self, workspace_name):
-        '''
-        Returns all projects under the given workspace name
-        '''
-        workspaces = self.get_all_workspaces()
-
-        try:
-            if workspaces is not None:
-                for current_workspace in workspaces:
-                    if current_workspace['Name'] == workspace_name:
-                        return current_workspace['projects']
-        except:
-            return []
-
-    def insert_project_into_workspace(self, workspace_name, project_object):
-        '''
-        Inserts a project into the specified workspace that matches the name
-        '''
-        workspaces = self.get_all_workspaces()
-
-        if workspaces is not None:
-            for current_workspace in workspaces:
-                if current_workspace['Name'] == workspace_name:
-                    current_workspace['projects'].append(project_object)
-                    self.insert_object_into_collection(self.DEFAULT_WORKSPACE_COLLECTION_NAME, current_workspace)
-                    return
-        return
+    def save_link(self, device_id: str, new_data: dict) -> dict:
+        #TODO: make this
+        pass

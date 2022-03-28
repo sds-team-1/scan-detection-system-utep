@@ -157,6 +157,16 @@ def addNodeWindow():
     addNode_Window.show()
 
 
+
+def createProjectWindow():
+    newProject_Window.show()
+
+def newScenarioUnitWindow():
+    newScenarioUnit_Window.show()
+
+def addNodeWindow():
+    addNode_Window.show()
+
 def createProject():
     global workspace_name, workspace_path
 
@@ -215,7 +225,6 @@ def define_workspace_path():
     workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
 
-
 def item_project_selected():
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
@@ -233,7 +242,6 @@ def save_workspace():
 
         for scenario in project.scenarios:
             os.makedirs(workspace_object.location + "/" + project.name + "/" + scenario.name)
-
 
 def export_project():
     scenarios = {}
@@ -271,7 +279,6 @@ def addNodeCheckboxStateChanged():
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
 
-
 def open_workspace(selected_workspace):
     global workspace_name
     time.sleep(1)
@@ -288,7 +295,6 @@ def open_workspace(selected_workspace):
                     scenarioName = QTreeWidgetItem([k])
                     projectName.addChild(scenarioName)
                     mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
-
 
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
