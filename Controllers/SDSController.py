@@ -246,7 +246,7 @@ class SDSController:
             try:
                 # Do launching with Capture Manager
                 pass
-            except Error as e:
+            except Exception as e:
                 # Handle here
                 self._state = SDSStateEnum.INIT_PROJECT
             self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
