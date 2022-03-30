@@ -207,6 +207,13 @@ def createProject():
         newProject_Window.close()
 
 
+def createScenario():
+    scenario = QTreeWidgetItem([newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()])
+    p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
+    p.addChild(scenario)
+    newScenarioUnit_Window.close()
+
+
 def edit_project(selected_project):
     pass
 
@@ -323,6 +330,22 @@ def edit_workspace(selected_workspace):
 
 
 def delete_workspace(selected_workspace):
+    pass
+
+
+def set_up_scenario_unit():
+    pass
+
+
+def start_scenario_unit():
+    pass
+
+
+def stop_scenario_unit():
+    pass
+
+
+def restore_scenario_unit():
     pass
 
 
@@ -470,6 +493,10 @@ def initialize_signals():
     mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
     mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
     mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
+    mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
+    mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
+    mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
+    mainWindowUI.setupScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
     mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
     mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -477,6 +504,9 @@ def initialize_signals():
 
     newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
     newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+
+    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
+    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(newScenarioUnit_Window.close)
 
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
