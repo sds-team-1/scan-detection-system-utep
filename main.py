@@ -99,41 +99,13 @@ def createWorkspaceWindow():
 def createWorkspace():
     global workspace_name, workspace_path, workspace_object
 
-    if createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text() == '' \
-            or createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text() == '':
+    workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
 
+    if not workspace_name:
         missingFields_Window.show()
 
     else:
-        first_query = workspaces_DB.find_one()
-
-        if first_query['Name'] == '':
-            new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                                  'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
-            workspaces_DB.update_one(first_query, new_query)
-
-            workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-
-        else:
-            current_id = workspaces_DB.find().sort('_id', -1).limit(1)
-            for doc in current_id:
-                current_id = doc['_id']
-
-            new_query = {'_id': int(current_id + 1),
-                         'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                         'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
-                         'Projects': []}
-
-            workspaces_DB.insert_one(new_query)
-
-        os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
-
-        workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
-
-        workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-        workspace_object.location = workspace_path
-        workspace_object.projects = []
-
+        
         mainWindow_Window.show()
         createWorkspace_Window.close()
         workspace_Window.close()
