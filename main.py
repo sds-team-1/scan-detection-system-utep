@@ -16,6 +16,10 @@ from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.workspace import Ui_workspace_window
 
+from Controllers.SDSController import SDSController
+from Database.DatabaseHelper import SDSDatabaseHelper
+from Controllers.AnalysisManager import SDSAnalysisManager
+
 
 ################ CLASSES ################
 class Workspace:
@@ -407,6 +411,14 @@ addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window
 addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
 
 missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+
+
+##### Top-level Integration w/ all subsystems. #####
+sds_controller = SDSController()
+import captureController as capture_controller
+sds_controller.add_capture_manager(capture_controller)
+sds_controller.add_analysis_manager(SDSAnalysisManager())
+sds_controller.add_mongo_connection(SDSDatabaseHelper())
 
 workspace_Window.show()
 

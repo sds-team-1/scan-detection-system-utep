@@ -1,8 +1,10 @@
 from enum import Enum, unique
 import json
 import re
+from types import ModuleType
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
+from Controllers.AnalysisManager import SDSAnalysisManager
 
 @unique
 class SDSStateEnum(Enum):
@@ -24,8 +26,8 @@ class SDSController:
     directory_regex_pattern = '/^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g'
 
     def __init__(self) -> None:
-        self._cap_manager = None
-        self._a_manager = None
+        self._cap_manager: ModuleType = None
+        self._a_manager: SDSAnalysisManager = None
         self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
         self._worklace_name: str = ''
