@@ -144,49 +144,32 @@ def createProject():
     #TODO: Remove these. See where else they are referenced.
     global workspace_name, workspace_path
 
-    if newProjectWindowUI.newProjectNameInput_newProjectWindow.text() == '' \
-            or newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value() == 0:
+    project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
+    project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
+    # If the input is incorrect show the missing fields window
+    if not project_name or project_parallel is 0:
         missingFields_Window.show()
-
-
+    #Otherwise save the project
     else:
-
         p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
         value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
-        # scenarios = {}
 
+        # Store the context of the project inside of this program
+        # TODO: Find the references of the projects to see how else they need it.
         project_object = Project('', '', 0, [])
-
         project_object.name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
-
         project_path = os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text())
-
         project_object.location = project_path
-
         project_object.max_units = value
+        workspace_object.projects.append(project_object)        
 
-        # for i in range(0, value):
-        #   scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
-        #  scenarios['Scenario ' + str(i + 1)] = ''
-        # p.addChild(scenario)
-        # scenario_object = Scenario('', '', '')
-        # scenario_object.name = 'Scenario ' + str(i + 1)
-        # scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
-        # scenario_object.nodes = ''
-        # project_object.scenarios.append(scenario_object)
+        # TODO: Use the sds controller to save the project
 
+        # Adds the TreeWidgetItem to the project list
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
-        # project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
-
-        workspace_object.projects.append(project_object)
-
-        # for q in workspaces_DB.find():
-        #  if q['Name'] == workspace_name:
-        #       workspaces_DB.update_one({'Projects': q['Projects']},
-        #                              {'$push': {'Projects': project}})
-
+        # Resets the values for the window
         newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
         newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
 
