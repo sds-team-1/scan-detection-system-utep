@@ -63,14 +63,14 @@ class CaptureController:
     def add_shared_folder(name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{vimname}\" --name {name} --hostpath {hostpath} --automount")
 
-    def startVM() -> bool:
+    def startVM(self) -> bool:
         '''
         Starts the VM with the name 'CoreUbuntu'
         Returns True if the VM was started successfully
         Returns False if the VM was already runnning
         '''
 
-        if state == "running":
+        if  self.state == "running":
             print("VM is already running")
             return False
 
@@ -79,9 +79,19 @@ class CaptureController:
         return True
 
         
-    def stopVM():
+    def stopVM(self) -> bool:
         '''
         Stops the VM with the name 'CoreUbuntu'
+        Returns True if the VM was stopped successfully
+        Returns False if the VM was already stopped
+        '''
+
+        if self.state == "stopped":
+            print("VM is already stopped")
+            return False
+
+        '''
+        TODO: finish this
         '''
         pass
 
