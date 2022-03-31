@@ -64,16 +64,19 @@ class SDSController:
         if self._db_connection is None:
             return []
         else:
-            return self._db_connection.retrieve_projects(workplace_name)
+            #Get project dictionaries related to workspace
+            projects = self._db_connection.retrieve_projects(workplace_name)
+            # Get a list of all the neames retrieved.
+            return [project['_id'] for project in projects]
 
-    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[Dict[str, str]]:
+    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
         #Gets all scenario_units of specified instance
         if self._db_connection is None:
             return []
         else:
             # Get the right project context
             scenario_ids = self._db_connection.retrieve_project(project_name)['scenario_units']
-            return [{self._db_connection.retrieve_scenario_unit(x)['scenario_name'], x} for x in scenario_ids]
+            return [self._db_connection.retrieve_scenario_unit(x)['scenario_name'] for x in scenario_ids]
 
     def list_all_nodes(self, workplace_name: str, project_name: str, 
         scenario_unit_id: str) -> List[str]:
@@ -111,6 +114,11 @@ class SDSController:
             # Do work here
             self._state = SDSStateEnum.INIT_WORKPLACE
 
+    def change_workspace_context(self, workspace_name: str):
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.INIT_SYSTEM:
+            self._worklace_name = workspace_name
+
     ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
         self._ensure_subsystems()
@@ -143,6 +151,11 @@ class SDSController:
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
             self._project_construction['parallel_units'] = n
+
+    def change_project_context(self, project_name: str):
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.INIT_PROJECT:
+            self._project_name = project_name
 
     def finish_project_construction(self):
         self._ensure_subsystems()
@@ -227,7 +240,7 @@ class SDSController:
     subnet_mask: int = 24, user: str = '', password: str = '', 
     diff_subnet: bool = False):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
+        if self._state is SDSStateEnum.INIT_PROJECT:
             # Continue here
             # Insert scenario node
             pass

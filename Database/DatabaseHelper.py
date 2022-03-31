@@ -52,11 +52,17 @@ class SDSDatabaseHelper:
         collection = db['workspaces']
         return collection.find().distinct('_id')
 
-    def retrieve_projects(self, workspace_name: str) -> List[str]:
+    def retrieve_projects(self, workspace_name: str) -> List[dict]:
         client = MongoClient(self.url)
         db = client['SDS']
-        collection = db['projects']
-        return collection.find()
+        collection = db['workspaces']
+        workspace_dict = collection.find_one({'_id': workspace_name})
+        projects = workspace_dict['projects']
+        project_list = []
+        for proj in projects:    
+            collection = db['projects']
+            project_list.append(collection.find_one({'_id': proj}))
+        return project_list
 
     """Import Project"""
     """Export Project"""
