@@ -20,14 +20,14 @@ class CaptureController:
         '''
         Runs the 'run bash ~/core/Files/CoreStart' this should cause a merge conflict
         '''
-        os.system(f"VBoxManage guestcontrol run --username \"{vim_username}\" --password \"{vim_password}\" bash ~/core/Files/CoreStart")
+        os.system(f"VBoxManage guestcontrol run --username \"{self.vim_username}\" --password \"{self.vim_password}\" bash ~/core/Files/CoreStart")
 
 
     def startService(self):
         '''
         Runs the 'run bash ~/core/Files/StartServices' command on the VM
         '''
-        os.system(f"VBoxManage guestcontrol \"{vimname}\" run --username \"{vim_username}\" --password \"{vim_password}\" bash ~/core/Files/StartServices")
+        os.system(f"VBoxManage guestcontrol \"{self.vimname}\" run --username \"{self.vim_username}\" --password \"{self.vim_password}\" bash ~/core/Files/StartServices")
 
 
     def cleanup(self):
@@ -36,13 +36,13 @@ class CaptureController:
         and the
         'rm -r ~/core/Files/Captures/*' command on the VM
         '''
-        os.system(f"VBoxManage guestcontrol \"{vimname}\" run --username \"{vim_username}\" --password \"{vim_password}\" core-cleanup")
-        os.system(f"VBoxManage guestcontrol run --username \"{vim_username}\" --password \"{vim_password}\" rm -r ~/core/Files/Captures/*")
+        os.system(f"VBoxManage guestcontrol \"{self.vimname}\" run --username \"{self.vim_username}\" --password \"{self.vim_password}\" core-cleanup")
+        os.system(f"VBoxManage guestcontrol run --username \"{self.vim_username}\" --password \"{self.vim_password}\" rm -r ~/core/Files/Captures/*")
 
 
     def run_command(self, command, args=""):
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
-        os.system(f"VBoxManage guestcontrol \"{vimname}\" --username \"{vim_username}\" --password \"{vim_password}\" run \"{command}\" {args}")
+        os.system(f"VBoxManage guestcontrol \"{self.vimname}\" --username \"{self.vim_username}\" --password \"{self.vim_password}\" run \"{command}\" {args}")
 
     def run_scenario(self, xml_as_string):
         '''
@@ -51,7 +51,7 @@ class CaptureController:
         pass
 
     def add_shared_folder(self, name, hostpath):
-        os.system(f"VBoxManage sharedfolder add \"{vimname}\" --name {name} --hostpath {hostpath} --automount")
+        os.system(f"VBoxManage sharedfolder add \"{self.vimname}\" --name {name} --hostpath {hostpath} --automount")
 
     def startVM(self) -> bool:
         '''
@@ -65,7 +65,7 @@ class CaptureController:
             print("VM is already running")
             return False
 
-        os.system(f"VBoxManage startvm \"{vimname}\"")
+        os.system(f"VBoxManage startvm \"{self.vimname}\"")
         state = "running"
         return True
 
@@ -101,10 +101,10 @@ class CaptureController:
 
     
     def startVMHeadless(self):
-        os.system(f"VBoxManage startvm \"{vimname}\" --type headless")
+        os.system(f"VBoxManage startvm \"{self.vimname}\" --type headless")
 
     def emergency_stop(self):
-        os.system(f"VBoxManage startvm \"{vimname}\" --type emergencystop")
+        os.system(f"VBoxManage startvm \"{self.vimname}\" --type emergencystop")
 
 
     # add logic in case the file is ran from the command line
