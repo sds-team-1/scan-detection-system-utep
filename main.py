@@ -495,6 +495,22 @@ setup_ui()
 
 initialize_signals()
 
+###### TOP LEVEL BUILDIGN ######
+sds_controller = SDSController()
+import captureController as capture_controller
+sds_controller.add_capture_manager(capture_controller)
+sds_controller.add_mongo_connection(SDSDatabaseHelper())
+sds_controller.add_analysis_manager(SDSAnalysisManager())
+
+# Get all workspaces from DB
+workspaces: list = sds_controller.list_all_workplaces()
+# Fill into tree on the UI.
+for workspace in workspaces:
+    l1 = QtWidgets.QTreeWidgetItem(workspace)
+    workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
+#FIXME: Fill in this section w/ controller operations do do the window with...
+# workspace options. 
 if 'SDS_DB' not in dbs:
     workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
     workspaces_DB.insert_one(workspace)
@@ -511,10 +527,5 @@ else:
 
 workspace_Window.show()
 
-sds_controller = SDSController()
-import captureController as capture_controller
-sds_controller.add_capture_manager(capture_controller)
-sds_controller.add_mongo_connection(SDSDatabaseHelper())
-sds_controller.add_analysis_manager(SDSAnalysisManager())
 
 sys.exit(app.exec_())

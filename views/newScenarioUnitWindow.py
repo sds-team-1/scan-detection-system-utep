@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_newScenarioUnit_window(object):
-    def setupNewScenarioUnit(self, newScenarioUnit_window):
+    def setupNewScenarioUnit(self, newScenarioUnit_window : QtWidgets.QDialog):
         newScenarioUnit_window.setObjectName("newScenarioUnit_window")
         newScenarioUnit_window.setEnabled(True)
         newScenarioUnit_window.resize(513, 115)

@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_workspace_window(object):
-    def setupWorkspaceUI(self, workspace_window):
+    def setupWorkspaceUI(self, workspace_window : QtWidgets.QDialog):
         workspace_window.setObjectName("workspace_window")
         workspace_window.resize(780, 463)
         workspace_window.setMinimumSize(QtCore.QSize(780, 463))

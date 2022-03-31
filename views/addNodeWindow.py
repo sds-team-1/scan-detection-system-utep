@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_addNode_window(object):
-    def setupAddNode(self, addNode_window):
+    def setupAddNode(self, addNode_window : QtWidgets.QDialog):
         addNode_window.setObjectName("addNode_window")
         addNode_window.setEnabled(True)
         addNode_window.resize(487, 240)

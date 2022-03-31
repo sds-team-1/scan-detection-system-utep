@@ -48,3 +48,9 @@ To this
 Once done, run the following command and you should have virtualbox installed
 `sudo python3 vboxapisetup.py install`
 
+To clean the remove all pycached files, run the following using python3
+```
+python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
+python3 -Bc "import pathlib; [p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]"
+```
+

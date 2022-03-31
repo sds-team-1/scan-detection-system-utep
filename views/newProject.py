@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 class Ui_newProject_window(object):
-    def setupNewProject(self, newProject_window):
+    def setupNewProject(self, newProject_window : QtWidgets.QDialog):
         newProject_window.setObjectName("newProject_window")
         newProject_window.setEnabled(True)
         newProject_window.resize(487, 135)
