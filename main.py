@@ -93,6 +93,7 @@ deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 
 workspace_path = ''
 workspace_name = ''
+# FIXME: Change this into a variables we can use w/ controller
 workspace_object = Workspace('', '', [])
 
 
