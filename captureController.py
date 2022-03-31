@@ -5,8 +5,17 @@ vimname = "CoreUbuntu"
 vim_username = "cj"
 vim_password = "1386"
 
+
+'''
+TODO: Use enums to keep track of capture controller
+'''
+
 class CaptureController:
 
+    state = "stopped"
+
+    def __init__(self):
+        pass
 
     def startScenario():
         '''
@@ -54,11 +63,27 @@ class CaptureController:
     def add_shared_folder(name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{vimname}\" --name {name} --hostpath {hostpath} --automount")
 
-    def startVM():
+    def startVM() -> bool:
         '''
         Starts the VM with the name 'CoreUbuntu'
+        Returns True if the VM was started successfully
+        Returns False if the VM was already runnning
         '''
+
+        if state == "running":
+            print("VM is already running")
+            return False
+
         os.system(f"VBoxManage startvm \"{vimname}\"")
+        state = "running"
+        return True
+
+        
+    def stopVM():
+        '''
+        Stops the VM with the name 'CoreUbuntu'
+        '''
+        pass
 
     def startVMHeadless():
         os.system(f"VBoxManage startvm \"{vimname}\" --type headless")
