@@ -19,7 +19,7 @@ class CaptureController:
 
     def startScenario(self):
         '''
-        Runs the 'run bash ~/core/Files/CoreStart' command on the VM
+        Runs the 'run bash ~/core/Files/CoreStart' this should cause a merge conflict
         '''
         os.system(f"VBoxManage guestcontrol run --username \"{vim_username}\" --password \"{vim_password}\" bash ~/core/Files/CoreStart")
 
