@@ -1,18 +1,17 @@
 import os
 import sys
 
-vimname = "CoreUbuntu"
-vim_username = "cj"
-vim_password = "1386"
-
 
 '''
 TODO: Use enums to keep track of capture controller
 '''
-
 class CaptureController:
 
     state = "stopped"
+
+    vimname = "CoreUbuntu"
+    vim_username = "cj"
+    vim_password = "1386"
 
     def __init__(self):
         pass
