@@ -83,6 +83,7 @@ class SDSController:
             #Do work here
             pass
 
+    ###### Workspace related functions ######
     def start_new_workplace(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_SYSTEM:
@@ -110,6 +111,7 @@ class SDSController:
             # Do work here
             self._state = SDSStateEnum.INIT_WORKPLACE
 
+    ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
@@ -164,6 +166,7 @@ class SDSController:
                 print('Could not save')
                 return False
 
+    ###### Enfore state function for overloading (testing) ######
     def _enfore_state(self, state: str):
         #INIT_SYSTEM = 1
         if state == 'init_system':
@@ -202,6 +205,7 @@ class SDSController:
         if state == 'file_manager_export_dialogue':
             self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
 
+    ###### Scenario Related Functions ######
     def add_scenario_unit(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
@@ -237,6 +241,7 @@ class SDSController:
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
+    ###### CORE Related functinos ######
     def set_up_scenario_units(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
@@ -244,7 +249,7 @@ class SDSController:
             try:
                 # Do launching with Capture Manager
                 pass
-            except Error as e:
+            except Exception as e:
                 # Handle here
                 self._state = SDSStateEnum.INIT_PROJECT
             self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
@@ -282,6 +287,3 @@ class SDSController:
     def gather_data_to_DB(self):
         self._ensure_subsystems()
         pass
-
-    '''The following methods are developed by the protocols by the GUI Lead
-    Mauricio.'''

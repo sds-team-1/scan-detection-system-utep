@@ -16,6 +16,10 @@ from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.workspace import Ui_workspace_window
 
+from Controllers.SDSController import SDSController
+from Controllers.AnalysisManager import SDSAnalysisManager
+
+from Database.DatabaseHelper import SDSDatabaseHelper
 
 class Workspace:
     def __init__(self, name, location, projects):
@@ -93,10 +97,12 @@ workspace_object = Workspace('', '', [])
 
 
 def createWorkspaceWindow():
+    sds_controller.start_new_workplace()
     createWorkspace_Window.show()
 
 
 def createWorkspace():
+    #TODO: Remove these variables, see where else they are referenced
     global workspace_name, workspace_path, workspace_object
 
     workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
@@ -105,13 +111,20 @@ def createWorkspace():
         missingFields_Window.show()
 
     else:
-        
-        mainWindow_Window.show()
-        createWorkspace_Window.close()
-        workspace_Window.close()
+        # Insert into controller of new workspace. 
+        sds_controller.specify_workplace_name(workspace_name)
+        workspace_injection_success: bool = sds_controller.finish_workplace_construction()
+        #TODO: Based on the success, insert another window if error
+        if not workspace_injection_success:
+            pass
+        else:
+            mainWindow_Window.show()
+            createWorkspace_Window.close()
+            workspace_Window.close()
 
 
 def createProjectWindow():
+    sds_controller.start_new_project_phase()
     newProject_Window.show()
 
 
@@ -128,6 +141,7 @@ def deleteConfirmationWindow():
 
 
 def createProject():
+    #TODO: Remove these. See where else they are referenced.
     global workspace_name, workspace_path
 
     if newProjectWindowUI.newProjectNameInput_newProjectWindow.text() == '' \
@@ -512,5 +526,11 @@ else:
             workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
 
 workspace_Window.show()
+
+sds_controller = SDSController()
+import captureController as capture_controller
+sds_controller.add_capture_manager(capture_controller)
+sds_controller.add_mongo_connection(SDSDatabaseHelper())
+sds_controller.add_analysis_manager(SDSAnalysisManager())
 
 sys.exit(app.exec_())
