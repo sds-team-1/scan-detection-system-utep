@@ -14,10 +14,9 @@ from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.workspace import Ui_workspace_window
-
 from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
-
+from captureController import CaptureController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 class Workspace:
@@ -505,8 +504,7 @@ setup_ui()
 initialize_signals()
 
 sds_controller = SDSController()
-import captureController as capture_controller
-sds_controller.add_capture_manager(capture_controller)
+sds_controller.add_capture_manager(CaptureController())
 sds_controller.add_mongo_connection(SDSDatabaseHelper())
 sds_controller.add_analysis_manager(SDSAnalysisManager())
 
