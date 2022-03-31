@@ -17,21 +17,21 @@ class CaptureController:
     def __init__(self):
         pass
 
-    def startScenario():
+    def startScenario(self):
         '''
         Runs the 'run bash ~/core/Files/CoreStart' command on the VM
         '''
         os.system(f"VBoxManage guestcontrol run --username \"{vim_username}\" --password \"{vim_password}\" bash ~/core/Files/CoreStart")
 
 
-    def startService():
+    def startService(self):
         '''
         Runs the 'run bash ~/core/Files/StartServices' command on the VM
         '''
         os.system(f"VBoxManage guestcontrol \"{vimname}\" run --username \"{vim_username}\" --password \"{vim_password}\" bash ~/core/Files/StartServices")
 
 
-    def cleanup():
+    def cleanup(self):
         '''
         Runs the 'core-cleanup' command on the VM
         and the
@@ -41,26 +41,17 @@ class CaptureController:
         os.system(f"VBoxManage guestcontrol run --username \"{vim_username}\" --password \"{vim_password}\" rm -r ~/core/Files/Captures/*")
 
 
-    def run_command(command, args=""):
+    def run_command(self, command, args=""):
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
         os.system(f"VBoxManage guestcontrol \"{vimname}\" --username \"{vim_username}\" --password \"{vim_password}\" run \"{command}\" {args}")
 
-    def run_scenario(xml_as_string):
+    def run_scenario(self, xml_as_string):
         '''
         Receives an xml string and runs the commands in the scenario
         '''
         pass
 
-    def restoreScenario():
-        '''
-        Runs commands that allows virtual machine to transition to ready state to run scenario
-        '''
-        pass
-        # cleanup()
-        # startScenario()
-        # startService()
-
-    def add_shared_folder(name, hostpath):
+    def add_shared_folder(self, name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{vimname}\" --name {name} --hostpath {hostpath} --automount")
 
     def startVM(self) -> bool:
@@ -69,6 +60,7 @@ class CaptureController:
         Returns True if the VM was started successfully
         Returns False if the VM was already runnning
         '''
+        print("Starting VM")
 
         if  self.state == "running":
             print("VM is already running")
@@ -85,6 +77,7 @@ class CaptureController:
         Returns True if the VM was stopped successfully
         Returns False if the VM was already stopped
         '''
+        print("Stopping VM")
 
         if self.state == "stopped":
             print("VM is already stopped")
@@ -93,12 +86,25 @@ class CaptureController:
         '''
         TODO: finish this
         '''
+        
+        pass
+    
+    def restoreScenario(self):
+        '''
+        Runs commands that allows virtual machine to transition to ready state to run scenario
+        '''
+        print("Restoring Scenario")
+        # cleanup()
+        # startScenario()
+        # startService()
         pass
 
-    def startVMHeadless():
+
+    
+    def startVMHeadless(self):
         os.system(f"VBoxManage startvm \"{vimname}\" --type headless")
 
-    def emergency_stop():
+    def emergency_stop(self):
         os.system(f"VBoxManage startvm \"{vimname}\" --type emergencystop")
 
 
