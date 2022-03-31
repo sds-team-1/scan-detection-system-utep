@@ -243,49 +243,44 @@ class SDSController:
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
-    ###### CORE Related functinos ######
-    def set_up_scenario_units(self):
-        self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_PROJECT:
-            # Do work here
-            try:
-                # Do launching with Capture Manager
-                pass
-            except Exception as e:
-                # Handle here
-                self._state = SDSStateEnum.INIT_PROJECT
-            self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
-
+    #TODO: Discuss and implement
     def notify_gathering_complete(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
             #Do work here
             pass
 
-    def run_scenario_units(self):
+    #TODO: Discuss this
+    def start_scenario_units(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
             # Do work here
+            self._cap_manager.startScenario()
+            self._cap_manager.startService()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def stop(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_RUNNING:
             # Do work here
+            self._cap_manager.emergency_stop()
             self._state = SDSStateEnum.NETWORK_STOPPED
 
     def restore(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_STOPPED:
             # Do work here
+            self._cap_manager.restoreScenario()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
+    #TODO: Discuss and implement
     def scenarios_complete(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_RUNNING:
             # Do work here
             self._state = SDSStateEnum.INIT_CAPTURE_NETWORK
 
+    #TODO: Discuss and implement this
     def gather_data_to_DB(self):
         self._ensure_subsystems()
         pass

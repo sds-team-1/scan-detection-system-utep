@@ -3,7 +3,6 @@ from pprint import pprint
 from typing import List
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from ..captureController import CaptureController
 
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"

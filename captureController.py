@@ -105,7 +105,7 @@ class CaptureController:
         os.system(f"VBoxManage startvm \"{vimname}\" --type headless")
 
     def emergency_stop(self):
-        os.system(f"VBoxManage startvm \"{vimname}\" --type emergencystop")
+        os.system(f"VBoxManage startvm \"{vimname}\workspace_collection --type emergencystop")
 
 
     # add logic in case the file is ran from the command line

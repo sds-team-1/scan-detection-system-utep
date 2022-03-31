@@ -1,3 +1,4 @@
+# Imports
 import os
 import sys
 import time
@@ -21,6 +22,7 @@ from Controllers.AnalysisManager import SDSAnalysisManager
 
 from Database.DatabaseHelper import SDSDatabaseHelper
 
+################ CLASSES ################
 class Workspace:
     def __init__(self, name, location, projects):
         self.name = name
@@ -63,15 +65,15 @@ class ScannerNode:
         self.max_parallel_runs = max_parallel_runs
         self.end_condition = end_condition
 
+################ END CLASSES ################
 
 app = QtWidgets.QApplication(sys.argv)
 
 client = MongoClient("mongodb://localhost:27017/")
-
 dbs = client.list_database_names()
 
-SDS_DB = client['SDS_DB']
-workspaces_DB = SDS_DB['workspaces']
+################ END CONSTANTS ################
+
 
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
@@ -141,6 +143,15 @@ def deleteConfirmationWindow():
     deleteConfirmation_Window.show()
 
 
+def createProjectWindow():
+    newProject_Window.show()
+
+def newScenarioUnitWindow():
+    newScenarioUnit_Window.show()
+
+def addNodeWindow():
+    addNode_Window.show()
+
 def createProject():
     #TODO: Remove these. See where else they are referenced.
     global workspace_name, workspace_path
@@ -183,6 +194,27 @@ def createScenario():
     p.addChild(scenario)
     newScenarioUnit_Window.close()
 
+def edit_workspace(selected_workspace):
+    pass
+
+
+def delete_workspace(selected_workspace):
+    pass
+
+def set_up_scenario_unit():
+    pass
+
+
+def start_scenario_unit():
+    pass
+
+
+def stop_scenario_unit():
+    pass
+
+
+def restore_scenario_unit():
+    pass
 
 def edit_project(selected_project):
     pass
@@ -222,7 +254,6 @@ def define_workspace_path():
     workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
 
-
 def item_project_selected():
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
@@ -232,13 +263,14 @@ def item_project_selected():
 
 def save_workspace():
     for project in workspace_object.projects:
-        os.makedirs(os.path.join(workspace_object.location,
-                                 project.name))
+        # first check if the directory exists, if it does delete it
+        if os.path.exists(workspace_object.location + "/" + project.name):
+            os.removedirs(workspace_object.location + "/" + project.name)
+
+        os.makedirs(workspace_object.location + "/" + project.name)
 
         for scenario in project.scenarios:
-            os.makedirs(os.path.join(project.location,
-                                     scenario.name))
-
+            os.makedirs(workspace_object.location + "/" + project.name + "/" + scenario.name)
 
 def export_project():
     scenarios = {}
@@ -276,7 +308,6 @@ def addNodeCheckboxStateChanged():
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
 
-
 def open_workspace(selected_workspace):
     global workspace_name
     time.sleep(1)
@@ -285,7 +316,8 @@ def open_workspace(selected_workspace):
     mainWindow_Window.show()
     workspace_Window.close()
 
-    for q in workspaces_DB.find():
+    
+    for q in workspace_collection.find():
         if q['Name'] == workspace_name:
             for p in q['Projects']:
                 projectName = QtWidgets.QTreeWidgetItem([p[0]])
@@ -293,31 +325,6 @@ def open_workspace(selected_workspace):
                     scenarioName = QTreeWidgetItem([k])
                     projectName.addChild(scenarioName)
                     mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
-
-
-def edit_workspace(selected_workspace):
-    pass
-
-
-def delete_workspace(selected_workspace):
-    pass
-
-
-def set_up_scenario_unit():
-    pass
-
-
-def start_scenario_unit():
-    pass
-
-
-def stop_scenario_unit():
-    pass
-
-
-def restore_scenario_unit():
-    pass
-
 
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
@@ -416,7 +423,7 @@ def context_menu_node(point):
     # name = item.text(0)
 
     # menu = QtWidgets.QMenu()
-    # action_add_scenario = QAction("Add Scenario Unit")
+    # action_project_seadd_scenario = QAction("Add Scenario Unit")
     # action_load_scenario = QAction("Load Scenario Unit")
     # action_edit_project = QAction("Edit Project")
     # action_delete_project = QAction("Delete Project")
@@ -511,7 +518,8 @@ for workspace in workspaces:
 
 #FIXME: Fill in this section w/ controller operations do do the window with...
 # workspace options. 
-if 'SDS_DB' not in dbs:
+workspaces_DB = client['SDS_DB']
+if 'SDS_DB' not in workspaces_DB.list_collections():
     workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
     workspaces_DB.insert_one(workspace)
 
