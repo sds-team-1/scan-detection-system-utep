@@ -3,6 +3,8 @@ import json
 import re
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
+from captureController import CaptureController
+from AnalysisManager import SDSAnalysisManager
 
 @unique
 class SDSStateEnum(Enum):
@@ -24,8 +26,8 @@ class SDSController:
     directory_regex_pattern = '/^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g'
 
     def __init__(self) -> None:
-        self._cap_manager = None
-        self._a_manager = None
+        self._cap_manager: CaptureController = None
+        self._a_manager: SDSAnalysisManager = None
         self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
         self._worklace_name: str = ''
@@ -277,18 +279,21 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
             # Do work here
+            self._cap_manager.startScenario()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def stop(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_RUNNING:
             # Do work here
+            self._cap_manager.stopVM()
             self._state = SDSStateEnum.NETWORK_STOPPED
 
     def restore(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_STOPPED:
             # Do work here
+            self._cap_manager.restoreScenario()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def scenarios_complete(self):
