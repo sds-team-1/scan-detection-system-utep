@@ -52,12 +52,12 @@ class CaptureController:
 
     def run_scenario_example(self):
         '''
-        Uses the file with the relative path ./research/xmlm-json-problem/example_core_simple_SU.xml
+        Uses the file with the relative path research/xml-json-problem/example_core_simple_SU.xml
         and stringifies it then sends it to the vm
         '''
 
         # first stringify the xml file
-        with open("./research/xmlm-json-problem/example_core_simple_SU.xml", "r") as f:
+        with open("research/xml-json-problem/example_core_simple_SU.xml", "r") as f:
             xml_as_string = f.read()
 
         # print the file
@@ -134,6 +134,8 @@ if __name__ == "__main__":
         print("Please provide a command, use -h for help")
     elif sys.argv[1] == "start":
         cc.startVM()
+    elif sys.argv[1] == "run-xml-test":
+        cc.run_scenario_example()
     elif sys.argv[1] == "start-headless":
         cc.startVMHeadless()
     elif sys.argv[1] == "start-scenario":
