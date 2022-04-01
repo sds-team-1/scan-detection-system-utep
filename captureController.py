@@ -106,6 +106,13 @@ class CaptureController:
     def emergency_stop(self):
         os.system(f"VBoxManage startvm \"{self.vm_name}\" --type emergencystop")
 
+    def shutdown_vm(self):
+        os.system(f"VBoxManage startvm \"{self.vm_name}\" --type shutdown")
+    
+    def restart_vm(self):
+        # VBoxManage controlvm <vm> reset
+        os.system(f"VBoxManage controlvm \"{self.vm_name}\" reset")
+
 
 
 
@@ -133,6 +140,12 @@ if __name__ == "__main__":
         cc.open_wireshark()
     elif sys.argv[1] == "add-shared-folder":
         cc.add_shared_folder(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "emergency-stop":
+        cc.emergency_stop()
+    elif sys.argv[1] == "shutdown-vm":
+        cc.shutdown_vm()
+    elif sys.argv[1] == "restart-vm":
+        cc.restart_vm()
     elif sys.argv[1] == "run":
         print("Attempting to run command: " + sys.argv[2])
         if len(sys.argv) == 3:
@@ -142,10 +155,16 @@ if __name__ == "__main__":
     elif sys.argv[1] == "-h" or sys.argv[1] == "--help":
         print("""
         Usage:
-        start-scenario - starts the scenario
-        start-service - starts the services
-        cleanup - cleans up the scenario
-        restore - restores the scenario
+        captureController.py [command] [args]
+        Commands:
+        core-cleanup
+        core-start
+        start-services
+        start
+        stop
+        open-wireshark
+        add-shared-folder
+        run [command] [args]
         """)
     else:
         print("Command not recognized, please use -h or --help for help")
