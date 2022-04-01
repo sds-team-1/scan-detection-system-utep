@@ -136,6 +136,7 @@ def deleteConfirmationWindow():
 
 def createProject():
     project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
+    #print(project_name)
     project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
     # If the input is incorrect show the missing fields window
@@ -150,10 +151,16 @@ def createProject():
         workspace_object.projects.append(project_object)
 
         # Use the sds controller to save the project
-        sds_controller.specify_project_name(project_object.name)
-        sds_controller.specify_num_parrallel_units(project_object.max_units)
+        sds_controller._enfore_state('workplace_construction')
+        #print('createproject showing currentworksspacename')
+        #print(current_workspace_name)
+        sds_controller.specify_workplace_name(current_workspace_name)
+        sds_controller._enfore_state('project_construction')
+        sds_controller.specify_project_name(project_name)
+        sds_controller.specify_num_parrallel_units(project_parallel)
         success = sds_controller.finish_project_construction()
 
+        #print(success)
         if not success:
             # TODO: Add a warning message
             pass
@@ -285,6 +292,8 @@ def addNodeCheckboxStateChanged():
 
 
 def open_workspace(selected_workspace):
+    global current_workspace_name
+    current_workspace_name = selected_workspace
     time.sleep(1)
     mainWindow_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
     mainWindow_Window.show()
@@ -293,7 +302,6 @@ def open_workspace(selected_workspace):
     project_names = sds_controller.list_all_projects(selected_workspace)
     for project_name in project_names:
         # Make TreeWidgetItem
-        print(project_name)
         project_tree_item = QTreeWidgetItem([project_name])
         # Get all scenarios related to workspace and project
         scenario_names = sds_controller.list_all_scenario_units(selected_workspace, project_name)

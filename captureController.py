@@ -1,6 +1,7 @@
 import os
 import string
 import sys
+import subprocess
 
 '''
 Temp notes
@@ -25,20 +26,6 @@ class CaptureController:
         self.vm_password = "ubuntu"
         pass
 
-    def startScenario(self):
-        '''
-        Runs the 'run bash ~/core/Files/CoreStart' this should cause a merge conflict
-        '''
-        os.system(f"VBoxManage guestcontrol run --username \"{self.vm_name}\" --password \"{self.vm_password}\" bash ~/core/Files/CoreStart")
-
-
-    def startService(self):
-        '''
-        Runs the 'run bash ~/core/Files/StartServices' command on the VM
-        '''
-        os.system(f"VBoxManage guestcontrol \"{self.vm_name}\" run --username \"{self.vm_name}\" --password \"{self.vm_password}\" bash ~/core/Files/StartServices")
-
-
     def run_core_cleanup(self):
         '''
         Runs CoreCleanup
@@ -46,35 +33,35 @@ class CaptureController:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
     
     def run_scenario_start(self):
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/topology.xml")
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/example_topology.xml")
 
     def run_core_start_services(self):
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
+        '''
+        Starts services on the VM
+        This method also deletes everything in the PCAPs directory
+        If it doesnt exists it will create it
+        '''
+        
+        # Check if PCAPs folder exists, if not create it, if it does, delete everything in it
+        if not os.path.exists("PCAPs"):
+            os.makedirs("PCAPs")
+        else:
+            for the_file in os.listdir("PCAPs"):
+                file_path = os.path.join("PCAPs", the_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(e)
 
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
+
+    def open_wireshark(path):
+        subprocess.Popen('wireshark -r' + path)
 
     def run_command(self, command, args=""):
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
         os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
-
-    def run_scenario(self, xml_as_string : string):
-        '''
-        Receives an xml string and runs the commands in the scenario
-        '''
-        pass
-
-    def run_scenario_example(self):
-        '''
-        Uses the file with the relative path research/xml-json-problem/example_core_simple_SU.xml
-        and stringifies it then sends it to the vm
-        '''
-
-        # first stringify the xml file
-        with open("research/xml-json-problem/example_core_simple_SU.xml", "r") as f:
-            xml_as_string = f.read()
-
-        # print the file
-        print(xml_as_string)
-
 
     def add_shared_folder(self, name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{self.vm_name}\" --name {name} --hostpath {hostpath} --automount")
