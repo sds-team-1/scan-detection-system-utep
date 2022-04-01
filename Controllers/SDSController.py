@@ -4,7 +4,7 @@ import re
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
 from captureController import CaptureController
-from AnalysisManager import SDSAnalysisManager
+from Controllers.AnalysisManager import SDSAnalysisManager
 
 @unique
 class SDSStateEnum(Enum):
@@ -247,11 +247,11 @@ class SDSController:
             # Insert scenario node
             pass
     
-    def finish_scenario_unit_construction(self):
+    def finish_scenario_unit_construction(self, project_name:str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             # Do work here
-            success = self._db_connection.create_scenario_unit(self._project_name,
+            success = self._db_connection.create_scenario_unit(project_name,
             self._scenario_unit_construction)
             self._state = SDSStateEnum.INIT_PROJECT
             return success

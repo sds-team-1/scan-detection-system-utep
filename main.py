@@ -177,10 +177,11 @@ def createScenario():
             #TODO: Display error
             pass
         else:
-            # TODO: Get project name.
+            #TODO: Test this
             s = QTreeWidgetItem([scenario_name])
             p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
             p.addChild(s)
+            sds_controller.finish_scenario_unit_construction(s.parent().text(0))
             newScenarioUnit_Window.close()
 
 
