@@ -1,4 +1,5 @@
 import os
+import string
 import sys
 
 
@@ -43,11 +44,25 @@ class CaptureController:
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
         os.system(f"VBoxManage guestcontrol \"{self.vimname}\" --username \"{self.vim_username}\" --password \"{self.vim_password}\" run \"{command}\" {args}")
 
-    def run_scenario(self, xml_as_string):
+    def run_scenario(self, xml_as_string : string):
         '''
         Receives an xml string and runs the commands in the scenario
         '''
         pass
+
+    def run_scenario_example(self):
+        '''
+        Uses the file with the relative path research/xml-json-problem/example_core_simple_SU.xml
+        and stringifies it then sends it to the vm
+        '''
+
+        # first stringify the xml file
+        with open("research/xml-json-problem/example_core_simple_SU.xml", "r") as f:
+            xml_as_string = f.read()
+
+        # print the file
+        print(xml_as_string)
+
 
     def add_shared_folder(self, name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{self.vimname}\" --name {name} --hostpath {hostpath} --automount")
@@ -106,39 +121,48 @@ class CaptureController:
         os.system(f"VBoxManage startvm \"{self.vimname}\" --type emergencystop")
 
 
-    # add logic in case the file is ran from the command line
-    if __name__ == "__main__":
-        if len(sys.argv) == 1:
-            print("Please provide a command, use -h for help")
-        elif sys.argv[1] == "start":
-            startVM()
-        elif sys.argv[1] == "start-headless":
-            startVMHeadless()
-        elif sys.argv[1] == "start-scenario":
-            startScenario()
-        elif sys.argv[1] == "start-service":
-            startService()
-        elif sys.argv[1] == "cleanup":
-            cleanup()
-        elif sys.argv[1] == "restore":
-            restoreScenario()
-        elif sys.argv[1] == "emergency-stop":
-            emergency_stop()
-        elif sys.argv[1] == "add-shared-folder":
-            add_shared_folder(sys.argv[2], sys.argv[3])
-        elif sys.argv[1] == "run":
-            print("Attempting to run command: " + sys.argv[2])
-            if len(sys.argv) == 3:
-                run_command(sys.argv[2])
-            else:
-                run_command(sys.argv[2], sys.argv[3])
-        elif sys.argv[1] == "-h" or sys.argv[1] == "--help":
-            print("""
-            Usage:
-            start-scenario - starts the scenario
-            start-service - starts the services
-            cleanup - cleans up the scenario
-            restore - restores the scenario
-            """)
+
+
+# add logic in case the file is ran from the command line
+
+
+if __name__ == "__main__":
+    cc = CaptureController()
+
+
+    if len(sys.argv) == 1:
+        print("Please provide a command, use -h for help")
+    elif sys.argv[1] == "start":
+        cc.startVM()
+    elif sys.argv[1] == "run-xml-test":
+        cc.run_scenario_example()
+    elif sys.argv[1] == "start-headless":
+        cc.startVMHeadless()
+    elif sys.argv[1] == "start-scenario":
+        cc.startScenario()
+    elif sys.argv[1] == "start-service":
+        cc.startService()
+    elif sys.argv[1] == "cleanup":
+        cc.cleanup()
+    elif sys.argv[1] == "restore":
+        cc.restoreScenario()
+    elif sys.argv[1] == "emergency-stop":
+        cc.emergency_stop()
+    elif sys.argv[1] == "add-shared-folder":
+        cc.add_shared_folder(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "run":
+        print("Attempting to run command: " + sys.argv[2])
+        if len(sys.argv) == 3:
+            cc.run_command(sys.argv[2])
         else:
-            print("Command not recognized, please use -h or --help for help")
+            cc.run_command(sys.argv[2], sys.argv[3])
+    elif sys.argv[1] == "-h" or sys.argv[1] == "--help":
+        print("""
+        Usage:
+        start-scenario - starts the scenario
+        start-service - starts the services
+        cleanup - cleans up the scenario
+        restore - restores the scenario
+        """)
+    else:
+        print("Command not recognized, please use -h or --help for help")
