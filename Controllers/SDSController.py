@@ -30,7 +30,7 @@ class SDSController:
         self._a_manager: SDSAnalysisManager = None
         self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
-        self._worklace_name: str = ''
+        self._workspace_name: str = ''
         self._project_name: str = ''
         self._project_construction: dict = {}
         self._scenario_unit_construction: dict = {}
@@ -69,6 +69,11 @@ class SDSController:
             #Get project dictionaries related to workspace
             projects = self._db_connection.retrieve_projects(workplace_name)
             # Get a list of all the neames retrieved.
+            if projects == [None]:
+                return []
+            project_names = []
+            for proj in projects:
+                project_names.append(proj['_id'])
             return [project['_id'] for project in projects]
 
     def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
@@ -98,13 +103,13 @@ class SDSController:
     def specify_workplace_name(self, workspace_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
-            self._worklace_name = workspace_name
+            self._workspace_name = workspace_name
 
     def finish_workplace_construction(self) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
             try:
-                self._db_connection.create_workspace(self._worklace_name)
+                self._db_connection.create_workspace(self._workspace_name)
                 self._state = SDSStateEnum.INIT_WORKPLACE
                 return True
             except:
@@ -119,7 +124,7 @@ class SDSController:
     def change_workspace_context(self, workspace_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_SYSTEM:
-            self._worklace_name = workspace_name
+            self._workspace_name = workspace_name
 
     ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
@@ -134,6 +139,7 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             # Do work here
+            self._project_construction = {}
             self._state = SDSStateEnum.PROJECT_CONSTRUCTION
 
     def specify_project_name(self, project_name: str):
@@ -159,12 +165,18 @@ class SDSController:
         if self._state is SDSStateEnum.INIT_PROJECT:
             self._project_name = project_name
 
-    def finish_project_construction(self):
+    def finish_project_construction(self) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
-            self._db_connection.create_project(self._worklace_name, self._project_construction)
+            #print('controller showing...')
+            #print(self._project_construction)
+            #print('seeing workspace name...')
+            #print(self._workspace_name)
+            success = self._db_connection.create_project(self._workspace_name, 
+            project=self._project_construction)
             self._state = SDSStateEnum.INIT_PROJECT
+            return success
 
     def export_project(self, project_name: str, directory: str) -> bool:
         self._ensure_subsystems()

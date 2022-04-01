@@ -28,21 +28,26 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url)
         db = client['SDS']
         collection = db['projects']
+        #print('dbhelper showing project...')
+        #print(project)
         if not project:
             try:
                 collection.insert_one({'_id': project_name, 'parallel_units': par_units,
                 'scenario_units': scenario_units})
+                update = {'$addToSet': {'projects': project_name}}
             except:
                 return False
         else:
             try:
                 collection.insert_one(project)
-                project_name = project['_id']
+                update = {'$addToSet': {'projects': project['_id']}}
             except:
                 return False
         collection = db['workspaces']
         query = {'_id': workspace_name}
-        update = {'$addToSet': {'projects': project_name}}
+        #print('createproject showing update...')
+        #print(query)
+        #print(update)
         success = collection.update_one(query, update)
         return False if success == 0 else True
 
