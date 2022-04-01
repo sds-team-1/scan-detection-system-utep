@@ -46,7 +46,7 @@ class CaptureController:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
     
     def run_scenario_start(self):
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/topology.xml")
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/example_topology.xml")
 
     def run_core_start_services(self):
         self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
