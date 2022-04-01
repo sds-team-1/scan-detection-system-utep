@@ -256,7 +256,8 @@ def save_workspace():
 def export_project():
     scenarios = {}
     project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
-    #FIXME: workspace_object reference
+    project_path = ''
+    # FIXME: workspace_object reference
     projects = workspace_object.projects
     for project in projects:
         if project.name == project_name:
