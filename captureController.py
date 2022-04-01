@@ -1,6 +1,7 @@
 import os
 import string
 import sys
+import subprocess
 
 '''
 Temp notes
@@ -55,30 +56,12 @@ class CaptureController:
 
         self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
 
+    def open_wireshark(path):
+        subprocess.Popen('wireshark -r' + path)
 
     def run_command(self, command, args=""):
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
         os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
-
-    def run_scenario(self, xml_as_string : string):
-        '''
-        Receives an xml string and runs the commands in the scenario
-        '''
-        pass
-
-    def run_scenario_example(self):
-        '''
-        Uses the file with the relative path research/xml-json-problem/example_core_simple_SU.xml
-        and stringifies it then sends it to the vm
-        '''
-
-        # first stringify the xml file
-        with open("research/xml-json-problem/example_core_simple_SU.xml", "r") as f:
-            xml_as_string = f.read()
-
-        # print the file
-        print(xml_as_string)
-
 
     def add_shared_folder(self, name, hostpath):
         os.system(f"VBoxManage sharedfolder add \"{self.vm_name}\" --name {name} --hostpath {hostpath} --automount")
