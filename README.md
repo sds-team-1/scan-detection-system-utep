@@ -48,3 +48,9 @@ To this
 Once done, run the following command and you should have virtualbox installed
 `sudo python3 vboxapisetup.py install`
 
+
+If you get an error like
+`bin/ls: cannot open directory 'media/sf_new-shared-folder': Permission denied`
+Then you have to go into the vm and make sure you run `sudo usermod -aG vboxsf ubuntu`
+
+I believe you also need to install the VirtualBox Guest Additions
