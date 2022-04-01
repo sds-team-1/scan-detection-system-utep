@@ -26,16 +26,23 @@ class CaptureController:
         self.vm_password = "ubuntu"
         pass
 
-    def run_core_cleanup(self):
+    def run_command(self, command, args=""):
+        # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
+        os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
+
+    def core_cleanup(self):
         '''
         Runs CoreCleanup
         '''
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
     
-    def run_scenario_start(self):
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/example_topology.xml")
+    def core_start(self):
+        '''
+        Runs CoreStart
+        '''
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/julio_xml_test.xml")
 
-    def run_core_start_services(self):
+    def start_services(self):
         '''
         Starts services on the VM
         This method also deletes everything in the PCAPs directory
@@ -56,17 +63,7 @@ class CaptureController:
 
         self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
 
-    def open_wireshark(path):
-        subprocess.Popen('wireshark -r' + path)
-
-    def run_command(self, command, args=""):
-        # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
-        os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
-
-    def add_shared_folder(self, name, hostpath):
-        os.system(f"VBoxManage sharedfolder add \"{self.vm_name}\" --name {name} --hostpath {hostpath} --automount")
-
-    def startVM(self) -> bool:
+    def start_vm(self) -> bool:
         '''
         Starts the VM with the name 'CoreUbuntu'
         Returns True if the VM was started successfully
@@ -79,11 +76,9 @@ class CaptureController:
             return False
 
         os.system(f"VBoxManage startvm \"{self.vm_name}\"")
-        state = "running"
-        return True
+        self.state = "running"
 
-        
-    def stopVM(self) -> bool:
+    def stop_vm(self) -> bool:
         '''
         Stops the VM with the name 'CoreUbuntu'
         Returns True if the VM was stopped successfully
@@ -95,29 +90,22 @@ class CaptureController:
             print("VM is already stopped")
             return False
 
-        '''
-        TODO: finish this
-        '''
-        
-        pass
-    
-    def restoreScenario(self):
-        '''
-        Runs commands that allows virtual machine to transition to ready state to run scenario
-        '''
-        print("Restoring Scenario")
-        # cleanup()
-        # startScenario()
-        # startService()
-        pass
+        self.emergency_stop()
+        self.state = "stopped"
+        return
 
+    def open_wireshark(path):
+        os.system(f"wireshark -r /Users/erikmtz/Documents/GitProjects/scan-detection-system-utep/PCAPs/capture.pcap")
 
-    
-    def startVMHeadless(self):
-        os.system(f"VBoxManage startvm \"{self.vm_name}\" --type headless")
+    def add_shared_folder(self, name, hostpath):
+        os.system(f"VBoxManage sharedfolder add \"{self.vm_name}\" --name {name} --hostpath {hostpath} --automount")
+
+    # def start_vm_headless(self):
+    #     os.system(f"VBoxManage startvm \"{self.vm_name}\" --type headless")
 
     def emergency_stop(self):
         os.system(f"VBoxManage startvm \"{self.vm_name}\" --type emergencystop")
+
 
 
 
@@ -131,26 +119,18 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 1:
         print("Please provide a command, use -h for help")
-    elif sys.argv[1] == "start":
-        cc.startVM()
-    elif sys.argv[1] == "scenario-start":
-        cc.run_scenario_start()
     elif sys.argv[1] == "core-cleanup":
-        cc.run_core_cleanup()
+        cc.core_cleanup()
+    elif sys.argv[1] == "core-start":
+        cc.core_start()
     elif sys.argv[1] == "start-services":
-        cc.run_core_start_services()
-    elif sys.argv[1] == "run-xml-test":
-        cc.run_scenario_example()
-    elif sys.argv[1] == "start-headless":
-        cc.startVMHeadless()
-    elif sys.argv[1] == "start-scenario":
-        cc.startScenario()
-    elif sys.argv[1] == "cleanup":
-        cc.cleanup()
-    elif sys.argv[1] == "restore":
-        cc.restoreScenario()
-    elif sys.argv[1] == "emergency-stop":
-        cc.emergency_stop()
+        cc.start_services()
+    elif sys.argv[1] == "start":
+        cc.start_vm()
+    elif sys.argv[1] == "stop":
+        cc.stop_vm()
+    elif sys.argv[1] == "open-wireshark":
+        cc.open_wireshark()
     elif sys.argv[1] == "add-shared-folder":
         cc.add_shared_folder(sys.argv[2], sys.argv[3])
     elif sys.argv[1] == "run":
