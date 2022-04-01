@@ -1,5 +1,7 @@
 import os
+import subprocess
 import sys
+import platform
 
 
 '''
@@ -15,6 +17,8 @@ class CaptureController:
 
     def __init__(self):
         pass
+
+
 
     def startScenario(self):
         '''
@@ -125,6 +129,9 @@ class CaptureController:
             restoreScenario()
         elif sys.argv[1] == "emergency-stop":
             emergency_stop()
+        elif sys.argv[1] == "wireshark":
+            print("wiresharkerino")
+            open_wireshark(sys.argv[2])
         elif sys.argv[1] == "add-shared-folder":
             add_shared_folder(sys.argv[2], sys.argv[3])
         elif sys.argv[1] == "run":
@@ -143,3 +150,8 @@ class CaptureController:
             """)
         else:
             print("Command not recognized, please use -h or --help for help")
+
+
+def open_wireshark(path):
+
+    subprocess.Popen('wireshark -r' + path)

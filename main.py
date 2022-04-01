@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 from pymongo import MongoClient
 
+import captureController
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
 from views.mainWindow import Ui_MainWindow
@@ -401,7 +402,7 @@ mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
 mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
 mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
 mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
-
+#mainWindowUI.wiresharkButton_mainWindow.clicked(captureController.open_wireshark("C:\\Users\\Luis\\Downloads\\200722_tcp_anon.pcapng"))
 newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
 newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
 
