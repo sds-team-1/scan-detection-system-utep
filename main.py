@@ -5,52 +5,58 @@ import json
 
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
-from pymongo import MongoClient
 
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
+from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
 from views.mainWindow import Ui_MainWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.workspace import Ui_workspace_window
-
+from Controllers.SDSController import SDSController
+from Controllers.AnalysisManager import SDSAnalysisManager
+from captureController import CaptureController
+from Database.DatabaseHelper import SDSDatabaseHelper
 
 class Workspace:
-    def __init__(self, name, location, projects):
+    def __init__(self, name: str = '', projects: list = []):
         self.name = name
-        self.location = location
         self.projects = projects
 
 
 class Project:
-    def __init__(self, name, location, max_units, scenarios):
+    def __init__(self, name: str, max_units: int, scenarios: list = []):
         self.name = name
-        self.location = location
         self.max_units = max_units
         self.scenarios = scenarios
 
 
 class Scenario:
-    def __init__(self, name, location, nodes):
+    def __init__(self, id, name, networks: list, devices: list, links: list):
+        self.id = id
         self.name = name
-        self.location = location
-        self.nodes = nodes
+        self.networks = networks
+        self.devices = devices
+        self.links = links
 
 
 class Node:
-    def __init__(self, listening, node_type, name, IP, port, MAC, scanner):
+    def __init__(self, id: int, listening: bool, node_type: str, name: str,
+    IP: str, port: int, MAC: str, network: int):
+        self.id = id
         self.listening = listening
         self.type = node_type
         self.name = name
         self.IP = IP
         self.port = port
         self.MAC = MAC
-        self.scanner = scanner
+        self.network = network
 
 
 class ScannerNode:
-    def __init__(self, us_pas, scanner_binary, arguments, iterations, max_parallel_runs, end_condition):
+    def __init__(self, id, us_pas, scanner_binary, arguments, iterations, max_parallel_runs, end_condition):
+        self.id = id
         self.us_pas = us_pas
         self.scanner_binary = scanner_binary
         self.arguments = arguments
@@ -58,13 +64,6 @@ class ScannerNode:
         self.max_parallel_runs = max_parallel_runs
         self.end_condition = end_condition
 
-
-client = MongoClient("mongodb://localhost:27017/")
-
-dbs = client.list_database_names()
-
-SDS_DB = client['SDS_DB']
-workspaces_DB = SDS_DB['workspaces']
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -75,6 +74,7 @@ newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
 missingFields_Window = QtWidgets.QDialog()
 newScenarioUnit_Window = QtWidgets.QDialog()
+deleteConfirmation_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
@@ -83,86 +83,45 @@ newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
 missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
+deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 
-workspaceUI.setupWorkspaceUI(workspace_Window)
-createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-mainWindowUI.setupMainWindowUI(mainWindow_Window)
-newProjectWindowUI.setupNewProject(newProject_Window)
-addNodeWindowUI.setupAddNode(addNode_Window)
-missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-
-workspace_path = ''
-workspace_name = ''
-workspace_object = Workspace('', '', [])
-
-if 'SDS_DB' not in dbs:
-    workspace = {'_id': 0, 'Name': '', 'Location': '', 'Projects': []}
-    workspaces_DB.insert_one(workspace)
-
-else:
-    query = workspaces_DB.find_one()
-    if query['Name'] != '':
-        for query in workspaces_DB.find():
-            l1 = QtWidgets.QTreeWidgetItem([query['Name']])
-            l1_child = QTreeWidgetItem([query['Location']])
-            l1_child.setFlags(l1_child.flags() & ~QtCore.Qt.ItemIsSelectable)
-            l1.addChild(l1_child)
-            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+workspace_object: Workspace = Workspace() 
+current_workspace_name = workspace_object.name
+current_project_name = ''
 
 
 def createWorkspaceWindow():
+    sds_controller.start_new_workplace()
     createWorkspace_Window.show()
 
 
 def createWorkspace():
-    global workspace_name, workspace_path, workspace_object
-
-    if createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text() == '' \
-            or createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text() == '':
-
+    # Get workspace name
+    ws_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
+    # Check if valid input
+    if not ws_name:
         missingFields_Window.show()
-
     else:
-        first_query = workspaces_DB.find_one()
-
-        if first_query['Name'] == '':
-            new_query = {'$set': {'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                                  'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text()}}
-            workspaces_DB.update_one(first_query, new_query)
-
-            workspace_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-
+        # Insert into controller of new workspace. 
+        sds_controller.specify_workplace_name(ws_name)
+        workspace_injection_success: bool = sds_controller.finish_workplace_construction()
+        #TODO: Based on the success, insert another window if error
+        if not workspace_injection_success:
+            pass
         else:
-            current_id = workspaces_DB.find().sort('_id', -1).limit(1)
-            for doc in current_id:
-                current_id = doc['_id']
-
-            new_query = {'_id': int(current_id + 1),
-                         'Name': createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text(),
-                         'Location': createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.text(),
-                         'Projects': []}
-
-            workspaces_DB.insert_one(new_query)
-
-        os.makedirs(os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()))
-
-        workspace_path = os.path.join(workspace_path, createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text())
-
-        workspace_object.name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-        workspace_object.location = workspace_path
-        workspace_object.projects = []
-
-        mainWindow_Window.show()
-        createWorkspace_Window.close()
-        workspace_Window.close()
+            workspace_object.name = ws_name
+            mainWindow_Window.show()
+            createWorkspace_Window.close()
+            workspace_Window.close()
 
 
 def createProjectWindow():
+    sds_controller.start_new_project_phase()
     newProject_Window.show()
 
 
 def newScenarioUnitWindow():
+    sds_controller.add_scenario_unit()
     newScenarioUnit_Window.show()
 
 
@@ -170,60 +129,91 @@ def addNodeWindow():
     addNode_Window.show()
 
 
+def deleteConfirmationWindow():
+    deleteConfirmation_Window.show()
+
+
 def createProject():
-    global workspace_name, workspace_path
+    project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
+    project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
-    if newProjectWindowUI.newProjectNameInput_newProjectWindow.text() == '' \
-            or newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value() == 0:
-
+    # If the input is incorrect show the missing fields window
+    if not project_name or project_parallel is 0:
         missingFields_Window.show()
-
-
+    #Otherwise save the project
     else:
+        p = QtWidgets.QTreeWidgetItem([project_name])
 
-        p = QtWidgets.QTreeWidgetItem([newProjectWindowUI.newProjectNameInput_newProjectWindow.text()])
-        value = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
-        #scenarios = {}
+        # Store the context of the project inside of this program
+        project_object: Project = Project(project_name, project_parallel)
+        workspace_object.projects.append(project_object)        
 
-        project_object = Project('', '', 0, [])
+        # Use the sds controller to save the project
+        sds_controller.specify_project_name(project_object.name)
+        sds_controller.specify_num_parrallel_units(project_object.max_units)
+        success = sds_controller.finish_project_construction()
 
-        project_object.name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
+        if not success:
+            #TODO: Add a warning message
+            pass
+        else:
+            # Adds the TreeWidgetItem to the project list
+            mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
-        project_path = os.path.join(workspace_path, newProjectWindowUI.newProjectNameInput_newProjectWindow.text())
+            # Resets the values for the window
+            newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
+            newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
+            newProject_Window.close()
 
-        project_object.location = project_path
 
-        project_object.max_units = value
+def createScenario():
+    scenario_name = newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()
+    if not scenario_name:
+        missingFields_Window.show()
+    else:
+        sds_controller.insert_scenario_name(scenario_name)
+        success = sds_controller.finish_scenario_unit_construction()
+        if not success:
+            #TODO: Display error
+            pass
+        else:
+            # TODO: Get project name.
+            s = QTreeWidgetItem([scenario_name])
+            p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
+            p.addChild(s)
+            newScenarioUnit_Window.close()
 
-        #for i in range(0, value):
-         #   scenario = QTreeWidgetItem(['Scenario ' + str(i + 1)])
-          #  scenarios['Scenario ' + str(i + 1)] = ''
-           # p.addChild(scenario)
-            #scenario_object = Scenario('', '', '')
-            #scenario_object.name = 'Scenario ' + str(i + 1)
-            #scenario_object.location = os.path.join(project_object.location, 'Scenario ' + str(i + 1))
-            #scenario_object.nodes = ''
-            #project_object.scenarios.append(scenario_object)
 
-        mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+def edit_project(selected_project):
+    pass
 
-       # project = [newProjectWindowUI.newProjectNameInput_newProjectWindow.text(), scenarios]
 
-        workspace_object.projects.append(project_object)
+def delete_project(selected_project):
+    pass
 
-        #for q in workspaces_DB.find():
-          #  if q['Name'] == workspace_name:
-         #       workspaces_DB.update_one({'Projects': q['Projects']},
-           #                              {'$push': {'Projects': project}})
 
-        newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
-        newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
+def load_scenario_unit():
+    pass
 
-        newProject_Window.close()
 
+def edit_scenario_unit(selected_scenario_unit):
+    pass
+
+
+def delete_scenario_unit(selected_scenario_unit):
+    pass
+
+
+def edit_node(selected_node):
+    pass
+
+
+def delete_node(selected_node):
+    pass
 
 
 def addNode():
+    #TODO: Implement this
     addNode_Window.close()
 
 
@@ -241,6 +231,7 @@ def item_project_selected():
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
 
 
+#TODO: Work on this to work with the controller
 def save_workspace():
     for project in workspace_object.projects:
         os.makedirs(os.path.join(workspace_object.location,
@@ -251,26 +242,25 @@ def save_workspace():
                                      scenario.name))
 
 
+#TODO: Fix this to work with controller.
 def export_project():
     scenarios = {}
     project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
     project_path = ''
+    #FIXME: workspace_object reference
     projects = workspace_object.projects
     for project in projects:
         if project.name == project_name:
-
             project_path = project.location
             for scenario in project.scenarios:
                 scenarios[scenario.name] = ''
-
     json_project = [project_name, scenarios]
-
     json_string = json.dumps(json_project)
-
     with open(project_path + '.json', 'w') as outfile:
         outfile.write(json_string)
 
 
+#TODO: Fix this to work with the controller.
 def import_project():
     dialog = QFileDialog()
     json_path = dialog.getOpenFileName(mainWindow_Window, 'Select JSON File')
@@ -289,33 +279,58 @@ def addNodeCheckboxStateChanged():
 
 
 def open_workspace(selected_workspace):
-    global workspace_name
     time.sleep(1)
-    workspace_name = selected_workspace
     mainWindow_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
     mainWindow_Window.show()
     workspace_Window.close()
+    #Get all project names related to workspace
+    project_names = sds_controller.list_all_projects(selected_workspace)
+    for project_name in project_names:
+        # Make TreeWidgetItem
+        print(project_name)
+        project_tree_item = QTreeWidgetItem([project_name])
+        # Get all scenarios related to workspace and project
+        scenario_names = sds_controller.list_all_scenario_units(selected_workspace, project_name)
+        for scenario_name in scenario_names:
+            # Make TreeWidgetItem
+            scenario_tree = QTreeWidgetItem([scenario_name])
+            # Add scenario tree to project tree
+            project_tree_item.addChild(scenario_tree)
+        mainWindowUI.projectsList_mainWindow.addTopLevelItem(project_tree_item)
 
-    for q in workspaces_DB.find():
-        if q['Name'] == workspace_name:
-            for p in q['Projects']:
-                projectName = QtWidgets.QTreeWidgetItem([p[0]])
-                for k, v in p[1].items():
-                    scenarioName = QTreeWidgetItem([k])
-                    projectName.addChild(scenarioName)
-                    mainWindowUI.projectsList_mainWindow.addTopLevelItem(projectName)
+#TODO: Implement this
+def edit_workspace(selected_workspace):
+    pass
+
+#TODO: Implement this
+def delete_workspace(selected_workspace):
+    pass
+
+#TODO: Check this call chain
+def set_up_scenario_unit():
+    sds_controller.set_up_scenario_units()
+
+#TODO: Check this call chain
+def start_scenario_unit():
+    sds_controller.run_scenario_units()
+
+#TODO: Check this call chain
+def stop_scenario_unit():
+    sds_controller.stop()
+
+#TODO: Check this call chain
+def restore_scenario_unit():
+    sds_controller.restore()
 
 
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
-
     if not index.isValid() or index.parent().isValid():
         return
-
     item = workspaceUI.workspacesList_workspaceWindow.itemAt(point)
     name = item.text(0)
-
     menu = QtWidgets.QMenu()
+
     action_open_workspace = QAction("Open Workspace")
     action_edit_workspace = QAction("Edit Workspace")
     action_delete_workspace = QAction("Delete Workspace")
@@ -325,6 +340,8 @@ def context_menu_workspace(point):
     menu.addAction(action_delete_workspace)
 
     action_open_workspace.triggered.connect(lambda: open_workspace(name))
+    action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+    action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
 
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
 
@@ -342,6 +359,9 @@ def context_menu_project(point):
 
         menu.addAction(action_edit_scenario_unit)
         menu.addAction(action_delete_scenario_unit)
+
+        action_edit_scenario_unit.triggered.connect(lambda: edit_scenario_unit(name))
+        action_delete_scenario_unit.triggered.connect(lambda: delete_scenario_unit(name))
 
         menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
 
@@ -363,38 +383,133 @@ def context_menu_project(point):
         menu.addAction(action_delete_project)
 
         action_add_scenario.triggered.connect(newScenarioUnitWindow)
+        action_load_scenario.triggered.connect(load_scenario_unit)
+        action_edit_project.triggered.connect(lambda: edit_project(name))
+        action_delete_project.triggered.connect(lambda: delete_project(name))
 
         menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
 
         return
 
 
-workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
-workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+def context_menu_node(point):
+    index = mainWindowUI.nodesList_mainWindow.indexAt(point)
 
-createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+    if not index.isValid() or index.parent().isValid():
+        item = mainWindowUI.nodesList_mainWindow.itemAt(point)
+        name = item.text(0)
 
-mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
-mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
-mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
-mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
-mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
-mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
-mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
+        menu = QtWidgets.QMenu()
+        action_edit_node = QAction("Edit Node")
+        action_delete_node = QAction("Delete Node")
 
-newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+        menu.addAction(action_edit_node)
+        menu.addAction(action_delete_node)
 
-addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+        action_edit_node.triggered.connect(lambda: edit_node(name))
+        action_delete_node.triggered.connect(lambda: delete_node(name))
 
-addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+        menu.exec_(mainWindowUI.nodesList_mainWindow.mapToGlobal(point))
 
-missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+        return
+
+    # if not index.isValid() or not index.parent().isValid():
+    # item = mainWindowUI.projectsList_mainWindow.itemAt(point)
+    # name = item.text(0)
+
+    # menu = QtWidgets.QMenu()
+    # action_add_scenario = QAction("Add Scenario Unit")
+    # action_load_scenario = QAction("Load Scenario Unit")
+    # action_edit_project = QAction("Edit Project")
+    # action_delete_project = QAction("Delete Project")
+
+    # menu.addAction(action_add_scenario)
+    # menu.addAction(action_load_scenario)
+    # menu.addAction(action_edit_project)
+    # menu.addAction(action_delete_project)
+
+    # action_add_scenario.triggered.connect(newScenarioUnitWindow)
+
+    # menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
+
+    # return
+
+
+def delete_selection():
+    pass
+
+
+def setup_ui():
+    workspaceUI.setupWorkspaceUI(workspace_Window)
+    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
+    mainWindowUI.setupMainWindowUI(mainWindow_Window)
+    newProjectWindowUI.setupNewProject(newProject_Window)
+    addNodeWindowUI.setupAddNode(addNode_Window)
+    missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+
+
+def initialize_signals():
+    workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+    workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+
+    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
+    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
+    createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
+
+    mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
+    mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
+    mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
+    mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
+    mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
+    mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
+    mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
+    mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
+    mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
+    mainWindowUI.setupScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
+    mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
+    mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
+
+    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
+
+    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
+    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(newScenarioUnit_Window.close)
+
+    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+
+    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+
+    missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
+
+    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        delete_selection)
+    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        deleteConfirmation_Window.close)
+
+def generate_workspaces_list_window():
+    workspaces_c = sds_controller.list_all_workplaces()
+    if workspaces_c:
+        for workspace_c in workspaces_c:
+            l1 = QtWidgets.QTreeWidgetItem([workspace_c])
+            workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
+setup_ui()
+
+initialize_signals()
+
+sds_controller = SDSController()
+sds_controller.add_capture_manager(CaptureController())
+sds_controller.add_mongo_connection(SDSDatabaseHelper())
+sds_controller.add_analysis_manager(SDSAnalysisManager())
+
+#sds controller implementation for filling workspaces
+generate_workspaces_list_window()
 
 workspace_Window.show()
 
