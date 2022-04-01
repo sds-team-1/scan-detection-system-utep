@@ -35,6 +35,24 @@ class CaptureController:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/example_topology.xml")
 
     def run_core_start_services(self):
+        '''
+        Starts services on the VM
+        This method also deletes everything in the PCAPs directory
+        If it doesnt exists it will create it
+        '''
+        
+        # Check if PCAPs folder exists, if not create it, if it does, delete everything in it
+        if not os.path.exists("PCAPs"):
+            os.makedirs("PCAPs")
+        else:
+            for the_file in os.listdir("PCAPs"):
+                file_path = os.path.join("PCAPs", the_file)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(e)
+
         self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
 
 
