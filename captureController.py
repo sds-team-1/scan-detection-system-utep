@@ -12,8 +12,8 @@ class CaptureController:
     def __init__(self):
         self.state = "stopped"
         self.vm_name = "LuisVM"
-        self.vm_username = 'ubuntu'
-        self.vm_password = 'ubuntu'
+        self.vm_username = "ubuntu"
+        self.vm_password = "ubuntu"
         pass
 
     def startScenario(self):
@@ -42,7 +42,7 @@ class CaptureController:
 
     def run_command(self, command, args=""):
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
-        os.system(f"VBoxManage guestcontrol \"{self.vm_name}\" --username \"{self.vm_name}\" --password \"{self.vm_password}\" run \"{command}\" {args}")
+        os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
 
     def run_scenario(self, xml_as_string : string):
         '''
