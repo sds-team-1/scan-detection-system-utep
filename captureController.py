@@ -2,6 +2,15 @@ import os
 import string
 import sys
 
+'''
+Temp notes
+To run core cleanup
+python3 captureController.py run "bin/sh" "/home/ubuntu/core/Files/CoreCleanup.sh"
+To run core start
+python3 captureController.py run "bin/sh" "/home/ubuntu/core/Files/CoreStart.sh"
+To run services
+python3 captureController.py run "bin/sh" "/home/ubuntu/core/Files/StartServices.sh"
+'''
 
 '''
 TODO: Use enums to keep track of capture controller
@@ -30,14 +39,17 @@ class CaptureController:
         os.system(f"VBoxManage guestcontrol \"{self.vm_name}\" run --username \"{self.vm_name}\" --password \"{self.vm_password}\" bash ~/core/Files/StartServices")
 
 
-    def cleanup(self):
+    def run_core_cleanup(self):
         '''
-        Runs the 'core-cleanup' command on the VM
-        and the
-        'rm -r ~/core/Files/Captures/*' command on the VM
+        Runs CoreCleanup
         '''
-        os.system(f"VBoxManage guestcontrol \"{self.vm_name}\" run --username \"{self.vm_name}\" --password \"{self.vm_password}\" core-cleanup")
-        os.system(f"VBoxManage guestcontrol run --username \"{self.vm_name}\" --password \"{self.vm_password}\" rm -r ~/core/Files/Captures/*")
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
+    
+    def run_scenario_start(self):
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/topology.xml")
+
+    def run_core_start_services(self):
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
 
 
     def run_command(self, command, args=""):
@@ -134,14 +146,18 @@ if __name__ == "__main__":
         print("Please provide a command, use -h for help")
     elif sys.argv[1] == "start":
         cc.startVM()
+    elif sys.argv[1] == "scenario-start":
+        cc.run_scenario_start()
+    elif sys.argv[1] == "core-cleanup":
+        cc.run_core_cleanup()
+    elif sys.argv[1] == "start-services":
+        cc.run_core_start_services()
     elif sys.argv[1] == "run-xml-test":
         cc.run_scenario_example()
     elif sys.argv[1] == "start-headless":
         cc.startVMHeadless()
     elif sys.argv[1] == "start-scenario":
         cc.startScenario()
-    elif sys.argv[1] == "start-service":
-        cc.startService()
     elif sys.argv[1] == "cleanup":
         cc.cleanup()
     elif sys.argv[1] == "restore":
