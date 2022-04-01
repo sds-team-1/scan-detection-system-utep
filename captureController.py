@@ -25,20 +25,6 @@ class CaptureController:
         self.vm_password = "ubuntu"
         pass
 
-    def startScenario(self):
-        '''
-        Runs the 'run bash ~/core/Files/CoreStart' this should cause a merge conflict
-        '''
-        os.system(f"VBoxManage guestcontrol run --username \"{self.vm_name}\" --password \"{self.vm_password}\" bash ~/core/Files/CoreStart")
-
-
-    def startService(self):
-        '''
-        Runs the 'run bash ~/core/Files/StartServices' command on the VM
-        '''
-        os.system(f"VBoxManage guestcontrol \"{self.vm_name}\" run --username \"{self.vm_name}\" --password \"{self.vm_password}\" bash ~/core/Files/StartServices")
-
-
     def run_core_cleanup(self):
         '''
         Runs CoreCleanup
@@ -49,7 +35,7 @@ class CaptureController:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/example_topology.xml")
 
     def run_core_start_services(self):
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
 
 
     def run_command(self, command, args=""):
