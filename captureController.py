@@ -24,6 +24,7 @@ class CaptureController:
         self.vm_name = "LuisVM"
         self.vm_username = "ubuntu"
         self.vm_password = "ubuntu"
+        self.vm_initial_string_command = f"VBoxManage guestcontrol \"{self.vm_name}\" --username \"{self.vm_username}\" --password \"{self.vm_password}\" "
         pass
 
     def run_command(self, command, args=""):
@@ -113,6 +114,22 @@ class CaptureController:
         # VBoxManage controlvm <vm> reset
         os.system(f"VBoxManage controlvm \"{self.vm_name}\" reset")
 
+    def copy_to(self, host_file_path, guest_path):
+        '''
+        Copies the file given in host_file path
+        and copies it to the guest path
+        '''
+        command = self.vm_initial_string_command + f"copyto --target-directory {guest_path} {host_file_path}"
+        os.system(command)
+
+    def copy_from(self, host_path, guest_file_path):
+        '''
+        Copies the file given in host_file path
+        and copies it to the guest path
+        '''
+        command = self.vm_initial_string_command + f"copyfrom --target-directory {host_path} {guest_file_path}"
+        os.system(command)
+
 
 
 
@@ -146,6 +163,8 @@ if __name__ == "__main__":
         cc.shutdown_vm()
     elif sys.argv[1] == "restart-vm":
         cc.restart_vm()
+    elif sys.argv[1] == "copy-to":
+        cc.copy_to("/Users/erikmtz/Documents/GitProjects/scan-detection-system-utep/test.txt", "/home/ubuntu/core/Files/")
     elif sys.argv[1] == "run":
         print("Attempting to run command: " + sys.argv[2])
         if len(sys.argv) == 3:
