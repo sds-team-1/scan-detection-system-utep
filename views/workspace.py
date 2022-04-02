@@ -52,6 +52,11 @@ class Ui_workspace_window(object):
         self.createWorkspaceButton_workspaceWindow = QtWidgets.QPushButton(workspace_window)
         self.createWorkspaceButton_workspaceWindow.setObjectName("createWorkspaceButton_workspaceWindow")
         self.createWorkspaceLayout_workspaceWindow.addWidget(self.createWorkspaceButton_workspaceWindow)
+
+        self.analysisManagerButton_workspaceWindow = QtWidgets.QPushButton(workspace_window)
+        self.analysisManagerButton_workspaceWindow.setObjectName("analysisManagerButton_workspaceWindow")
+        self.createWorkspaceLayout_workspaceWindow.addWidget(self.analysisManagerButton_workspaceWindow)
+
         self.mainLayout_workspaceWindow.addLayout(self.createWorkspaceLayout_workspaceWindow)
         self.gridLayout.addLayout(self.mainLayout_workspaceWindow, 0, 0, 1, 1)
 
@@ -67,4 +72,5 @@ class Ui_workspace_window(object):
         self.SDSLabel_workspaceWindow.setText(_translate("workspace_window", "Scan Detection System"))
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
         self.createWorkspaceButton_workspaceWindow.setText(_translate("workspace_window", "Create New Workspace"))
+        self.analysisManagerButton_workspaceWindow.setText(_translate("workspace_window", "Analysis Manager"))
 
