@@ -6,3 +6,4 @@ from Database import DatabaseHelper
 
 database = DatabaseHelper.SDSDatabaseHelper()
 
+print('database variable ready')

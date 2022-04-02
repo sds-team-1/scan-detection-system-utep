@@ -35,15 +35,15 @@ class SDSController:
         self._project_construction: dict = {}
         self._scenario_unit_construction: dict = {}
 
-    def add_capture_manager(self, capture_manager):
+    def add_capture_manager(self, capture_manager: CaptureController):
         if self._cap_manager == None:
             self._cap_manager = capture_manager
 
-    def add_analysis_manager(self, analysis_manager):
+    def add_analysis_manager(self, analysis_manager: SDSAnalysisManager):
         if self._a_manager == None:
             self._a_manager = analysis_manager
     
-    def add_mongo_connection(self, connection):
+    def add_mongo_connection(self, connection: SDSDatabaseHelper):
         if self._db_connection == None:
             self._db_connection = connection
 
