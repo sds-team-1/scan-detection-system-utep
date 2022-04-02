@@ -55,9 +55,11 @@ class Node:
         self.network = network
 
 
-class ScannerNode:
-    def __init__(self, id, us_pas, scanner_binary, arguments, iterations, max_parallel_runs, end_condition):
-        self.id = id
+class ScannerNode(Node):
+    def __init__(self, id: int, listening: bool, node_type: str, name: str, IP: str, \
+        port: int, MAC: str, network: int, us_pas, scanner_binary, arguments, \
+            iterations, max_parallel_runs, end_condition):
+        super().__init__(id, listening, node_type, name, IP, port, MAC, network)
         self.us_pas = us_pas
         self.scanner_binary = scanner_binary
         self.arguments = arguments
