@@ -145,11 +145,8 @@ def createProject():
     # Otherwise save the project
     else:
         p = QtWidgets.QTreeWidgetItem([project_name])
-
-        # Store the context of the project inside of this program
-        project_object: Project = Project(project_name, project_parallel)
-        workspace_object.projects.append(project_object)
-
+        #print('creating project')
+        #print(project_name)
         # Use the sds controller to save the project
         sds_controller._enfore_state('workplace_construction')
         #print('createproject showing currentworksspacename')
