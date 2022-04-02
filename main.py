@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
+from views.databaseConfigWindow import Ui_databaseConfig_window
+from views.databaseErrorWindow import Ui_databaseError_window
 from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
 from views.mainWindow import Ui_MainWindow
 from views.missingFieldsWindow import Ui_missingFields_window
@@ -78,6 +80,8 @@ addNode_Window = QtWidgets.QDialog()
 missingFields_Window = QtWidgets.QDialog()
 newScenarioUnit_Window = QtWidgets.QDialog()
 deleteConfirmation_Window = QtWidgets.QDialog()
+databaseConfig_Window = QtWidgets.QDialog()
+databaseError_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
@@ -87,6 +91,8 @@ addNodeWindowUI = Ui_addNode_window()
 missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
+databaseConfigWindowUI = Ui_databaseConfig_window()
+databaseErrorWindowUI = Ui_databaseError_window()
 
 workspace_object: Workspace = Workspace()
 current_workspace_name = workspace_object.name
@@ -96,6 +102,22 @@ current_project_name = ''
 def createWorkspaceWindow():
     sds_controller.start_new_workplace()
     createWorkspace_Window.show()
+
+
+def databaseConfigWindow():
+    databaseConfig_Window.show()
+
+
+# TODO: Implement connecting to the database. IP already obtained when clicked connect.
+def connect_database():
+    database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
+    print(database_ip)
+    # If success -> close window
+    databaseConfig_Window.close()
+
+    # TODO: When error occurs, use this commented line:
+    #databaseError_Window.show()
+
 
 
 def createWorkspace():
@@ -475,10 +497,15 @@ def setup_ui():
     missingFieldsWindowUI.setupMissingFields(missingFields_Window)
     newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
     deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
+    databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
 
 def initialize_signals():
     workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+    workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
+    #workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
+    #workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 
@@ -525,6 +552,11 @@ def initialize_signals():
     deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
         deleteConfirmation_Window.close)
 
+    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
+    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+        databaseConfig_Window.close)
+
+    databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
 def generate_workspaces_list_window():
     workspaces_c = sds_controller.list_all_workplaces()
