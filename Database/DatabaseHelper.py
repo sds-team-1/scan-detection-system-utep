@@ -110,25 +110,15 @@ class SDSDatabaseHelper:
         scenario_objid: str = ''
         try:
             #Replace subdata w/ arrays for inserting to db
-            networks = data['networks']
-            data['networks'] = []
-            devices = data['devices']
-            data['devices'] = []
-            links = data['links']
-            data['links'] = []
+            nodes = data['nodes']
+            data['nodes'] = []
 
             #Saves the scenario and retrieves the id
             scenario_objid = collection.insert_one(data).inserted_id
 
-            network_keys = networks.keys()
-            for k in network_keys:
-                self.create_network(scenario_objid, networks[k])
-            device_keys = devices.keys()
-            for k in device_keys:
-                self.create_device(scenario_objid, devices[k])
-            link_keys = links.keys()
-            for k in link_keys:
-                self.create_link(scenario_objid, links[k])
+            node_keys = nodes.keys()
+            for n in node_keys:
+                self.create_node(scenario_objid, nodes[n])
         except:
             print('ERROR:DatabaseHelper -> Duplicate Key. Scenario ID already exists')
             return ''
@@ -152,9 +142,6 @@ class SDSDatabaseHelper:
         data = collection.find_one({'_id': o})
         return data if data else {}
 
-
-        
-        
     def save_scenario_unit(self, scenario_id: str, data: dict) -> bool:
         client = MongoClient(self.url)
         db = client.SDS
@@ -165,38 +152,6 @@ class SDSDatabaseHelper:
         except: 
             return False
 
-    def create_network(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def retrieve_network(self, network_id: str, data: dict) -> dict:
-        #TODO: Make this
-        pass
-
-    def save_network(self, network_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def create_device(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def retrieve_device(self, device_id: str) -> dict:
-        #TODO: make this
-        pass
-
-    def save_device(self, device_id: str, new_data: dict) -> dict:
-        #TODO: make this
-        pass
-
-    def create_link(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def retrieve_link(self, device_id: str) -> dict:
-        #TODO: make this
-        pass
-
-    def save_link(self, device_id: str, new_data: dict) -> dict:
-        #TODO: make this
+    #TODO: Implement this
+    def create_node(self, scenario_object_id, node_data: dict):
         pass
