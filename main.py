@@ -576,7 +576,6 @@ def set_up_database_connection():
         ip = database_ip_dict['ip']
         port = database_ip_dict['port']
         ip_port = f'{ip}:{port}'
-    # For future context that db doesn't connect
     try:
         db = SDSDatabaseHelper(ip_port)
         return (SDSDatabaseHelper(ip_port), True)
@@ -589,23 +588,22 @@ initialize_signals()
 
 sds_controller = None
 
-#First check the mongodb connection
-mongo_connection, db_connection_success = set_up_database_connection()
+def assert_database_connection():
+    global sds_controller, mongo_connection
+    mongo_connection, db_connection_success = set_up_database_connection()
 
-if db_connection_success:
-    sds_controller = SDSController()
-    sds_controller.add_mongo_connection(mongo_connection)
-    sds_controller.add_capture_manager(CaptureController())
-    sds_controller.add_analysis_manager(SDSAnalysisManager())
-    # sds controller implementation for filling workspaces
-    generate_workspaces_list_window()
+    if db_connection_success:
+        sds_controller = SDSController()
+        sds_controller.add_mongo_connection(mongo_connection)
+        sds_controller.add_capture_manager(CaptureController())
+        sds_controller.add_analysis_manager(SDSAnalysisManager())
+        # sds controller implementation for filling workspaces
+        generate_workspaces_list_window()
+        workspace_Window.show()
+    else:
+        workspace_Window.show()
+        databaseError_Window.show()
 
-else:
-    print(f'enters else fail db_connection_success')
-    databaseConfigWindow()
-    databaseError_Window.show()
-    pass
-
-workspace_Window.show()
+assert_database_connection()
 
 sys.exit(app.exec_())
