@@ -196,9 +196,7 @@ def createProject():
 
 
 def createScenario():
-    print('main.createScenario called')
     scenario_name = newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()
-    print(f'scenario name is {scenario_name}')
     if not scenario_name:
         missingFields_Window.show()
     else:
@@ -207,10 +205,8 @@ def createScenario():
         sds_controller.insert_scenario_name(scenario_name)
         # TODO: This causes an error when creating a scenario.
         project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
-        print(f'project_name = {project_name}')
         # TODO: INSERT ITERATIONS HERE
         su_iterations = mainWindowUI.scenarioIterationsSpinbox_mainWindow.value()
-        print(f'main.su units is {su_iterations}')
         success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
         if not success:
             # TODO: Display error
@@ -573,18 +569,37 @@ def generate_workspaces_list_window():
             l1 = QtWidgets.QTreeWidgetItem([workspace_c])
             workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
 
+def set_up_database_connection():
+    database_ip_dict: dict = {}
+    ip_port = ''
+    with open('conf/db_config.json') as mongo_ip_file:
+        database_ip_dict = json.load(mongo_ip_file)
+        ip = database_ip_dict['ip']
+        port = database_ip_dict['port']
+        ip_port = f'{ip}:{port}'
+    # For future context that db doesn't connect
+    try:
+        db = SDSDatabaseHelper(ip_port)
+        return (SDSDatabaseHelper(ip_port), True)
+    except:
+        return (None, False)
 
 setup_ui()
 
 initialize_signals()
 
-sds_controller = SDSController()
-sds_controller.add_capture_manager(CaptureController())
-sds_controller.add_mongo_connection(SDSDatabaseHelper())
-sds_controller.add_analysis_manager(SDSAnalysisManager())
+sds_controller = None
 
-# sds controller implementation for filling workspaces
-generate_workspaces_list_window()
+#First check the mongodb connection
+mongo_connection, db_connection_success = set_up_database_connection()
+
+if db_connection_success:
+    sds_controller = SDSController()
+    sds_controller.add_mongo_connection(mongo_connection)
+    sds_controller.add_capture_manager(CaptureController())
+    sds_controller.add_analysis_manager(SDSAnalysisManager())
+    # sds controller implementation for filling workspaces
+    generate_workspaces_list_window()
 
 workspace_Window.show()
 
