@@ -116,9 +116,11 @@ class SDSDatabaseHelper:
             #Saves the scenario and retrieves the id
             scenario_objid = collection.insert_one(data).inserted_id
 
+            #Insert all the keys if there 
             node_keys = nodes.keys()
             for n in node_keys:
-                self.create_node(scenario_objid, nodes[n])
+                # Create the node
+                node_db_insertion_id = self.create_node(scenario_objid, nodes[n])
         except:
             print('ERROR:DatabaseHelper -> Duplicate Key. Scenario ID already exists')
             return ''
@@ -152,6 +154,18 @@ class SDSDatabaseHelper:
         except: 
             return False
 
-    #TODO: Implement this
-    def create_node(self, scenario_object_id, node_data: dict):
-        pass
+    #TODO: Test this
+    def create_node(self, scenario_object_id, node_data: dict) -> bool:
+        # Insert the node to the database
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['nodes']
+        result = False
+        try:
+            node_obj_id = collection.insert_one(node_data).inserted_id
+            query = {'_id': scenario_object_id}
+            update = {'nodes': node_obj_id}
+            result = collection.update_one(query, {'$set': update})
+        except:
+            print('Error: Database Helper could not insert the node')
+        return True if result.matched_count else False
