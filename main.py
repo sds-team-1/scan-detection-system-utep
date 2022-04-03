@@ -601,6 +601,12 @@ if db_connection_success:
     # sds controller implementation for filling workspaces
     generate_workspaces_list_window()
 
+else:
+    print(f'enters else fail db_connection_success')
+    databaseConfigWindow()
+    databaseError_Window.show()
+    pass
+
 workspace_Window.show()
 
 sys.exit(app.exec_())
