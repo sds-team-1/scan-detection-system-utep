@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>databaseConfig_window</class>
+ <widget class="QWidget" name="databaseConfig_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>135</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>513</width>
+    <height>135</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>513</width>
+    <height>135</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Database Configuration</string>
+  </property>
+  <layout class="QGridLayout" name="DatabaseConfigWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="mainLayout_databaseConfigWindow">
+     <item>
+      <layout class="QHBoxLayout" name="databaseConfigIPLayout_databaseConfigWindow">
+       <item>
+        <widget class="QLabel" name="databaseConfigIPLabel_databaseConfigWindow">
+         <property name="text">
+          <string>Database IP Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="databaseConfigIPInput_databaseConfigWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="databaseConfigIPButtonsLayout_databaseConfigWindow">
+       <item>
+        <widget class="QPushButton" name="databaseConfigIPConnectButton_databaseConfigWindow">
+         <property name="text">
+          <string>Connect</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="databaseConfigIPCancelButton_databaseConfigWindow">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

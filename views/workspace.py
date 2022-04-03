@@ -57,6 +57,10 @@ class Ui_workspace_window(object):
         self.analysisManagerButton_workspaceWindow.setObjectName("analysisManagerButton_workspaceWindow")
         self.createWorkspaceLayout_workspaceWindow.addWidget(self.analysisManagerButton_workspaceWindow)
 
+        self.dbConfigButton_workspaceWindow = QtWidgets.QPushButton(workspace_window)
+        self.dbConfigButton_workspaceWindow.setObjectName("dbConfigButton_workspaceWindow")
+        self.createWorkspaceLayout_workspaceWindow.addWidget(self.dbConfigButton_workspaceWindow)
+
         self.mainLayout_workspaceWindow.addLayout(self.createWorkspaceLayout_workspaceWindow)
         self.gridLayout.addLayout(self.mainLayout_workspaceWindow, 0, 0, 1, 1)
 
@@ -73,4 +77,5 @@ class Ui_workspace_window(object):
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
         self.createWorkspaceButton_workspaceWindow.setText(_translate("workspace_window", "Create New Workspace"))
         self.analysisManagerButton_workspaceWindow.setText(_translate("workspace_window", "Analysis Manager"))
+        self.dbConfigButton_workspaceWindow.setText(_translate("workspace_window", "Database Configuration"))
 
