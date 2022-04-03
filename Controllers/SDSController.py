@@ -34,6 +34,7 @@ class SDSController:
         self._project_name: str = ''
         self._project_construction: dict = {}
         self._scenario_unit_construction: dict = {}
+        self._entire_workspace_context: dict = {}
 
     def add_capture_manager(self, capture_manager: CaptureController):
         if self._cap_manager == None:
