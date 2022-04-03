@@ -7,7 +7,8 @@ from bson.objectid import ObjectId
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"
 
-    def __init__(self):
+    def __init__(self, ip_port: str):
+        self.url = ip_port
         client = MongoClient(self.url)
         db = client.SDS
         serverStatusResult = db.command("serverStatus")
