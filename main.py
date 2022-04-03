@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 
 from views.addNodeWindow import Ui_addNode_window
 from views.createWorkspace import Ui_newWorkspace_window
+from views.databaseConfigWindow import Ui_databaseConfig_window
+from views.databaseErrorWindow import Ui_databaseError_window
 from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
 from views.mainWindow import Ui_MainWindow
 from views.missingFieldsWindow import Ui_missingFields_window
@@ -55,9 +57,11 @@ class Node:
         self.network = network
 
 
-class ScannerNode:
-    def __init__(self, id, us_pas, scanner_binary, arguments, iterations, max_parallel_runs, end_condition):
-        self.id = id
+class ScannerNode(Node):
+    def __init__(self, id: int, listening: bool, node_type: str, name: str, IP: str, \
+        port: int, MAC: str, network: int, us_pas, scanner_binary, arguments, \
+            iterations, max_parallel_runs, end_condition):
+        super().__init__(id, listening, node_type, name, IP, port, MAC, network)
         self.us_pas = us_pas
         self.scanner_binary = scanner_binary
         self.arguments = arguments
@@ -76,6 +80,8 @@ addNode_Window = QtWidgets.QDialog()
 missingFields_Window = QtWidgets.QDialog()
 newScenarioUnit_Window = QtWidgets.QDialog()
 deleteConfirmation_Window = QtWidgets.QDialog()
+databaseConfig_Window = QtWidgets.QDialog()
+databaseError_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
@@ -85,6 +91,8 @@ addNodeWindowUI = Ui_addNode_window()
 missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
+databaseConfigWindowUI = Ui_databaseConfig_window()
+databaseErrorWindowUI = Ui_databaseError_window()
 
 workspace_object: Workspace = Workspace()
 current_workspace_name = workspace_object.name
@@ -94,6 +102,22 @@ current_project_name = ''
 def createWorkspaceWindow():
     sds_controller.start_new_workplace()
     createWorkspace_Window.show()
+
+
+def databaseConfigWindow():
+    databaseConfig_Window.show()
+
+
+# TODO: Implement connecting to the database. IP already obtained when clicked connect.
+def connect_database():
+    database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
+    print(database_ip)
+    # If success -> close window
+    databaseConfig_Window.close()
+
+    # TODO: When error occurs, use this commented line:
+    #databaseError_Window.show()
+
 
 
 def createWorkspace():
@@ -155,7 +179,7 @@ def createProject():
         sds_controller._enfore_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
-        success = sds_controller.finish_project_construction()
+        success = sds_controller.finish_project_construction(project_name)
 
         #print(success)
         if not success:
@@ -172,12 +196,22 @@ def createProject():
 
 
 def createScenario():
+    print('main.createScenario called')
     scenario_name = newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()
+    print(f'scenario name is {scenario_name}')
     if not scenario_name:
         missingFields_Window.show()
     else:
+        sds_controller._enfore_state('init_project')
+        sds_controller.add_scenario_unit()
         sds_controller.insert_scenario_name(scenario_name)
-        success = sds_controller.finish_scenario_unit_construction()
+        # TODO: This causes an error when creating a scenario.
+        project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        print(f'project_name = {project_name}')
+        # TODO: INSERT ITERATIONS HERE
+        su_iterations = mainWindowUI.scenarioIterationsSpinbox_mainWindow.value()
+        print(f'main.su units is {su_iterations}')
+        success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
         if not success:
             # TODO: Display error
             pass
@@ -186,7 +220,6 @@ def createScenario():
             s = QTreeWidgetItem([scenario_name])
             p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
             p.addChild(s)
-            sds_controller.finish_scenario_unit_construction(s.parent().text(0))
             newScenarioUnit_Window.close()
 
 
@@ -232,13 +265,18 @@ def define_workspace_path():
 
 def item_project_selected():
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
-        # TODO: Check add node button(I was not able to create a project) - Reminder: Add node button must be
-        #  disable at the start.
+        # TODO: Check add node button(I was not able to create a project)
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(False)
+        mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
+        mainWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
+        mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
     else:
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(True)
+        mainWindowUI.startScenarioButton_mainWindow.setEnabled(True)
+        mainWindowUI.stopScenarioButton_mainWindow.setEnabled(True)
+        mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(True)
 
 
 # TODO: Work on this to work with the controller
@@ -430,30 +468,32 @@ def context_menu_node(point):
 
         return
 
-    # if not index.isValid() or not index.parent().isValid():
-    # item = mainWindowUI.projectsList_mainWindow.itemAt(point)
-    # name = item.text(0)
-
-    # menu = QtWidgets.QMenu()
-    # action_add_scenario = QAction("Add Scenario Unit")
-    # action_load_scenario = QAction("Load Scenario Unit")
-    # action_edit_project = QAction("Edit Project")
-    # action_delete_project = QAction("Delete Project")
-
-    # menu.addAction(action_add_scenario)
-    # menu.addAction(action_load_scenario)
-    # menu.addAction(action_edit_project)
-    # menu.addAction(action_delete_project)
-
-    # action_add_scenario.triggered.connect(newScenarioUnitWindow)
-
-    # menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
-
-    # return
-
 
 def delete_selection():
     pass
+
+
+# TODO: Store services in variables or objects.
+def store_core_sds_service():
+    core_sds_service = mainWindowUI.coreSdsServiceInput_mainWindow.text()
+    print(core_sds_service)
+
+
+def store_core_port_number():
+    core_port_number = mainWindowUI.corePortNumberInput_mainWindow.text()
+    print(core_port_number)
+
+
+def store_sds_vm_service():
+    sds_vm_service = mainWindowUI.vmSdsServiceInput_mainWindow.text()
+    print(sds_vm_service)
+
+
+def store_sds_docker_service():
+    sds_docker_service = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
+    #selected_scenario = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    #print(selected_scenario)
+    print(sds_docker_service)
 
 
 def setup_ui():
@@ -465,10 +505,15 @@ def setup_ui():
     missingFieldsWindowUI.setupMissingFields(missingFields_Window)
     newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
     deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
+    databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
 
 def initialize_signals():
     workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
+    workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
+    #workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
+    #workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 
@@ -491,6 +536,11 @@ def initialize_signals():
     mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
 
+    mainWindowUI.coreSdsServiceInput_mainWindow.textChanged[str].connect(store_core_sds_service)
+    mainWindowUI.corePortNumberInput_mainWindow.textChanged[str].connect(store_core_port_number)
+    mainWindowUI.vmSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_vm_service)
+    mainWindowUI.dockerSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_docker_service)
+
     newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
     newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
 
@@ -510,6 +560,11 @@ def initialize_signals():
     deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
         deleteConfirmation_Window.close)
 
+    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
+    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+        databaseConfig_Window.close)
+
+    databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
 def generate_workspaces_list_window():
     workspaces_c = sds_controller.list_all_workplaces()

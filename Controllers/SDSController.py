@@ -34,16 +34,17 @@ class SDSController:
         self._project_name: str = ''
         self._project_construction: dict = {}
         self._scenario_unit_construction: dict = {}
+        self._entire_workspace_context: dict = {}
 
-    def add_capture_manager(self, capture_manager):
+    def add_capture_manager(self, capture_manager: CaptureController):
         if self._cap_manager == None:
             self._cap_manager = capture_manager
 
-    def add_analysis_manager(self, analysis_manager):
+    def add_analysis_manager(self, analysis_manager: SDSAnalysisManager):
         if self._a_manager == None:
             self._a_manager = analysis_manager
     
-    def add_mongo_connection(self, connection):
+    def add_mongo_connection(self, connection: SDSDatabaseHelper):
         if self._db_connection == None:
             self._db_connection = connection
 
@@ -237,12 +238,13 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
             self._scenario_unit_construction['scenario_name'] = ''
-            self._scenario_unit_construction['networks'] = {}
-            self._scenario_unit_construction['devices'] = {}
-            self._scenario_unit_construction['links'] = {}
+            self._scenario_unit_construction['nodes'] = {}
+            self._scenario_unit_construction['iterations'] = 1
+            self._scenario_unit_construction['PCAP'] = []
             self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
         
     def insert_scenario_name(self, name: str):
+        print(f'sdsc.state is {str(self._state)}')
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             self._scenario_unit_construction['scenario_name'] = name
@@ -259,10 +261,12 @@ class SDSController:
             # Insert scenario node
             pass
     
-    def finish_scenario_unit_construction(self, project_name:str):
+    def finish_scenario_unit_construction(self, project_name: str, iterations: int):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             # Do work here
+            print('sdsc.finish_scenario_unit_construction called')
+            self._scenario_unit_construction['iterations'] = iterations
             success = self._db_connection.create_scenario_unit(project_name,
             self._scenario_unit_construction)
             self._state = SDSStateEnum.INIT_PROJECT

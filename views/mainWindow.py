@@ -155,3 +155,8 @@ class Ui_MainWindow(object):
         self.scenarioStatus_mainWindow.setText(_translate("MainWindow", "Active"))
         self.addNodeButton_mainWindow.setText(_translate("MainWindow", "    Add Node    "))
         self.setupScenarioButton_mainWindow.setText(_translate("MainWindow", "Set up Scenario"))
+
+        self.startScenarioButton_mainWindow.setEnabled(False)
+        self.stopScenarioButton_mainWindow.setEnabled(False)
+        self.restoreScenarioButton_mainWindow.setEnabled(False)
+        #self.addNodeButton_mainWindow.setEnabled(False)

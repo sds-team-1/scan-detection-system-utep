@@ -110,26 +110,18 @@ class SDSDatabaseHelper:
         scenario_objid: str = ''
         try:
             #Replace subdata w/ arrays for inserting to db
-            networks = data['networks']
-            data['networks'] = []
-            devices = data['devices']
-            data['devices'] = []
-            links = data['links']
-            data['links'] = []
+            nodes = data['nodes']
+            data['nodes'] = []
 
             #Saves the scenario and retrieves the id
             scenario_objid = collection.insert_one(data).inserted_id
 
-            network_keys = networks.keys()
-            for k in network_keys:
-                self.create_network(scenario_objid, networks[k])
-            device_keys = devices.keys()
-            for k in device_keys:
-                self.create_device(scenario_objid, devices[k])
-            link_keys = links.keys()
-            for k in link_keys:
-                self.create_link(scenario_objid, links[k])
-        except:
+            #Insert all the keys if there 
+            node_keys = nodes.keys()
+            for n in node_keys:
+                # Create the node
+                node_db_insertion_id = self.create_node(scenario_objid, nodes[n])
+        except Exception as e:
             print('ERROR:DatabaseHelper -> Duplicate Key. Scenario ID already exists')
             return ''
         # Add key to projects scenarios property
@@ -152,9 +144,6 @@ class SDSDatabaseHelper:
         data = collection.find_one({'_id': o})
         return data if data else {}
 
-
-        
-        
     def save_scenario_unit(self, scenario_id: str, data: dict) -> bool:
         client = MongoClient(self.url)
         db = client.SDS
@@ -165,38 +154,22 @@ class SDSDatabaseHelper:
         except: 
             return False
 
-    def create_network(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
+    #TODO: Test this
+    def create_node(self, scenario_object_id, node_data: dict) -> bool:
+        # Insert the node to the database
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['nodes']
+        result = False
+        try:
+            node_obj_id = collection.insert_one(node_data).inserted_id
+            query = {'_id': scenario_object_id}
+            update = {'nodes': node_obj_id}
+            result = collection.update_one(query, {'$set': update})
+        except:
+            print('Error: Database Helper could not insert the node')
+        return True if result.matched_count else False
 
-    def retrieve_network(self, network_id: str, data: dict) -> dict:
-        #TODO: Make this
-        pass
-
-    def save_network(self, network_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def create_device(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def retrieve_device(self, device_id: str) -> dict:
-        #TODO: make this
-        pass
-
-    def save_device(self, device_id: str, new_data: dict) -> dict:
-        #TODO: make this
-        pass
-
-    def create_link(self, scenario_id: str, data: dict) -> bool:
-        #TODO: Make this
-        pass
-
-    def retrieve_link(self, device_id: str) -> dict:
-        #TODO: make this
-        pass
-
-    def save_link(self, device_id: str, new_data: dict) -> dict:
-        #TODO: make this
+    #TODO: Implement this
+    def retrieve_all_nodes_for_scenario(self, scenario_object_id: str) -> dict:
         pass
