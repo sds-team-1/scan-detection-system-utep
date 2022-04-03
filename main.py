@@ -179,7 +179,7 @@ def createProject():
         sds_controller._enfore_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
-        success = sds_controller.finish_project_construction()
+        success = sds_controller.finish_project_construction(project_name)
 
         #print(success)
         if not success:
@@ -196,13 +196,22 @@ def createProject():
 
 
 def createScenario():
+    print('main.createScenario called')
     scenario_name = newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()
+    print(f'scenario name is {scenario_name}')
     if not scenario_name:
         missingFields_Window.show()
     else:
+        sds_controller._enfore_state('init_project')
+        sds_controller.add_scenario_unit()
         sds_controller.insert_scenario_name(scenario_name)
         # TODO: This causes an error when creating a scenario.
-        success = sds_controller.finish_scenario_unit_construction()
+        project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        print(f'project_name = {project_name}')
+        # TODO: INSERT ITERATIONS HERE
+        su_iterations = mainWindowUI.scenarioIterationsSpinbox_mainWindow.value()
+        print(f'main.su units is {su_iterations}')
+        success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
         if not success:
             # TODO: Display error
             pass
@@ -211,7 +220,6 @@ def createScenario():
             s = QTreeWidgetItem([scenario_name])
             p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
             p.addChild(s)
-            sds_controller.finish_scenario_unit_construction(s.parent().text(0))
             newScenarioUnit_Window.close()
 
 

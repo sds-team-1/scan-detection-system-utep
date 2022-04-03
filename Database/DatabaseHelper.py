@@ -121,7 +121,7 @@ class SDSDatabaseHelper:
             for n in node_keys:
                 # Create the node
                 node_db_insertion_id = self.create_node(scenario_objid, nodes[n])
-        except:
+        except Exception as e:
             print('ERROR:DatabaseHelper -> Duplicate Key. Scenario ID already exists')
             return ''
         # Add key to projects scenarios property
