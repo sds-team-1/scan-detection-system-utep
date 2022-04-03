@@ -169,3 +169,7 @@ class SDSDatabaseHelper:
         except:
             print('Error: Database Helper could not insert the node')
         return True if result.matched_count else False
+
+    #TODO: Implement this
+    def retrieve_all_nodes_for_scenario(self, scenario_object_id: str) -> dict:
+        pass
