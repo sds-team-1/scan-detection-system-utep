@@ -28,6 +28,7 @@ class Ui_newProject_window(object):
         self.newProjectMaxUnitsLayout_newProjectWindow.addWidget(self.newProjectMaxLabel_newProjectWindow)
         self.newProjectMaxUnitsSpinbox_newProjectWindow = QtWidgets.QSpinBox(newProject_window)
         self.newProjectMaxUnitsSpinbox_newProjectWindow.setObjectName("newProjectMaxUnitsSpinbox_newProjectWindow")
+        self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(1)
         self.newProjectMaxUnitsLayout_newProjectWindow.addWidget(self.newProjectMaxUnitsSpinbox_newProjectWindow)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.newProjectMaxUnitsLayout_newProjectWindow.addItem(spacerItem)
