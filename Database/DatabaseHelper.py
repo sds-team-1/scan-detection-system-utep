@@ -6,10 +6,11 @@ from bson.objectid import ObjectId
 
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"
+    TIMEOUT_MS = 5000
 
     def __init__(self, ip_port: str):
         self.url = ip_port
-        client = MongoClient(self.url)
+        client = MongoClient(self.url, serverSelectionTimeoutMS = self.TIMEOUT_MS)
         db = client.SDS
         serverStatusResult = db.command("serverStatus")
 

@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import json
+import uuid
 
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
@@ -98,6 +99,8 @@ workspace_object: Workspace = Workspace()
 current_workspace_name = workspace_object.name
 current_project_name = ''
 
+sds_controller = SDSController()
+db_config_filename = 'conf/db_config.json'
 
 def createWorkspaceWindow():
     sds_controller.start_new_workplace()
@@ -110,13 +113,26 @@ def databaseConfigWindow():
 
 # TODO: Implement connecting to the database. IP already obtained when clicked connect.
 def connect_database():
+    global db_config_filename, mongo_connection
     database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
-    print(database_ip)
-    # If success -> close window
-    databaseConfig_Window.close()
-
-    # TODO: When error occurs, use this commented line:
-    #databaseError_Window.show()
+    # Edit config file to insert database ip
+    data = None
+    with open(db_config_filename, 'r') as config_file:
+        data = json.load(config_file)
+        data['ip'] = database_ip
+    tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
+    with open(tempfile, 'w') as config_file:
+        json.dump(data, config_file, indent=4)
+    os.replace(tempfile, db_config_filename)
+    # Try to set up controller w/ database again
+    mongo_connection, connection_success  = set_up_database_connection()
+    if connection_success:
+        connect_subsystems_and_database()
+        # If success -> close window
+        databaseConfig_Window.close()
+    else:
+        # TODO: When error occurs, use this commented line:
+        databaseError_Window.show()
 
 
 
@@ -562,6 +578,7 @@ def initialize_signals():
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
 def generate_workspaces_list_window():
+    workspaceUI.workspacesList_workspaceWindow.clear()
     workspaces_c = sds_controller.list_all_workplaces()
     if workspaces_c:
         for workspace_c in workspaces_c:
@@ -573,36 +590,38 @@ def set_up_database_connection():
     ip_port = ''
     with open('conf/db_config.json') as mongo_ip_file:
         database_ip_dict = json.load(mongo_ip_file)
+        protocol = database_ip_dict['protocol']
         ip = database_ip_dict['ip']
         port = database_ip_dict['port']
-        ip_port = f'{ip}:{port}'
+        ip_port = f'{protocol}{ip}:{port}'
     try:
         db = SDSDatabaseHelper(ip_port)
-        return (SDSDatabaseHelper(ip_port), True)
+        print(f'connection worked {db}')
+        return (db, True)
     except:
         return (None, False)
-
-setup_ui()
-
-initialize_signals()
-
-sds_controller = None
 
 def assert_database_connection():
     global sds_controller, mongo_connection
     mongo_connection, db_connection_success = set_up_database_connection()
 
     if db_connection_success:
-        sds_controller = SDSController()
-        sds_controller.add_mongo_connection(mongo_connection)
-        sds_controller.add_capture_manager(CaptureController())
-        sds_controller.add_analysis_manager(SDSAnalysisManager())
-        # sds controller implementation for filling workspaces
-        generate_workspaces_list_window()
+        connect_subsystems_and_database()
         workspace_Window.show()
     else:
         workspace_Window.show()
         databaseError_Window.show()
+
+def connect_subsystems_and_database():
+    sds_controller.add_mongo_connection(mongo_connection)
+    sds_controller.add_capture_manager(CaptureController())
+    sds_controller.add_analysis_manager(SDSAnalysisManager())
+    # sds controller implementation for filling workspaces
+    generate_workspaces_list_window()
+
+setup_ui()
+
+initialize_signals()
 
 assert_database_connection()
 
