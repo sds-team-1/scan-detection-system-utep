@@ -120,9 +120,6 @@ class Ui_MainWindow(object):
         self.addNodeButton_mainWindow = QtWidgets.QPushButton(self.CentralLayout_mainWindow)
         self.addNodeButton_mainWindow.setObjectName("addNodeButton_mainWindow")
         self.nodeLayout_mainWindow.addWidget(self.addNodeButton_mainWindow)
-        self.setupScenarioButton_mainWindow = QtWidgets.QPushButton(self.CentralLayout_mainWindow)
-        self.setupScenarioButton_mainWindow.setObjectName("setupScenarioButton_mainWindow")
-        self.nodeLayout_mainWindow.addWidget(self.setupScenarioButton_mainWindow)
         self.scenarioLayout_mainWindow.addLayout(self.nodeLayout_mainWindow)
         self.centralSectionLayout_mainWindow.addLayout(self.scenarioLayout_mainWindow)
         self.gridLayout_2.addLayout(self.centralSectionLayout_mainWindow, 1, 0, 1, 1)
@@ -165,7 +162,6 @@ class Ui_MainWindow(object):
         self.scenarioStatusLabel_mainWindow.setText(_translate("MainWindow", "Status:"))
         self.scenarioStatus_mainWindow.setText(_translate("MainWindow", "Active"))
         self.addNodeButton_mainWindow.setText(_translate("MainWindow", "    Add Node    "))
-        self.setupScenarioButton_mainWindow.setText(_translate("MainWindow", "Set up Scenario"))
 
         self.startScenarioButton_mainWindow.setEnabled(False)
         self.runScenarioButton_mainWindow.setEnabled(False)

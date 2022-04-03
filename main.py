@@ -526,7 +526,6 @@ def initialize_signals():
     mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
     mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
     mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
-    mainWindowUI.setupScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
     mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
     mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
