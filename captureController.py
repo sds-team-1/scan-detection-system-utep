@@ -18,7 +18,6 @@ TODO: Use enums to keep track of capture controller
 '''
 class CaptureController:
 
-
     def __init__(self):
         self.state = "stopped"
         self.vm_name = "LuisVM"
@@ -42,6 +41,17 @@ class CaptureController:
         Runs CoreStart
         '''
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/julio_xml_test.xml")
+
+    def core_start(self, xml_file_path):
+        '''
+        Runs CoreStart
+        '''
+        # Copy the xml file to the VM
+        self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
+        # Get the xml file name
+        xml_file_name = xml_file_path.split("/")[-1]
+        # Run the command
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/" + xml_file_name)
 
     def start_services(self):
         '''
@@ -139,7 +149,6 @@ class CaptureController:
 
 if __name__ == "__main__":
     cc = CaptureController()
-
 
     if len(sys.argv) == 1:
         print("Please provide a command, use -h for help")
