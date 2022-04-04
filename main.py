@@ -265,6 +265,8 @@ def delete_node(selected_node):
 
 def addNode():
     # TODO: Implement this
+    #l1 = QTreeWidgetItem(['0', '1', '2', '3', '4', '5', '6', '7'])
+    #mainWindowUI.nodesList_mainWindow.addTopLevelItem(l1)
     addNode_Window.close()
 
 
