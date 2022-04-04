@@ -60,8 +60,8 @@ class Node:
 
 class ScannerNode(Node):
     def __init__(self, id: int, listening: bool, node_type: str, name: str, IP: str, \
-        port: int, MAC: str, network: int, us_pas, scanner_binary, arguments, \
-            iterations, max_parallel_runs, end_condition):
+                 port: int, MAC: str, network: int, us_pas, scanner_binary, arguments, \
+                 iterations, max_parallel_runs, end_condition):
         super().__init__(id, listening, node_type, name, IP, port, MAC, network)
         self.us_pas = us_pas
         self.scanner_binary = scanner_binary
@@ -102,6 +102,7 @@ current_project_name = ''
 sds_controller = SDSController()
 db_config_filename = 'conf/db_config.json'
 
+
 def createWorkspaceWindow():
     sds_controller.start_new_workplace()
     createWorkspace_Window.show()
@@ -125,7 +126,7 @@ def connect_database():
         json.dump(data, config_file, indent=4)
     os.replace(tempfile, db_config_filename)
     # Try to set up controller w/ database again
-    mongo_connection, connection_success  = set_up_database_connection()
+    mongo_connection, connection_success = set_up_database_connection()
     if connection_success:
         connect_subsystems_and_database()
         # If success -> close window
@@ -133,7 +134,6 @@ def connect_database():
     else:
         # TODO: When error occurs, use this commented line:
         databaseError_Window.show()
-
 
 
 def createWorkspace():
@@ -176,7 +176,7 @@ def deleteConfirmationWindow():
 
 def createProject():
     project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
-    #print(project_name)
+    # print(project_name)
     project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
     # If the input is incorrect show the missing fields window
@@ -185,19 +185,19 @@ def createProject():
     # Otherwise save the project
     else:
         p = QtWidgets.QTreeWidgetItem([project_name])
-        #print('creating project')
-        #print(project_name)
+        # print('creating project')
+        # print(project_name)
         # Use the sds controller to save the project
         sds_controller._enfore_state('workplace_construction')
-        #print('createproject showing currentworksspacename')
-        #print(current_workspace_name)
+        # print('createproject showing currentworksspacename')
+        # print(current_workspace_name)
         sds_controller.specify_workplace_name(current_workspace_name)
         sds_controller._enfore_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
         success = sds_controller.finish_project_construction(project_name)
 
-        #print(success)
+        # print(success)
         if not success:
             # TODO: Add a warning message
             pass
@@ -265,8 +265,8 @@ def delete_node(selected_node):
 
 def addNode():
     # TODO: Implement this
-    #l1 = QTreeWidgetItem(['0', '1', '2', '3', '4', '5', '6', '7'])
-    #mainWindowUI.nodesList_mainWindow.addTopLevelItem(l1)
+    # l1 = QTreeWidgetItem(['0', '1', '2', '3', '4', '5', '6', '7'])
+    # mainWindowUI.nodesList_mainWindow.addTopLevelItem(l1)
     addNode_Window.close()
 
 
@@ -505,8 +505,8 @@ def store_sds_vm_service():
 
 def store_sds_docker_service():
     sds_docker_service = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
-    #selected_scenario = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
-    #print(selected_scenario)
+    # selected_scenario = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    # print(selected_scenario)
     print(sds_docker_service)
 
 
@@ -526,8 +526,8 @@ def setup_ui():
 def initialize_signals():
     workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
     workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
-    #workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
-    #workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
+    # workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
+    # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 
@@ -579,6 +579,7 @@ def initialize_signals():
 
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
+
 def generate_workspaces_list_window():
     workspaceUI.workspacesList_workspaceWindow.clear()
     workspaces_c = sds_controller.list_all_workplaces()
@@ -586,6 +587,7 @@ def generate_workspaces_list_window():
         for workspace_c in workspaces_c:
             l1 = QtWidgets.QTreeWidgetItem([workspace_c])
             workspaceUI.workspacesList_workspaceWindow.addTopLevelItem(l1)
+
 
 def set_up_database_connection():
     database_ip_dict: dict = {}
@@ -599,9 +601,10 @@ def set_up_database_connection():
     try:
         db = SDSDatabaseHelper(ip_port)
         print(f'connection worked {db}')
-        return (db, True)
+        return db, True
     except:
-        return (None, False)
+        return None, False
+
 
 def assert_database_connection():
     global sds_controller, mongo_connection
@@ -614,12 +617,14 @@ def assert_database_connection():
         workspace_Window.show()
         databaseError_Window.show()
 
+
 def connect_subsystems_and_database():
     sds_controller.add_mongo_connection(mongo_connection)
     sds_controller.add_capture_manager(CaptureController())
     sds_controller.add_analysis_manager(SDSAnalysisManager())
     # sds controller implementation for filling workspaces
     generate_workspaces_list_window()
+
 
 setup_ui()
 

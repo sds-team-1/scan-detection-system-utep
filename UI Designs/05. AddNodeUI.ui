@@ -157,13 +157,6 @@
        <item>
         <widget class="QLineEdit" name="nodeScannerBinaryInput_addNodeWindow"/>
        </item>
-       <item>
-        <widget class="QPushButton" name="nodeScannerBinaryBrowseButton_addNodeWindow">
-         <property name="text">
-          <string>Browse...</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -244,7 +237,57 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="nodeEndConditionInput_addNodeWindow"/>
+        <widget class="QComboBox" name="nodeEndConditionCombobox_addNodeWindow"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="nodeTimeLayout_addNodeWindow">
+       <item>
+        <widget class="QLabel" name="minutesLabel_addNodeWindow">
+         <property name="text">
+          <string>Minutes:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="minutesSpinbox_addNodeWindow"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="secondsLabel_addNodeWindow">
+         <property name="text">
+          <string>Seconds:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="secondsSpinbox_addNodeWindow"/>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>

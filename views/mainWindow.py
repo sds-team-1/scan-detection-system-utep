@@ -173,3 +173,4 @@ class Ui_MainWindow(object):
         self.stopScenarioButton_mainWindow.setEnabled(False)
         self.restoreScenarioButton_mainWindow.setEnabled(False)
         #self.addNodeButton_mainWindow.setEnabled(False)
+        # self.addSetNodeButton_mainWindow.setEnabled(False)
