@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/tmp/tmpqb7km5qa">
+  <networks>
+    <network id="2" name="n2" icon="" canvas="1" type="SWITCH">
+      <position x="398.0" y="494.0" lat="47.574675927930436" lon="-122.12696127650379" alt="2.0"/>
+    </network>
+    <network id="1" name="n1" icon="" canvas="1" type="SWITCH">
+      <position x="405.0" y="192.0" lat="47.57742116861272" lon="-122.12686695339896" alt="2.0"/>
+    </network>
+  </networks>
+  <devices>
+    <device id="4" name="n4" icon="" canvas="1" type="PC" class="" image="">
+      <position x="223.0" y="89.0" lat="47.578357426394255" lon="-122.1293193541246" alt="2.0"/>
+      <configservices>
+        <service name="DefaultRoute"/>
+      </configservices>
+    </device>
+    <device id="5" name="n5" icon="" canvas="1" type="PC" class="" image="">
+      <position x="163.0" y="629.0" lat="47.57344870425467" lon="-122.13012783788032" alt="2.0"/>
+      <configservices>
+        <service name="DefaultRoute"/>
+      </configservices>
+    </device>
+    <device id="6" name="n6" icon="" canvas="1" type="PC" class="" image="">
+      <position x="617.0" y="609.0" lat="47.57363051698441" lon="-122.12401031079544" alt="2.0"/>
+      <configservices>
+        <service name="DefaultRoute"/>
+      </configservices>
+    </device>
+    <device id="7" name="n7" icon="" canvas="1" type="PC" class="" image="">
+      <position x="625.0" y="94.0" lat="47.57831197737401" lon="-122.12390251296135" alt="2.0"/>
+      <configservices>
+        <service name="DefaultRoute"/>
+      </configservices>
+    </device>
+    <device id="3" name="n3" icon="" canvas="1" type="router" class="" image="">
+      <position x="401.0" y="348.0" lat="47.57600311523809" lon="-122.126920852316" alt="2.0"/>
+      <configservices>
+        <service name="zebra"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+        <service name="OSPFv2"/>
+      </configservices>
+    </device>
+  </devices>
+  <configservice_configurations>
+    <service name="DefaultRoute" node="4"/>
+    <service name="DefaultRoute" node="5"/>
+    <service name="DefaultRoute" node="6"/>
+    <service name="DefaultRoute" node="7"/>
+    <service name="zebra" node="3"/>
+    <service name="OSPFv3" node="3"/>
+    <service name="IPForward" node="3"/>
+    <service name="OSPFv2" node="3"/>
+  </configservice_configurations>
+  <session_origin lat="47.579166412353516" lon="-122.13232421875" alt="2.0" scale="150.0"/>
+  <session_options>
+    <configuration name="controlnet" value=""/>
+    <configuration name="controlnet0" value=""/>
+    <configuration name="controlnet1" value=""/>
+    <configuration name="controlnet2" value=""/>
+    <configuration name="controlnet3" value=""/>
+    <configuration name="controlnet_updown_script" value=""/>
+    <configuration name="enablerj45" value="1"/>
+    <configuration name="preservedir" value="0"/>
+    <configuration name="enablesdt" value="0"/>
+    <configuration name="sdturl" value="tcp://127.0.0.1:50000/"/>
+    <configuration name="ovs" value="0"/>
+    <configuration name="platform_id_start" value="1"/>
+    <configuration name="nem_id_start" value="1"/>
+    <configuration name="link_enabled" value="1"/>
+    <configuration name="loss_threshold" value="30"/>
+    <configuration name="link_interval" value="1"/>
+    <configuration name="link_timeout" value="4"/>
+    <configuration name="mtu" value="0"/>
+  </session_options>
+  <session_metadata>
+    <configuration name="edges" value="[]"/>
+    <configuration name="canvas" value="{&quot;gridlines&quot;: true, &quot;canvases&quot;: [{&quot;id&quot;: 1, &quot;wallpaper&quot;: null, &quot;wallpaper_style&quot;: 1, &quot;fit_image&quot;: false, &quot;dimensions&quot;: [1000, 750]}]}"/>
+    <configuration name="hidden" value="[]"/>
+    <configuration name="shapes" value="[]"/>
+  </session_metadata>
+  <default_services>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="prouter"/>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+  </default_services>
+</scenario>
