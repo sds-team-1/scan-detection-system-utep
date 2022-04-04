@@ -265,8 +265,39 @@ def delete_node(selected_node):
 
 def addNode():
     # TODO: Implement this
-    # l1 = QTreeWidgetItem(['0', '1', '2', '3', '4', '5', '6', '7'])
-    # mainWindowUI.nodesList_mainWindow.addTopLevelItem(l1)
+    subnet = '0'
+    log = ''
+    if addNodeWindowUI.nodeLogNetNodeCheckBox_addNodeWindow.isChecked():
+        log = 'Yes'
+    else:
+        log = 'No'
+    type = addNodeWindowUI.nodeTypeComboBox_addNodeWindow.currentText()
+    name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
+    MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
+    IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
+    s_v = ''
+    if addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.isChecked():
+        user_pw = addNodeWindowUI.nodeUserPassInput_addNodeWindow.text()
+        scanner_bin = addNodeWindowUI.nodeScannerBinaryInput_addNodeWindow.text()
+        arguments = addNodeWindowUI.nodeArgumentsInput_addNodeWindow.text()
+        num_iterations = str(addNodeWindowUI.nodeNumIterationsSpinBox_addNodeWindow.value())
+        max_parallel_runs = str(addNodeWindowUI.nodeMaxParallelRunsSpinBox_addNodeWindow.value())
+        if addNodeWindowUI.nodeEndConditionCombobox_addNodeWindow.currentText() == 'on-scan-complete':
+            end_condition = 'on-scan-complete'
+        else:
+            # TODO: Handle minutes and seconds.
+            minutes = str(addNodeWindowUI.minutesSpinbox_addNodeWindow.value())
+            seconds = str(addNodeWindowUI.secondsSpinbox_addNodeWindow.value())
+        toolButton = QtWidgets.QToolButton(mainWindowUI.CentralLayout_mainWindow)
+        toolButton.setText('Scanner')
+        node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
+        mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+        mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
+
+    else:
+        s_v = 'Victim'
+        node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP, s_v])
+        mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
     addNode_Window.close()
 
 
