@@ -16,6 +16,7 @@ from views.mainWindow import Ui_MainWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
+from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
 from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
@@ -78,6 +79,7 @@ createWorkspace_Window = QtWidgets.QDialog()
 mainWindow_Window = QtWidgets.QMainWindow()
 newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
+addSetNodes_Window = QtWidgets.QDialog()
 missingFields_Window = QtWidgets.QDialog()
 newScenarioUnit_Window = QtWidgets.QDialog()
 deleteConfirmation_Window = QtWidgets.QDialog()
@@ -89,6 +91,7 @@ createWorkspaceUI = Ui_newWorkspace_window()
 mainWindowUI = Ui_MainWindow()
 newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
+addSetNodesWindowUI = Ui_addSetNodes_window()
 missingFieldsWindowUI = Ui_missingFields_window()
 newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
@@ -196,6 +199,15 @@ def addNodeWindow():
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
     addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
     addNode_Window.show()
+
+
+def addSetNodesWindow():
+    global addSetNodes_Window
+    addSetNodes_Window = QtWidgets.QDialog()
+    addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window)
+    addSetNodesWindowUI.setNodesCreateButton_addSetNodesWindow.clicked.connect(addSetNodes)
+    addSetNodesWindowUI.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_Window.close)
+    addSetNodes_Window.show()
 
 
 def deleteConfirmationWindow():
@@ -334,6 +346,11 @@ def addNode():
         node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP, s_v])
         mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
     addNode_Window.close()
+
+
+# TODO: To be implemented
+def addSetNodes():
+    pass
 
 
 def define_workspace_path():
@@ -604,6 +621,7 @@ def initialize_signals():
     mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
     mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
+    mainWindowUI.addSetNodeButton_mainWindow.clicked.connect(addSetNodesWindow)
 
     mainWindowUI.coreSdsServiceInput_mainWindow.textChanged[str].connect(store_core_sds_service)
     mainWindowUI.corePortNumberInput_mainWindow.textChanged[str].connect(store_core_port_number)
