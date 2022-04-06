@@ -104,11 +104,22 @@ db_config_filename = 'conf/db_config.json'
 
 
 def createWorkspaceWindow():
+    global createWorkspace_Window
+    createWorkspace_Window = QtWidgets.QDialog()
+    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
     sds_controller.start_new_workplace()
+    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
+    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
     createWorkspace_Window.show()
 
 
 def databaseConfigWindow():
+    global databaseError_Window
+    databaseError_Window = QtWidgets.QDialog()
+    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
+    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
+    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+        databaseConfig_Window.close)
     databaseConfig_Window.show()
 
 
@@ -157,20 +168,44 @@ def createWorkspace():
 
 
 def createProjectWindow():
+    global newProject_Window
+    newProject_Window = QtWidgets.QDialog()
+    newProjectWindowUI.setupNewProject(newProject_Window)
+    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
+    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
     sds_controller.start_new_project_phase()
     newProject_Window.show()
 
 
 def newScenarioUnitWindow():
+    global newScenarioUnit_Window
+    newScenarioUnit_Window = QtWidgets.QDialog()
+    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
+    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
+    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
+        newScenarioUnit_Window.close)
     sds_controller.add_scenario_unit()
     newScenarioUnit_Window.show()
 
 
 def addNodeWindow():
+    global addNode_Window
+    addNode_Window = QtWidgets.QDialog()
+    addNodeWindowUI.setupAddNode(addNode_Window)
+    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
+    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
+    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
     addNode_Window.show()
 
 
 def deleteConfirmationWindow():
+    global deleteConfirmation_Window
+    deleteConfirmation_Window = QtWidgets.QDialog()
+    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
+    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        delete_selection)
+    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
+        deleteConfirmation_Window.close)
     deleteConfirmation_Window.show()
 
 
@@ -543,14 +578,8 @@ def store_sds_docker_service():
 
 def setup_ui():
     workspaceUI.setupWorkspaceUI(workspace_Window)
-    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
     mainWindowUI.setupMainWindowUI(mainWindow_Window)
-    newProjectWindowUI.setupNewProject(newProject_Window)
-    addNodeWindowUI.setupAddNode(addNode_Window)
     missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-    deleteConfirmationWindowUI.setupDeleteConfirmation(deleteConfirmation_Window)
-    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
     databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
 
@@ -561,10 +590,6 @@ def initialize_signals():
     # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
-
-    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-    createWorkspaceUI.browseWorkspaceButton_newWorkspaceWindow.clicked.connect(define_workspace_path)
 
     mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
     mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
@@ -585,28 +610,7 @@ def initialize_signals():
     mainWindowUI.vmSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_vm_service)
     mainWindowUI.dockerSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_docker_service)
 
-    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
-
-    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
-    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
-        newScenarioUnit_Window.close)
-
-    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
-
-    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
-
     missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
-
-    deleteConfirmationWindowUI.deleteConfirmationButton_deleteConfirmationWindow.clicked.connect(
-        delete_selection)
-    deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
-        deleteConfirmation_Window.close)
-
-    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-        databaseConfig_Window.close)
 
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
