@@ -202,7 +202,6 @@ class Ui_addNode_window(object):
             self.nodeUserPassInput_addNodeWindow.deleteLater()
             self.nodeScannerBinaryLabel_addNodeWindow.deleteLater()
             self.nodeScannerBinaryInput_addNodeWindow.deleteLater()
-            self.nodeScannerBinaryBrowseButton_addNodeWindow.deleteLater()
             self.nodeArgumentsLabel_addNodeWindow.deleteLater()
             self.nodeArgumentsInput_addNodeWindow.deleteLater()
             self.nodeNumIterationsLabel_addNodeWindow.deleteLater()
@@ -210,7 +209,13 @@ class Ui_addNode_window(object):
             self.nodeMaxParallelRunsLabel_addNodeWindow.deleteLater()
             self.nodeMaxParallelRunsSpinBox_addNodeWindow.deleteLater()
             self.nodeEndConditionLabel_addNodeWindow.deleteLater()
-            self.nodeEndConditionInput_addNodeWindow.deleteLater()
+            if self.nodeEndConditionCombobox_addNodeWindow.currentText() == 'Time...':
+                self.minutesSpinbox_addNodeWindow.deleteLater()
+                self.minutesLabel_addNodeWindow.deleteLater()
+                self.secondsSpinbox_addNodeWindow.deleteLater()
+                self.secondsLabel_addNodeWindow.deleteLater()
+                self.mainLayout_addNodeWindow.removeItem(self.nodeTimeLayout_addNodeWindow)
+            self.nodeEndConditionCombobox_addNodeWindow.deleteLater()
 
             self.mainLayout_addNodeWindow.removeItem(self.nodeUserPassLayout_addNodeWindow)
             self.mainLayout_addNodeWindow.removeItem(self.nodeScannerBinaryLayout_addNodeWindow)
