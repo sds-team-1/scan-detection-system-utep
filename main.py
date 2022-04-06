@@ -111,7 +111,6 @@ def databaseConfigWindow():
     databaseConfig_Window.show()
 
 
-# TODO: Implement connecting to the database. IP already obtained when clicked connect.
 def connect_database():
     global db_config_filename, mongo_connection
     database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
@@ -131,7 +130,6 @@ def connect_database():
         # If success -> close window
         databaseConfig_Window.close()
     else:
-        # TODO: When error occurs, use this commented line:
         databaseError_Window.show()
 
 
