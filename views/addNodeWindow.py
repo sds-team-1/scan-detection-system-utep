@@ -170,7 +170,7 @@ class Ui_addNode_window(object):
             self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.nodeEndConditionLayout_addNodeWindow.addItem(self.spacerItem4)
 
-            self.nodeEndConditionCombobox_addNodeWindow.activated.connect(lambda: self.end_condition_changed(addNode_window, _translate))
+            self.nodeEndConditionCombobox_addNodeWindow.currentIndexChanged.connect(lambda: self.end_condition_changed(addNode_window, _translate))
 
             self.mainLayout_addNodeWindow.addLayout(self.nodeEndConditionLayout_addNodeWindow)
 
