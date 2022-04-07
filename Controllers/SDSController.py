@@ -111,6 +111,7 @@ class SDSController:
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
             try:
                 self._db_connection.create_workspace(self._workspace_name)
+                self.change_workspace_context(self._workspace_name)
                 self._state = SDSStateEnum.INIT_WORKPLACE
                 return True
             except:
@@ -124,14 +125,15 @@ class SDSController:
 
     def change_workspace_context(self, workspace_name: str):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_SYSTEM:
-            self._workspace_name = workspace_name
+        self._workspace_name = workspace_name
+        self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
 
     ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             if self._db_connection.create_project(workspace_name, project):
+                self.change_workspace_context(workspace_name)
                 self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
                 return True
         return False
@@ -170,12 +172,9 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
-            #print('controller showing...')
-            #print(self._project_construction)
-            #print('seeing workspace name...')
-            #print(self._workspace_name)
             success = self._db_connection.create_project(self._workspace_name, 
             project=self._project_construction)
+            self.change_workspace_context(self._workspace_name)
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
@@ -258,6 +257,7 @@ class SDSController:
         if self._state is SDSStateEnum.INIT_PROJECT:
             # Continue here
             # Insert scenario node
+            self.change_workspace_context(self._workspace_name)
             pass
     
     def finish_scenario_unit_construction(self, project_name: str, iterations: int):
@@ -267,6 +267,7 @@ class SDSController:
             self._scenario_unit_construction['iterations'] = iterations
             success = self._db_connection.create_scenario_unit(project_name,
             self._scenario_unit_construction)
+            self.change_workspace_context(self._workspace_name)
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
@@ -319,3 +320,10 @@ class SDSController:
     def gather_data_to_DB(self):
         self._ensure_subsystems()
         pass
+
+    #UI needs all the nodes of a scenario unit
+    def get_all_nodes(self, scenario_id: str):
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.INIT_PROJECT:
+            nodes: list = self._db_connection.retrieve_all_nodes_for_scenario(scenario_id)
+            return nodes

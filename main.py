@@ -360,12 +360,15 @@ def define_workspace_path():
 
 def item_project_selected():
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+        # This condition is for scenarios. Works with the project list which...
+        # contains projects and scenarios
         # TODO: Check add node button(I was not able to create a project)
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(False)
         mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
         mainWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
         mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
+        #TODO:  Load all of the nodes of the scenario unit into the window
     else:
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(True)
