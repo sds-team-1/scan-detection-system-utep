@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>addSetNodes_window</class>
+ <widget class="QWidget" name="addSetNodes_window">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>160</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>513</width>
+    <height>160</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>513</width>
+    <height>160</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Add Set of Victim Nodes</string>
+  </property>
+  <layout class="QGridLayout" name="AddSetNodesWindowLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="mainLayout_addSetNodesWindow">
+     <item>
+      <layout class="QHBoxLayout" name="startingIPLayout_addSetNodesWindow">
+       <item>
+        <widget class="QLabel" name="startingIPLabel_addSetNodesWindow">
+         <property name="text">
+          <string>Starting IP Address:     </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="startingIPInput_addSetNodesWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="startingMACLayout_addSetNodesWindow">
+       <item>
+        <widget class="QLabel" name="startingMACLabel_addSetNodesWindow">
+         <property name="text">
+          <string>Starting MAC Address:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="startingMACInput_addSetNodesWindow"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="typeNodesLayout_addSetNodesWindow">
+       <item>
+        <widget class="QLabel" name="typeNodesLabel_addSetNodesWindow">
+         <property name="text">
+          <string>Type: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="typeNodesCombobox_addSetNodesWindow"/>
+       </item>
+       <item>
+        <spacer name="typeNodesSpacer_addSetNodesWindow">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="buttonsLayout_addSetNodesWindow">
+       <item>
+        <widget class="QPushButton" name="setNodesCreateButton_naddSetNodesWindow">
+         <property name="text">
+          <string>Create</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="setNodesCancelButton_addSetNodesWindow">
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
