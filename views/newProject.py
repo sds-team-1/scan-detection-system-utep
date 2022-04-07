@@ -49,6 +49,6 @@ class Ui_newProject_window(object):
         _translate = QtCore.QCoreApplication.translate
         newProject_window.setWindowTitle(_translate("newProject_window", "New Project"))
         self.newProjectNameLabel_newProjectWindow.setText(_translate("newProject_window", "Project Name:     "))
-        self.newProjectMaxLabel_newProjectWindow.setText(_translate("newProject_window", "Maximum Scenario Units:"))
+        self.newProjectMaxLabel_newProjectWindow.setText(_translate("newProject_window", "Maximum Scenario Units in Parallel:"))
         self.newProjectCreateButton_newProjectWindow.setText(_translate("newProject_window", "Create"))
         self.newProjectCancelButton_newProjectWindow.setText(_translate("newProject_window", "Cancel"))
