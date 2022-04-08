@@ -20,10 +20,21 @@ class SDSDatabaseHelper:
         db = client['SDS']
         collection = db['workspaces']
         try:
-            collection.insert_one({'_id': workspace_name, 'projects': []})
+            collection.insert_one({'_id': workspace_name, 'projects': [], \
+                'core_sds_service_ip': '', 'core_sds_port_number': ''})
         except:
             return False
         return True
+
+    def save_workspace(self, workspace_name: str, data: dict):
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['workspaces']
+        try:
+            result = collection.update_one({'_id': workspace_name}, {'$set': data})
+            return True if result.matched_count else False
+        except:
+            return False
 
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
@@ -42,7 +53,7 @@ class SDSDatabaseHelper:
         else:
             try:
                 collection.insert_one(project)
-                update = {'$addToSet': {'projects': project['_id']}}
+                update = {'$push': {'projects': project['_id']}}
             except:
                 return False
         collection = db['workspaces']
@@ -58,6 +69,48 @@ class SDSDatabaseHelper:
         db = client['SDS']
         collection = db['workspaces']
         return collection.find().distinct('_id')
+    
+    def get_workspace_context(self, workspace_name: str) -> dict:
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['workspaces']
+        workspace_dict = collection.find_one({'_id': workspace_name})
+        # Replace all projects with data
+        projects_to_remove = [project_name for project_name in workspace_dict['projects']]
+        for project_name in projects_to_remove:
+            # Get project Data
+            project_collection = db['projects']
+            project_dict = project_collection.find_one({'_id': project_name})
+            if not project_dict:
+                continue
+            # Replace all scenarios with data
+            scenarios_to_remove = [unique_scenario for unique_scenario in project_dict['scenario_units']]
+            for unique_scenario in scenarios_to_remove: 
+                # Get scenario data
+                # Replace ids with dictionary
+                scenario_collection = db['scenarios']
+                scenario_dict = scenario_collection.find_one({'_id': unique_scenario})
+                if not scenario_dict:
+                    continue
+                # Replace all nodes with data
+                nodes_to_remove = [node for node in scenario_dict['nodes']]
+                for node in nodes_to_remove:
+                    node_collection = db['nodes']
+                    node_dict = node_collection.find_one({'_id': node})
+                    if not node_dict:
+                        continue
+                    # Replace node id with dictionary
+                    scenario_dict['nodes'].append(node_dict)
+                for n in nodes_to_remove:
+                    scenario_dict['nodes'].remove(n)
+                project_dict['scenario_units'].append(scenario_dict)
+            for s in scenarios_to_remove:
+                project_dict['scenario_units'].remove(s)
+            workspace_dict['projects'].append(project_dict)
+            # Replace project name with dictionary
+        for p in projects_to_remove:
+            workspace_dict['projects'].remove(p)
+        return workspace_dict
 
     def retrieve_projects(self, workspace_name: str) -> List[dict]:
         client = MongoClient(self.url)
@@ -92,7 +145,7 @@ class SDSDatabaseHelper:
         db = client.SDS
         collection = db['projects']
         try:
-            result = collection.update_one({'_id': project_name}, {'$set': new_data})
+            result = collection.update_one({'_id': project_name}, {'$push': new_data})
             return True if result.matched_count else False
         except Exception as e:
             return False
@@ -130,7 +183,7 @@ class SDSDatabaseHelper:
         collection = db['projects']
         query = {'_id': project_name}
         update = {'scenario_units': scenario_objid}
-        collection.update_one(query, {'$set': update})
+        collection.update_one(query, {'$push': update})
         return str(scenario_objid)
 
     def retrieve_scenario_unit(self, scenario_id: str) -> dict:
@@ -167,11 +220,15 @@ class SDSDatabaseHelper:
             node_obj_id = collection.insert_one(node_data).inserted_id
             query = {'_id': scenario_object_id}
             update = {'nodes': node_obj_id}
-            result = collection.update_one(query, {'$set': update})
+            collection = db['scenarios']
+            result = collection.update_one(query, {'$push': update})
         except:
             print('Error: Database Helper could not insert the node')
         return True if result.matched_count else False
 
     #TODO: Implement this
     def retrieve_all_nodes_for_scenario(self, scenario_object_id: str) -> dict:
+        client = MongoClient(self.url)
+        db = client.SDS
+        
         pass

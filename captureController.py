@@ -77,7 +77,7 @@ class CaptureController:
         self.core_start_from_xml_file_path(xml_file_path)
 
 
-    def start_services(self):
+    def start_services(self, scenario_dict: dict):
         '''
         Starts services on the VM
         This method also deletes everything in the PCAPs directory
