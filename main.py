@@ -240,7 +240,7 @@ def createProject():
         sds_controller._enforce_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
-        success = sds_controller.finish_project_construction(project_name)
+        success = sds_controller.finish_project_construction()
 
         # print(success)
         if not success:
@@ -505,6 +505,7 @@ def delete_workspace(selected_workspace):
 
 
 def set_up_scenario_unit():
+    sds_controller._enforce_state('init_capture_network')
     scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
     vm_ip = mainWindowUI.vmSdsServiceInput_mainWindow.text()
     docker_ip = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
