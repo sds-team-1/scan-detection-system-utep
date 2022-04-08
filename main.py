@@ -12,7 +12,7 @@ from views.createWorkspace import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
 from views.databaseErrorWindow import Ui_databaseError_window
 from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
-from views.mainWindow import Ui_MainWindow
+from views.captureManagerWindow import Ui_CaptureManagerWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
@@ -76,7 +76,7 @@ app = QtWidgets.QApplication(sys.argv)
 
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
-mainWindow_Window = QtWidgets.QMainWindow()
+captureManager_Window = QtWidgets.QMainWindow()
 newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
 addSetNodes_Window = QtWidgets.QDialog()
@@ -88,7 +88,7 @@ databaseError_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
-mainWindowUI = Ui_MainWindow()
+captureManagerWindowUI = Ui_CaptureManagerWindow()
 newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
 addSetNodesWindowUI = Ui_addSetNodes_window()
@@ -163,7 +163,7 @@ def createWorkspace():
             pass
         else:
             workspace_object.name = ws_name
-            mainWindow_Window.show()
+            captureManager_Window.show()
             createWorkspace_Window.close()
             workspace_Window.close()
 
@@ -248,7 +248,7 @@ def createProject():
             pass
         else:
             # Adds the TreeWidgetItem to the project list
-            mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+            captureManagerWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
             # Resets the values for the window
             newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
@@ -265,9 +265,9 @@ def createScenario():
         sds_controller.add_scenario_unit()
         sds_controller.insert_scenario_name(scenario_name)
         # TODO: This causes an error when creating a scenario.
-        project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        project_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
         # TODO: INSERT ITERATIONS HERE
-        su_iterations = mainWindowUI.scenarioIterationsSpinbox_mainWindow.value()
+        su_iterations = captureManagerWindowUI.scenarioIterationsSpinbox_mainWindow.value()
         success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
         if not success:
             # TODO: Display error
@@ -275,7 +275,7 @@ def createScenario():
         else:
             # TODO: Test this
             s = QTreeWidgetItem([scenario_name])
-            p = mainWindowUI.projectsList_mainWindow.selectedItems()[0]
+            p = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0]
             p.addChild(s)
             newScenarioUnit_Window.close()
 
@@ -345,12 +345,12 @@ def addNode():
             minutes = str(addNodeWindowUI.minutesSpinbox_addNodeWindow.value())
             seconds = str(addNodeWindowUI.secondsSpinbox_addNodeWindow.value())
             end_condition = f'time-{minutes}:{seconds}'
-        toolButton = QtWidgets.QToolButton(mainWindowUI.CentralLayout_mainWindow)
+        toolButton = QtWidgets.QToolButton(captureManagerWindowUI.CentralLayout_mainWindow)
         toolButton.setText('Scanner')
         #node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
         #mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
         #mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
-    scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    scenario_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     node_id = len(nodes_list)
@@ -358,11 +358,11 @@ def addNode():
         subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    mainWindowUI.nodesList_mainWindow.clear()
+    captureManagerWindowUI.nodesList_mainWindow.clear()
     for node in nodes_list:
         node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-        mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+        captureManagerWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
     addNode_Window.close()
 
 
@@ -381,32 +381,32 @@ def define_workspace_path():
 def item_project_selected():
     # print(f'checking if item_project_selected went inside')
     # Clear the window
-    mainWindowUI.nodesList_mainWindow.clear()
-    if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+    captureManagerWindowUI.nodesList_mainWindow.clear()
+    if captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
         # This condition is for projects. Works with the project list which...
         # contains projects and scenarios
         # TODO: Check add node button(I was not able to create a project)
-        mainWindowUI.exportButton_mainWindow.setEnabled(True)
-        mainWindowUI.addNodeButton_mainWindow.setEnabled(False)
-        mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
-        mainWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
-        mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.exportButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.addNodeButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.startScenarioButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
     else:
         #print(f'checking if else checked')
-        mainWindowUI.exportButton_mainWindow.setEnabled(False)
-        mainWindowUI.addNodeButton_mainWindow.setEnabled(True)
-        mainWindowUI.startScenarioButton_mainWindow.setEnabled(True)
-        mainWindowUI.stopScenarioButton_mainWindow.setEnabled(True)
-        mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.exportButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.addNodeButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.startScenarioButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.stopScenarioButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.restoreScenarioButton_mainWindow.setEnabled(True)
         # Get all the nodes
-        scenario_ID = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        scenario_ID = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
         #print(f'checking scenario id: {scenario_ID}')
         sds_controller._enforce_state('init_project')
         node_list = sds_controller.get_all_nodes(scenario_ID)
         # Insert into vm and docker text saved values
         vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
-        mainWindowUI.vmSdsServiceInput_mainWindow.setText(vm_ip)
-        mainWindowUI.dockerSdsServiceInput_mainWindow.setText(docker_ip)
+        captureManagerWindowUI.vmSdsServiceInput_mainWindow.setText(vm_ip)
+        captureManagerWindowUI.dockerSdsServiceInput_mainWindow.setText(docker_ip)
         #print(f'checking if nodes list is anything: {node_list}')
         # Insert all the nodes into the UI
         if node_list:
@@ -414,7 +414,7 @@ def item_project_selected():
             for node in node_list:
                 node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
                     node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-                mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+                captureManagerWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
                 # TODO: Ask mauricio how this works
                 # mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
 
@@ -433,7 +433,7 @@ def save_workspace():
 # TODO: Fix this to work with controller.
 def export_project():
     scenarios = {}
-    project_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    project_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
     project_path = ''
     # FIXME: workspace_object reference
     projects = workspace_object.projects
@@ -451,14 +451,14 @@ def export_project():
 # TODO: Fix this to work with the controller.
 def import_project():
     dialog = QFileDialog()
-    json_path = dialog.getOpenFileName(mainWindow_Window, 'Select JSON File')
+    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File')
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
         p = QtWidgets.QTreeWidgetItem([project[0]])
         for x in project[1]:
             s = QTreeWidgetItem([x])
             p.addChild(s)
-        mainWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+        captureManagerWindowUI.projectsList_mainWindow.addTopLevelItem(p)
 
 
 def addNodeCheckboxStateChanged():
@@ -473,8 +473,8 @@ def open_workspace(selected_workspace):
     print(f'check if open_workspace is called')
     sds_controller.change_workspace_context(current_workspace_name)
     time.sleep(1)
-    mainWindow_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
-    mainWindow_Window.show()
+    captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
+    captureManager_Window.show()
     workspace_Window.close()
     # Get all project names related to workspace
     project_names = sds_controller.list_all_projects(selected_workspace)
@@ -488,10 +488,10 @@ def open_workspace(selected_workspace):
             scenario_tree = QTreeWidgetItem([scenario_name])
             # Add scenario tree to project tree
             project_tree_item.addChild(scenario_tree)
-        mainWindowUI.projectsList_mainWindow.addTopLevelItem(project_tree_item)
+        captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
     #Insert core options if saved
-    mainWindowUI.corePortNumberInput_mainWindow.setText(sds_controller.get_core_port())
-    mainWindowUI.coreSdsServiceInput_mainWindow.setText(sds_controller.get_core_ip())
+    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
+    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
 
 # TODO: Implement this
@@ -506,32 +506,32 @@ def delete_workspace(selected_workspace):
 
 def set_up_scenario_unit():
     sds_controller._enforce_state('init_capture_network')
-    scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
-    vm_ip = mainWindowUI.vmSdsServiceInput_mainWindow.text()
-    docker_ip = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
+    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+    vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
+    docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
     sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
-    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(False)
-    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(False)
-    mainWindowUI.runScenarioButton_mainWindow.setEnabled(False)
+    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
+    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
+    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
 def start_scenario_unit():
     # Get input
-    ip = mainWindowUI.coreSdsServiceInput_mainWindow.text()
-    port = mainWindowUI.corePortNumberInput_mainWindow.text()
+    ip = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
+    port = captureManagerWindowUI.corePortNumberInput_captureManagerWindow.text()
     # store input into workspace
     sds_controller.insert_core_sds_service(ip, port)
-    mainWindowUI.corePortNumberInput_mainWindow.setEnabled(False)
-    mainWindowUI.coreSdsServiceInput_mainWindow.setEnabled(False)
+    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setEnabled(False)
+    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setEnabled(False)
     sds_controller.start_VM()
-    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
-    mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
+    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
+    captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
 
 def stop_scenario_unit():
     #sds_controller.stop()
-    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(True)
-    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(True)
-    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
+    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
+    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
+    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
 
 def restore_scenario_unit():
     #sds_controller.restore()
@@ -562,10 +562,10 @@ def context_menu_workspace(point):
 
 
 def context_menu_project(point):
-    index = mainWindowUI.projectsList_mainWindow.indexAt(point)
+    index = captureManagerWindowUI.projectsList_captureManagerWindow.indexAt(point)
 
     if not index.isValid() or index.parent().isValid():
-        item = mainWindowUI.projectsList_mainWindow.itemAt(point)
+        item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
@@ -578,12 +578,12 @@ def context_menu_project(point):
         action_edit_scenario_unit.triggered.connect(lambda: edit_scenario_unit(name))
         action_delete_scenario_unit.triggered.connect(lambda: delete_scenario_unit(name))
 
-        menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
+        menu.exec_(captureManagerWindowUI.projectsList_captureManagerWindow.mapToGlobal(point))
 
         return
 
     if not index.isValid() or not index.parent().isValid():
-        item = mainWindowUI.projectsList_mainWindow.itemAt(point)
+        item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
@@ -602,16 +602,16 @@ def context_menu_project(point):
         action_edit_project.triggered.connect(lambda: edit_project(name))
         action_delete_project.triggered.connect(lambda: delete_project(name))
 
-        menu.exec_(mainWindowUI.projectsList_mainWindow.mapToGlobal(point))
+        menu.exec_(captureManagerWindowUI.projectsList_captureManagerWindow.mapToGlobal(point))
 
         return
 
 
 def context_menu_node(point):
-    index = mainWindowUI.nodesList_mainWindow.indexAt(point)
+    index = captureManagerWindowUI.nodesList_captureManagerWindow.indexAt(point)
 
     if not index.isValid() or index.parent().isValid():
-        item = mainWindowUI.nodesList_mainWindow.itemAt(point)
+        item = captureManagerWindowUI.nodesList_captureManagerWindow.itemAt(point)
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
@@ -624,7 +624,7 @@ def context_menu_node(point):
         action_edit_node.triggered.connect(lambda: edit_node(name))
         action_delete_node.triggered.connect(lambda: delete_node(name))
 
-        menu.exec_(mainWindowUI.nodesList_mainWindow.mapToGlobal(point))
+        menu.exec_(captureManagerWindowUI.nodesList_captureManagerWindow.mapToGlobal(point))
 
         return
 
@@ -635,30 +635,30 @@ def delete_selection():
 
 # TODO: Store services in variables or objects.
 def store_core_sds_service():
-    core_sds_service = mainWindowUI.coreSdsServiceInput_mainWindow.text()
+    core_sds_service = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
     print(core_sds_service)
 
 
 def store_core_port_number():
-    core_port_number = mainWindowUI.corePortNumberInput_mainWindow.text()
+    core_port_number = captureManagerWindowUI.corePortNumberInput_captureManagerWindow.text()
     print(core_port_number)
 
 
 def store_sds_vm_service():
-    sds_vm_service = mainWindowUI.vmSdsServiceInput_mainWindow.text()
+    sds_vm_service = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
     print(sds_vm_service)
 
 
 def store_sds_docker_service():
-    sds_docker_service = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
-    # selected_scenario = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    sds_docker_service = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
+    # selected_scenario = mainWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     # print(selected_scenario)
     print(sds_docker_service)
 
 
 def setup_ui():
     workspaceUI.setupWorkspaceUI(workspace_Window)
-    mainWindowUI.setupMainWindowUI(mainWindow_Window)
+    captureManagerWindowUI.setupCaptureManager(captureManager_Window)
     missingFieldsWindowUI.setupMissingFields(missingFields_Window)
     databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
@@ -671,26 +671,26 @@ def initialize_signals():
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 
-    mainWindowUI.newButton_mainWindow.clicked.connect(createProjectWindow)
-    mainWindowUI.projectsList_mainWindow.itemSelectionChanged.connect(item_project_selected)
-    mainWindowUI.saveButton_mainWindow.clicked.connect(save_workspace)
-    mainWindowUI.exportButton_mainWindow.clicked.connect(export_project)
-    mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
-    mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
-    mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
-    mainWindowUI.runScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
-    mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
-    mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
-    mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    mainWindowUI.projectsList_mainWindow.customContextMenuRequested.connect(context_menu_project)
-    mainWindowUI.nodesList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    mainWindowUI.nodesList_mainWindow.customContextMenuRequested.connect(context_menu_node)
-    mainWindowUI.addSetNodeButton_mainWindow.clicked.connect(addSetNodesWindow)
+    captureManagerWindowUI.newButton_captureManagerWindow.clicked.connect(createProjectWindow)
+    captureManagerWindowUI.projectsList_captureManagerWindow.itemSelectionChanged.connect(item_project_selected)
+    captureManagerWindowUI.saveButton_captureManagerWindow.clicked.connect(save_workspace)
+    captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
+    captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
+    captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
+    captureManagerWindowUI.startScenarioButton_captureManagerWindow.clicked.connect(start_scenario_unit)
+    captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
+    captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
+    captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
+    captureManagerWindowUI.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    captureManagerWindowUI.projectsList_captureManagerWindow.customContextMenuRequested.connect(context_menu_project)
+    captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+    captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
+    captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
 
-    mainWindowUI.coreSdsServiceInput_mainWindow.textChanged[str].connect(store_core_sds_service)
-    mainWindowUI.corePortNumberInput_mainWindow.textChanged[str].connect(store_core_port_number)
-    mainWindowUI.vmSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_vm_service)
-    mainWindowUI.dockerSdsServiceInput_mainWindow.textChanged[str].connect(store_sds_docker_service)
+    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
+    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.textChanged[str].connect(store_core_port_number)
+    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_vm_service)
+    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_docker_service)
 
     missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
