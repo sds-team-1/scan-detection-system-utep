@@ -513,7 +513,7 @@ def set_up_scenario_unit():
     mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(False)
     mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(False)
     mainWindowUI.runScenarioButton_mainWindow.setEnabled(False)
-    #sds_controller.run_scenario_units(scenario_name)
+    sds_controller.run_scenario_units(scenario_name)
 
 def start_scenario_unit():
     # Get input
@@ -523,7 +523,7 @@ def start_scenario_unit():
     sds_controller.insert_core_sds_service(ip, port)
     mainWindowUI.corePortNumberInput_mainWindow.setEnabled(False)
     mainWindowUI.coreSdsServiceInput_mainWindow.setEnabled(False)
-    #sds_controller.start_VM()
+    sds_controller.start_VM()
     mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
     mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
 
