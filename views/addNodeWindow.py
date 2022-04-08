@@ -170,7 +170,7 @@ class Ui_addNode_window(object):
             self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.nodeEndConditionLayout_addNodeWindow.addItem(self.spacerItem4)
 
-            self.nodeEndConditionCombobox_addNodeWindow.activated.connect(lambda: self.end_condition_changed(addNode_window, _translate))
+            self.nodeEndConditionCombobox_addNodeWindow.currentIndexChanged.connect(lambda: self.end_condition_changed(addNode_window, _translate))
 
             self.mainLayout_addNodeWindow.addLayout(self.nodeEndConditionLayout_addNodeWindow)
 
@@ -202,7 +202,6 @@ class Ui_addNode_window(object):
             self.nodeUserPassInput_addNodeWindow.deleteLater()
             self.nodeScannerBinaryLabel_addNodeWindow.deleteLater()
             self.nodeScannerBinaryInput_addNodeWindow.deleteLater()
-            self.nodeScannerBinaryBrowseButton_addNodeWindow.deleteLater()
             self.nodeArgumentsLabel_addNodeWindow.deleteLater()
             self.nodeArgumentsInput_addNodeWindow.deleteLater()
             self.nodeNumIterationsLabel_addNodeWindow.deleteLater()
@@ -210,7 +209,13 @@ class Ui_addNode_window(object):
             self.nodeMaxParallelRunsLabel_addNodeWindow.deleteLater()
             self.nodeMaxParallelRunsSpinBox_addNodeWindow.deleteLater()
             self.nodeEndConditionLabel_addNodeWindow.deleteLater()
-            self.nodeEndConditionInput_addNodeWindow.deleteLater()
+            if self.nodeEndConditionCombobox_addNodeWindow.currentText() == 'Time...':
+                self.minutesSpinbox_addNodeWindow.deleteLater()
+                self.minutesLabel_addNodeWindow.deleteLater()
+                self.secondsSpinbox_addNodeWindow.deleteLater()
+                self.secondsLabel_addNodeWindow.deleteLater()
+                self.mainLayout_addNodeWindow.removeItem(self.nodeTimeLayout_addNodeWindow)
+            self.nodeEndConditionCombobox_addNodeWindow.deleteLater()
 
             self.mainLayout_addNodeWindow.removeItem(self.nodeUserPassLayout_addNodeWindow)
             self.mainLayout_addNodeWindow.removeItem(self.nodeScannerBinaryLayout_addNodeWindow)
