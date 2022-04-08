@@ -76,6 +76,16 @@ class CaptureController:
         # Run Core Start command
         self.core_start_from_xml_file_path(xml_file_path)
 
+    def core_start_from_dictionary(self, topology_dict):
+        '''
+        Runs CoreStart using the xml as a string
+        '''
+        # Create the xml file
+        xml_creator = XML_Creator(topology_dict)
+        xml_as_string = xml_creator.create_xml()
+        # Run Core Start command
+        self.core_start_from_xml_string(xml_as_string)
+
 
     def start_services(self, scenario_dict: dict):
         '''
