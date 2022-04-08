@@ -2,7 +2,7 @@ import os
 import string
 import sys
 import subprocess
-
+from xml_test import XML_Creator
 '''
 Temp notes
 To run core cleanup
@@ -35,14 +35,8 @@ class CaptureController:
         Runs CoreCleanup
         '''
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
-    
-    def core_start(self):
-        '''
-        Runs CoreStart
-        '''
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/julio_xml_test.xml")
 
-    def core_start(self, xml_file_path):
+    def core_start_from_xml_file_path(self, xml_file_path):
         '''
         Runs CoreStart
         '''
@@ -52,6 +46,36 @@ class CaptureController:
         xml_file_name = xml_file_path.split("/")[-1]
         # Run the command
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/" + xml_file_name)
+
+
+    def core_start_from_xml_string(self, xml_as_string):
+        '''
+        Runs CoreStart using the xml as a string
+        '''
+
+        # Create a file with the xml
+        xml_file_path = "topology.xml"
+
+
+        # if the file exists delete it
+        if os.path.exists(xml_file_path):
+            os.remove(xml_file_path)
+            
+        # Create the file
+        with open(xml_file_path, "w") as f:
+            f.write(xml_as_string)
+
+        # Copy the xml file to the VM
+        xml_file_path = os.path.abspath(xml_file_path)
+        self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
+
+
+        # run cleanup script
+        self.core_cleanup()
+
+        # Run Core Start command
+        self.core_start_from_xml_file_path(xml_file_path)
+
 
     def start_services(self):
         '''
@@ -128,6 +152,9 @@ class CaptureController:
         '''
         Copies the file given in host_file path
         and copies it to the guest path
+        self: the CaptureController object
+        host_file_path: the path of the file to copy
+        guest_path: the path to copy the file to
         '''
         command = self.vm_initial_string_command + f"copyto --target-directory {guest_path} {host_file_path}"
         os.system(command)
@@ -140,6 +167,15 @@ class CaptureController:
         command = self.vm_initial_string_command + f"copyfrom --target-directory {host_path} {guest_file_path}"
         os.system(command)
 
+
+
+    def test_(self):
+        xml = XML_Creator.XmlHelper(XML_Creator.test_input)
+        xml.format_dict()
+        xml.create_xml_string()
+        xml_as_string = xml.get_xml_str()
+
+        self.core_start_from_xml_string(xml_as_string)
 
 
 
@@ -155,13 +191,15 @@ if __name__ == "__main__":
     elif sys.argv[1] == "core-cleanup":
         cc.core_cleanup()
     elif sys.argv[1] == "core-start":
-        cc.core_start()
+        cc.core_start_from_xml_file_path()
     elif sys.argv[1] == "start-services":
         cc.start_services()
     elif sys.argv[1] == "start":
         cc.start_vm()
     elif sys.argv[1] == "stop":
         cc.stop_vm()
+    elif sys.argv[1] == "test":
+        cc.test_()
     elif sys.argv[1] == "open-wireshark":
         cc.open_wireshark()
     elif sys.argv[1] == "add-shared-folder":
