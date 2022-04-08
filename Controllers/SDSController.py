@@ -343,13 +343,12 @@ class SDSController:
     #UI needs all the nodes of a scenario unit
     def get_all_nodes(self, scenario_name: str):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_PROJECT:
-            projects_list = self._entire_workspace_context['projects']
-            for project_dict in projects_list:
-                scenario_list = project_dict['scenario_units']
-                for scenario_dict in scenario_list:
-                    if scenario_dict['scenario_name'] == scenario_name:
-                        return scenario_dict['nodes']
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return scenario_dict['nodes']
     
     def get_scenario_id(self, scenario_name: str):
         self._ensure_subsystems()
