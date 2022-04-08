@@ -233,11 +233,11 @@ def createProject():
         # print('creating project')
         # print(project_name)
         # Use the sds controller to save the project
-        sds_controller._enfore_state('workplace_construction')
+        sds_controller._enforce_state('workplace_construction')
         # print('createproject showing currentworksspacename')
         # print(current_workspace_name)
         sds_controller.specify_workplace_name(current_workspace_name)
-        sds_controller._enfore_state('project_construction')
+        sds_controller._enforce_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
         success = sds_controller.finish_project_construction(project_name)
@@ -261,7 +261,7 @@ def createScenario():
     if not scenario_name:
         missingFields_Window.show()
     else:
-        sds_controller._enfore_state('init_project')
+        sds_controller._enforce_state('init_project')
         sds_controller.add_scenario_unit()
         sds_controller.insert_scenario_name(scenario_name)
         # TODO: This causes an error when creating a scenario.
