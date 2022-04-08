@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AnalysisManagerWindow</class>
+ <widget class="QMainWindow" name="AnalysisManagerWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1131</width>
+    <height>747</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>812</width>
+    <height>580</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Scan Detection System - Analysis Manager</string>
+  </property>
+  <widget class="QWidget" name="CentralLayout_analysisManagerWindow">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="centralSectionLayout_analysisManagerWindow">
+      <item>
+       <widget class="QTreeWidget" name="scenariosList_analysisManagerWindow">
+        <property name="minimumSize">
+         <size>
+          <width>220</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>220</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <column>
+         <property name="text">
+          <string>Pcap Files</string>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>Scenario 1</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Pcap File 1</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Pcap File 2</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>Scenario 2</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="scenariosLayout_analysisManagerWindow">
+        <item>
+         <layout class="QVBoxLayout" name="pcapsLayout_analysisManagerWindow">
+          <item>
+           <widget class="QTabWidget" name="pcapsTabWidget_analysisManagerWindow">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="Pcap_pcap">
+             <attribute name="title">
+              <string>Pcap.pcap</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout">
+              <item row="0" column="0">
+               <widget class="QTreeWidget" name="pcapList_analysisManagerWindow">
+                <column>
+                 <property name="text">
+                  <string>No.</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Time</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Source</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Destination</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Protocol</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Length</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Info</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="pcap_1">
+             <attribute name="title">
+              <string>1.pcap</string>
+             </attribute>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="protocolStatsLayout_analysisManagerWindow">
+          <item>
+           <widget class="QTreeWidget" name="protocolStatsList_analysisManagerWindow">
+            <column>
+             <property name="text">
+              <string>Protocol</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Percent Packets</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Packets</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Percent Bytes</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Bytes</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Bits/s</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>End Packets</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>End Bytes</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>End Bits/s</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="buttonsLayout_analysisManagerWindow">
+      <item>
+       <spacer name="horizontalSpacerButtons_analysisManagerWindow">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="filtersButton_analysisManagerWindow">
+        <property name="toolTip">
+         <string>New Project</string>
+        </property>
+        <property name="text">
+         <string>      Filters      </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="closeAnalysisManager_analysisManagerWindow">
+        <property name="text">
+         <string>Close Analysis Manager</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
