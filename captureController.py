@@ -2,6 +2,7 @@ import os
 import string
 import sys
 import subprocess
+from xml.etree.ElementTree import XML
 from xml_test import XML_Creator
 '''
 Temp notes
@@ -78,8 +79,19 @@ class CaptureController:
 
     def core_start_from_dictionary(self, topology_dict):
         '''
-        Runs CoreStart using the xml as a string
+        Runs CoreStart using the json db format
         '''
+        # TODO: figure out how the topology_dict is going to be received
+        # # rename 'nodes' to 'devices'
+        # topology_dict['devices'] = topology_dict['nodes']
+
+        # print(topology_dict)
+
+        # # Create the xml file\
+        # xml = XML_Creator.XmlHelper(XML_Creator.XmlHelper.test_input)
+        # xml.format_dict()
+        # xml.create_xml_string()
+
         # Create the xml file
         xml_creator = XML_Creator(topology_dict)
         xml_as_string = xml_creator.create_xml()
