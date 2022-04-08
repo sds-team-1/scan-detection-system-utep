@@ -126,7 +126,6 @@ def databaseConfigWindow():
     databaseConfig_Window.show()
 
 
-# TODO: Implement connecting to the database. IP already obtained when clicked connect.
 def connect_database():
     global db_config_filename, mongo_connection
     database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
@@ -146,7 +145,6 @@ def connect_database():
         # If success -> close window
         databaseConfig_Window.close()
     else:
-        # TODO: When error occurs, use this commented line:
         databaseError_Window.show()
 
 
@@ -315,35 +313,55 @@ def addNode():
     subnet = '0'
     log = ''
     if addNodeWindowUI.nodeLogNetNodeCheckBox_addNodeWindow.isChecked():
-        log = 'Yes'
+        log = 'True'
     else:
-        log = 'No'
+        log = 'False'
     type = addNodeWindowUI.nodeTypeComboBox_addNodeWindow.currentText()
+    if type == 'CORE':
+        type = 'PC'
+    elif type == 'VM' or type == 'Docker':
+        type = 'RJ45'
     name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
     MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
     IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
-    s_v = ''
-    if addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.isChecked():
+    subnet = addNodeWindowUI.nodeSeparateSubNetNodeCheckBox_addNodeWindow.isChecked()
+    user_pw = ''
+    scanner_bin = ''
+    arguments = ''
+    num_iterations = 1
+    max_parallel_runs = 1
+    end_condition = ''
+    scanning = addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.isChecked()
+    if scanning:
         user_pw = addNodeWindowUI.nodeUserPassInput_addNodeWindow.text()
         scanner_bin = addNodeWindowUI.nodeScannerBinaryInput_addNodeWindow.text()
         arguments = addNodeWindowUI.nodeArgumentsInput_addNodeWindow.text()
-        num_iterations = str(addNodeWindowUI.nodeNumIterationsSpinBox_addNodeWindow.value())
-        max_parallel_runs = str(addNodeWindowUI.nodeMaxParallelRunsSpinBox_addNodeWindow.value())
+        num_iterations = addNodeWindowUI.nodeNumIterationsSpinBox_addNodeWindow.value()
+        max_parallel_runs = addNodeWindowUI.nodeMaxParallelRunsSpinBox_addNodeWindow.value()
         if addNodeWindowUI.nodeEndConditionCombobox_addNodeWindow.currentText() == 'on-scan-complete':
             end_condition = 'on-scan-complete'
         else:
             # TODO: Handle minutes and seconds.
             minutes = str(addNodeWindowUI.minutesSpinbox_addNodeWindow.value())
             seconds = str(addNodeWindowUI.secondsSpinbox_addNodeWindow.value())
+            end_condition = f'time-{minutes}:{seconds}'
         toolButton = QtWidgets.QToolButton(mainWindowUI.CentralLayout_mainWindow)
         toolButton.setText('Scanner')
-        node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
-        mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
-        mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
-
-    else:
-        s_v = 'Victim'
-        node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP, s_v])
+        #node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
+        #mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+        #mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
+    scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    scenario_id = sds_controller.get_scenario_id(scenario_name)
+    nodes_list = sds_controller.get_all_nodes(scenario_name)
+    node_id = len(nodes_list)
+    sds_controller.insert_node(scenario_id, node_id, log, type, name, IP, MAC, \
+        subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
+        max_parallel_runs, end_condition)
+    nodes_list = sds_controller.get_all_nodes(scenario_name)
+    mainWindowUI.nodesList_mainWindow.clear()
+    for node in nodes_list:
+        node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+            node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
         mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
     addNode_Window.close()
 
@@ -361,7 +379,12 @@ def define_workspace_path():
 
 
 def item_project_selected():
+    # print(f'checking if item_project_selected went inside')
+    # Clear the window
+    mainWindowUI.nodesList_mainWindow.clear()
     if mainWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+        # This condition is for projects. Works with the project list which...
+        # contains projects and scenarios
         # TODO: Check add node button(I was not able to create a project)
         mainWindowUI.exportButton_mainWindow.setEnabled(True)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(False)
@@ -369,11 +392,31 @@ def item_project_selected():
         mainWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
         mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
     else:
+        #print(f'checking if else checked')
         mainWindowUI.exportButton_mainWindow.setEnabled(False)
         mainWindowUI.addNodeButton_mainWindow.setEnabled(True)
         mainWindowUI.startScenarioButton_mainWindow.setEnabled(True)
         mainWindowUI.stopScenarioButton_mainWindow.setEnabled(True)
         mainWindowUI.restoreScenarioButton_mainWindow.setEnabled(True)
+        # Get all the nodes
+        scenario_ID = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        #print(f'checking scenario id: {scenario_ID}')
+        sds_controller._enforce_state('init_project')
+        node_list = sds_controller.get_all_nodes(scenario_ID)
+        # Insert into vm and docker text saved values
+        vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
+        mainWindowUI.vmSdsServiceInput_mainWindow.setText(vm_ip)
+        mainWindowUI.dockerSdsServiceInput_mainWindow.setText(docker_ip)
+        #print(f'checking if nodes list is anything: {node_list}')
+        # Insert all the nodes into the UI
+        if node_list:
+            #print(f'checking if nodes list is available for ui...{node_list}')
+            for node in node_list:
+                node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+                    node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
+                mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+                # TODO: Ask mauricio how this works
+                # mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
 
 
 # TODO: Work on this to work with the controller
@@ -426,6 +469,9 @@ def addNodeCheckboxStateChanged():
 def open_workspace(selected_workspace):
     global current_workspace_name
     current_workspace_name = selected_workspace
+    # Change sds_controller workspace context
+    print(f'check if open_workspace is called')
+    sds_controller.change_workspace_context(current_workspace_name)
     time.sleep(1)
     mainWindow_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
     mainWindow_Window.show()
@@ -443,6 +489,9 @@ def open_workspace(selected_workspace):
             # Add scenario tree to project tree
             project_tree_item.addChild(scenario_tree)
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(project_tree_item)
+    #Insert core options if saved
+    mainWindowUI.corePortNumberInput_mainWindow.setText(sds_controller.get_core_port())
+    mainWindowUI.coreSdsServiceInput_mainWindow.setText(sds_controller.get_core_ip())
 
 
 # TODO: Implement this
@@ -455,24 +504,37 @@ def delete_workspace(selected_workspace):
     pass
 
 
-# TODO: Check this call chain
 def set_up_scenario_unit():
-    sds_controller.set_up_scenario_units()
+    scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    vm_ip = mainWindowUI.vmSdsServiceInput_mainWindow.text()
+    docker_ip = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
+    sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(False)
+    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(False)
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(False)
+    #sds_controller.run_scenario_units(scenario_name)
 
-
-# TODO: Check this call chain
 def start_scenario_unit():
-    sds_controller.run_scenario_units()
+    # Get input
+    ip = mainWindowUI.coreSdsServiceInput_mainWindow.text()
+    port = mainWindowUI.corePortNumberInput_mainWindow.text()
+    # store input into workspace
+    sds_controller.insert_core_sds_service(ip, port)
+    mainWindowUI.corePortNumberInput_mainWindow.setEnabled(False)
+    mainWindowUI.coreSdsServiceInput_mainWindow.setEnabled(False)
+    #sds_controller.start_VM()
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
+    mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
 
-
-# TODO: Check this call chain
 def stop_scenario_unit():
-    sds_controller.stop()
+    #sds_controller.stop()
+    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(True)
+    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(True)
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
 
-
-# TODO: Check this call chain
 def restore_scenario_unit():
-    sds_controller.restore()
+    #sds_controller.restore()
+    pass
 
 
 def context_menu_workspace(point):
@@ -615,6 +677,7 @@ def initialize_signals():
     mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
     mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
     mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
+    mainWindowUI.runScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
     mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
     mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
     mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
