@@ -242,6 +242,8 @@ class SDSController:
             self._scenario_unit_construction['nodes'] = {}
             self._scenario_unit_construction['iterations'] = 1
             self._scenario_unit_construction['PCAP'] = []
+            self._scenario_unit_construction['sds_vm_service'] = ''
+            self._scenario_unit_construction['sds_docker_service'] = ''
             self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
         
     def insert_scenario_name(self, name: str):
@@ -288,13 +290,13 @@ class SDSController:
             return success
 
     ###### CORE Related functinos ######
-    def set_up_scenario_units(self):
+    def start_VM(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
             # Do work here
             try:
                 # Do launching with Capture Manager
-                pass
+                self._cap_manager.start_vm()
             except Exception as e:
                 # Handle here
                 self._state = SDSStateEnum.INIT_PROJECT
@@ -306,11 +308,12 @@ class SDSController:
             #Do work here
             pass
 
-    def run_scenario_units(self):
+    def run_scenario_units(self, scenario_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
             # Do work here
-            self._cap_manager.startScenario()
+            scenario_dict = self.get_scenario_data(scenario_name)
+            self._cap_manager.start_services(scenario_dict)
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def stop(self):
@@ -356,3 +359,51 @@ class SDSController:
             for scenario_dict in scenario_list:
                 if scenario_dict['scenario_name'] == scenario_name:
                     return scenario_dict['_id']
+
+    def get_scenario_project_name(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return project_dict['_id']
+
+    def get_scenario_vm_info(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return (scenario_dict['sds_vm_service'], scenario_dict['sds_docker_service'])
+
+    def get_scenario_data(self, scenario_name: str):
+        scenario_dict = {}
+        scenario_dict['scenario_name'] = scenario_name
+        scenario_dict['project_name'] = self.get_scenario_project_name(scenario_name)
+        scenario_dict['workspace_name'] = self._entire_workspace_context['_id']
+        scenario_dict['nodes'] = self.get_all_nodes(scenario_name)
+        scenario_dict['core_sds_service_ip'] = self._entire_workspace_context['core_sds_service_ip']
+        scenario_dict['core_sds_port_number'] = self._entire_workspace_context['core_sds_port_number']
+        vm, docker = self.get_scenario_vm_info(scenario_name)
+        scenario_dict['sds_vm_service'] = vm
+        scenario_dict['sds_docker_service'] = docker
+        return scenario_dict
+
+    def get_core_ip(self):
+        return self._entire_workspace_context['core_sds_service_ip']
+
+    def get_core_port(self):
+        return self._entire_workspace_context['core_sds_port_number']
+
+    def insert_vm_service(self, scenario_name: str, vm_ip: str, docker_ip: str):
+        scenario_id = self.get_scenario_id(scenario_name)
+        self._db_connection.save_scenario_unit(scenario_id, {'sds_vm_service': vm_ip, \
+            'sds_docker_service': docker_ip})
+        self.change_workspace_context(self._workspace_name)
+
+    def insert_core_sds_service(self, ip: str, port: str):
+        self._db_connection.save_workspace(self._workspace_name, {'core_sds_service_ip': ip, \
+            'core_sds_port_number': port})
+        self.change_workspace_context(self._workspace_name)

@@ -20,10 +20,21 @@ class SDSDatabaseHelper:
         db = client['SDS']
         collection = db['workspaces']
         try:
-            collection.insert_one({'_id': workspace_name, 'projects': []})
+            collection.insert_one({'_id': workspace_name, 'projects': [], \
+                'core_sds_service_ip': '', 'core_sds_port_number': ''})
         except:
             return False
         return True
+
+    def save_workspace(self, workspace_name: str, data: dict):
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['workspaces']
+        try:
+            result = collection.update_one({'_id': workspace_name}, {'$set': data})
+            return True if result.matched_count else False
+        except:
+            return False
 
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
@@ -193,7 +204,7 @@ class SDSDatabaseHelper:
         db = client.SDS
         collection = db['scenarios']
         try:
-            result = collection.update_one({'_id': scenario_id}, {'$push': data})
+            result = collection.update_one({'_id': scenario_id}, {'$set': data})
             return True if result.matched_count else False
         except: 
             return False

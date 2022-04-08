@@ -43,7 +43,7 @@ class CaptureController:
         '''
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /media/sf_new-shared-folder/research/xml-json-problem/julio_xml_test.xml")
 
-    def start_services(self):
+    def start_services(self, scenario_dict: dict):
         '''
         Starts services on the VM
         This method also deletes everything in the PCAPs directory

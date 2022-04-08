@@ -403,6 +403,10 @@ def item_project_selected():
         #print(f'checking scenario id: {scenario_ID}')
         sds_controller._enforce_state('init_project')
         node_list = sds_controller.get_all_nodes(scenario_ID)
+        # Insert into vm and docker text saved values
+        vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
+        mainWindowUI.vmSdsServiceInput_mainWindow.setText(vm_ip)
+        mainWindowUI.dockerSdsServiceInput_mainWindow.setText(docker_ip)
         #print(f'checking if nodes list is anything: {node_list}')
         # Insert all the nodes into the UI
         if node_list:
@@ -485,6 +489,9 @@ def open_workspace(selected_workspace):
             # Add scenario tree to project tree
             project_tree_item.addChild(scenario_tree)
         mainWindowUI.projectsList_mainWindow.addTopLevelItem(project_tree_item)
+    #Insert core options if saved
+    mainWindowUI.corePortNumberInput_mainWindow.setText(sds_controller.get_core_port())
+    mainWindowUI.coreSdsServiceInput_mainWindow.setText(sds_controller.get_core_ip())
 
 
 # TODO: Implement this
@@ -497,24 +504,37 @@ def delete_workspace(selected_workspace):
     pass
 
 
-# TODO: Check this call chain
 def set_up_scenario_unit():
-    sds_controller.set_up_scenario_units()
+    scenario_name = mainWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    vm_ip = mainWindowUI.vmSdsServiceInput_mainWindow.text()
+    docker_ip = mainWindowUI.dockerSdsServiceInput_mainWindow.text()
+    sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(False)
+    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(False)
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(False)
+    #sds_controller.run_scenario_units(scenario_name)
 
-
-# TODO: Check this call chain
 def start_scenario_unit():
-    sds_controller.run_scenario_units()
+    # Get input
+    ip = mainWindowUI.coreSdsServiceInput_mainWindow.text()
+    port = mainWindowUI.corePortNumberInput_mainWindow.text()
+    # store input into workspace
+    sds_controller.insert_core_sds_service(ip, port)
+    mainWindowUI.corePortNumberInput_mainWindow.setEnabled(False)
+    mainWindowUI.coreSdsServiceInput_mainWindow.setEnabled(False)
+    #sds_controller.start_VM()
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
+    mainWindowUI.startScenarioButton_mainWindow.setEnabled(False)
 
-
-# TODO: Check this call chain
 def stop_scenario_unit():
-    sds_controller.stop()
+    #sds_controller.stop()
+    mainWindowUI.vmSdsServiceInput_mainWindow.setEnabled(True)
+    mainWindowUI.dockerSdsServiceInput_mainWindow.setEnabled(True)
+    mainWindowUI.runScenarioButton_mainWindow.setEnabled(True)
 
-
-# TODO: Check this call chain
 def restore_scenario_unit():
-    sds_controller.restore()
+    #sds_controller.restore()
+    pass
 
 
 def context_menu_workspace(point):
@@ -657,6 +677,7 @@ def initialize_signals():
     mainWindowUI.importButton_mainWindow.clicked.connect(import_project)
     mainWindowUI.addNodeButton_mainWindow.clicked.connect(addNodeWindow)
     mainWindowUI.startScenarioButton_mainWindow.clicked.connect(start_scenario_unit)
+    mainWindowUI.runScenarioButton_mainWindow.clicked.connect(set_up_scenario_unit)
     mainWindowUI.stopScenarioButton_mainWindow.clicked.connect(stop_scenario_unit)
     mainWindowUI.restoreScenarioButton_mainWindow.clicked.connect(restore_scenario_unit)
     mainWindowUI.projectsList_mainWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
