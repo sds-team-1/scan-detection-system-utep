@@ -209,6 +209,7 @@ class SDSDatabaseHelper:
             node_obj_id = collection.insert_one(node_data).inserted_id
             query = {'_id': scenario_object_id}
             update = {'nodes': node_obj_id}
+            collection = db['scenarios']
             result = collection.update_one(query, {'$push': update})
         except:
             print('Error: Database Helper could not insert the node')

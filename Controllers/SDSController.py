@@ -124,9 +124,11 @@ class SDSController:
             self._state = SDSStateEnum.INIT_WORKPLACE
 
     def change_workspace_context(self, workspace_name: str):
+        # print('db.change_workspace called')
         self._ensure_subsystems()
         self._workspace_name = workspace_name
         self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
+        # print(self._entire_workspace_context)
 
     ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
@@ -194,7 +196,7 @@ class SDSController:
                 return False
 
     ###### Enfore state function for overloading (testing) ######
-    def _enfore_state(self, state: str):
+    def _enforce_state(self, state: str):
         #INIT_SYSTEM = 1
         if state == 'init_system':
             self._state = SDSStateEnum.INIT_SYSTEM
@@ -247,16 +249,30 @@ class SDSController:
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             self._scenario_unit_construction['scenario_name'] = name
             
-    def insert_node(self, scenario_id: str, node_name: str = '', 
-    scanning: bool = False, parallel_exec: int = 1, bin_path: str = '', 
-    args: list = [], listening: bool = False, end_condition: str = '', 
-    node_type: str = 'core-node', ip4: str = '', mac: str = '', 
-    subnet_mask: int = 24, user: str = '', password: str = '', 
-    diff_subnet: bool = False):
+    def insert_node(self, scenario_id: str, node_id: str, listening: bool, \
+        type: str, name: str, ip: str, mac: str, subnet: bool, scanning: bool, \
+        username_pass: str, scanner_binary: str, arguments: str, iterations: int,\
+        parallel_runs: int, end_condition: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
             # Continue here
             # Insert scenario node
+            node_dict = {}
+            node_dict['id'] = node_id
+            node_dict['listening'] = listening
+            node_dict['type'] = type
+            node_dict['name'] = name
+            node_dict['ip'] = ip
+            node_dict['mac'] = mac
+            node_dict['subnet'] = subnet
+            node_dict['scanning'] = scanning
+            node_dict['username/pass'] = username_pass
+            node_dict['scanner_binary'] = scanner_binary
+            node_dict['arguments'] = arguments
+            node_dict['iterations'] = iterations
+            node_dict['parallel_runs'] = parallel_runs
+            node_dict['end_condition'] = end_condition
+            self._db_connection.create_node(scenario_id, node_dict)
             self.change_workspace_context(self._workspace_name)
             pass
     
@@ -322,8 +338,21 @@ class SDSController:
         pass
 
     #UI needs all the nodes of a scenario unit
-    def get_all_nodes(self, scenario_id: str):
+    def get_all_nodes(self, scenario_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
-            nodes: list = self._db_connection.retrieve_all_nodes_for_scenario(scenario_id)
-            return nodes
+            projects_list = self._entire_workspace_context['projects']
+            for project_dict in projects_list:
+                scenario_list = project_dict['scenario_units']
+                for scenario_dict in scenario_list:
+                    if scenario_dict['scenario_name'] == scenario_name:
+                        return scenario_dict['nodes']
+    
+    def get_scenario_id(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return scenario_dict['_id']
