@@ -54,7 +54,7 @@ class XmlHelper:
              '</default_services>' \
              '</scenario>'
 
-    id_counter = 0
+    id_counter = 1
     formatted_dict = {}
     xml_str = ""
     networks_str = ""
@@ -69,12 +69,15 @@ class XmlHelper:
 
     def create_xml_string(self):
         self.xml_str = xmltodict.unparse(self.formatted_dict, short_empty_elements=True)
+
+
         self.replace_key_XML(
             xmltodict.unparse(self.formatted_dict["scenario"]["networks"], short_empty_elements=True).replace(
                 '<?xml version="1.0" encoding="utf-8"?>\n', ""), self.networks_str)
-        self.replace_key_XML(
-            xmltodict.unparse(self.formatted_dict["scenario"]["devices"], short_empty_elements=True).replace(
-                '<?xml version="1.0" encoding="utf-8"?>\n', ""), self.devices_str)
+        if len(self.input_dict["devices"]) > 0:
+            self.replace_key_XML(
+                xmltodict.unparse(self.formatted_dict["scenario"]["devices"], short_empty_elements=True).replace(
+                    '<?xml version="1.0" encoding="utf-8"?>\n', ""), self.devices_str)
         
         self.replace_key_XML(
             xmltodict.unparse(self.formatted_dict["scenario"]["links"], short_empty_elements=True).replace(
@@ -93,15 +96,16 @@ class XmlHelper:
         networks = self.format_networks()
         self.formatted_dict["scenario"]["networks"] = networks["networks"]
 
-        devices = self.format_devices()
-        self.formatted_dict["scenario"]["devices"] = devices["devices"]
+        if len(self.input_dict["devices"]) > 0:
+            devices = self.format_devices()
+            self.formatted_dict["scenario"]["devices"] = devices["devices"]
 
         links = self.format_links()
         self.formatted_dict["scenario"]["links"] = links["links"]
 
     def format_links(self):
         links_dict = {"links": {}}
-        linksList = self.input_dict["devices"] + self.input_dict["networks"][0:len(self.input_dict["networks"])-1] 
+        linksList = self.input_dict["devices"] + self.input_dict["networks"]
 
         for i in range(len(linksList)):
             name = ""
@@ -165,96 +169,21 @@ class XmlHelper:
         self.networks_str = self.networks_str + xmltodict.unparse(
             {'network': {'@id': "99", '@name': "Switch",
                             '@icon': "", "@canvas": "1", "@type": "SWITCH",
-                            "position": self.format_position()}}, short_empty_elements=True).replace(
+                            "position": {'@x': "45.61198425292969", '@y': "347.94708251953125", '@lat': "47.575", "@lon": "-122.1254116826387", "@alt": "2.0"}}}, short_empty_elements=True).replace(
             '<?xml version="1.0" encoding="utf-8"?>\n', "")
         network_dict["networks"].update(
             {'network': {'@id': "99", '@name': "Switch",
                             '@icon': "", "@canvas": "1", "@type": "SWITCH",
-                            "position": self.format_position()}})
+                            "position": {'@x': "45.61198425292969", '@y': "347.94708251953125", '@lat': "47.575", "@lon": "-122.1254116826387", "@alt": "2.0"}}})
         return network_dict
 
     def format_position(self):
         self.id_counter += 1
-        position = {'@x': "617.0" + str(self.id_counter), '@y': "609.0" + str(self.id_counter), '@lat': "47.57363051698441" + str(self.id_counter), "@lon": "-122.12401031079544" + str(self.id_counter), "@alt": "2.0"}
+        position = {'@x': "0", '@y': "0", '@lat': "47.576", "@lon": "-122." + str(1330 - (self.id_counter*5)), "@alt": "2.0"}
         return position
-
-    def format_configservices(self):
-        config = {}
-
-    def find_subnets(self, nodes):
-        subnets = {}
-        for node in nodes:
-            ip_split = node['ip'].split(".")
-            subnet = ip_split[0] + "." + ip_split[1] + "." + ip_split[2] + ".n"
-            if subnet in subnets:
-                subnets[subnet] += 1
-            else:
-                subnets[subnet] = 1
-        return subnets
 
     def get_xml_str(self):
         return self.xml_str
 
     def get_networks_str(self):
         return self.networks_str
-
-test_input = {"name": "ScenarioA",
-              "networks":[
-                  {"id": "2",
-                   "name": "Core",
-                   "type": "RJ45",
-                   "mac": "aa:aa:aa:aa:aa:aa",
-                   "ip": "10.10.10.10",
-                   "ip4_mask": "24"},
-                   {"id": "3",
-                   "name": "Docker",
-                   "type": "RJ45",
-                   "mac": "aa:aa:aa:aa:aa:ab",
-                   "ip": "10.10.10.11",
-                   "ip4_mask": "24"}
-                  ],
-              "devices":[
-                  {"id": "4",
-                   "name": "Victim1Sub1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ac",
-                   "ip": "10.10.1.2",
-                   "ip4_mask": "24"},
-                   {"id": "5",
-                   "name": "Victim2Sub1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ae",
-                   "ip": "10.10.1.3",
-                   "ip4_mask": "24"},
-                    {"id": "6",
-                   "name": "Victim3Sub1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ad",
-                   "ip": "10.10.1.4",
-                   "ip4_mask": "24"},
-                   {"id": "7",
-                   "name": "Victim4Sub2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:af",
-                   "ip": "10.10.2.2",
-                   "ip4_mask": "24"},
-                    {"id": "8",
-                   "name": "Victim5Sub2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1c",
-                   "ip": "10.10.2.3",
-                   "ip4_mask": "24"},
-                   {"id": "9",
-                   "name": "Victim6Sub2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1e",
-                   "ip": "10.10.2.3",
-                   "ip4_mask": "24"}
-                  ]
-              }
-
-xml = XmlHelper(test_input)
-xml.format_dict()
-xml.create_xml_string()
-xml.create_xml_file()
-print(xml.get_xml_str())
