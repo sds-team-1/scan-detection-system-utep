@@ -2,7 +2,6 @@
 import xmltodict
 import os
 
-
 class XmlHelper:
     config = '<session_origin lat="47.579166412353516" lon="-122.13232421875" alt="2.0" scale="150.0"/>' \
              '<session_options>' \
@@ -247,54 +246,51 @@ class XmlHelper:
     def get_networks_str(self):
         return self.networks_str
 
-test_input = {"name": "ScenarioA",
-              "networks":[
-                #   {"id": "12",
-                #    "name": "Docker",
-                #    "type": "RJ45",
-                #    "mac": "aa:aa:aa:aa:aa:aa",
-                #    "ip": "10.10.10.10",
-                #    "ip4_mask": "24"},
-                  ],
-              "devices":[
-                  {"id": "14",
-                   "name": "n1s1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ac",
-                   "ip": "10.10.1.2",
-                   "ip4_mask": "24"},
-                   {"id": "15",
-                   "name": "n2s1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ae",
-                   "ip": "10.10.1.3",
-                   "ip4_mask": "24"},
-                    {"id": "16",
-                   "name": "n3s1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ad",
-                   "ip": "10.10.1.4",
-                   "ip4_mask": "24"},
-                   {"id": "17",
-                   "name": "n4s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:af",
-                   "ip": "10.10.2.2",
-                   "ip4_mask": "24"},
-                    {"id": "18",
-                   "name": "n5s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1c",
-                   "ip": "10.10.2.4",
-                   "ip4_mask": "24"},
-                   {"id": "19",
-                   "name": "n6s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1e",
-                   "ip": "10.10.2.3",
-                   "ip4_mask": "24"}
-                  ]
-              }
-
-xml = XmlHelper(test_input)
-print(xml.get_xml_str())
+# test_input = {"name": "ScenarioA",
+#               "networks":[
+#                 #   {"id": "12",
+#                 #    "name": "Docker",
+#                 #    "type": "RJ45",
+#                 #    "mac": "aa:aa:aa:aa:aa:aa",
+#                 #    "ip": "10.10.10.10",
+#                 #    "ip4_mask": "24"},
+#                   ],
+#               "devices":[
+#                   {"id": "14",
+#                    "name": "n1s1",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:ac",
+#                    "ip": "10.10.1.2",
+#                    "ip4_mask": "24"},
+#                    {"id": "15",
+#                    "name": "n2s1",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:ae",
+#                    "ip": "10.10.1.3",
+#                    "ip4_mask": "24"},
+#                     {"id": "16",
+#                    "name": "n3s1",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:ad",
+#                    "ip": "10.10.1.4",
+#                    "ip4_mask": "24"},
+#                    {"id": "17",
+#                    "name": "n4s2",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:af",
+#                    "ip": "10.10.2.2",
+#                    "ip4_mask": "24"},
+#                     {"id": "18",
+#                    "name": "n5s2",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:1c",
+#                    "ip": "10.10.2.4",
+#                    "ip4_mask": "24"},
+#                    {"id": "19",
+#                    "name": "n6s2",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:1e",
+#                    "ip": "10.10.2.3",
+#                    "ip4_mask": "24"}
+#                   ]
+#               }
