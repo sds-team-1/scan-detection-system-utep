@@ -2,7 +2,32 @@
 import xmltodict
 import os
 
+# Helper class to create an xml string from a given dictionary.
+# Node IDs must be larger than 10 (this allows a max of 10 switches or subnets, if more are required then make sure the node ids are large)
+# IDs must be base10
+# RJ45 can be created but not tested, from my understanding RJ45 will only be used for docker.
+# Please follow the given convention {"name": "ScenarioA", #any name will do
+#               "networks":[
+#                 #   {"id": "12", # for all ids they must be greated than 10, this allows for at least 10 switches if we want more make sure the ids start with a larger number
+#                 #    "name": "Docker",
+#                 #    "type": "RJ45",
+#                 #    "mac": "aa:aa:aa:aa:aa:aa",
+#                 #    "ip": "10.10.10.10",
+#                 #    "ip4_mask": "24"},
+#                   ],
+#               "devices":[ # Core would be of type PC
+#                   {"id": "14",
+#                    "name": "n1s1",
+#                    "type": "PC",
+#                    "mac": "aa:aa:aa:aa:aa:ac",
+#                    "ip": "10.10.1.2",
+#                    "ip4_mask": "24"}]}
+# networks refers to RJ45 nodes
+# devices refers to core nodes such as Core or victims
+# all mac, ips, and ids must be unique 
 class XmlHelper:
+    
+    # Default config for all nodes. Custome services can also be assigned by node.
     config = '<session_origin lat="47.579166412353516" lon="-122.13232421875" alt="2.0" scale="150.0"/>' \
              '<session_options>' \
              '<configuration name="controlnet" value=""/>' \
@@ -63,7 +88,7 @@ class XmlHelper:
 
     link_dict = {}
 
-    # Constcutor to create helper class object
+    # Constcutor to create helper class object, methods were included to reduce the number of calls. Creating an object will do everything and lastly you would just have to get the string or file.
     def __init__(self, input_dict):
         self.input_dict = input_dict
         self.format_dict()
@@ -114,6 +139,7 @@ class XmlHelper:
         links = self.format_links()
         self.formatted_dict["scenario"]["links"] = links["links"]
 
+    # uses given dictionary to find subnets, build links, and creat ID for new switches
     def find_subnets(self):
         self.link_dict
         for node in self.input_dict["devices"]+self.input_dict["networks"]:
@@ -130,6 +156,7 @@ class XmlHelper:
                 self.routerLinkips.append(originalIP)
         return self.link_dict
 
+    # Method to format all links of the scenario. This includes PCs, RJ45, switches, and router
     def format_links(self):
         links_dict = {"links": {}}
         linksList = self.input_dict["devices"] + self.input_dict["networks"]
@@ -174,7 +201,8 @@ class XmlHelper:
                 ethCount += 1
             else: continue
         return links_dict   
-
+    
+    # formated the PC nodes as well as the router that all switches are connected to
     def format_devices(self):
         devices_dict = {"devices": {}}
         devicesList = self.input_dict["devices"]
@@ -202,6 +230,7 @@ class XmlHelper:
 
         return devices_dict
 
+    # method to format RJ45 nodes, in additon it uses the subnet information to create the required number of switches
     def format_networks(self):
         network_dict = {"networks": {}}
         networksList = self.input_dict["networks"]
@@ -235,27 +264,33 @@ class XmlHelper:
             ip += 1
         return network_dict
 
+    # method to format the postion of
     def format_position(self):
         self.id_counter += 1
         position = {'@x': "0", '@y': "0", '@lat': "47.57792708883367", "@lon": "-122." + str(1330 - (self.id_counter*5)), "@alt": "2.0"}
         return position
 
+    # getter to obtain created xml string
     def get_xml_str(self):
         return self.xml_str
 
+    # method used for testing. to see what type of information was being saved.
     def get_networks_str(self):
         return self.networks_str
 
-# test_input = {"name": "ScenarioA",
+# example of dictionary needed
+# the arrays can be blank if needed.
+
+# test_input = {"name": "ScenarioA", #any name will do
 #               "networks":[
-#                 #   {"id": "12",
+#                 #   {"id": "12", # for all ids they must be greated than 10, this allows for at least 10 switches if we want more make sure the ids start with a larger number
 #                 #    "name": "Docker",
 #                 #    "type": "RJ45",
 #                 #    "mac": "aa:aa:aa:aa:aa:aa",
 #                 #    "ip": "10.10.10.10",
 #                 #    "ip4_mask": "24"},
 #                   ],
-#               "devices":[
+#               "devices":[ # Core would be of type PC
 #                   {"id": "14",
 #                    "name": "n1s1",
 #                    "type": "PC",
