@@ -1,5 +1,6 @@
 import os
 import string
+import time
 import sys
 import subprocess
 from xml.etree.ElementTree import XML
@@ -28,13 +29,21 @@ class CaptureController:
         pass
 
     def run_command(self, command, args=""):
+        '''
+        Runs the command in a new subprocess
+        '''
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
-        os.system(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}")
+        # subprocess.call(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}", shell=True)
+        command_string = f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}"
+        # subprocess.call(command_string, shell=True)
+        
+        subprocess.Popen(command_string, shell=True, close_fds=True)
 
     def core_cleanup(self):
         '''
         Runs CoreCleanup
         '''
+        print("Running CoreCleanup")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
 
     def core_start_from_xml_file_path(self, xml_file_path):
@@ -45,8 +54,36 @@ class CaptureController:
         self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
         # Get the xml file name
         xml_file_name = xml_file_path.split("/")[-1]
+
+        # Run Core Cleanup
+        self.core_cleanup()
+        # Wait 10 seconds
+        for i in range(10):
+            print(f"Waiting {i} seconds")
+            time.sleep(1)
+
         # Run the command
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/" + xml_file_name)
+
+    def core_start(self):
+        '''
+        Runs core start
+        '''
+        # Run Core Cleanup
+        self.core_cleanup()
+        # Wait 10 seconds
+        for i in range(10):
+            print(f"Waiting 10 seconds -> {i} seconds")
+            time.sleep(1)
+
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
+
+        # wait 30 seconds
+        for i in range(15):
+            print(f"Waiting 15 seconds -> {i} seconds")
+            time.sleep(1)
+
+        self.start_services()
 
 
     def core_start_from_xml_string(self, xml_as_string):
@@ -56,7 +93,6 @@ class CaptureController:
 
         # Create a file with the xml
         xml_file_path = "topology.xml"
-
 
         # if the file exists delete it
         if os.path.exists(xml_file_path):
@@ -70,12 +106,9 @@ class CaptureController:
         xml_file_path = os.path.abspath(xml_file_path)
         self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
 
-
-        # run cleanup script
-        self.core_cleanup()
-
         # Run Core Start command
-        self.core_start_from_xml_file_path(xml_file_path)
+        self.core_start()
+
 
     def core_start_from_dictionary(self, topology_dict):
         '''
@@ -92,19 +125,33 @@ class CaptureController:
         # xml.format_dict()
         # xml.create_xml_string()
 
-        # Create the xml file
-        xml_creator = XML_Creator(topology_dict)
-        xml_as_string = xml_creator.create_xml()
+
+        # Currently xml conversion is still in progress
+        # # Create the xml file
+        # xml_creator = XML_Creator(topology_dict)
+        # xml_as_string = xml_creator.create_xml()
+
+
+        # so instead we will read from a file
+        # it is under research/xml-json-problem/example_topology.xml
+
+        # Read the xml file
+        xml_as_string = ""
+        with open("./research/xml-json-problem/example_topology.xml", "r") as f:
+            xml_as_string = f.read()
+            
         # Run Core Start command
         self.core_start_from_xml_string(xml_as_string)
 
 
-    def start_services(self, scenario_dict: dict):
+    def start_services(self):
         '''
         Starts services on the VM
         This method also deletes everything in the PCAPs directory
         If it doesnt exists it will create it
         '''
+
+        self.start_vm()
         
         # Check if PCAPs folder exists, if not create it, if it does, delete everything in it
         if not os.path.exists("PCAPs"):
@@ -117,8 +164,28 @@ class CaptureController:
                         os.unlink(file_path)
                 except Exception as e:
                     print(e)
+            os.rmdir("PCAPs")
 
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh /media/sf_new-shared-folder/PCAPs/capture.pcap");
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
+
+
+        # wait 35 seconds
+        for i in range(40):
+            print(f"Waiting 40 seconds -> {i} seconds")
+            time.sleep(1)
+        
+        self.core_cleanup()
+
+        # wait 10 seconds
+        for i in range(10):
+            print(f"Waiting 10 seconds -> {i} seconds")
+            time.sleep(1)
+
+        # A file will be generated called /home/ubuntu/core/Files/pcaps/pcap1.pcap
+        # use copy_from and store on host machine
+        # self.copy_from("/home/ubuntu/core/Files/pcaps/pcap1.pcap", "PCAPs")
+        self.copy_from("PCAPs", "/home/ubuntu/core/Files/pcaps/pcap1.pcap")
+
 
     def start_vm(self) -> bool:
         '''
@@ -190,13 +257,11 @@ class CaptureController:
         os.system(command)
 
 
-
     def test_(self):
         xml = XML_Creator.XmlHelper(XML_Creator.test_input)
         xml.format_dict()
         xml.create_xml_string()
         xml_as_string = xml.get_xml_str()
-
         self.core_start_from_xml_string(xml_as_string)
 
 
