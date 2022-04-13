@@ -1,5 +1,14 @@
 from PyQt5 import QtCore, QtWidgets
 
+#import pcap
+import dpkt
+from dpkt.utils import mac_to_str
+import socket
+import scapy
+from PyQt5.QtWidgets import QTreeWidgetItem
+from scapy.utils import rdpcap
+import pyshark
+
 
 class Ui_AnalysisManagerWindow(object):
     def setupAnalysisManager(self, AnalysisManagerWindow):
@@ -95,3 +104,18 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Filters      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
+
+        cap = pyshark.FileCapture('pcap1.pcap',
+                                  only_summaries=True)
+        for pkt in cap:
+            l = []
+            l.append(str(pkt.no))
+            l.append(str(pkt.time))
+            l.append(str(pkt.source))
+            l.append(str(pkt.destination))
+            l.append(str(pkt.protocol))
+            l.append(str(pkt.length))
+            l.append(str(pkt.info))
+            l1 = QTreeWidgetItem(l)
+            self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+
