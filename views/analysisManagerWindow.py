@@ -108,6 +108,22 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Filters      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
         test_pcap.create_json_file()
         test_pcap.to_json()
