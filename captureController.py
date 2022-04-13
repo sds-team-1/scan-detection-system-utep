@@ -4,7 +4,7 @@ import time
 import sys
 import subprocess
 from xml.etree.ElementTree import XML
-from xml_test import XML_Creator
+from Helpers import XmlHelper
 '''
 Temp notes
 To run core cleanup
@@ -90,7 +90,7 @@ class CaptureController:
         '''
         Runs CoreStart using the xml as a string
         '''
-
+        
         # Create a file with the xml
         xml_file_path = "topology.xml"
 
@@ -258,11 +258,15 @@ class CaptureController:
 
 
     def test_(self):
-        xml = XML_Creator.XmlHelper(XML_Creator.test_input)
-        xml.format_dict()
-        xml.create_xml_string()
-        xml_as_string = xml.get_xml_str()
-        self.core_start_from_xml_string(xml_as_string)
+        # xml = XML_Creator.XmlHelper(XML_Creator.test_input)
+        # xml.format_dict()
+        # xml.create_xml_string()
+        # xml_as_string = xml.get_xml_str()
+        # self.core_start_from_xml_string(xml_as_string)
+
+        xml = XmlHelper.XmlHelper(XmlHelper.test_input)
+
+        self.core_start_from_xml_string(xml.xml_str)
 
 
 
