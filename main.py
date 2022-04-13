@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 
 from views.addNodeWindow import Ui_addNode_window
+from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.createWorkspace import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
 from views.databaseErrorWindow import Ui_databaseError_window
@@ -77,6 +78,7 @@ app = QtWidgets.QApplication(sys.argv)
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 captureManager_Window = QtWidgets.QMainWindow()
+analysisManager_Window = QtWidgets.QMainWindow()
 newProject_Window = QtWidgets.QDialog()
 addNode_Window = QtWidgets.QDialog()
 addSetNodes_Window = QtWidgets.QDialog()
@@ -89,6 +91,7 @@ databaseError_Window = QtWidgets.QDialog()
 workspaceUI = Ui_workspace_window()
 createWorkspaceUI = Ui_newWorkspace_window()
 captureManagerWindowUI = Ui_CaptureManagerWindow()
+analysisManagerWindowUI = Ui_AnalysisManagerWindow()
 newProjectWindowUI = Ui_newProject_window()
 addNodeWindowUI = Ui_addNode_window()
 addSetNodesWindowUI = Ui_addSetNodes_window()
@@ -124,6 +127,17 @@ def databaseConfigWindow():
     databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
         databaseConfig_Window.close)
     databaseConfig_Window.show()
+
+
+def analysisManagerWindow():
+    global analysisManager_Window
+    analysisManager_Window = QtWidgets.QMainWindow()
+    analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
+    #databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
+    #databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+     #   databaseConfig_Window.close)
+    workspace_Window.close()
+    analysisManager_Window.show()
 
 
 def connect_database():
@@ -666,6 +680,7 @@ def setup_ui():
 def initialize_signals():
     workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
     workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
+    workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
     # workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
     # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
