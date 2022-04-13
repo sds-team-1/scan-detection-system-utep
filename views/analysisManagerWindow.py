@@ -9,6 +9,9 @@ from PyQt5.QtWidgets import QTreeWidgetItem
 from scapy.utils import rdpcap
 import pyshark
 
+from Models.pcap import Pcap
+from Models.capture import Capture
+
 
 class Ui_AnalysisManagerWindow(object):
     def setupAnalysisManager(self, AnalysisManagerWindow):
@@ -105,9 +108,37 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Filters      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
-        cap = pyshark.FileCapture('pcap1.pcap',
-                                  only_summaries=True)
-        for pkt in cap:
+        test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
+        test_pcap.create_json_file()
+        test_pcap.to_json()
+        test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap_2.pcapng")
+        test_pcap.create_json_file()
+        test_pcap.to_json()
+        test_capture = Capture("scenario", "C:\\Users\\Luis\\Downloads\\")
+        test_capture.add_pcap(test_pcap)
+        test_capture.add_pcap(test_pcap_2)
+        test_capture.create_merged_file()
+        test_capture.merge_pcaps()
+        cap = test_capture.iterate_file("ip.src == 192.168.200.21")
+        self.iterate_packets(cap)
+
+
+        # cap = pyshark.FileCapture('pcap1.pcap',
+        #                           only_summaries=True)
+        # for pkt in cap:
+        #     l = []
+        #     l.append(str(pkt.no))
+        #     l.append(str(pkt.time))
+        #     l.append(str(pkt.source))
+        #     l.append(str(pkt.destination))
+        #     l.append(str(pkt.protocol))
+        #     l.append(str(pkt.length))
+        #     l.append(str(pkt.info))
+        #     l1 = QTreeWidgetItem(l)
+        #     self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+
+    def iterate_packets(self, packets):
+        for pkt in packets:
             l = []
             l.append(str(pkt.no))
             l.append(str(pkt.time))
@@ -118,4 +149,3 @@ class Ui_AnalysisManagerWindow(object):
             l.append(str(pkt.info))
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
-
