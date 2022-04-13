@@ -1,2 +1,0 @@
-#!/bin/sh
-tcpdump -w capture_file
