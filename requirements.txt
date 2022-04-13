@@ -1,5 +1,4 @@
 PyQt5
 pymongo
 xmltodict
-dicttoxml
 pyshark
