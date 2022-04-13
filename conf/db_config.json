@@ -1,5 +1,5 @@
 {
     "protocol": "mongodb://",
-    "ip": "localhost",
+    "ip": "trgergr",
     "port": "27017"
 }
