@@ -74,7 +74,6 @@ class ScannerNode(Node):
 
 
 app = QtWidgets.QApplication(sys.argv)
-
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 captureManager_Window = QtWidgets.QMainWindow()
