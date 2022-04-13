@@ -1,12 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 
 #import pcap
-import dpkt
-from dpkt.utils import mac_to_str
-import socket
-import scapy
 from PyQt5.QtWidgets import QTreeWidgetItem
-from scapy.utils import rdpcap
 import pyshark
 
 
