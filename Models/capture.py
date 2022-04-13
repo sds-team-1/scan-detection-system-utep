@@ -2,6 +2,10 @@ import pcap
 import os
 import shutil
 import platform
+import pyshark
+import collections
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Capture:
     def __init__(self, name: str, parentPath:str) -> None:
@@ -56,6 +60,33 @@ class Capture:
             if a != self.pcaps[-1]:
                 f.write(',')
         f.write(']}')
+    def iterate_file(self, filter:str):
+        cap = pyshark.FileCapture("C:\\Users\\Luis\\Downloads\\test_pcap_2.pcapng", display_filter=filter ,
+                                  only_summaries=True)
+        pktlist= []
+        for pkt in cap:
+            pktlist.append(pkt.protocol)
+            print(pkt.no)
+            print(pkt.time)
+            print(pkt.source)
+            print(pkt.destination)
+            print(pkt.protocol)
+            print(pkt.length)
+            print(pkt.info)
+        counter = collections.Counter(pktlist)
+
+        plt.style.use('ggplot')
+        y_pos = np.arange(len(list(counter.keys())))
+        plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
+        plt.xticks(y_pos, list(counter.keys()))
+        plt.ylabel("Frequency")
+        plt.xlabel("Protocol Name")
+        plt.savefig("ProtocolGraph.png")
+        plt.show()
+
+
+
+
 
 
 test_pcap = pcap.Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
@@ -64,8 +95,9 @@ test_pcap.to_json()
 test_pcap_2 = pcap.Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap_2.pcapng")
 test_pcap.create_json_file()
 test_pcap.to_json()
-test_capture = Capture("test scenario", "C:\\Users\\Luis\\Downloads\\")
+test_capture = Capture("scenario", "C:\\Users\\Luis\\Downloads\\")
 test_capture.add_pcap(test_pcap)
 test_capture.add_pcap(test_pcap_2)
 test_capture.create_merged_file()
 test_capture.merge_pcaps()
+test_capture.iterate_file("ip.src == 192.168.200.21")
