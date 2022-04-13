@@ -1,6 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
 
-#import pcap
 from PyQt5.QtWidgets import QTreeWidgetItem
 import pyshark
 
@@ -9,6 +8,8 @@ from Models.capture import Capture
 
 
 class Ui_AnalysisManagerWindow(object):
+    #def applyFilters(self):
+
     def setupAnalysisManager(self, AnalysisManagerWindow):
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
@@ -57,8 +58,12 @@ class Ui_AnalysisManagerWindow(object):
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonsLayout_analysisManagerWindow.addItem(spacerItem)
+
+
+        self.filterInput_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
+        self.filterInput_analysisManagerWindow.setObjectName("filterInput_analysisManagerWindow")
+        self.buttonsLayout_analysisManagerWindow.addWidget(self.filterInput_analysisManagerWindow)
+
         self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
@@ -100,7 +105,7 @@ class Ui_AnalysisManagerWindow(object):
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow", "End Bytes"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow", "End Bits/s"))
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
-        self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Filters      "))
+        self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
 
