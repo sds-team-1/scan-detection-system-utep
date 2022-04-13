@@ -60,8 +60,9 @@ class Capture:
             if a != self.pcaps[-1]:
                 f.write(',')
         f.write(']}')
-    def iterate_file(self, filter:str):
-        cap = pyshark.FileCapture("C:\\Users\\Luis\\Downloads\\test_pcap_2.pcapng", display_filter=filter ,
+    def iterate_file(self, filter:str, file:Pcap):
+
+        cap = pyshark.FileCapture(file.path, display_filter=filter ,
                                   only_summaries=True)
         pktlist= []
         file_list = []

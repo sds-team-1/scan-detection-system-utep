@@ -135,7 +135,7 @@ class Ui_AnalysisManagerWindow(object):
         test_capture.add_pcap(test_pcap_2)
         test_capture.create_merged_file()
         test_capture.merge_pcaps()
-        cap = test_capture.iterate_file("ip.src == 192.168.200.21")
+        cap = test_capture.iterate_file("ip.src == 192.168.200.21", test_capture.pcaps[0])
         self.iterate_packets(cap)
 
 
