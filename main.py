@@ -262,7 +262,7 @@ def createProject():
             pass
         else:
             # Adds the TreeWidgetItem to the project list
-            captureManagerWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+            captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(p)
 
             # Resets the values for the window
             newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
@@ -279,9 +279,9 @@ def createScenario():
         sds_controller.add_scenario_unit()
         sds_controller.insert_scenario_name(scenario_name)
         # TODO: This causes an error when creating a scenario.
-        project_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
         # TODO: INSERT ITERATIONS HERE
-        su_iterations = captureManagerWindowUI.scenarioIterationsSpinbox_mainWindow.value()
+        su_iterations = captureManagerWindowUI.scenarioIterationsSpinbox_captureManagerWindow.value()
         success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
         if not success:
             # TODO: Display error
@@ -289,7 +289,7 @@ def createScenario():
         else:
             # TODO: Test this
             s = QTreeWidgetItem([scenario_name])
-            p = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0]
+            p = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0]
             p.addChild(s)
             newScenarioUnit_Window.close()
 
@@ -359,12 +359,12 @@ def addNode():
             minutes = str(addNodeWindowUI.minutesSpinbox_addNodeWindow.value())
             seconds = str(addNodeWindowUI.secondsSpinbox_addNodeWindow.value())
             end_condition = f'time-{minutes}:{seconds}'
-        toolButton = QtWidgets.QToolButton(captureManagerWindowUI.CentralLayout_mainWindow)
+        toolButton = QtWidgets.QToolButton(captureManagerWindowUI.CentralLayout_captureManagerWindow)
         toolButton.setText('Scanner')
         #node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
-        #mainWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
-        #mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
-    scenario_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        #captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
+        #captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
+    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     node_id = len(nodes_list)
@@ -372,11 +372,11 @@ def addNode():
         subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    captureManagerWindowUI.nodesList_mainWindow.clear()
+    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
     for node in nodes_list:
         node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-        captureManagerWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+        captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addNode_Window.close()
 
 
@@ -395,32 +395,32 @@ def define_workspace_path():
 def item_project_selected():
     # print(f'checking if item_project_selected went inside')
     # Clear the window
-    captureManagerWindowUI.nodesList_mainWindow.clear()
-    if captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].parent() is None:
+    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
+    if captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
         # This condition is for projects. Works with the project list which...
         # contains projects and scenarios
         # TODO: Check add node button(I was not able to create a project)
-        captureManagerWindowUI.exportButton_mainWindow.setEnabled(True)
-        captureManagerWindowUI.addNodeButton_mainWindow.setEnabled(False)
-        captureManagerWindowUI.startScenarioButton_mainWindow.setEnabled(False)
-        captureManagerWindowUI.stopScenarioButton_mainWindow.setEnabled(False)
-        captureManagerWindowUI.restoreScenarioButton_mainWindow.setEnabled(False)
+        captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
     else:
         #print(f'checking if else checked')
-        captureManagerWindowUI.exportButton_mainWindow.setEnabled(False)
-        captureManagerWindowUI.addNodeButton_mainWindow.setEnabled(True)
-        captureManagerWindowUI.startScenarioButton_mainWindow.setEnabled(True)
-        captureManagerWindowUI.stopScenarioButton_mainWindow.setEnabled(True)
-        captureManagerWindowUI.restoreScenarioButton_mainWindow.setEnabled(True)
+        captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
         # Get all the nodes
-        scenario_ID = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+        scenario_ID = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
         #print(f'checking scenario id: {scenario_ID}')
         sds_controller._enforce_state('init_project')
         node_list = sds_controller.get_all_nodes(scenario_ID)
         # Insert into vm and docker text saved values
         vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
-        captureManagerWindowUI.vmSdsServiceInput_mainWindow.setText(vm_ip)
-        captureManagerWindowUI.dockerSdsServiceInput_mainWindow.setText(docker_ip)
+        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+        captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
         #print(f'checking if nodes list is anything: {node_list}')
         # Insert all the nodes into the UI
         if node_list:
@@ -428,9 +428,9 @@ def item_project_selected():
             for node in node_list:
                 node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
                     node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-                captureManagerWindowUI.nodesList_mainWindow.addTopLevelItem(node_item)
+                captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
                 # TODO: Ask mauricio how this works
-                # mainWindowUI.nodesList_mainWindow.setItemWidget(node_item, 6, toolButton)
+                # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
 
 
 # TODO: Work on this to work with the controller
@@ -447,7 +447,7 @@ def save_workspace():
 # TODO: Fix this to work with controller.
 def export_project():
     scenarios = {}
-    project_name = captureManagerWindowUI.projectsList_mainWindow.selectedItems()[0].text(0)
+    project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     project_path = ''
     # FIXME: workspace_object reference
     projects = workspace_object.projects
@@ -472,7 +472,7 @@ def import_project():
         for x in project[1]:
             s = QTreeWidgetItem([x])
             p.addChild(s)
-        captureManagerWindowUI.projectsList_mainWindow.addTopLevelItem(p)
+        captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(p)
 
 
 def addNodeCheckboxStateChanged():
@@ -665,7 +665,7 @@ def store_sds_vm_service():
 
 def store_sds_docker_service():
     sds_docker_service = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
-    # selected_scenario = mainWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+    # selected_scenario = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     # print(selected_scenario)
     print(sds_docker_service)
 
