@@ -373,7 +373,7 @@ def addNode():
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     node_id = len(nodes_list)
     sds_controller.insert_node(scenario_id, node_id, log, type, name, IP, MAC, \
-        subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
+        scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     captureManagerWindowUI.nodesList_captureManagerWindow.clear()
