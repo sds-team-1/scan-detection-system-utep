@@ -3,7 +3,7 @@ import json
 import re
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
-from captureController import CaptureController
+from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
 
 @unique
