@@ -487,12 +487,6 @@ def open_workspace(selected_workspace):
 #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
  #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
-
-# TODO: Implement this
-def edit_workspace(selected_workspace):
-    pass
-
-
 # TODO: Implement this
 def delete_workspace(selected_workspace):
     pass
