@@ -373,7 +373,7 @@ def addNode():
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     node_id = len(nodes_list)
     sds_controller.insert_node(scenario_id, node_id, log, type, name, IP, MAC, \
-        scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
+        subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     captureManagerWindowUI.nodesList_captureManagerWindow.clear()
@@ -432,7 +432,7 @@ def item_project_selected():
         if node_list:
             #print(f'checking if nodes list is available for ui...{node_list}')
             for node in node_list:
-                node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+                node_item = QTreeWidgetItem([str(node['listening']), \
                     node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
                 captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
                 # TODO: Ask mauricio how this works
