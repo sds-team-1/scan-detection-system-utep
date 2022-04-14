@@ -187,7 +187,9 @@ class SDSController:
                 data = self._db_connection.retrieve_project(project_name)
                 _file = open(directory, 'w')
                 #Write dictionary to json file
+                print(f'exporting data: {data}')
                 json.dump(data, _file)
+                _file.close()
                 self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
                 return True
             except Exception as e:
