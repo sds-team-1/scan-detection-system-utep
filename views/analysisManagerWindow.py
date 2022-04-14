@@ -2,10 +2,10 @@ from PyQt5 import QtCore, QtWidgets
 
 from PyQt5.QtWidgets import QTreeWidgetItem
 import pyshark
+import os
 
 
 class Ui_AnalysisManagerWindow(object):
-    #def applyFilters(self):
 
     def setupAnalysisManager(self, AnalysisManagerWindow):
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
@@ -105,8 +105,19 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
-        cap = pyshark.FileCapture('pcap1.pcap',
+        self.scenariosList_analysisManagerWindow.itemSelectionChanged.connect(self.pcap_selected)
+
+        for file in os.listdir('pcaps'):
+            x = QtWidgets.QTreeWidgetItem([str(file)])
+            self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
+
+
+    def pcap_selected(self):
+        self.pcapList_analysisManagerWindow.clear()
+
+        cap = pyshark.FileCapture('pcaps/' + self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0),
                                   only_summaries=True)
+
         for pkt in cap:
             l = []
             l.append(str(pkt.no))
@@ -118,4 +129,3 @@ class Ui_AnalysisManagerWindow(object):
             l.append(str(pkt.info))
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
-
