@@ -407,7 +407,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
     else:
@@ -415,7 +415,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
         # Get all the nodes
@@ -545,7 +545,7 @@ def start_scenario_unit():
     captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setEnabled(False)
     sds_controller.start_VM()
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
-    captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
 
 def stop_scenario_unit():
     #sds_controller.stop()
@@ -698,7 +698,7 @@ def initialize_signals():
     captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
     captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
-    captureManagerWindowUI.startScenarioButton_captureManagerWindow.clicked.connect(start_scenario_unit)
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_scenario_unit)
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
     captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)

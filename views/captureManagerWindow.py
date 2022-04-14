@@ -46,28 +46,36 @@ class Ui_CaptureManagerWindow(object):
         self.scenarioIterationsLabel_captureManagerWindow = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
         self.scenarioIterationsLabel_captureManagerWindow.setObjectName("scenarioIterationsLabel_captureManagerWindow")
         self.scenarioRunLayout_captureManagerWindow.addWidget(self.scenarioIterationsLabel_captureManagerWindow)
+
         self.scenarioIterationsSpinbox_captureManagerWindow = QtWidgets.QSpinBox(self.CentralLayout_captureManagerWindow)
         self.scenarioIterationsSpinbox_captureManagerWindow.setObjectName("scenarioIterationsSpinbox_captureManagerWindow")
         self.scenarioIterationsSpinbox_captureManagerWindow.setValue(1)
         self.scenarioRunLayout_captureManagerWindow.addWidget(self.scenarioIterationsSpinbox_captureManagerWindow)
-        self.startScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.startScenarioButton_captureManagerWindow.setObjectName("startScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.startScenarioButton_captureManagerWindow)
-        self.runScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.runScenarioButton_captureManagerWindow.setObjectName("runScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.runScenarioButton_captureManagerWindow)
-        self.stopScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.stopScenarioButton_captureManagerWindow.setObjectName("stopScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.stopScenarioButton_captureManagerWindow)
-        self.restoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.restoreScenarioButton_captureManagerWindow.setObjectName("restoreScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.restoreScenarioButton_captureManagerWindow)
+
+        self.startVirtualMachineButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.startVirtualMachineButton_captureManagerWindow.setObjectName("startVirtualMachineButton_captureManagerWindow")
+        self.scenarioRunLayout_captureManagerWindow.addWidget(self.startVirtualMachineButton_captureManagerWindow)
+
         self.shutdownVMButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.shutdownVMButton_captureManagerWindow.setObjectName("shutdownVMButton_captureManagerWindow")
         self.scenarioRunLayout_captureManagerWindow.addWidget(self.shutdownVMButton_captureManagerWindow)
+
+        self.runScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.runScenarioButton_captureManagerWindow.setObjectName("runScenarioButton_captureManagerWindow")
+        self.scenarioRunLayout_captureManagerWindow.addWidget(self.runScenarioButton_captureManagerWindow)
+
+        self.stopScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.stopScenarioButton_captureManagerWindow.setObjectName("stopScenarioButton_captureManagerWindow")
+        self.scenarioRunLayout_captureManagerWindow.addWidget(self.stopScenarioButton_captureManagerWindow)
+
+        self.restoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.restoreScenarioButton_captureManagerWindow.setObjectName("restoreScenarioButton_captureManagerWindow")
+        self.scenarioRunLayout_captureManagerWindow.addWidget(self.restoreScenarioButton_captureManagerWindow)
+
         self.closeWorkspaceButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.closeWorkspaceButton_captureManagerWindow.setObjectName("closeWorkspaceButton_captureManagerWindow")
         self.scenarioRunLayout_captureManagerWindow.addWidget(self.closeWorkspaceButton_captureManagerWindow)
+
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.scenarioRunLayout_captureManagerWindow.addItem(spacerItem1)
         self.scenarioLayout_captureManagerWindow.addLayout(self.scenarioRunLayout_captureManagerWindow)
@@ -114,11 +122,13 @@ class Ui_CaptureManagerWindow(object):
         self.projectsList_captureManagerWindow.setSortingEnabled(False)
         self.projectsList_captureManagerWindow.setSortingEnabled(__sortingEnabled)
         self.scenarioIterationsLabel_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Scenario Iterations:   "))
-        self.startScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Start VM"))
+
+        self.startVirtualMachineButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Start VM"))
+        self.shutdownVMButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Shutdown VM"))
+
         self.runScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Run Scenario"))
         self.stopScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Stop Scenario"))
         self.restoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Restore State"))
-        self.shutdownVMButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Shutdown VM"))
         self.closeWorkspaceButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Close Workspace"))
         self.nodesList_captureManagerWindow.headerItem().setText(0, _translate("CaptureManagerWindow", "Log Net Traffic"))
         self.nodesList_captureManagerWindow.headerItem().setText(1, _translate("CaptureManagerWindow", "Type"))
@@ -132,7 +142,7 @@ class Ui_CaptureManagerWindow(object):
         self.addNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "    Add Node    "))
         self.addSetNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Set of Victim Nodes"))
 
-        self.startScenarioButton_captureManagerWindow.setEnabled(False)
+        self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
         self.runScenarioButton_captureManagerWindow.setEnabled(False)
         self.stopScenarioButton_captureManagerWindow.setEnabled(False)
         self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
