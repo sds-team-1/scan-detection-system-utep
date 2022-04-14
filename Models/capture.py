@@ -33,6 +33,7 @@ class Capture:
         return self.pcaps
 
     def merge_pcaps(self):
+        self.create_merged_file()
         pcap_paths = ""
         for pcap in self.pcaps:
             pcap_paths += pcap.path + " "
@@ -40,6 +41,9 @@ class Capture:
             os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
         else:
             os.system('mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+
+        new_pcap = Pcap("merged_pcap.pcap",self.path,"scenario.pcap")
+        self.add_pcap(new_pcap)
 
     def create_folder(self)-> str:
         if not os.path.isdir(self.path):
