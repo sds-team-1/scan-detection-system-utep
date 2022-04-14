@@ -8,16 +8,16 @@ from Models.capture import Capture
 
 
 class Ui_AnalysisManagerWindow(object):
-    # #def applyFilters(self):
-    # test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap.pcapng")
-    # # test_pcap.create_json_file()
-    # # test_pcap.to_json()
-    # test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap_2.pcapng")
-    # # test_pcap.create_json_file()
-    # # test_pcap.to_json()
-    # test_capture = Capture("scenario\\", "C:\\Users\\Luis\\Downloads\\")
-    # test_capture.add_pcap(test_pcap)
-    # test_capture.add_pcap(test_pcap_2)
+    #def applyFilters(self):
+    test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\cjsan\\Downloads\\scenario\\", "test_pcap.pcapng")
+    # test_pcap.create_json_file()
+    # test_pcap.to_json()
+    test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\cjsan\\Downloads\\scenario\\", "test_pcap_2.pcapng")
+    # test_pcap.create_json_file()
+    # test_pcap.to_json()
+    test_capture = Capture("scenario\\", "C:\\Users\\cjsan\\Downloads\\")
+    test_capture.add_pcap(test_pcap)
+    test_capture.add_pcap(test_pcap_2)
 
     # test_capture.create_merged_file()
     # test_capture.merge_pcaps()
@@ -92,6 +92,7 @@ class Ui_AnalysisManagerWindow(object):
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.gridLayout_2.addLayout(self.buttonsLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
+        self.closeAnalysisManager_analysisManagerWindow.clicked.connect(AnalysisManagerWindow.close)
 
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
@@ -175,6 +176,9 @@ class Ui_AnalysisManagerWindow(object):
             l.append(str(pkt.info))
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+
+
+
     def show_pcap_list(self):
         for pcap in self.test_capture.pcaps:
             print(pcap.name)
