@@ -8,16 +8,16 @@ from Models.capture import Capture
 
 
 class Ui_AnalysisManagerWindow(object):
-    #def applyFilters(self):
-    #test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap.pcapng")
-    # test_pcap.create_json_file()
-    # test_pcap.to_json()
-    #test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap_2.pcapng")
-    # test_pcap.create_json_file()
-    # test_pcap.to_json()
-    #test_capture = Capture("scenario\\", "C:\\Users\\Luis\\Downloads\\")
-    #test_capture.add_pcap(test_pcap)
-    #test_capture.add_pcap(test_pcap_2)
+    # #def applyFilters(self):
+    # test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap.pcapng")
+    # # test_pcap.create_json_file()
+    # # test_pcap.to_json()
+    # test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap_2.pcapng")
+    # # test_pcap.create_json_file()
+    # # test_pcap.to_json()
+    # test_capture = Capture("scenario\\", "C:\\Users\\Luis\\Downloads\\")
+    # test_capture.add_pcap(test_pcap)
+    # test_capture.add_pcap(test_pcap_2)
 
     # test_capture.create_merged_file()
     # test_capture.merge_pcaps()
