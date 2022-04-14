@@ -240,7 +240,7 @@ def createProject():
     project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
     # If the input is incorrect show the missing fields window
-    if not project_name or project_parallel is 0:
+    if not project_name or project_parallel == 0:
         missingFields_Window.show()
     # Otherwise save the project
     else:
@@ -378,7 +378,7 @@ def addNode():
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     captureManagerWindowUI.nodesList_captureManagerWindow.clear()
     for node in nodes_list:
-        node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+        node_item = QTreeWidgetItem([ str(node['listening']), \
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
         captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addNode_Window.close()
