@@ -131,12 +131,21 @@ class SDSController:
         # print(self._entire_workspace_context)
 
     ###### Project related functions ######
-    def import_project(self, workspace_name: str, project: dict) -> bool:
+    def import_project(self, project: dict) -> bool:
         self._ensure_subsystems()
+        print(f'called import_project')
         if self._state is SDSStateEnum.INIT_WORKPLACE:
-            if self._db_connection.create_project(workspace_name, project):
+            workspace_name = self._entire_workspace_context['_id']
+            print(f'valid state')
+            if self._db_connection.create_project(workspace_name, project= project):
+                print(f'imported project')
                 self.change_workspace_context(workspace_name)
-                self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+                return True
+            # If the project is already made. Just add the project name
+            else:
+                print(f'inserting project name in workspace')
+                self._db_connection.update_workspace_projects(workspace_name, project['_id'])
+                self.change_workspace_context(workspace_name)
                 return True
         return False
 

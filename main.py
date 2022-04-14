@@ -438,21 +438,8 @@ def item_project_selected():
 def save_workspace():
     pass
 
-
-# TODO: Fix this to work with controller.
 def export_project():
     project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    # FIXME: workspace_object reference
-    """projects = workspace_object.projects
-    for project in projects:
-        if project.name == project_name:
-            project_path = project.location
-            for scenario in project.scenarios:
-                scenarios[scenario.name] = ''
-    json_project = [project_name, scenarios]
-    json_string = json.dumps(json_project)
-    with open(project_path + '.json', 'w') as outfile:
-        outfile.write(json_string)"""
     export_path = QFileDialog().getSaveFileName(caption='Export Project',directory='~/untitled.json')
     print(f'export path is: {export_path}')
     sds_controller._enforce_state('init_project')
@@ -462,16 +449,12 @@ def export_project():
 # TODO: Fix this to work with the controller.
 def import_project():
     dialog = QFileDialog()
-    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File')
+    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
-        # Creates a tree object to put in the gui
-        p = QtWidgets.QTreeWidgetItem([project[0]])
-        for x in project[1]:
-            s = QTreeWidgetItem([x])
-            p.addChild(s)
-        captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(p)
         # Save project into controller
+        sds_controller._enforce_state('init_workplace')
+        sds_controller.import_project(project)
         # Redraw the data
 
 
