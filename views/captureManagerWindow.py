@@ -101,7 +101,7 @@ class Ui_CaptureManagerWindow(object):
         _translate = QtCore.QCoreApplication.translate
         CaptureManagerWindow.setWindowTitle(_translate("CaptureManagerWindow", "Scan Detection System"))
         self.newButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "New Project"))
-        self.projectButtonsLabel.setText(_translate("CaptureManagerWindow", "  Project Functions  "))k
+        self.projectButtonsLabel.setText(_translate("CaptureManagerWindow", "  Project Functions  "))
         self.newButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  New  "))
         self.saveButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "Save Project"))
         self.saveButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  Save  "))
