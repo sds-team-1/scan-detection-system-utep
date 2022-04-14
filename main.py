@@ -420,8 +420,8 @@ def item_project_selected():
         node_list = sds_controller.get_all_nodes(scenario_ID)
         # Insert into vm and docker text saved values
         vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
-        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
-        captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+#        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+ #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
         #print(f'checking if nodes list is anything: {node_list}')
         # Insert all the nodes into the UI
         if node_list:
