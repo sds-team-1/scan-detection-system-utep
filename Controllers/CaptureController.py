@@ -126,7 +126,6 @@ class CaptureController:
             return
         
         topology_dict["name"] =  topology_dict["scenario_name"]
-        topology_dict["devices"] = topology_dict["nodes"]
 
         # if 'networks' key is not in the dict, set it to empty list
         if 'networks' not in topology_dict:
@@ -183,7 +182,7 @@ class CaptureController:
 
     def start_vm(self) -> bool:
         '''
-        Starts the VM with the name 'CoreUbuntu'
+        Starts the VM with the name 'UbuntuDefault'
         Returns True if the VM was started successfully
         Returns False if the VM was already runnning
         '''
@@ -248,6 +247,7 @@ class CaptureController:
         os.system(command)
 
     def test_(self):
+        self.start_vm()
         test_dict = TestInput.test_dictionary_for_core_start
         self.core_start_from_dictionary(test_dict)
 

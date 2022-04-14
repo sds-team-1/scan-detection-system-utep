@@ -420,8 +420,8 @@ def item_project_selected():
         node_list = sds_controller.get_all_nodes(scenario_ID)
         # Insert into vm and docker text saved values
         vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
-        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
-        captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+#        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+ #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
         #print(f'checking if nodes list is anything: {node_list}')
         # Insert all the nodes into the UI
         if node_list:
@@ -504,8 +504,8 @@ def open_workspace(selected_workspace):
             project_tree_item.addChild(scenario_tree)
         captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
     #Insert core options if saved
-    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
-    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
+#    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
+ #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
 
 # TODO: Implement this
@@ -702,10 +702,10 @@ def initialize_signals():
     captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
 
-    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
-    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.textChanged[str].connect(store_core_port_number)
-    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_vm_service)
-    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_docker_service)
+    #captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
+    #captureManagerWindowUI.corePortNumberInput_captureManagerWindow.textChanged[str].connect(store_core_port_number)
+    #captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_vm_service)
+    #captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_docker_service)
 
     missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
