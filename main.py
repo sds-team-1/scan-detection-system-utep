@@ -220,6 +220,7 @@ def addSetNodesWindow():
     addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window)
     addSetNodesWindowUI.setNodesCreateButton_addSetNodesWindow.clicked.connect(addSetNodes)
     addSetNodesWindowUI.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_Window.close)
+    addSetNodesWindowUI.startingIPInput_addSetNodesWindow.setText(f"1.1.{ip_counter}.2")
     addSetNodes_Window.show()
 
 
@@ -336,7 +337,7 @@ def addNode():
     if type == 'CORE':
         type = 'PC'
     elif type == 'VM' or type == 'Docker':
-        type = 'RJ45'
+        type = 'PC'  #temp solution
     name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
     MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
     IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
@@ -386,7 +387,13 @@ def addNode():
 
 # TODO: To be implemented
 def addSetNodes():
-    pass
+    starting_ip = addSetNodesWindowUI.startingIPInput_addSetNodesWindow.text()
+    split_starting_ip = starting_ip.split(".")
+    num_nodes = addSetNodesWindowUI.numberVictimNodesSpinbox_addSetNodesWindow.value()
+    
+    # for i in range(split_starting_ip[2],len(num_nodes)):
+        
+        
 
 
 def define_workspace_path():
