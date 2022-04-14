@@ -1,8 +1,10 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtGui import QPixmap
 
 
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window):
+        workspace_window.setWindowIcon(QtGui.QIcon('network.png'))
         workspace_window.setObjectName("workspace_window")
         workspace_window.resize(780, 463)
         workspace_window.setMinimumSize(QtCore.QSize(780, 463))
@@ -72,7 +74,7 @@ class Ui_workspace_window(object):
         __sortingEnabled = self.workspacesList_workspaceWindow.isSortingEnabled()
         self.workspacesList_workspaceWindow.setSortingEnabled(False)
         self.workspacesList_workspaceWindow.setSortingEnabled(__sortingEnabled)
-        self.logoLabel_workspaceWindow.setText(_translate("workspace_window", "LOGO"))
+        self.logoLabel_workspaceWindow.setPixmap(QPixmap('img/network.png'))
         self.SDSLabel_workspaceWindow.setText(_translate("workspace_window", "Scan Detection System"))
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
         self.createWorkspaceButton_workspaceWindow.setText(_translate("workspace_window", "Create New Workspace"))
