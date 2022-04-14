@@ -11,6 +11,23 @@ class Ui_AnalysisManagerWindow(object):
     #def applyFilters(self):
 
     def setupAnalysisManager(self, AnalysisManagerWindow):
+
+        test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
+        #test_pcap.create_json_file()
+        #test_pcap.to_json()
+        test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap_2.pcapng")
+        #test_pcap.create_json_file()
+        #test_pcap.to_json()
+        test_capture = Capture("scenario", "C:\\Users\\Luis\\Downloads\\")
+        test_capture.add_pcap(test_pcap)
+        test_capture.add_pcap(test_pcap_2)
+        #test_capture.create_merged_file()
+        #test_capture.merge_pcaps()
+
+        #self.iterate_packets(cap)
+
+
+
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
         AnalysisManagerWindow.setMinimumSize(QtCore.QSize(812, 580))
@@ -66,7 +83,13 @@ class Ui_AnalysisManagerWindow(object):
 
         self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
+        self.filtersButton_analysisManagerWindow.clicked.connect(
+            lambda: self.iterate_packets(test_capture, self.filterInput_analysisManagerWindow.text(), 1))
+
+
+
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
+
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
@@ -107,6 +130,7 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
+        self.iterate_packets(test_capture, "", 0)
 
 
 
@@ -124,19 +148,7 @@ class Ui_AnalysisManagerWindow(object):
 
 
 
-        test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
-        test_pcap.create_json_file()
-        test_pcap.to_json()
-        test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap_2.pcapng")
-        test_pcap.create_json_file()
-        test_pcap.to_json()
-        test_capture = Capture("scenario", "C:\\Users\\Luis\\Downloads\\")
-        test_capture.add_pcap(test_pcap)
-        test_capture.add_pcap(test_pcap_2)
-        test_capture.create_merged_file()
-        test_capture.merge_pcaps()
-        cap = test_capture.iterate_file("ip.src == 192.168.200.21", test_capture.pcaps[0])
-        self.iterate_packets(cap)
+
 
 
         # cap = pyshark.FileCapture('pcap1.pcap',
@@ -153,7 +165,9 @@ class Ui_AnalysisManagerWindow(object):
         #     l1 = QTreeWidgetItem(l)
         #     self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
 
-    def iterate_packets(self, packets):
+    def iterate_packets(self,capture, filter, pcap):
+        self.pcapList_analysisManagerWindow.clear()
+        packets = capture.iterate_file(filter, capture.pcaps[pcap])
         for pkt in packets:
             l = []
             l.append(str(pkt.no))

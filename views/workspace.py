@@ -73,6 +73,7 @@ class Ui_workspace_window(object):
         __sortingEnabled = self.workspacesList_workspaceWindow.isSortingEnabled()
         self.workspacesList_workspaceWindow.setSortingEnabled(False)
         self.workspacesList_workspaceWindow.setSortingEnabled(__sortingEnabled)
+
         self.logoLabel_workspaceWindow.setPixmap(QPixmap('img/network.png'))
         self.SDSLabel_workspaceWindow.setText(_translate("workspace_window", "Scan Detection System"))
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
