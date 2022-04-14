@@ -434,8 +434,8 @@ def item_project_selected():
                 # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
 
 
-# TODO: Work on this to work with the controller
 def save_workspace():
+    # Everything is already saved. So we don't really need it. YW
     pass
 
 def export_project():
@@ -446,16 +446,13 @@ def export_project():
     sds_controller.export_project(project_name, export_path[0]) 
 
 
-# TODO: Fix this to work with the controller.
 def import_project():
     dialog = QFileDialog()
     json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
-        # Save project into controller
         sds_controller._enforce_state('init_workplace')
         sds_controller.import_project(project)
-        # Redraw the data
 
 
 def addNodeCheckboxStateChanged():
