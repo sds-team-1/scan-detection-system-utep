@@ -535,17 +535,18 @@ def set_up_scenario_unit():
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
-def start_scenario_unit():
+def start_virtual_machine():
     # Get input
-    ip = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
-    port = captureManagerWindowUI.corePortNumberInput_captureManagerWindow.text()
     # store input into workspace
-    sds_controller.insert_core_sds_service(ip, port)
-    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setEnabled(False)
-    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setEnabled(False)
-    sds_controller.start_VM()
-    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
-    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+    # sds_controller.insert_core_sds_service(ip, port)
+    sds_controller.start_virtual_machine()
+    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
+    # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+
+def shutdown_virtual_machine():
+    print("shutdown virtual machine")
+    sds_controller.shutdown_virtual_machine()
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
 def stop_scenario_unit():
     #sds_controller.stop()
@@ -698,7 +699,8 @@ def initialize_signals():
     captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
     captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
-    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_scenario_unit)
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_virtual_machine)
+    captureManagerWindowUI.shutdownVMButton_captureManagerWindow.clicked.connect(shutdown_virtual_machine)
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
     captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
