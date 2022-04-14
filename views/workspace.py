@@ -1,9 +1,10 @@
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap
 
 
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window):
+        workspace_window.setWindowIcon(QtGui.QIcon('network.png'))
         workspace_window.setObjectName("workspace_window")
         workspace_window.resize(780, 463)
         workspace_window.setMinimumSize(QtCore.QSize(780, 463))

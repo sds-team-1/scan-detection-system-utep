@@ -21,7 +21,7 @@ from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
 from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
-from captureController import CaptureController
+from Controllers.CaptureController import CaptureController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 
@@ -74,7 +74,6 @@ class ScannerNode(Node):
 
 
 app = QtWidgets.QApplication(sys.argv)
-
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
 captureManager_Window = QtWidgets.QMainWindow()
@@ -402,6 +401,7 @@ def item_project_selected():
         # TODO: Check add node button(I was not able to create a project)
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
@@ -409,6 +409,7 @@ def item_project_selected():
         #print(f'checking if else checked')
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)

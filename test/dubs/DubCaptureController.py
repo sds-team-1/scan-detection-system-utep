@@ -1,4 +1,4 @@
-from captureController import CaptureController
+from Controllers.CaptureController import CaptureController
 
 class DubCaptureController(CaptureController):
     

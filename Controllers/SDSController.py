@@ -3,7 +3,7 @@ import json
 import re
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
-from captureController import CaptureController
+from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
 
 @unique
@@ -382,7 +382,16 @@ class SDSController:
         scenario_dict['scenario_name'] = scenario_name
         scenario_dict['project_name'] = self.get_scenario_project_name(scenario_name)
         scenario_dict['workspace_name'] = self._entire_workspace_context['_id']
-        scenario_dict['nodes'] = self.get_all_nodes(scenario_name)
+        # Seperate nodes into devices and networks.
+        nodes = self.get_all_nodes(scenario_name) 
+        scenario_dict['devices'] = []
+        scenario_dict['networks'] = []
+        for node in nodes:
+            type = node['type']
+            if type == 'PC':
+                scenario_dict['devices'].append(node)
+            elif type == 'RJ45':
+                scenario_dict['networks'].append(node)
         scenario_dict['core_sds_service_ip'] = self._entire_workspace_context['core_sds_service_ip']
         scenario_dict['core_sds_port_number'] = self._entire_workspace_context['core_sds_port_number']
         vm, docker = self.get_scenario_vm_info(scenario_name)
