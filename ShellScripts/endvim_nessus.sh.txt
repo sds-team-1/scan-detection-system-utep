@@ -1,2 +1,0 @@
-#!/bin/sh
-VBoxManage guestcontrol "vmname" start --exe ".\end_nessus.sh"

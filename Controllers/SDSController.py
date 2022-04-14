@@ -4,6 +4,7 @@ import re
 from types import ModuleType
 from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
+from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
 
 @unique
@@ -26,24 +27,25 @@ class SDSController:
     directory_regex_pattern = '/^[^\s^\x00-\x1f\\?*:"";<>|\/.][^\x00-\x1f\\?*:"";<>|\/]*[^\s^\x00-\x1f\\?*:"";<>|\/.]+$/g'
 
     def __init__(self) -> None:
-        self._cap_manager: ModuleType = None
+        self._cap_manager: CaptureController = None
         self._a_manager: SDSAnalysisManager = None
         self._db_connection: SDSDatabaseHelper = None 
         self._state = SDSStateEnum.INIT_SYSTEM
-        self._worklace_name: str = ''
+        self._workspace_name: str = ''
         self._project_name: str = ''
         self._project_construction: dict = {}
         self._scenario_unit_construction: dict = {}
+        self._entire_workspace_context: dict = {}
 
-    def add_capture_manager(self, capture_manager):
+    def add_capture_manager(self, capture_manager: CaptureController):
         if self._cap_manager == None:
             self._cap_manager = capture_manager
 
-    def add_analysis_manager(self, analysis_manager):
+    def add_analysis_manager(self, analysis_manager: SDSAnalysisManager):
         if self._a_manager == None:
             self._a_manager = analysis_manager
     
-    def add_mongo_connection(self, connection):
+    def add_mongo_connection(self, connection: SDSDatabaseHelper):
         if self._db_connection == None:
             self._db_connection = connection
 
@@ -66,16 +68,24 @@ class SDSController:
         if self._db_connection is None:
             return []
         else:
-            return self._db_connection.retrieve_projects(workplace_name)
+            #Get project dictionaries related to workspace
+            projects = self._db_connection.retrieve_projects(workplace_name)
+            # Get a list of all the neames retrieved.
+            if projects == [None]:
+                return []
+            project_names = []
+            for proj in projects:
+                project_names.append(proj['_id'])
+            return [project['_id'] for project in projects]
 
-    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[Dict[str, str]]:
+    def list_all_scenario_units(self, workplace_name: str, project_name: str) -> List[str]:
         #Gets all scenario_units of specified instance
         if self._db_connection is None:
             return []
         else:
             # Get the right project context
             scenario_ids = self._db_connection.retrieve_project(project_name)['scenario_units']
-            return [{self._db_connection.retrieve_scenario_unit(x)['scenario_name'], x} for x in scenario_ids]
+            return [self._db_connection.retrieve_scenario_unit(x)['scenario_name'] for x in scenario_ids]
 
     def list_all_nodes(self, workplace_name: str, project_name: str, 
         scenario_unit_id: str) -> List[str]:
@@ -85,6 +95,7 @@ class SDSController:
             #Do work here
             pass
 
+    ###### Workspace related functions ######
     def start_new_workplace(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_SYSTEM:
@@ -94,13 +105,14 @@ class SDSController:
     def specify_workplace_name(self, workspace_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
-            self._worklace_name = workspace_name
+            self._workspace_name = workspace_name
 
     def finish_workplace_construction(self) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
             try:
-                self._db_connection.create_workspace(self._worklace_name)
+                self._db_connection.create_workspace(self._workspace_name)
+                self.change_workspace_context(self._workspace_name)
                 self._state = SDSStateEnum.INIT_WORKPLACE
                 return True
             except:
@@ -112,10 +124,19 @@ class SDSController:
             # Do work here
             self._state = SDSStateEnum.INIT_WORKPLACE
 
+    def change_workspace_context(self, workspace_name: str):
+        # print('db.change_workspace called')
+        self._ensure_subsystems()
+        self._workspace_name = workspace_name
+        self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
+        # print(self._entire_workspace_context)
+
+    ###### Project related functions ######
     def import_project(self, workspace_name: str, project: dict) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             if self._db_connection.create_project(workspace_name, project):
+                self.change_workspace_context(workspace_name)
                 self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
                 return True
         return False
@@ -124,6 +145,7 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_WORKPLACE:
             # Do work here
+            self._project_construction = {}
             self._state = SDSStateEnum.PROJECT_CONSTRUCTION
 
     def specify_project_name(self, project_name: str):
@@ -144,12 +166,20 @@ class SDSController:
             # Do work here
             self._project_construction['parallel_units'] = n
 
-    def finish_project_construction(self):
+    def change_project_context(self, project_name: str):
+        self._ensure_subsystems()
+        if self._state is SDSStateEnum.INIT_PROJECT:
+            self._project_name = project_name
+
+    def finish_project_construction(self) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.PROJECT_CONSTRUCTION:
             # Do work here
-            self._db_connection.create_project(self._worklace_name, self._project_construction)
+            success = self._db_connection.create_project(self._workspace_name, 
+            project=self._project_construction)
+            self.change_workspace_context(self._workspace_name)
             self._state = SDSStateEnum.INIT_PROJECT
+            return success
 
     def export_project(self, project_name: str, directory: str) -> bool:
         self._ensure_subsystems()
@@ -166,7 +196,8 @@ class SDSController:
                 print('Could not save')
                 return False
 
-    def _enfore_state(self, state: str):
+    ###### Enfore state function for overloading (testing) ######
+    def _enforce_state(self, state: str):
         #INIT_SYSTEM = 1
         if state == 'init_system':
             self._state = SDSStateEnum.INIT_SYSTEM
@@ -204,13 +235,16 @@ class SDSController:
         if state == 'file_manager_export_dialogue':
             self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
 
+    ###### Scenario Related Functions ######
     def add_scenario_unit(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
             self._scenario_unit_construction['scenario_name'] = ''
-            self._scenario_unit_construction['networks'] = {}
-            self._scenario_unit_construction['devices'] = {}
-            self._scenario_unit_construction['links'] = {}
+            self._scenario_unit_construction['nodes'] = {}
+            self._scenario_unit_construction['iterations'] = 1
+            self._scenario_unit_construction['PCAP'] = []
+            self._scenario_unit_construction['sds_vm_service'] = ''
+            self._scenario_unit_construction['sds_docker_service'] = ''
             self._state = SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION
         
     def insert_scenario_name(self, name: str):
@@ -218,34 +252,52 @@ class SDSController:
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             self._scenario_unit_construction['scenario_name'] = name
             
-    def insert_node(self, scenario_id: str, node_name: str = '', 
-    scanning: bool = False, parallel_exec: int = 1, bin_path: str = '', 
-    args: list = [], listening: bool = False, end_condition: str = '', 
-    node_type: str = 'core-node', ip4: str = '', mac: str = '', 
-    subnet_mask: int = 24, user: str = '', password: str = '', 
-    diff_subnet: bool = False):
+    def insert_node(self, scenario_id: str, node_id: str, listening: bool, \
+        type: str, name: str, ip: str, mac: str, subnet: bool, scanning: bool, \
+        username_pass: str, scanner_binary: str, arguments: str, iterations: int,\
+        parallel_runs: int, end_condition: str):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
+        if self._state is SDSStateEnum.INIT_PROJECT:
             # Continue here
             # Insert scenario node
+            node_dict = {}
+            node_dict['id'] = node_id
+            node_dict['listening'] = listening
+            node_dict['type'] = type
+            node_dict['name'] = name
+            node_dict['ip'] = ip
+            node_dict['mac'] = mac
+            node_dict['subnet'] = subnet
+            node_dict['scanning'] = scanning
+            node_dict['username/pass'] = username_pass
+            node_dict['scanner_binary'] = scanner_binary
+            node_dict['arguments'] = arguments
+            node_dict['iterations'] = iterations
+            node_dict['parallel_runs'] = parallel_runs
+            node_dict['end_condition'] = end_condition
+            self._db_connection.create_node(scenario_id, node_dict)
+            self.change_workspace_context(self._workspace_name)
             pass
     
-    def finish_scenario_unit_construction(self):
+    def finish_scenario_unit_construction(self, project_name: str, iterations: int):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             # Do work here
-            success = self._db_connection.create_scenario_unit(self._project_name,
+            self._scenario_unit_construction['iterations'] = iterations
+            success = self._db_connection.create_scenario_unit(project_name,
             self._scenario_unit_construction)
+            self.change_workspace_context(self._workspace_name)
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
-    def set_up_scenario_units(self):
+    ###### CORE Related functinos ######
+    def start_VM(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_PROJECT:
             # Do work here
             try:
                 # Do launching with Capture Manager
-                pass
+                self._cap_manager.start_vm()
             except Exception as e:
                 # Handle here
                 self._state = SDSStateEnum.INIT_PROJECT
@@ -257,22 +309,26 @@ class SDSController:
             #Do work here
             pass
 
-    def run_scenario_units(self):
+    def run_scenario_units(self, scenario_name: str):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
             # Do work here
+            scenario_dict = self.get_scenario_data(scenario_name)
+            self._cap_manager.start_services(scenario_dict)
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def stop(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_RUNNING:
             # Do work here
+            self._cap_manager.stopVM()
             self._state = SDSStateEnum.NETWORK_STOPPED
 
     def restore(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_STOPPED:
             # Do work here
+            self._cap_manager.restoreScenario()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def scenarios_complete(self):
@@ -285,5 +341,78 @@ class SDSController:
         self._ensure_subsystems()
         pass
 
-    '''The following methods are developed by the protocols by the GUI Lead
-    Mauricio.'''
+    #UI needs all the nodes of a scenario unit
+    def get_all_nodes(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return scenario_dict['nodes']
+    
+    def get_scenario_id(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return scenario_dict['_id']
+
+    def get_scenario_project_name(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return project_dict['_id']
+
+    def get_scenario_vm_info(self, scenario_name: str):
+        self._ensure_subsystems()
+        projects_list = self._entire_workspace_context['projects']
+        for project_dict in projects_list:
+            scenario_list = project_dict['scenario_units']
+            for scenario_dict in scenario_list:
+                if scenario_dict['scenario_name'] == scenario_name:
+                    return (scenario_dict['sds_vm_service'], scenario_dict['sds_docker_service'])
+
+    def get_scenario_data(self, scenario_name: str):
+        scenario_dict = {}
+        scenario_dict['scenario_name'] = scenario_name
+        scenario_dict['project_name'] = self.get_scenario_project_name(scenario_name)
+        scenario_dict['workspace_name'] = self._entire_workspace_context['_id']
+        # Seperate nodes into devices and networks.
+        nodes = self.get_all_nodes(scenario_name) 
+        scenario_dict['devices'] = []
+        scenario_dict['networks'] = []
+        for node in nodes:
+            type = node['type']
+            if type == 'PC':
+                scenario_dict['devices'].append(node)
+            elif type == 'RJ45':
+                scenario_dict['networks'].append(node)
+        scenario_dict['core_sds_service_ip'] = self._entire_workspace_context['core_sds_service_ip']
+        scenario_dict['core_sds_port_number'] = self._entire_workspace_context['core_sds_port_number']
+        vm, docker = self.get_scenario_vm_info(scenario_name)
+        scenario_dict['sds_vm_service'] = vm
+        scenario_dict['sds_docker_service'] = docker
+        return scenario_dict
+
+    def get_core_ip(self):
+        return self._entire_workspace_context['core_sds_service_ip']
+
+    def get_core_port(self):
+        return self._entire_workspace_context['core_sds_port_number']
+
+    def insert_vm_service(self, scenario_name: str, vm_ip: str, docker_ip: str):
+        scenario_id = self.get_scenario_id(scenario_name)
+        self._db_connection.save_scenario_unit(scenario_id, {'sds_vm_service': vm_ip, \
+            'sds_docker_service': docker_ip})
+        self.change_workspace_context(self._workspace_name)
+
+    def insert_core_sds_service(self, ip: str, port: str):
+        self._db_connection.save_workspace(self._workspace_name, {'core_sds_service_ip': ip, \
+            'core_sds_port_number': port})
+        self.change_workspace_context(self._workspace_name)

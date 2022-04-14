@@ -28,6 +28,7 @@ class Ui_newProject_window(object):
         self.newProjectMaxUnitsLayout_newProjectWindow.addWidget(self.newProjectMaxLabel_newProjectWindow)
         self.newProjectMaxUnitsSpinbox_newProjectWindow = QtWidgets.QSpinBox(newProject_window)
         self.newProjectMaxUnitsSpinbox_newProjectWindow.setObjectName("newProjectMaxUnitsSpinbox_newProjectWindow")
+        self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(1)
         self.newProjectMaxUnitsLayout_newProjectWindow.addWidget(self.newProjectMaxUnitsSpinbox_newProjectWindow)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.newProjectMaxUnitsLayout_newProjectWindow.addItem(spacerItem)
@@ -48,6 +49,7 @@ class Ui_newProject_window(object):
         _translate = QtCore.QCoreApplication.translate
         newProject_window.setWindowTitle(_translate("newProject_window", "New Project"))
         self.newProjectNameLabel_newProjectWindow.setText(_translate("newProject_window", "Project Name:     "))
-        self.newProjectMaxLabel_newProjectWindow.setText(_translate("newProject_window", "Maximum Scenario Units:"))
+        self.newProjectMaxLabel_newProjectWindow.setText(_translate("newProject_window", "Maximum Scenario Units in "
+                                                                                         "Parallel:"))
         self.newProjectCreateButton_newProjectWindow.setText(_translate("newProject_window", "Create"))
         self.newProjectCancelButton_newProjectWindow.setText(_translate("newProject_window", "Cancel"))

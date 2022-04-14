@@ -2,7 +2,7 @@
 The end goal of the Scan Detection System (SDS) is to provide users with the ability to capture and analyze network traffic data through a graphical workspace.
 
 
-## To start, open terminal on the root foolder and run the following command to install requirements
+## To start, open terminal on the root folder and run the following command to install requirements
 `pip3 install -r ./requirements.txt`
 
 ## Mongo DB Setup
@@ -48,9 +48,18 @@ To this
 Once done, run the following command and you should have virtualbox installed
 `sudo python3 vboxapisetup.py install`
 
+<<<<<<< HEAD
 To clean the remove all pycached files, run the following using python3
 ```
 python3 -Bc "import pathlib; [p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
 python3 -Bc "import pathlib; [p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]"
 ```
 
+=======
+
+If you get an error like
+`bin/ls: cannot open directory 'media/sf_new-shared-folder': Permission denied`
+Then you have to go into the vm and make sure you run `sudo usermod -aG vboxsf ubuntu`
+
+I believe you also need to install the VirtualBox Guest Additions
+>>>>>>> 30dc4ca37e8361e9d6239dc2e7e4bec84a0c4d4b
