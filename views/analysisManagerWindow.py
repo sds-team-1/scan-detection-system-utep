@@ -42,10 +42,6 @@ class Ui_AnalysisManagerWindow(object):
         self.scenariosList_analysisManagerWindow.setMinimumSize(QtCore.QSize(220, 0))
         self.scenariosList_analysisManagerWindow.setMaximumSize(QtCore.QSize(220, 16777215))
         self.scenariosList_analysisManagerWindow.setObjectName("scenariosList_analysisManagerWindow")
-        #item_0 = QtWidgets.QTreeWidgetItem(self.scenariosList_analysisManagerWindow)
-        #item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        #item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        #item_0 = QtWidgets.QTreeWidgetItem(self.scenariosList_analysisManagerWindow)
         self.centralSectionLayout_analysisManagerWindow.addWidget(self.scenariosList_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
         self.scenariosLayout_analysisManagerWindow.setObjectName("scenariosLayout_analysisManagerWindow")
@@ -97,7 +93,6 @@ class Ui_AnalysisManagerWindow(object):
         self.gridLayout_2.addLayout(self.buttonsLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
 
-        self.pcapsTabWidget_analysisManagerWindow.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
         _translate = QtCore.QCoreApplication.translate
@@ -105,12 +100,7 @@ class Ui_AnalysisManagerWindow(object):
         self.scenariosList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "Pcap Files"))
         __sortingEnabled = self.scenariosList_analysisManagerWindow.isSortingEnabled()
         self.scenariosList_analysisManagerWindow.setSortingEnabled(False)
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).setText(0, _translate("AnalysisManagerWindow", "Scenario 1"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).child(0).setText(0, _translate("AnalysisManagerWindow", "Pcap File 1"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).child(1).setText(0, _translate("AnalysisManagerWindow", "Pcap File 2"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(1).setText(0, _translate("AnalysisManagerWindow", "Scenario 2"))
         self.scenariosList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
-
         #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
         #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "Protocol"))
