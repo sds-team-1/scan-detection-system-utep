@@ -21,7 +21,7 @@ from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
 from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
-from captureController import CaptureController
+from Controllers.CaptureController import CaptureController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 

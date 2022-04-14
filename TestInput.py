@@ -28,8 +28,7 @@ class TestInput:
             "iterations": 1,
             "parallel_runs": 1,
             "end_condition": "on-scan-complete | time mm:ss"
-        }
-    ],
+        }],
     "networks": [
         {
             "id": "2",
@@ -43,6 +42,7 @@ class TestInput:
             "scanning": "false"
         }
     ],
+
     "scenario_name": "scenarioA",
     "project_name": "projectA",
     "workspace_name": "workspaceA",
