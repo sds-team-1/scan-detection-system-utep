@@ -1,7 +1,12 @@
 from PyQt5 import QtCore, QtWidgets
 
+from PyQt5.QtWidgets import QTreeWidgetItem
+import pyshark
+import os
+
 
 class Ui_AnalysisManagerWindow(object):
+
     def setupAnalysisManager(self, AnalysisManagerWindow):
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
@@ -50,8 +55,12 @@ class Ui_AnalysisManagerWindow(object):
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonsLayout_analysisManagerWindow.addItem(spacerItem)
+
+
+        self.filterInput_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
+        self.filterInput_analysisManagerWindow.setObjectName("filterInput_analysisManagerWindow")
+        self.buttonsLayout_analysisManagerWindow.addWidget(self.filterInput_analysisManagerWindow)
+
         self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
@@ -93,5 +102,30 @@ class Ui_AnalysisManagerWindow(object):
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow", "End Bytes"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow", "End Bits/s"))
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
-        self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Filters      "))
+        self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
+
+        self.scenariosList_analysisManagerWindow.itemSelectionChanged.connect(self.pcap_selected)
+
+        for file in os.listdir('pcaps'):
+            x = QtWidgets.QTreeWidgetItem([str(file)])
+            self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
+
+
+    def pcap_selected(self):
+        self.pcapList_analysisManagerWindow.clear()
+
+        cap = pyshark.FileCapture('pcaps/' + self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0),
+                                  only_summaries=True)
+
+        for pkt in cap:
+            l = []
+            l.append(str(pkt.no))
+            l.append(str(pkt.time))
+            l.append(str(pkt.source))
+            l.append(str(pkt.destination))
+            l.append(str(pkt.protocol))
+            l.append(str(pkt.length))
+            l.append(str(pkt.info))
+            l1 = QTreeWidgetItem(l)
+            self.pcapList_analysisManagerWindow.addTopLevelItem(l1)

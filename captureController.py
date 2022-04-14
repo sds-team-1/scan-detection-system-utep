@@ -4,7 +4,8 @@ import time
 import sys
 import subprocess
 from xml.etree.ElementTree import XML
-from xml_test import XML_Creator
+from Helpers import XmlHelper
+from TestInput import TestInput
 '''
 Temp notes
 To run core cleanup
@@ -22,7 +23,7 @@ class CaptureController:
 
     def __init__(self):
         self.state = "stopped"
-        self.vm_name = "LuisVM"
+        self.vm_name = "UbuntuDefault"
         self.vm_username = "ubuntu"
         self.vm_password = "ubuntu"
         self.vm_initial_string_command = f"VBoxManage guestcontrol \"{self.vm_name}\" --username \"{self.vm_username}\" --password \"{self.vm_password}\" "
@@ -33,6 +34,8 @@ class CaptureController:
         Runs the command in a new subprocess
         '''
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
+        # VBoxManage guestcontrol UbuntuDefault --username ubuntu --password ubuntu run /bin/ls  
+
         # subprocess.call(f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}", shell=True)
         command_string = f"VBoxManage guestcontrol {self.vm_name} --username {self.vm_username} --password {self.vm_password} run {command} {args}"
         # subprocess.call(command_string, shell=True)
@@ -43,34 +46,16 @@ class CaptureController:
         '''
         Runs CoreCleanup
         '''
-        print("Running CoreCleanup")
+        print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
-
-    def core_start_from_xml_file_path(self, xml_file_path):
-        '''
-        Runs CoreStart
-        '''
-        # Copy the xml file to the VM
-        self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
-        # Get the xml file name
-        xml_file_name = xml_file_path.split("/")[-1]
-
-        # Run Core Cleanup
-        self.core_cleanup()
-        # Wait 10 seconds
-        for i in range(10):
-            print(f"Waiting {i} seconds")
-            time.sleep(1)
-
-        # Run the command
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh /home/ubuntu/core/Files/" + xml_file_name)
 
     def core_start(self):
         '''
-        Runs core start
+        Runs CoreCleanup.sh the calls CoreStart.sh
         '''
         # Run Core Cleanup
         self.core_cleanup()
+
         # Wait 10 seconds
         for i in range(10):
             print(f"Waiting 10 seconds -> {i} seconds")
@@ -83,15 +68,35 @@ class CaptureController:
             print(f"Waiting 15 seconds -> {i} seconds")
             time.sleep(1)
 
-        self.start_services()
+    def core_start_from_xml_file_path(self, xml_file_path):
+        '''
+        Runs CoreStart
+        '''
+        # # if vm is not running, return
+        if self.state != "running":
+            print("Cannot start, vm is not powered on")
+            return
+        
+        # Copy the xml file to the VM
+        self.copy_to(xml_file_path, "/home/ubuntu/core/Files/")
 
+        # Run the command
+        self.core_start()
 
     def core_start_from_xml_string(self, xml_as_string):
         '''
         Runs CoreStart using the xml as a string
+        Creates a file on the host machine then copies to vm
+        Will return if the vm is not running
         '''
 
-        # Create a file with the xml
+        # # if vm is not running, return
+        if self.state != "running":
+            print("Cannot start, vm is not powered on")
+            return
+
+        
+        # Create a file name with the xml
         xml_file_path = "topology.xml"
 
         # if the file exists delete it
@@ -113,35 +118,26 @@ class CaptureController:
     def core_start_from_dictionary(self, topology_dict):
         '''
         Runs CoreStart using the json db format
+        Converts the dictionary to then calls core_start_from_xml_string
+        Will return if the vm is not running
         '''
-        # TODO: figure out how the topology_dict is going to be received
-        # # rename 'nodes' to 'devices'
-        # topology_dict['devices'] = topology_dict['nodes']
 
-        # print(topology_dict)
+        # # if vm is not running, return
+        if self.state != "running":
+            print("Cannot start, vm is not powered on")
+            return
+        
+        topology_dict["name"] =  topology_dict["scenario_name"]
+        topology_dict["devices"] = topology_dict["nodes"]
 
-        # # Create the xml file\
-        # xml = XML_Creator.XmlHelper(XML_Creator.XmlHelper.test_input)
-        # xml.format_dict()
-        # xml.create_xml_string()
+        # if 'networks' key is not in the dict, set it to empty list
+        if 'networks' not in topology_dict:
+            topology_dict['networks'] = []
 
-
-        # Currently xml conversion is still in progress
-        # # Create the xml file
-        # xml_creator = XML_Creator(topology_dict)
-        # xml_as_string = xml_creator.create_xml()
-
-
-        # so instead we will read from a file
-        # it is under research/xml-json-problem/example_topology.xml
-
-        # Read the xml file
-        xml_as_string = ""
-        with open("./research/xml-json-problem/example_topology.xml", "r") as f:
-            xml_as_string = f.read()
+        xml = XmlHelper.XmlHelper(topology_dict)
             
         # Run Core Start command
-        self.core_start_from_xml_string(xml_as_string)
+        self.core_start_from_xml_string(xml.get_xml_str())
 
 
     def start_services(self):
@@ -256,16 +252,9 @@ class CaptureController:
         command = self.vm_initial_string_command + f"copyfrom --target-directory {host_path} {guest_file_path}"
         os.system(command)
 
-
     def test_(self):
-        xml = XML_Creator.XmlHelper(XML_Creator.test_input)
-        xml.format_dict()
-        xml.create_xml_string()
-        xml_as_string = xml.get_xml_str()
-        self.core_start_from_xml_string(xml_as_string)
-
-
-
+        test_dict = TestInput.test_dictionary_for_core_start
+        self.core_start_from_dictionary(test_dict)
 
 # add logic in case the file is ran from the command line
 
