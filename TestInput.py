@@ -1,6 +1,6 @@
 class TestInput:
     test_dictionary_for_core_start =   {
-    "nodes": [
+    "devices": [
         {
             "id": "90",
             "listening": "false",
@@ -29,6 +29,19 @@ class TestInput:
             "parallel_runs": 1,
             "end_condition": "on-scan-complete | time mm:ss"
         }
+    "networks": [
+        {
+            "id": "2",
+            "listening": "true",
+            "type": "RJ45",
+            "name": "vm_connect",
+            "ip": "10.0.0.2",
+            "ip4_mask": "24",
+            "mac": "00:00:00:00:00:02",
+            "subnet": 0,
+            "scanning": "false"
+        }
+    ]
     ],
     "scenario_name": "scenarioA",
     "project_name": "projectA",
