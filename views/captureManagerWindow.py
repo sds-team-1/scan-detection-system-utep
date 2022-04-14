@@ -12,6 +12,11 @@ class Ui_CaptureManagerWindow(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.buttonsLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_captureManagerWindow.setObjectName("buttonsLayout_captureManagerWindow")
+
+        self.projectButtonsLabel = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        self.projectButtonsLabel.setObjectName("projectButtonsLabel")
+        self.buttonsLayout_captureManagerWindow.addWidget(self.projectButtonsLabel)
+        
         self.newButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.newButton_captureManagerWindow.setObjectName("newButton_captureManagerWindow")
         self.buttonsLayout_captureManagerWindow.addWidget(self.newButton_captureManagerWindow)
@@ -96,6 +101,7 @@ class Ui_CaptureManagerWindow(object):
         _translate = QtCore.QCoreApplication.translate
         CaptureManagerWindow.setWindowTitle(_translate("CaptureManagerWindow", "Scan Detection System"))
         self.newButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "New Project"))
+        self.projectButtonsLabel.setText(_translate("CaptureManagerWindow", "  Project Functions  "))k
         self.newButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  New  "))
         self.saveButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "Save Project"))
         self.saveButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  Save  "))
