@@ -387,10 +387,10 @@ class SDSController:
         scenario_dict['devices'] = []
         scenario_dict['networks'] = []
         for node in nodes:
-            type = node['type']
-            if type == 'PC':
+            _type = node['type']
+            if _type == 'PC':
                 scenario_dict['devices'].append(node)
-            elif type == 'RJ45':
+            elif _type == 'RJ45':
                 scenario_dict['networks'].append(node)
         scenario_dict['core_sds_service_ip'] = self._entire_workspace_context['core_sds_service_ip']
         scenario_dict['core_sds_port_number'] = self._entire_workspace_context['core_sds_port_number']
