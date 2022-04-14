@@ -2,12 +2,33 @@ from PyQt5 import QtCore, QtWidgets
 
 from PyQt5.QtWidgets import QTreeWidgetItem
 import pyshark
-import os
+
+from Models.pcap import Pcap
+from Models.capture import Capture
 
 
 class Ui_AnalysisManagerWindow(object):
+    #def applyFilters(self):
+    test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap.pcapng")
+    # test_pcap.create_json_file()
+    # test_pcap.to_json()
+    test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap_2.pcapng")
+    # test_pcap.create_json_file()
+    # test_pcap.to_json()
+    test_capture = Capture("scenario\\", "C:\\Users\\Luis\\Downloads\\")
+    test_capture.add_pcap(test_pcap)
+    test_capture.add_pcap(test_pcap_2)
 
+    # test_capture.create_merged_file()
+    # test_capture.merge_pcaps()
+
+    # self.iterate_packets(cap)
     def setupAnalysisManager(self, AnalysisManagerWindow):
+
+
+
+
+
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
         AnalysisManagerWindow.setMinimumSize(QtCore.QSize(812, 580))
@@ -21,10 +42,6 @@ class Ui_AnalysisManagerWindow(object):
         self.scenariosList_analysisManagerWindow.setMinimumSize(QtCore.QSize(220, 0))
         self.scenariosList_analysisManagerWindow.setMaximumSize(QtCore.QSize(220, 16777215))
         self.scenariosList_analysisManagerWindow.setObjectName("scenariosList_analysisManagerWindow")
-        #item_0 = QtWidgets.QTreeWidgetItem(self.scenariosList_analysisManagerWindow)
-        #item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        #item_1 = QtWidgets.QTreeWidgetItem(item_0)
-        #item_0 = QtWidgets.QTreeWidgetItem(self.scenariosList_analysisManagerWindow)
         self.centralSectionLayout_analysisManagerWindow.addWidget(self.scenariosList_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
         self.scenariosLayout_analysisManagerWindow.setObjectName("scenariosLayout_analysisManagerWindow")
@@ -32,17 +49,17 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsLayout_analysisManagerWindow.setObjectName("pcapsLayout_analysisManagerWindow")
         self.pcapsTabWidget_analysisManagerWindow = QtWidgets.QTabWidget(self.CentralLayout_analysisManagerWindow)
         self.pcapsTabWidget_analysisManagerWindow.setObjectName("pcapsTabWidget_analysisManagerWindow")
-        self.Pcap_pcap = QtWidgets.QWidget()
-        self.Pcap_pcap.setObjectName("Pcap_pcap")
-        self.gridLayout = QtWidgets.QGridLayout(self.Pcap_pcap)
-        self.gridLayout.setObjectName("gridLayout")
-        self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget(self.Pcap_pcap)
-        self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
-        self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
-        self.pcapsTabWidget_analysisManagerWindow.addTab(self.Pcap_pcap, "")
-        self.pcap_1 = QtWidgets.QWidget()
-        self.pcap_1.setObjectName("pcap_1")
-        self.pcapsTabWidget_analysisManagerWindow.addTab(self.pcap_1, "")
+        # self.Pcap_pcap = QtWidgets.QWidget()
+        # self.Pcap_pcap.setObjectName("Pcap_pcap")
+        # self.gridLayout = QtWidgets.QGridLayout(self.Pcap_pcap)
+        # self.gridLayout.setObjectName("gridLayout")
+        # self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
+        # self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
+        # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.Pcap_pcap, "")
+        #self.pcap_1 = QtWidgets.QWidget()
+        #self.pcap_1.setObjectName("pcap_1")
+        #self.pcapsTabWidget_analysisManagerWindow.addTab(self.pcap_1, "")
         self.pcapsLayout_analysisManagerWindow.addWidget(self.pcapsTabWidget_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.pcapsLayout_analysisManagerWindow)
         self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
@@ -63,14 +80,19 @@ class Ui_AnalysisManagerWindow(object):
 
         self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
+        self.filtersButton_analysisManagerWindow.clicked.connect(
+            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(), self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
+
+
+
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
+
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.gridLayout_2.addLayout(self.buttonsLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
 
-        self.pcapsTabWidget_analysisManagerWindow.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
         _translate = QtCore.QCoreApplication.translate
@@ -78,20 +100,9 @@ class Ui_AnalysisManagerWindow(object):
         self.scenariosList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "Pcap Files"))
         __sortingEnabled = self.scenariosList_analysisManagerWindow.isSortingEnabled()
         self.scenariosList_analysisManagerWindow.setSortingEnabled(False)
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).setText(0, _translate("AnalysisManagerWindow", "Scenario 1"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).child(0).setText(0, _translate("AnalysisManagerWindow", "Pcap File 1"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(0).child(1).setText(0, _translate("AnalysisManagerWindow", "Pcap File 2"))
-        #self.scenariosList_analysisManagerWindow.topLevelItem(1).setText(0, _translate("AnalysisManagerWindow", "Scenario 2"))
         self.scenariosList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
-        self.pcapList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "No."))
-        self.pcapList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow", "Time"))
-        self.pcapList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow", "Source"))
-        self.pcapList_analysisManagerWindow.headerItem().setText(3, _translate("AnalysisManagerWindow", "Destination"))
-        self.pcapList_analysisManagerWindow.headerItem().setText(4, _translate("AnalysisManagerWindow", "Protocol"))
-        self.pcapList_analysisManagerWindow.headerItem().setText(5, _translate("AnalysisManagerWindow", "Length"))
-        self.pcapList_analysisManagerWindow.headerItem().setText(6, _translate("AnalysisManagerWindow", "Info"))
-        self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
-        self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
+        #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
+        #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "Protocol"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow", "Percent Packets"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow", "Packets"))
@@ -104,21 +115,56 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
+        #self.iterate_packets(self.test_capture, "", 0)
+        self.show_pcap_list()
+        self.scenariosList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab())
+        # self.scenariosList_analysisManagerWindow.doubleClicked.connect(
+        #     lambda: self.iterate_packets(self.test_capture, "",
+        #                                  self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
 
-        self.scenariosList_analysisManagerWindow.itemSelectionChanged.connect(self.pcap_selected)
-
-        for file in os.listdir('pcaps'):
-            x = QtWidgets.QTreeWidgetItem([str(file)])
-            self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
 
 
-    def pcap_selected(self):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # cap = pyshark.FileCapture('pcap1.pcap',
+        #                           only_summaries=True)
+        # for pkt in cap:
+        #     l = []
+        #     l.append(str(pkt.no))
+        #     l.append(str(pkt.time))
+        #     l.append(str(pkt.source))
+        #     l.append(str(pkt.destination))
+        #     l.append(str(pkt.protocol))
+        #     l.append(str(pkt.length))
+        #     l.append(str(pkt.info))
+        #     l1 = QTreeWidgetItem(l)
+        #     self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+
+    def iterate_packets(self,capture, filter, pcap):
         self.pcapList_analysisManagerWindow.clear()
+        packets = capture.iterate_file(filter, pcap)
 
-        cap = pyshark.FileCapture('pcaps/' + self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0),
-                                  only_summaries=True)
-
-        for pkt in cap:
+        for pkt in packets:
             l = []
             l.append(str(pkt.no))
             l.append(str(pkt.time))
@@ -129,3 +175,37 @@ class Ui_AnalysisManagerWindow(object):
             l.append(str(pkt.info))
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+    def show_pcap_list(self):
+        for pcap in self.test_capture.pcaps:
+            print(pcap.name)
+            x = QtWidgets.QTreeWidgetItem([pcap.name])
+            self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
+    def open_tab(self):
+        pcap = QtWidgets.QWidget()
+        pcap.setObjectName(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+        #gridLayout = QtWidgets.QGridLayout(pcap)
+        #gridLayout.setObjectName("gridLayout")
+
+        self.gridLayout = QtWidgets.QGridLayout(pcap)
+        self.gridLayout.setObjectName("gridLayout")
+        self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
+        self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
+        self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+        self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+        self.pcapList_analysisManagerWindow.headerItem().setText(0,  "No.")
+        self.pcapList_analysisManagerWindow.headerItem().setText(1,  "Time")
+        self.pcapList_analysisManagerWindow.headerItem().setText(2,  "Source")
+        self.pcapList_analysisManagerWindow.headerItem().setText(3,  "Destination")
+        self.pcapList_analysisManagerWindow.headerItem().setText(4,  "Protocol")
+        self.pcapList_analysisManagerWindow.headerItem().setText(5,  "Length")
+        self.pcapList_analysisManagerWindow.headerItem().setText(6,  "Info")
+
+
+
+        self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+        #self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+
+        self.iterate_packets(self.test_capture, "",
+                             self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+        self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
+
