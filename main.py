@@ -220,6 +220,7 @@ def addSetNodesWindow():
     addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window)
     addSetNodesWindowUI.setNodesCreateButton_addSetNodesWindow.clicked.connect(addSetNodes)
     addSetNodesWindowUI.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_Window.close)
+    addSetNodesWindowUI.startingIPInput_addSetNodesWindow.setText(f"1.1.{ip_counter}.2")
     addSetNodes_Window.show()
 
 
@@ -240,7 +241,7 @@ def createProject():
     project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
     # If the input is incorrect show the missing fields window
-    if not project_name or project_parallel is 0:
+    if not project_name or project_parallel == 0:
         missingFields_Window.show()
     # Otherwise save the project
     else:
@@ -336,7 +337,7 @@ def addNode():
     if type == 'CORE':
         type = 'PC'
     elif type == 'VM' or type == 'Docker':
-        type = 'RJ45'
+        type = 'PC'  #temp solution
     name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
     MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
     IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
@@ -378,7 +379,7 @@ def addNode():
     nodes_list = sds_controller.get_all_nodes(scenario_name)
     captureManagerWindowUI.nodesList_captureManagerWindow.clear()
     for node in nodes_list:
-        node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+        node_item = QTreeWidgetItem([ str(node['listening']), \
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
         captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addNode_Window.close()
@@ -386,7 +387,13 @@ def addNode():
 
 # TODO: To be implemented
 def addSetNodes():
-    pass
+    starting_ip = addSetNodesWindowUI.startingIPInput_addSetNodesWindow.text()
+    split_starting_ip = starting_ip.split(".")
+    num_nodes = addSetNodesWindowUI.numberVictimNodesSpinbox_addSetNodesWindow.value()
+    
+    # for i in range(split_starting_ip[2],len(num_nodes)):
+        
+        
 
 
 def define_workspace_path():
@@ -407,7 +414,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
+        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
     else:
@@ -415,7 +422,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(True)
+        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
         # Get all the nodes
@@ -432,7 +439,7 @@ def item_project_selected():
         if node_list:
             #print(f'checking if nodes list is available for ui...{node_list}')
             for node in node_list:
-                node_item = QTreeWidgetItem([str(node['subnet']), str(node['listening']), \
+                node_item = QTreeWidgetItem([str(node['listening']), \
                     node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
                 captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
                 # TODO: Ask mauricio how this works
@@ -535,17 +542,18 @@ def set_up_scenario_unit():
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
-def start_scenario_unit():
+def start_virtual_machine():
     # Get input
-    ip = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
-    port = captureManagerWindowUI.corePortNumberInput_captureManagerWindow.text()
     # store input into workspace
-    sds_controller.insert_core_sds_service(ip, port)
-    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setEnabled(False)
-    captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setEnabled(False)
-    sds_controller.start_VM()
-    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
-    captureManagerWindowUI.startScenarioButton_captureManagerWindow.setEnabled(False)
+    # sds_controller.insert_core_sds_service(ip, port)
+    sds_controller.start_virtual_machine()
+    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
+    # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+
+def shutdown_virtual_machine():
+    print("shutdown virtual machine")
+    sds_controller.shutdown_virtual_machine()
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
 def stop_scenario_unit():
     #sds_controller.stop()
@@ -698,7 +706,8 @@ def initialize_signals():
     captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
     captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
-    captureManagerWindowUI.startScenarioButton_captureManagerWindow.clicked.connect(start_scenario_unit)
+    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_virtual_machine)
+    captureManagerWindowUI.shutdownVMButton_captureManagerWindow.clicked.connect(shutdown_virtual_machine)
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
     captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
