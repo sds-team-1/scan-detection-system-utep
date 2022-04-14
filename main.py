@@ -107,6 +107,7 @@ current_project_name = ''
 sds_controller = SDSController()
 db_config_filename = 'conf/db_config.json'
 
+ip_counter = 0
 
 def createWorkspaceWindow():
     global createWorkspace_Window
@@ -209,6 +210,7 @@ def addNodeWindow():
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
     addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
+    addNodeWindowUI.nodeIPAddressInput_addNodeWindow.setText(f"1.1.{ip_counter}.2")
     addNode_Window.show()
 
 
@@ -323,6 +325,7 @@ def delete_node(selected_node):
 
 def addNode():
     # TODO: Implement this
+    global ip_counter
     subnet = '0'
     log = ''
     if addNodeWindowUI.nodeLogNetNodeCheckBox_addNodeWindow.isChecked():
@@ -337,7 +340,9 @@ def addNode():
     name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
     MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
     IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
-    subnet = addNodeWindowUI.nodeSeparateSubNetNodeCheckBox_addNodeWindow.isChecked()
+    IP_parse = IP.split(".")
+    ip_counter = int(IP_parse[2])+1
+    # subnet = addNodeWindowUI.nodeSeparateSubNetNodeCheckBox_addNodeWindow.isChecked()
     user_pw = ''
     scanner_bin = ''
     arguments = ''
