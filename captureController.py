@@ -44,7 +44,7 @@ class CaptureController:
 
     def core_cleanup(self):
         '''
-        Runs CoreCleanup
+        Runs the CoreCleanup.sh script
         '''
         print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
@@ -70,7 +70,7 @@ class CaptureController:
 
     def core_start_from_xml_file_path(self, xml_file_path):
         '''
-        Runs CoreStart
+        Runs copies the file provided to the VM and then calls core_start
         '''
         # # if vm is not running, return
         if self.state != "running":
@@ -85,9 +85,8 @@ class CaptureController:
 
     def core_start_from_xml_string(self, xml_as_string):
         '''
-        Runs CoreStart using the xml as a string
         Creates a file on the host machine then copies to vm
-        Will return if the vm is not running
+        Calls core_start
         '''
 
         # # if vm is not running, return
@@ -117,8 +116,7 @@ class CaptureController:
 
     def core_start_from_dictionary(self, topology_dict):
         '''
-        Runs CoreStart using the json db format
-        Converts the dictionary to then calls core_start_from_xml_string
+        Converts the dictionary to xml string then calls core_start_from_xml_string
         Will return if the vm is not running
         '''
 
@@ -216,9 +214,6 @@ class CaptureController:
 
     def open_wireshark(path):
         os.system(f"wireshark -r /Users/erikmtz/Documents/GitProjects/scan-detection-system-utep/PCAPs/capture.pcap")
-
-    def add_shared_folder(self, name, hostpath):
-        os.system(f"VBoxManage sharedfolder add \"{self.vm_name}\" --name {name} --hostpath {hostpath} --automount")
 
     # def start_vm_headless(self):
     #     os.system(f"VBoxManage startvm \"{self.vm_name}\" --type headless")
