@@ -384,6 +384,7 @@ def addNode():
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
         captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addNode_Window.close()
+    captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
 
 # TODO: To be implemented
@@ -418,6 +419,7 @@ def addSetNodes():
             node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
         captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addSetNodes_Window.close()
+    captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         
 
 
@@ -469,6 +471,8 @@ def item_project_selected():
                 captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
                 # TODO: Ask mauricio how this works
                 # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
+
+        captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
 
 def save_workspace():
@@ -585,7 +589,7 @@ def context_menu_workspace(point):
     menu.addAction(action_delete_workspace)
 
     action_open_workspace.triggered.connect(lambda: open_workspace(name))
-    action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+    #action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
     action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
 
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
