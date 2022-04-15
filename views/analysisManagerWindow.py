@@ -20,13 +20,13 @@ class Ui_AnalysisManagerWindow(object):
 
     test_capture = Capture("", os.path.join(os.getcwd(), "pcaps"))
     # test_capture.add_pcap(Pcap("/pcap1.pcap", "./pcaps", "pcap1.pcap"))
-    test_capture.add_pcap(Pcap(os.path.join("pcap1.pcap"), "", "pcap1.pcap"))
-    test_capture.add_pcap(Pcap(os.path.join("pcap2.pcapng"), "", "pcap2.pcap"))
-    test_capture.add_pcap(Pcap(os.path.join("pcap3.pcapng"), "", "pcap3.pcap"))
+    #test_capture.add_pcap(Pcap(os.path.join("pcap1.pcap"), "", "pcap1.pcap"))
+    #test_capture.add_pcap(Pcap(os.path.join("pcap2.pcapng"), "", "pcap2.pcap"))
+    #test_capture.add_pcap(Pcap(os.path.join("pcap3.pcapng"), "", "pcap3.pcap"))
 
 
-    test_capture.create_merged_file()
-    test_capture.merge_pcaps()
+    #test_capture.create_merged_file()
+    #test_capture.merge_pcaps()
 
     # self.iterate_packets(cap)
     def setupAnalysisManager(self, AnalysisManagerWindow):
@@ -88,10 +88,14 @@ class Ui_AnalysisManagerWindow(object):
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
         self.filtersButton_analysisManagerWindow.clicked.connect(
             lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(), self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
-
-
-
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
+
+        self.mergeAllButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.mergeAllButton_analysisManagerWindow.setObjectName("mergeAllButton_analysisManagerWindow")
+        self.mergeAllButton_analysisManagerWindow.clicked.connect(
+            lambda: self.merge_all())
+        self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeAllButton_analysisManagerWindow)
+
 
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
@@ -120,8 +124,10 @@ class Ui_AnalysisManagerWindow(object):
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow", "End Bits/s"))
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
+        self.mergeAllButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge All Pcaps      "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
         #self.iterate_packets(self.test_capture, "", 0)
+        self.add_pcaps()
         self.show_pcap_list()
         self.scenariosList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab())
         # self.scenariosList_analysisManagerWindow.doubleClicked.connect(
@@ -181,7 +187,9 @@ class Ui_AnalysisManagerWindow(object):
             l.append(str(pkt.info))
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
+        packets.close()
     def show_pcap_list(self):
+        self.scenariosList_analysisManagerWindow.clear()
         for pcap in self.test_capture.pcaps:
             print(pcap.name)
             x = QtWidgets.QTreeWidgetItem([pcap.name])
@@ -215,3 +223,15 @@ class Ui_AnalysisManagerWindow(object):
                              self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
         self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
 
+    def add_pcaps(self):
+        for filename in os.listdir(self.test_capture.path):
+            f = os.path.join(self.test_capture.path, filename)
+            if os.path.isfile(f):
+                print(filename)
+                pcap = Pcap(filename, self.test_capture.path, filename)
+                self.test_capture.add_pcap(pcap)
+
+    def merge_all(self):
+        self.test_capture.create_merged_file()
+        self.test_capture.merge_pcaps()
+        self.show_pcap_list()
