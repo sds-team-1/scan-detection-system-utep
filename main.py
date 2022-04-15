@@ -552,11 +552,11 @@ def delete_workspace(selected_workspace):
 def set_up_scenario_unit():
     sds_controller._enforce_state('init_capture_network')
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
-    docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
-    sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
-    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
-    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
+    # vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
+    # docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
+    # sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+    # captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
+    # captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
     # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
