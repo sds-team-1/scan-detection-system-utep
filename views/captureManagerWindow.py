@@ -142,9 +142,10 @@ class Ui_CaptureManagerWindow(object):
         self.addNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "    Add Node    "))
         self.addSetNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Set of Victim Nodes"))
 
-        self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        self.runScenarioButton_captureManagerWindow.setEnabled(False)
-        self.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        # Temporarily having all buttons enabled
+        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+        # self.runScenarioButton_captureManagerWindow.setEnabled(False)
+        # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
+        # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
         self.addNodeButton_captureManagerWindow.setEnabled(False)
         self.addSetNodeButton_captureManagerWindow.setEnabled(False)

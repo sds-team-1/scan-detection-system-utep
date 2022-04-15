@@ -443,16 +443,16 @@ def item_project_selected():
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
         # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        # captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
+        # captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
     else:
         #print(f'checking if else checked')
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
         # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
+        # captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
+        # captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
         # Get all the nodes
         scenario_ID = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
         #print(f'checking scenario id: {scenario_ID}')
@@ -546,7 +546,7 @@ def set_up_scenario_unit():
     sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
     captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
     captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
-    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
+    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
 def start_virtual_machine():
@@ -566,7 +566,7 @@ def stop_scenario_unit():
     #sds_controller.stop()
     captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
     captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
-    captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
+    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
 
 def restore_scenario_unit():
     #sds_controller.restore()
