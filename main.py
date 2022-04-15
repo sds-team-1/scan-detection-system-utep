@@ -404,7 +404,6 @@ def addSetNodes():
     for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]),1):
         MAC += 1
         node_mac = str(MAC)[1:]
-        print(node_mac)
         node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
         node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
         node_name = name + str(count)
