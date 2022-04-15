@@ -582,7 +582,7 @@ def context_menu_workspace(point):
     menu = QtWidgets.QMenu()
 
     action_open_workspace = QAction("Open Workspace")
-    action_edit_workspace = QAction("Edit Workspace")
+    action_edit_workspace = QAction("Edit Workspace Name")
     action_delete_workspace = QAction("Delete Workspace")
 
     menu.addAction(action_open_workspace)
