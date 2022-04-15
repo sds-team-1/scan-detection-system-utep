@@ -5,6 +5,7 @@ from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
 from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
+from main import delete_workspace
 
 @unique
 class SDSStateEnum(Enum):
@@ -130,13 +131,25 @@ class SDSController:
         self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
         # print(self._entire_workspace_context)
 
+    def delete_workspace_contents(self, workspace_name):
+        pass
+
     ###### Project related functions ######
-    def import_project(self, workspace_name: str, project: dict) -> bool:
+    def import_project(self, project: dict) -> bool:
         self._ensure_subsystems()
+        print(f'called import_project')
         if self._state is SDSStateEnum.INIT_WORKPLACE:
-            if self._db_connection.create_project(workspace_name, project):
+            workspace_name = self._entire_workspace_context['_id']
+            print(f'valid state')
+            if self._db_connection.create_project(workspace_name, project= project):
+                print(f'imported project')
                 self.change_workspace_context(workspace_name)
-                self._state = SDSStateEnum.FILE_MANAGER_IMPORT_DIALOGUE
+                return True
+            # If the project is already made. Just add the project name
+            else:
+                print(f'inserting project name in workspace')
+                self._db_connection.update_workspace_projects(workspace_name, project['_id'])
+                self.change_workspace_context(workspace_name)
                 return True
         return False
 
@@ -187,7 +200,9 @@ class SDSController:
                 data = self._db_connection.retrieve_project(project_name)
                 _file = open(directory, 'w')
                 #Write dictionary to json file
+                print(f'exporting data: {data}')
                 json.dump(data, _file)
+                _file.close()
                 self._state = SDSStateEnum.FILE_MANAGER_EXPORT_DIALOGUE
                 return True
             except Exception as e:
@@ -290,17 +305,17 @@ class SDSController:
             return success
 
     ###### CORE Related functinos ######
-    def start_VM(self):
+    def start_virtual_machine(self):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_PROJECT:
-            # Do work here
-            try:
-                # Do launching with Capture Manager
-                self._cap_manager.start_vm()
-            except Exception as e:
-                # Handle here
-                self._state = SDSStateEnum.INIT_PROJECT
-            self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
+        # Do work here
+        # try:
+        #     # Do launching with Capture Manager
+        # Temp commenting
+        self._cap_manager.start_vm()
+        # except Exception as e:
+        #     # Handle here
+        #     self._state = SDSStateEnum.INIT_PROJECT
+        # self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
 
     def notify_gathering_complete(self):
         self._ensure_subsystems()
@@ -316,18 +331,18 @@ class SDSController:
             self._cap_manager.start_services(scenario_dict)
             self._state = SDSStateEnum.NETWORK_RUNNING
 
-    def stop(self):
+    def shutdown_virtual_machine(self):
+        print("Shutting down virtual machine - sds controller")
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.NETWORK_RUNNING:
-            # Do work here
-            self._cap_manager.stopVM()
-            self._state = SDSStateEnum.NETWORK_STOPPED
+        # Do work here
+        self._cap_manager.shutdown_vm()
+        self._state = SDSStateEnum.NETWORK_STOPPED
 
-    def restore(self):
+    def restore_core(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_STOPPED:
             # Do work here
-            self._cap_manager.restoreScenario()
+            self._cap_manager.core_cleanup()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def scenarios_complete(self):
@@ -387,10 +402,10 @@ class SDSController:
         scenario_dict['devices'] = []
         scenario_dict['networks'] = []
         for node in nodes:
-            type = node['type']
-            if type == 'PC':
+            _type = node['type']
+            if _type == 'PC':
                 scenario_dict['devices'].append(node)
-            elif type == 'RJ45':
+            elif _type == 'RJ45':
                 scenario_dict['networks'].append(node)
         scenario_dict['core_sds_service_ip'] = self._entire_workspace_context['core_sds_service_ip']
         scenario_dict['core_sds_port_number'] = self._entire_workspace_context['core_sds_port_number']

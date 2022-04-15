@@ -191,8 +191,8 @@ class CaptureController:
         if  self.state == "running":
             print("VM is already running")
             return False
-
-        os.system(f"VBoxManage startvm \"{self.vm_name}\"")
+        command_string = f"VBoxManage startvm {self.vm_name}"
+        subprocess.Popen(command_string, shell=True, close_fds=True)
         self.state = "running"
 
     def stop_vm(self) -> bool:
@@ -221,7 +221,14 @@ class CaptureController:
         os.system(f"VBoxManage startvm \"{self.vm_name}\" --type emergencystop")
 
     def shutdown_vm(self):
-        os.system(f"VBoxManage startvm \"{self.vm_name}\" --type shutdown")
+        # FIXME this doesnt work due to strange error with VBoxManage wtf is going on
+        # os.system(f"VBoxManage startvm \"{self.vm_name}\" --type shutdown")
+        # vboxmanage controlvm Ubuntu poweroff soft
+        # use the above command to shutdown the VM
+        print("Shutting down VM")
+        command_string = f"VBoxManage controlvm {self.vm_name} poweroff soft"
+        subprocess.Popen(command_string, shell=True, close_fds=True)
+        self.state = "stopped"
     
     def restart_vm(self):
         # VBoxManage controlvm <vm> reset
