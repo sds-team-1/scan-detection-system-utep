@@ -364,7 +364,7 @@ def addNode():
     if scanning:
         user_pw = addNodeWindowUI.nodeUserPassInput_addNodeWindow.text()
         scanner_bin = addNodeWindowUI.nodeScannerBinaryInput_addNodeWindow.text()
-        arguments = addNodeWindowUI.nodeArgumentsInput_addNodeWindow.text()
+        arguments = addNodeWindowUI.nodeNMapArgumentsInput_addNodeWindow.text() + "$$$" + addNodeWindowUI.nodeNiktoArgumentsInput_addNodeWindow.text()
         num_iterations = addNodeWindowUI.nodeNumIterationsSpinBox_addNodeWindow.value()
         max_parallel_runs = addNodeWindowUI.nodeMaxParallelRunsSpinBox_addNodeWindow.value()
         if addNodeWindowUI.nodeEndConditionCombobox_addNodeWindow.currentText() == 'on-scan-complete':
