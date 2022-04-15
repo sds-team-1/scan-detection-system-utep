@@ -72,7 +72,7 @@ class ScannerNode(Node):
         self.max_parallel_runs = max_parallel_runs
         self.end_condition = end_condition
 
-
+ 
 app = QtWidgets.QApplication(sys.argv)
 workspace_Window = QtWidgets.QDialog()
 createWorkspace_Window = QtWidgets.QDialog()
