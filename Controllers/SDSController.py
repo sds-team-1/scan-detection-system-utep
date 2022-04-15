@@ -5,7 +5,6 @@ from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
 from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
-from main import delete_workspace
 
 @unique
 class SDSStateEnum(Enum):
