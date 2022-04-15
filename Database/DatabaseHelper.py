@@ -87,6 +87,8 @@ class SDSDatabaseHelper:
         collection = db['workspaces']
         workspace_dict = collection.find_one({'_id': workspace_name})
         # Replace all projects with data
+        if not workspace_dict['projects']:
+            return workspace_dict
         projects_to_remove = [project_name for project_name in workspace_dict['projects']]
         for project_name in projects_to_remove:
             # Get project Data

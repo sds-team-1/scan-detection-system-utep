@@ -19,9 +19,9 @@ from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
-from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
 from Controllers.CaptureController import CaptureController
+from Controllers.SDSController import SDSController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 
