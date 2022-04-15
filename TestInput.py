@@ -1,38 +1,6 @@
 class TestInput:
-    test_dictionary_for_core_start =   {
-    "devices": [
-        {
-            "id": "90",
-            "listening": "false",
-            "type": "PC",
-            "name": "one",
-            "ip": "10.0.0.1",
-            "ip4_mask": "24",
-            "mac": "00:00:00:00:00:01",
-            "subnet": 0,
-            "scanning": "false"
-        },
-        {
-            "id": "10",
-            "listening": "true",
-            "type": "PC",
-            "name": "two",
-            "ip": "10.0.1.1",
-            "mac": "00:00:00:00:00:02",
-            "ip4_mask": "24",
-            "subnet": 1,
-            "scanning": "true",
-            "username/pass": "root/pass",
-            "scanner_binary": "/usr/bin/nmap",
-            "arguments": "--ts -v -ip 10.0.0.1",
-            "iterations": 1,
-            "parallel_runs": 1,
-            "end_condition": "on-scan-complete | time mm:ss"
-        }],
-    "networks": [
-    ],
-
-    "scenario_name": "scenarioA",
-    "project_name": "projectA",
-    "workspace_name": "workspaceA",
-}
+    test_dictionary_for_core_start = {
+        'scenario_name': 's1', 
+        'project_name': 'p1', 
+        'workspace_name': 'Test2', 'devices': [{'_id': ObjectId('6258f06aacebb3e44444c46e'), 'id': 11, 'listening': 'False', 'type': 'PC', 'name': 'n1', 'ip': '1.1.0.2', 'mac': '00:00:00:00:00:01', 'subnet': '0', 'scanning': False, 'username/pass': '', 'scanner_binary': '', 'arguments': '', 'iterations': 1, 'parallel_runs': 1, 'end_condition': ''}, {'_id': ObjectId('6258f06eacebb3e44444c471'), 'id': 12, 'listening': 'True', 'type': 'PC', 'name': '', 'ip': '1.1.1.2', 'mac': '00:00:00:00:00:02', 'subnet': '0', 'scanning': False, 'username/pass': '', 'scanner_binary': '', 'arguments': '', 'iterations': 1, 'parallel_runs': 1, 'end_condition': ''}, {'_id': ObjectId(
+        '6258f07eacebb3e44444c474'), 'id': 13, 'listening': 'False', 'type': 'PC', 'name': '', 'ip': '1.1.2.2', 'mac': '00:00:00:00:00:03', 'subnet': '0', 'scanning': True, 'username/pass': 'userpass', 'scanner_binary': 'scannerbinary', 'arguments': 'nmap ', 'iterations': 1, 'parallel_runs': 1, 'end_condition': 'on-scan-complete'}, {'_id': ObjectId('6258f099acebb3e44444c477'), 'id': 14, 'listening': 'True', 'type': 'PC', 'name': 'n2', 'ip': '1.1.3.2', 'mac': '00:00:00:00:00:04', 'subnet': '0', 'scanning': True, 'username/pass': 'userpass2', 'scanner_binary': 'binary', 'arguments': 'args2', 'iterations': 1, 'parallel_runs': 1, 'end_condition': 'on-scan-complete'}], 'networks': [], 'core_sds_service_ip': '', 'core_sds_port_number': '', 'sds_vm_service': '', 'sds_docker_service': ''}
