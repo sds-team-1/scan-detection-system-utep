@@ -506,8 +506,9 @@ def addNodeCheckboxStateChanged():
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
 
 
-def open_workspace(selected_workspace):
+def open_workspace():
     global current_workspace_name
+    selected_workspace = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
     current_workspace_name = selected_workspace
     # Change sds_controller workspace context
     # print(f'check if open_workspace is called')
@@ -585,15 +586,12 @@ def context_menu_workspace(point):
     name = item.text(0)
     menu = QtWidgets.QMenu()
 
-    action_open_workspace = QAction("Open Workspace")
     action_edit_workspace = QAction("Edit Workspace Name")
     action_delete_workspace = QAction("Delete Workspace")
 
-    menu.addAction(action_open_workspace)
     menu.addAction(action_edit_workspace)
     menu.addAction(action_delete_workspace)
 
-    action_open_workspace.triggered.connect(lambda: open_workspace(name))
     #action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
     action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
 
@@ -722,6 +720,7 @@ def initialize_signals():
     # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+    workspaceUI.workspacesList_workspaceWindow.doubleClicked.connect(open_workspace)
 
     captureManagerWindowUI.projectsList_captureManagerWindow.itemSelectionChanged.connect(item_project_selected)
 
