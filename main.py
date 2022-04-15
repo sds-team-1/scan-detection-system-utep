@@ -335,7 +335,7 @@ def addNode():
     else:
         log = 'False'
     type = addNodeWindowUI.nodeTypeComboBox_addNodeWindow.currentText()
-    if type == 'CORE':
+    if type == 'CORE' or type == 'VM':
         type = 'PC'
     elif type == 'VM' or type == 'Docker':
         type = 'PC'  #temp solution
@@ -471,46 +471,25 @@ def item_project_selected():
                 # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
 
 
-# TODO: Work on this to work with the controller
 def save_workspace():
-    for project in workspace_object.projects:
-        os.makedirs(os.path.join(workspace_object.location,
-                                 project.name))
+    # Everything is already saved. So we don't really need it. YW
+    pass
 
-        for scenario in project.scenarios:
-            os.makedirs(os.path.join(project.location,
-                                     scenario.name))
-
-
-# TODO: Fix this to work with controller.
 def export_project():
-    scenarios = {}
     project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    project_path = ''
-    # FIXME: workspace_object reference
-    projects = workspace_object.projects
-    for project in projects:
-        if project.name == project_name:
-            project_path = project.location
-            for scenario in project.scenarios:
-                scenarios[scenario.name] = ''
-    json_project = [project_name, scenarios]
-    json_string = json.dumps(json_project)
-    with open(project_path + '.json', 'w') as outfile:
-        outfile.write(json_string)
+    export_path = QFileDialog().getSaveFileName(caption='Export Project',directory='~/untitled.json')
+    print(f'export path is: {export_path}')
+    sds_controller._enforce_state('init_project')
+    sds_controller.export_project(project_name, export_path[0]) 
 
 
-# TODO: Fix this to work with the controller.
 def import_project():
     dialog = QFileDialog()
-    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File')
+    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
-        p = QtWidgets.QTreeWidgetItem([project[0]])
-        for x in project[1]:
-            s = QTreeWidgetItem([x])
-            p.addChild(s)
-        captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(p)
+        sds_controller._enforce_state('init_workplace')
+        sds_controller.import_project(project)
 
 
 def addNodeCheckboxStateChanged():
@@ -545,15 +524,11 @@ def open_workspace(selected_workspace):
 #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
  #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
-
-# TODO: Implement this
-def edit_workspace(selected_workspace):
-    pass
-
-
 # TODO: Implement this
 def delete_workspace(selected_workspace):
-    pass
+    ''' Removes the workspace. If projects don't exist in other workspaces then
+    they will be deleted. Same rule for the scenarios and nodes.'''
+    sds_controller.delete_workspace_contents(selected_workspace)
 
 
 def set_up_scenario_unit():

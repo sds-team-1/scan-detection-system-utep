@@ -26,6 +26,17 @@ class SDSDatabaseHelper:
             return False
         return True
 
+    def update_workspace_projects(self, workspace_name: str, project_name: str) -> bool:
+        client = MongoClient(self.url)
+        db = client['SDS']
+        collection = db['workspaces']
+        try:
+            collection.update_one({'_id': workspace_name}, {'$push': {'projects': project_name}})
+            return True
+        except:
+            return False
+
+
     def save_workspace(self, workspace_name: str, data: dict):
         client = MongoClient(self.url)
         db = client.SDS
@@ -169,8 +180,9 @@ class SDSDatabaseHelper:
             data['nodes'] = []
 
             #Saves the scenario and retrieves the id
+            print(f'{data}')
             scenario_objid = collection.insert_one(data).inserted_id
-
+            print('succuss')
             #Insert all the keys if there 
             node_keys = nodes.keys()
             for n in node_keys:
