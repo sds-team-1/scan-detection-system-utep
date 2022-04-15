@@ -206,12 +206,17 @@ def newScenarioUnitWindow():
 
 def addNodeWindow():
     global addNode_Window
+    global MAC
     addNode_Window = QtWidgets.QDialog()
     addNodeWindowUI.setupAddNode(addNode_Window)
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
     addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
     addNodeWindowUI.nodeIPAddressInput_addNodeWindow.setText(f"1.1.{ip_counter}.2")
+    MAC += 1
+    node_mac = str(MAC)[1:]
+    node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
+    addNodeWindowUI.nodeMACAddressInput_addNodeWindow.setText(node_mac)
     addNode_Window.show()
 
 
@@ -505,7 +510,7 @@ def open_workspace(selected_workspace):
     global current_workspace_name
     current_workspace_name = selected_workspace
     # Change sds_controller workspace context
-    print(f'check if open_workspace is called')
+    # print(f'check if open_workspace is called')
     sds_controller.change_workspace_context(current_workspace_name)
     time.sleep(1)
     captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
@@ -775,7 +780,6 @@ def set_up_database_connection():
         ip_port = f'{protocol}{ip}:{port}'
     try:
         db = SDSDatabaseHelper(ip_port)
-        print(f'connection worked {db}')
         return db, True
     except:
         return None, False
