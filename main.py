@@ -520,6 +520,8 @@ def open_workspace(selected_workspace):
             # Add scenario tree to project tree
             project_tree_item.addChild(scenario_tree)
         captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+
+    captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
     #Insert core options if saved
 #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
  #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
