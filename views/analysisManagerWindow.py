@@ -102,6 +102,7 @@ class Ui_AnalysisManagerWindow(object):
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.gridLayout_2.addLayout(self.buttonsLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
+        self.closeAnalysisManager_analysisManagerWindow.clicked.connect(AnalysisManagerWindow.close)
 
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
