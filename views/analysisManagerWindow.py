@@ -2,25 +2,31 @@ from PyQt5 import QtCore, QtWidgets
 
 from PyQt5.QtWidgets import QTreeWidgetItem
 import pyshark
+import os
 
 from Models.pcap import Pcap
 from Models.capture import Capture
 
 
 class Ui_AnalysisManagerWindow(object):
-    # #def applyFilters(self):
-    # test_pcap = Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap.pcapng")
+
+    # test_pcap = Pcap("first pcap", "./pcaps", "first pcap")
     # # test_pcap.create_json_file()
     # # test_pcap.to_json()
-    # test_pcap_2 = Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\scenario\\", "test_pcap_2.pcapng")
     # # test_pcap.create_json_file()
     # # test_pcap.to_json()
-    # test_capture = Capture("scenario\\", "C:\\Users\\Luis\\Downloads\\")
     # test_capture.add_pcap(test_pcap)
     # test_capture.add_pcap(test_pcap_2)
 
-    # test_capture.create_merged_file()
-    # test_capture.merge_pcaps()
+    test_capture = Capture("", os.path.join(os.getcwd(), "pcaps"))
+    # test_capture.add_pcap(Pcap("/pcap1.pcap", "./pcaps", "pcap1.pcap"))
+    test_capture.add_pcap(Pcap(os.path.join("pcap1.pcap"), "", "pcap1.pcap"))
+    test_capture.add_pcap(Pcap(os.path.join("pcap2.pcapng"), "", "pcap2.pcap"))
+    test_capture.add_pcap(Pcap(os.path.join("pcap3.pcapng"), "", "pcap3.pcap"))
+
+
+    test_capture.create_merged_file()
+    test_capture.merge_pcaps()
 
     # self.iterate_packets(cap)
     def setupAnalysisManager(self, AnalysisManagerWindow):

@@ -305,17 +305,17 @@ class SDSController:
             return success
 
     ###### CORE Related functinos ######
-    def start_VM(self):
+    def start_virtual_machine(self):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_PROJECT:
-            # Do work here
-            try:
-                # Do launching with Capture Manager
-                self._cap_manager.start_vm()
-            except Exception as e:
-                # Handle here
-                self._state = SDSStateEnum.INIT_PROJECT
-            self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
+        # Do work here
+        # try:
+        #     # Do launching with Capture Manager
+        # Temp commenting
+        self._cap_manager.start_vm()
+        # except Exception as e:
+        #     # Handle here
+        #     self._state = SDSStateEnum.INIT_PROJECT
+        # self._state = SDSStateEnum.LAUNCHING_CORE_UNITS
 
     def notify_gathering_complete(self):
         self._ensure_subsystems()
@@ -331,18 +331,18 @@ class SDSController:
             self._cap_manager.start_services(scenario_dict)
             self._state = SDSStateEnum.NETWORK_RUNNING
 
-    def stop(self):
+    def shutdown_virtual_machine(self):
+        print("Shutting down virtual machine - sds controller")
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.NETWORK_RUNNING:
-            # Do work here
-            self._cap_manager.stopVM()
-            self._state = SDSStateEnum.NETWORK_STOPPED
+        # Do work here
+        self._cap_manager.shutdown_vm()
+        self._state = SDSStateEnum.NETWORK_STOPPED
 
-    def restore(self):
+    def restore_core(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_STOPPED:
             # Do work here
-            self._cap_manager.restoreScenario()
+            self._cap_manager.core_cleanup()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
     def scenarios_complete(self):
