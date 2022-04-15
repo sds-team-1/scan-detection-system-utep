@@ -53,10 +53,14 @@ class Ui_addNode_window(object):
         self.nodeIPAddressInput_addNodeWindow.setObjectName("nodeIPAddressInput_addNodeWindow")
         self.nodeIPAddressLayout_addNodeWindow.addWidget(self.nodeIPAddressInput_addNodeWindow)
         self.mainLayout_addNodeWindow.addLayout(self.nodeIPAddressLayout_addNodeWindow)
+
         self.nodeScannerNodeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
         self.nodeScannerNodeLayout_addNodeWindow.setObjectName("nodeScannerNodeLayout_addNodeWindow")
         self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.nodeScannerNodeLayout_addNodeWindow.addItem(self.spacerItem1)
+        self.nodeWebServerNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
+        self.nodeWebServerNodeCheckBox_addNodeWindow.setObjectName("nodeWebServerNodeCheckBox_addNodeWindow")
+        self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeWebServerNodeCheckBox_addNodeWindow)
         self.nodeLogNetNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
         self.nodeLogNetNodeCheckBox_addNodeWindow.setObjectName("nodeLogNetNodeCheckBox_addNodeWindow")
         self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeLogNetNodeCheckBox_addNodeWindow)
@@ -64,6 +68,7 @@ class Ui_addNode_window(object):
         self.nodeScannerNodeCheckBox_addNodeWindow.setObjectName("nodeScannerNodeCheckBox_addNodeWindow")
         self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeScannerNodeCheckBox_addNodeWindow)
         self.mainLayout_addNodeWindow.addLayout(self.nodeScannerNodeLayout_addNodeWindow)
+
         self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
         self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
         self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
@@ -83,6 +88,7 @@ class Ui_addNode_window(object):
         self.nodeNameLabel_addNodeWindow.setText(_translate("addNode_window", "Node Name:          "))
         self.nodeMACAddressLabel_addNodeWindow.setText(_translate("addNode_window", "MAC Address:       "))
         self.nodeIPAddressLabel_addNodeWindow.setText(_translate("addNode_window", "IP Address:            "))
+        self.nodeWebServerNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Web Server"))
         self.nodeLogNetNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Log Network Traffic"))
         self.nodeScannerNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Scanner Node"))
         self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
@@ -92,9 +98,11 @@ class Ui_addNode_window(object):
 
     def scannerNode(self, addNode_window, _translate):
         if self.nodeScannerNodeCheckBox_addNodeWindow.isChecked():
-            addNode_window.resize(487, 450)
-            addNode_window.setMinimumSize(QtCore.QSize(487, 450))
-            addNode_window.setMaximumSize(QtCore.QSize(487, 450))
+            self.nmapFlag = False
+            self.niktoFlag = False
+            addNode_window.resize(487, 490)
+            addNode_window.setMinimumSize(QtCore.QSize(487, 490))
+            addNode_window.setMaximumSize(QtCore.QSize(487, 490))
 
             self.addNodeButton_addNodeWindow.deleteLater()
             self.addNodeCancelButton_addNodeWindow.deleteLater()
@@ -118,15 +126,44 @@ class Ui_addNode_window(object):
             self.nodeScannerBinaryInput_addNodeWindow.setObjectName("nodeScannerBinaryInput_addNodeWindow")
             self.nodeScannerBinaryLayout_addNodeWindow.addWidget(self.nodeScannerBinaryInput_addNodeWindow)
             self.mainLayout_addNodeWindow.addLayout(self.nodeScannerBinaryLayout_addNodeWindow)
-            self.nodeArgumentsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeArgumentsLayout_addNodeWindow.setObjectName("nodeArgumentsLayout_addNodeWindow")
-            self.nodeArgumentsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeArgumentsLabel_addNodeWindow.setObjectName("nodeArgumentsLabel_addNodeWindow")
-            self.nodeArgumentsLayout_addNodeWindow.addWidget(self.nodeArgumentsLabel_addNodeWindow)
-            self.nodeArgumentsInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-            self.nodeArgumentsInput_addNodeWindow.setObjectName("nodeArgumentsInput_addNodeWindow")
-            self.nodeArgumentsLayout_addNodeWindow.addWidget(self.nodeArgumentsInput_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeArgumentsLayout_addNodeWindow)
+
+            self.nodeScannersNNNodeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
+            self.nodeScannersNNNodeLayout_addNodeWindow.setObjectName("nodeScannersNNNodeLayout_addNodeWindow")
+            self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+            self.nodeScannersNNNodeLayout_addNodeWindow.addItem(self.spacerItem1)
+            self.nodeNMapNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
+            self.nodeNMapNodeCheckBox_addNodeWindow.setObjectName("nodeNMapNodeCheckBox_addNodeWindow")
+            self.nodeScannersNNNodeLayout_addNodeWindow.addWidget(self.nodeNMapNodeCheckBox_addNodeWindow)
+            self.nodeNiktoNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
+            self.nodeNiktoNodeCheckBox_addNodeWindow.setObjectName("nodeNiktoNodeCheckBox_addNodeWindow")
+            self.nodeScannersNNNodeLayout_addNodeWindow.addWidget(self.nodeNiktoNodeCheckBox_addNodeWindow)
+            self.mainLayout_addNodeWindow.addLayout(self.nodeScannersNNNodeLayout_addNodeWindow)
+
+            self.nodeNMapNodeCheckBox_addNodeWindow.toggled.connect(self.nmapSignal)
+            self.nodeNiktoNodeCheckBox_addNodeWindow.toggled.connect(self.niktoSignal)
+
+            self.nodeNMapArgumentsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
+            self.nodeNMapArgumentsLayout_addNodeWindow.setObjectName("nodeNMapArgumentsLayout_addNodeWindow")
+            self.nodeNMapArgumentsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
+            self.nodeNMapArgumentsLabel_addNodeWindow.setObjectName("nodeNMapArgumentsLabel_addNodeWindow")
+            self.nodeNMapArgumentsLayout_addNodeWindow.addWidget(self.nodeNMapArgumentsLabel_addNodeWindow)
+            self.nodeNMapArgumentsInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
+            self.nodeNMapArgumentsInput_addNodeWindow.setObjectName("nodeNMapArgumentsInput_addNodeWindow")
+            self.nodeNMapArgumentsLayout_addNodeWindow.addWidget(self.nodeNMapArgumentsInput_addNodeWindow)
+            self.mainLayout_addNodeWindow.addLayout(self.nodeNMapArgumentsLayout_addNodeWindow)
+            self.nodeNMapArgumentsInput_addNodeWindow.setDisabled(True)
+
+            self.nodeNiktoArgumentsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
+            self.nodeNiktoArgumentsLayout_addNodeWindow.setObjectName("nodeNiktoArgumentsLayout_addNodeWindow")
+            self.nodeNiktoArgumentsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
+            self.nodeNiktoArgumentsLabel_addNodeWindow.setObjectName("nodeNiktoArgumentsLabel_addNodeWindow")
+            self.nodeNiktoArgumentsLayout_addNodeWindow.addWidget(self.nodeNiktoArgumentsLabel_addNodeWindow)
+            self.nodeNiktoArgumentsInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
+            self.nodeNiktoArgumentsInput_addNodeWindow.setObjectName("nodeNiktoArgumentsInput_addNodeWindow")
+            self.nodeNiktoArgumentsLayout_addNodeWindow.addWidget(self.nodeNiktoArgumentsInput_addNodeWindow)
+            self.mainLayout_addNodeWindow.addLayout(self.nodeNiktoArgumentsLayout_addNodeWindow)
+            self.nodeNiktoArgumentsInput_addNodeWindow.setDisabled(True)
+
             self.nodeNumIterationsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
             self.nodeNumIterationsLayout_addNodeWindow.setObjectName("nodeNumIterationsLayout_addNodeWindow")
             self.nodeNumIterationsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
@@ -172,7 +209,13 @@ class Ui_addNode_window(object):
 
             self.nodeUserPassLabel_addNodeWindow.setText(_translate("addNode_window", "User/Pass:             "))
             self.nodeScannerBinaryLabel_addNodeWindow.setText(_translate("addNode_window", "Scanner-Binary:    "))
-            self.nodeArgumentsLabel_addNodeWindow.setText(_translate("addNode_window", "Arguments:            "))
+
+            self.nodeNMapNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "NMap"))
+            self.nodeNiktoNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Nikto"))
+
+            self.nodeNMapArgumentsLabel_addNodeWindow.setText(_translate("addNode_window", "NMap Arguments: "))
+            self.nodeNiktoArgumentsLabel_addNodeWindow.setText(_translate("addNode_window", "Nikto Arguments:  "))
+
             self.nodeNumIterationsLabel_addNodeWindow.setText(_translate("addNode_window", "Number-Iterations:"))
             self.nodeMaxParallelRunsLabel_addNodeWindow.setText(_translate("addNode_window", "Max-Parallel-Runs:"))
             self.nodeEndConditionLabel_addNodeWindow.setText(_translate("addNode_window", "End-Condition:       "))
@@ -198,8 +241,16 @@ class Ui_addNode_window(object):
             self.nodeUserPassInput_addNodeWindow.deleteLater()
             self.nodeScannerBinaryLabel_addNodeWindow.deleteLater()
             self.nodeScannerBinaryInput_addNodeWindow.deleteLater()
-            self.nodeArgumentsLabel_addNodeWindow.deleteLater()
-            self.nodeArgumentsInput_addNodeWindow.deleteLater()
+
+            self.nodeNMapArgumentsLabel_addNodeWindow.deleteLater()
+            self.nodeNMapArgumentsInput_addNodeWindow.deleteLater()
+
+            self.nodeNiktoArgumentsLabel_addNodeWindow.deleteLater()
+            self.nodeNiktoArgumentsInput_addNodeWindow.deleteLater()
+
+            self.nodeNMapNodeCheckBox_addNodeWindow.deleteLater()
+            self.nodeNiktoNodeCheckBox_addNodeWindow.deleteLater()
+
             self.nodeNumIterationsLabel_addNodeWindow.deleteLater()
             self.nodeNumIterationsSpinBox_addNodeWindow.deleteLater()
             self.nodeMaxParallelRunsLabel_addNodeWindow.deleteLater()
@@ -215,7 +266,11 @@ class Ui_addNode_window(object):
 
             self.mainLayout_addNodeWindow.removeItem(self.nodeUserPassLayout_addNodeWindow)
             self.mainLayout_addNodeWindow.removeItem(self.nodeScannerBinaryLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeArgumentsLayout_addNodeWindow)
+
+            self.mainLayout_addNodeWindow.removeItem(self.nodeNMapArgumentsLayout_addNodeWindow)
+            self.mainLayout_addNodeWindow.removeItem(self.nodeNiktoArgumentsLayout_addNodeWindow)
+            self.mainLayout_addNodeWindow.removeItem(self.nodeScannersNNNodeLayout_addNodeWindow)
+
             self.mainLayout_addNodeWindow.removeItem(self.nodeNumIterationsLayout_addNodeWindow)
             self.mainLayout_addNodeWindow.removeItem(self.nodeMaxParallelRunsLayout_addNodeWindow)
             self.mainLayout_addNodeWindow.removeItem(self.nodeEndConditionLayout_addNodeWindow)
@@ -310,3 +365,21 @@ class Ui_addNode_window(object):
             self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
             self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
             self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+
+
+    def nmapSignal(self):
+        if self.nmapFlag is True:
+            self.nodeNMapArgumentsInput_addNodeWindow.setEnabled(False)
+            self.nmapFlag = False
+        else:
+            self.nodeNMapArgumentsInput_addNodeWindow.setEnabled(True)
+            self.nmapFlag = True
+
+
+    def niktoSignal(self):
+        if self.niktoFlag is True:
+            self.nodeNiktoArgumentsInput_addNodeWindow.setEnabled(False)
+            self.niktoFlag = False
+        else:
+            self.nodeNiktoArgumentsInput_addNodeWindow.setEnabled(True)
+            self.niktoFlag = True
