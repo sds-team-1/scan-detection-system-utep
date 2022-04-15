@@ -387,6 +387,7 @@ def addNode():
     captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
 
+
 # TODO: To be implemented
 def addSetNodes():
     starting_ip = addSetNodesWindowUI.startingIPInput_addSetNodesWindow.text()
