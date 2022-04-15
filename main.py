@@ -121,12 +121,11 @@ def createWorkspaceWindow():
 
 
 def databaseConfigWindow():
-    global databaseError_Window
-    databaseError_Window = QtWidgets.QDialog()
+    global databaseConfig_Window
+    databaseConfig_Window = QtWidgets.QDialog()
     databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
     databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-        databaseConfig_Window.close)
+    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(databaseConfig_Window.close)
     databaseConfig_Window.show()
 
 
