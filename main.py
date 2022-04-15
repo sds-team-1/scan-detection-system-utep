@@ -684,6 +684,12 @@ def store_sds_docker_service():
     print(sds_docker_service)
 
 
+def closeCaptureManager():
+    workspace_Window.show()
+    generate_workspaces_list_window()
+    captureManager_Window.close()
+
+
 def setup_ui():
     workspaceUI.setupWorkspaceUI(workspace_Window)
     captureManagerWindowUI.setupCaptureManager(captureManager_Window)
@@ -716,6 +722,7 @@ def initialize_signals():
     captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
+    captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
 
     #captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
     #captureManagerWindowUI.corePortNumberInput_captureManagerWindow.textChanged[str].connect(store_core_port_number)
