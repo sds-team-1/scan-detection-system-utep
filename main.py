@@ -442,7 +442,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+        # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
     else:
@@ -450,7 +450,7 @@ def item_project_selected():
         captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
         captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+        # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
         captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
         # Get all the nodes
@@ -560,7 +560,7 @@ def start_virtual_machine():
 def shutdown_virtual_machine():
     print("shutdown virtual machine")
     sds_controller.shutdown_virtual_machine()
-    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+    # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
 def stop_scenario_unit():
     #sds_controller.stop()
