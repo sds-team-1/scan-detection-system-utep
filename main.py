@@ -599,6 +599,9 @@ def context_menu_workspace(point):
 def context_menu_project(point):
     index = captureManagerWindowUI.projectsList_captureManagerWindow.indexAt(point)
 
+    if not index.isValid():
+        return
+
     if not index.isValid() or index.parent().isValid():
         item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
         name = item.text(0)
@@ -644,6 +647,9 @@ def context_menu_project(point):
 
 def context_menu_node(point):
     index = captureManagerWindowUI.nodesList_captureManagerWindow.indexAt(point)
+
+    if not index.isValid():
+        return
 
     if not index.isValid() or index.parent().isValid():
         item = captureManagerWindowUI.nodesList_captureManagerWindow.itemAt(point)
