@@ -127,6 +127,10 @@ def databaseConfigWindow():
     databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
     databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
     databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(databaseConfig_Window.close)
+    with open('conf/db_config.json') as mongo_ip_file:
+        database_ip_dict = json.load(mongo_ip_file)
+        ip = database_ip_dict['ip']
+        databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
     databaseConfig_Window.show()
 
 
