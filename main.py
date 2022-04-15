@@ -108,6 +108,7 @@ sds_controller = SDSController()
 db_config_filename = 'conf/db_config.json'
 
 ip_counter = 0
+id_counter = 10
 MAC = 1000000000000
 
 def createWorkspaceWindow():
@@ -121,12 +122,15 @@ def createWorkspaceWindow():
 
 
 def databaseConfigWindow():
-    global databaseError_Window
-    databaseError_Window = QtWidgets.QDialog()
+    global databaseConfig_Window
+    databaseConfig_Window = QtWidgets.QDialog()
     databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
     databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-        databaseConfig_Window.close)
+    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(databaseConfig_Window.close)
+    with open('conf/db_config.json') as mongo_ip_file:
+        database_ip_dict = json.load(mongo_ip_file)
+        ip = database_ip_dict['ip']
+        databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
     databaseConfig_Window.show()
 
 
@@ -378,8 +382,9 @@ def addNode():
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    node_id = len(nodes_list)
-    sds_controller.insert_node(scenario_id, node_id, log, type, name, IP, MAC, \
+    global id_counter
+    id_counter +=1
+    sds_controller.insert_node(scenario_id, id_counter, log, type, name, IP, MAC, \
         subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
@@ -402,17 +407,18 @@ def addSetNodes():
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    node_id = len(nodes_list)
     count = 1
     global MAC 
+    global id_counter
     
     for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]),1):
+        id_counter +=1
         MAC += 1
         node_mac = str(MAC)[1:]
         node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
         node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
         node_name = name + str(count)
-        sds_controller.insert_node(scenario_id, node_id, False, "PC", node_name, node_ip, node_mac, \
+        sds_controller.insert_node(scenario_id, id_counter, False, "PC", node_name, node_ip, node_mac, \
             True, False, "", "", "", 1, \
             1, "")
         count += 1
@@ -506,8 +512,9 @@ def addNodeCheckboxStateChanged():
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
 
 
-def open_workspace(selected_workspace):
+def open_workspace():
     global current_workspace_name
+    selected_workspace = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
     current_workspace_name = selected_workspace
     # Change sds_controller workspace context
     # print(f'check if open_workspace is called')
@@ -545,11 +552,11 @@ def delete_workspace(selected_workspace):
 def set_up_scenario_unit():
     sds_controller._enforce_state('init_capture_network')
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
-    docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
-    sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
-    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
-    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
+    # vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
+    # docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
+    # sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+    # captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
+    # captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
     # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
     sds_controller.run_scenario_units(scenario_name)
 
@@ -588,15 +595,12 @@ def context_menu_workspace(point):
     name = item.text(0)
     menu = QtWidgets.QMenu()
 
-    action_open_workspace = QAction("Open Workspace")
     action_edit_workspace = QAction("Edit Workspace Name")
     action_delete_workspace = QAction("Delete Workspace")
 
-    menu.addAction(action_open_workspace)
     menu.addAction(action_edit_workspace)
     menu.addAction(action_delete_workspace)
 
-    action_open_workspace.triggered.connect(lambda: open_workspace(name))
     #action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
     action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
 
@@ -725,6 +729,7 @@ def initialize_signals():
     # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
+    workspaceUI.workspacesList_workspaceWindow.doubleClicked.connect(open_workspace)
 
     captureManagerWindowUI.projectsList_captureManagerWindow.itemSelectionChanged.connect(item_project_selected)
 
