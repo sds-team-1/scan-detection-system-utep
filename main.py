@@ -484,6 +484,8 @@ def export_project():
 def import_project():
     dialog = QFileDialog()
     json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+    if not json_path[0]:
+        return
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
         sds_controller._enforce_state('init_workplace')
