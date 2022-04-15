@@ -20,6 +20,8 @@ TODO: Use enums to keep track of capture controller
 '''
 class CaptureController:
 
+    scenario_dict = None
+
     def __init__(self):
         self.state = "stopped"
         self.vm_name = "UbuntuDefault"
@@ -118,6 +120,9 @@ class CaptureController:
         Converts the dictionary to xml string then calls core_start_from_xml_string
         Will return if the vm is not running
         '''
+
+        # Store the dictionary
+        self.scenario_dict = topology_dict
 
         # # if vm is not running, return
         if self.state != "running":
