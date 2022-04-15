@@ -52,8 +52,6 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url)
         db = client['SDS']
         collection = db['projects']
-        #print('dbhelper showing project...')
-        #print(project)
         if not project:
             try:
                 collection.insert_one({'_id': project_name, 'parallel_units': par_units,
@@ -69,9 +67,6 @@ class SDSDatabaseHelper:
                 return False
         collection = db['workspaces']
         query = {'_id': workspace_name}
-        #print('createproject showing update...')
-        #print(query)
-        #print(update)
         success = collection.update_one(query, update)
         return False if success == 0 else True
 
@@ -92,6 +87,8 @@ class SDSDatabaseHelper:
         print("workspace context " +  workspace_name)
         
         # Replace all projects with data
+        if 'projects' not in workspace_dict.keys():
+            return workspace_dict
         projects_to_remove = [project_name for project_name in workspace_dict['projects']]
         for project_name in projects_to_remove:
             # Get project Data
