@@ -5,13 +5,24 @@ class Ui_addSetNodes_window(object):
     def setupAddSetNodes(self, addSetNodes_window):
         addSetNodes_window.setObjectName("addSetNodes_window")
         addSetNodes_window.setEnabled(True)
-        addSetNodes_window.resize(513, 150)
-        addSetNodes_window.setMinimumSize(QtCore.QSize(513, 150))
-        addSetNodes_window.setMaximumSize(QtCore.QSize(513, 150))
+        addSetNodes_window.resize(513, 170)
+        addSetNodes_window.setMinimumSize(QtCore.QSize(513, 170))
+        addSetNodes_window.setMaximumSize(QtCore.QSize(513, 170))
         self.AddSetNodesWindowLayout = QtWidgets.QGridLayout(addSetNodes_window)
         self.AddSetNodesWindowLayout.setObjectName("AddSetNodesWindowLayout")
         self.mainLayout_addSetNodesWindow = QtWidgets.QVBoxLayout()
         self.mainLayout_addSetNodesWindow.setObjectName("mainLayout_addSetNodesWindow")
+        
+        self.startingNameLayout_addSetNodesWindow = QtWidgets.QHBoxLayout()
+        self.startingNameLayout_addSetNodesWindow.setObjectName("startingNameLayout_addSetNodesWindow")
+        self.startingNameLabel_addSetNodesWindow = QtWidgets.QLabel(addSetNodes_window)
+        self.startingNameLabel_addSetNodesWindow.setObjectName("startingNameLabel_addSetNodesWindow")
+        self.startingNameLayout_addSetNodesWindow.addWidget(self.startingNameLabel_addSetNodesWindow)
+        self.startingNameInput_addSetNodesWindow = QtWidgets.QLineEdit(addSetNodes_window)
+        self.startingNameInput_addSetNodesWindow.setObjectName("startingNameInput_addSetNodesWindow")
+        self.startingNameLayout_addSetNodesWindow.addWidget(self.startingNameInput_addSetNodesWindow)
+        self.mainLayout_addSetNodesWindow.addLayout(self.startingNameLayout_addSetNodesWindow)
+        
         self.startingIPLayout_addSetNodesWindow = QtWidgets.QHBoxLayout()
         self.startingIPLayout_addSetNodesWindow.setObjectName("startingIPLayout_addSetNodesWindow")
         self.startingIPLabel_addSetNodesWindow = QtWidgets.QLabel(addSetNodes_window)
@@ -21,6 +32,7 @@ class Ui_addSetNodes_window(object):
         self.startingIPInput_addSetNodesWindow.setObjectName("startingIPInput_addSetNodesWindow")
         self.startingIPLayout_addSetNodesWindow.addWidget(self.startingIPInput_addSetNodesWindow)
         self.mainLayout_addSetNodesWindow.addLayout(self.startingIPLayout_addSetNodesWindow)
+        
         self.numberVictimNodesLayout_addSetNodesWindow = QtWidgets.QHBoxLayout()
         self.numberVictimNodesLayout_addSetNodesWindow.setObjectName("numberVictimNodesLayout_addSetNodesWindow")
         self.numberVictimNodesLabel_addSetNodesWindow = QtWidgets.QLabel(addSetNodes_window)
@@ -51,6 +63,7 @@ class Ui_addSetNodes_window(object):
         _translate = QtCore.QCoreApplication.translate
         addSetNodes_window.setWindowTitle(_translate("addSetNodes_window", "Add Set of Victim Nodes"))
         self.startingIPLabel_addSetNodesWindow.setText(_translate("addSetNodes_window", "Starting IP Address:     "))
+        self.startingNameLabel_addSetNodesWindow.setText(_translate("addSetNodes_window", "Name:     "))
         self.numberVictimNodesLabel_addSetNodesWindow.setText(_translate("addSetNodes_window", "Number of Nodes: "))
         self.setNodesCreateButton_addSetNodesWindow.setText(_translate("addSetNodes_window", "Create"))
         self.setNodesCancelButton_addSetNodesWindow.setText(_translate("addSetNodes_window", "Cancel"))

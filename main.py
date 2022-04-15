@@ -108,6 +108,7 @@ sds_controller = SDSController()
 db_config_filename = 'conf/db_config.json'
 
 ip_counter = 0
+MAC = 1000000000000
 
 def createWorkspaceWindow():
     global createWorkspace_Window
@@ -388,11 +389,35 @@ def addNode():
 # TODO: To be implemented
 def addSetNodes():
     starting_ip = addSetNodesWindowUI.startingIPInput_addSetNodesWindow.text()
+    name = addSetNodesWindowUI.startingNameInput_addSetNodesWindow.text()
     split_starting_ip = starting_ip.split(".")
     num_nodes = addSetNodesWindowUI.numberVictimNodesSpinbox_addSetNodesWindow.value()
+    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+    scenario_id = sds_controller.get_scenario_id(scenario_name)
+    nodes_list = sds_controller.get_all_nodes(scenario_name)
+    node_id = len(nodes_list)
+    count = 1
+    global MAC 
     
-    # for i in range(split_starting_ip[2],len(num_nodes)):
-        
+    for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]),1):
+        MAC += 1
+        node_mac = str(MAC)[1:]
+        print(node_mac)
+        node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
+        node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
+        node_name = name + str(count)
+        sds_controller.insert_node(scenario_id, node_id, False, "PC", node_name, node_ip, node_mac, \
+            True, False, "", "", "", 1, \
+            1, "")
+        count += 1
+    
+    nodes_list = sds_controller.get_all_nodes(scenario_name)
+    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
+    for node in nodes_list:
+        node_item = QTreeWidgetItem([ str(node['listening']), \
+            node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
+        captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
+    addSetNodes_Window.close()
         
 
 
