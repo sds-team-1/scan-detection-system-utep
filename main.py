@@ -713,22 +713,31 @@ def initialize_signals():
     workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
 
-    captureManagerWindowUI.newButton_captureManagerWindow.clicked.connect(createProjectWindow)
     captureManagerWindowUI.projectsList_captureManagerWindow.itemSelectionChanged.connect(item_project_selected)
+
+    # Project button functions
+    captureManagerWindowUI.newButton_captureManagerWindow.clicked.connect(createProjectWindow)
     captureManagerWindowUI.saveButton_captureManagerWindow.clicked.connect(save_workspace)
     captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
     captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
-    captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
+
+    # Virtual Machine button functions
     captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_virtual_machine)
     captureManagerWindowUI.shutdownVMButton_captureManagerWindow.clicked.connect(shutdown_virtual_machine)
+
+    # Scenario button functions
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
     captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
+
+    # Node button functions
+    captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
+    captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
+
     captureManagerWindowUI.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     captureManagerWindowUI.projectsList_captureManagerWindow.customContextMenuRequested.connect(context_menu_project)
     captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
-    captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
     captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
 
     #captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
