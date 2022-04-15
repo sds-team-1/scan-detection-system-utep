@@ -5,7 +5,6 @@ import sys
 import subprocess
 from xml.etree.ElementTree import XML
 from Helpers import XmlHelper
-from TestInput import TestInput
 '''
 Temp notes
 To run core cleanup
@@ -252,11 +251,6 @@ class CaptureController:
         '''
         command = self.vm_initial_string_command + f"copyfrom --target-directory {host_path} {guest_file_path}"
         os.system(command)
-
-    def test_(self):
-        self.start_vm()
-        test_dict = TestInput.test_dictionary_for_core_start
-        self.core_start_from_dictionary(test_dict)
 
 # add logic in case the file is ran from the command line
 
