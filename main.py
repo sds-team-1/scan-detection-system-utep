@@ -131,6 +131,8 @@ def databaseConfigWindow():
         database_ip_dict = json.load(mongo_ip_file)
         ip = database_ip_dict['ip']
         databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
+        port = database_ip_dict['port']
+        databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
     databaseConfig_Window.show()
 
 
