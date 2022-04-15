@@ -180,8 +180,9 @@ class SDSDatabaseHelper:
             data['nodes'] = []
 
             #Saves the scenario and retrieves the id
+            print(f'{data}')
             scenario_objid = collection.insert_one(data).inserted_id
-
+            print('succuss')
             #Insert all the keys if there 
             node_keys = nodes.keys()
             for n in node_keys:

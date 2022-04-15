@@ -489,7 +489,9 @@ def open_workspace(selected_workspace):
 
 # TODO: Implement this
 def delete_workspace(selected_workspace):
-    pass
+    ''' Removes the workspace. If projects don't exist in other workspaces then
+    they will be deleted. Same rule for the scenarios and nodes.'''
+    sds_controller.delete_workspace_contents(selected_workspace)
 
 
 def set_up_scenario_unit():

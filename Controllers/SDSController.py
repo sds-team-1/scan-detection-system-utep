@@ -5,6 +5,7 @@ from typing import Dict, List
 from Database.DatabaseHelper import SDSDatabaseHelper
 from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
+from main import delete_workspace
 
 @unique
 class SDSStateEnum(Enum):
@@ -129,6 +130,9 @@ class SDSController:
         self._workspace_name = workspace_name
         self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
         # print(self._entire_workspace_context)
+
+    def delete_workspace_contents(self, workspace_name):
+        pass
 
     ###### Project related functions ######
     def import_project(self, project: dict) -> bool:
