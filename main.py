@@ -19,9 +19,9 @@ from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
-from Controllers.SDSController import SDSController
 from Controllers.AnalysisManager import SDSAnalysisManager
 from Controllers.CaptureController import CaptureController
+from Controllers.SDSController import SDSController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
 
@@ -183,7 +183,6 @@ def createWorkspace():
         if not workspace_injection_success:
             pass
         else:
-            workspace_object.name = ws_name
             captureManager_Window.show()
             createWorkspace_Window.close()
             workspace_Window.close()
@@ -264,7 +263,6 @@ def createProject():
         sds_controller._enforce_state('workplace_construction')
         # print('createproject showing currentworksspacename')
         # print(current_workspace_name)
-        sds_controller.specify_workplace_name(current_workspace_name)
         sds_controller._enforce_state('project_construction')
         sds_controller.specify_project_name(project_name)
         sds_controller.specify_num_parrallel_units(project_parallel)
@@ -503,6 +501,8 @@ def export_project():
 def import_project():
     dialog = QFileDialog()
     json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+    if not json_path[0]:
+        return
     with open(json_path[0]) as json_file:
         project = json.load(json_file)
         sds_controller._enforce_state('init_workplace')
@@ -617,6 +617,8 @@ def context_menu_project(point):
 
     if not index.isValid() or index.parent().isValid():
         item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
+        if not item:
+            return
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
@@ -666,6 +668,8 @@ def context_menu_node(point):
 
     if not index.isValid() or index.parent().isValid():
         item = captureManagerWindowUI.nodesList_captureManagerWindow.itemAt(point)
+        if not item:
+            return
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
