@@ -64,13 +64,13 @@ class Ui_CaptureManagerWindow(object):
         self.runScenarioButton_captureManagerWindow.setObjectName("runScenarioButton_captureManagerWindow")
         self.scenarioRunLayout_captureManagerWindow.addWidget(self.runScenarioButton_captureManagerWindow)
 
-        self.stopScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.stopScenarioButton_captureManagerWindow.setObjectName("stopScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.stopScenarioButton_captureManagerWindow)
+        self.stopRestoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.stopRestoreScenarioButton_captureManagerWindow.setObjectName("stopScenarioButton_captureManagerWindow")
+        self.scenarioRunLayout_captureManagerWindow.addWidget(self.stopRestoreScenarioButton_captureManagerWindow)
 
-        self.restoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.restoreScenarioButton_captureManagerWindow.setObjectName("restoreScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.restoreScenarioButton_captureManagerWindow)
+        # self.restoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        # self.restoreScenarioButton_captureManagerWindow.setObjectName("restoreScenarioButton_captureManagerWindow")
+        # self.scenarioRunLayout_captureManagerWindow.addWidget(self.restoreScenarioButton_captureManagerWindow)
 
         self.closeWorkspaceButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.closeWorkspaceButton_captureManagerWindow.setObjectName("closeWorkspaceButton_captureManagerWindow")
@@ -127,8 +127,8 @@ class Ui_CaptureManagerWindow(object):
         self.shutdownVMButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Shutdown VM"))
 
         self.runScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Run Scenario"))
-        self.stopScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Stop Scenario"))
-        self.restoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Restore State"))
+        self.stopRestoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Stop/Restore Scenario"))
+        #self.restoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Restore State"))
         self.closeWorkspaceButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Close Workspace"))
         self.nodesList_captureManagerWindow.headerItem().setText(0, _translate("CaptureManagerWindow", "Log Net Traffic"))
         self.nodesList_captureManagerWindow.headerItem().setText(1, _translate("CaptureManagerWindow", "Type"))

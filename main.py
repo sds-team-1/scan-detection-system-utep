@@ -568,14 +568,17 @@ def shutdown_virtual_machine():
 
 def stop_scenario_unit():
     #sds_controller.stop()
-    captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
-    captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
+    #captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
+    #captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
     # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
+    pass
 
 def restore_scenario_unit():
     #sds_controller.restore()
     pass
 
+def stop_restore_unit():
+    sds_controller.stop_restore_core()
 
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
@@ -737,8 +740,8 @@ def initialize_signals():
 
     # Scenario button functions
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
-    captureManagerWindowUI.stopScenarioButton_captureManagerWindow.clicked.connect(stop_scenario_unit)
-    captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
+    captureManagerWindowUI.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(lambda: stop_restore_unit())
+    #captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)

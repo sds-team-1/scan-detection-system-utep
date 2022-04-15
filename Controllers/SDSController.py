@@ -344,6 +344,10 @@ class SDSController:
             self._cap_manager.core_cleanup()
             self._state = SDSStateEnum.NETWORK_RUNNING
 
+    def stop_restore_core(self):
+        self._ensure_subsystems()
+        self._cap_manager.core_cleanup()
+
     def scenarios_complete(self):
         self._ensure_subsystems()
         if self._state is SDSStateEnum.NETWORK_RUNNING:
