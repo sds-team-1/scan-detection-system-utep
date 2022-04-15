@@ -589,6 +589,9 @@ def restore_scenario_unit():
 def stop_restore_unit():
     sds_controller.stop_restore_core()
 
+def start_services():
+    sds_controller.start_services()
+
 def context_menu_workspace(point):
     index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
     if not index.isValid() or index.parent().isValid():
@@ -752,7 +755,7 @@ def initialize_signals():
     # Scenario button functions
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(lambda: stop_restore_unit())
-    #captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.clicked.connect(restore_scenario_unit)
+    captureManagerWindowUI.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)

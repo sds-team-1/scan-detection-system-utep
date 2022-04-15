@@ -34,6 +34,9 @@ class CaptureController:
         '''
         Runs the command in a new subprocess
         '''
+
+        # Example commands
+        # VBoxManage guestcontrol UbuntuDefault --username ubuntu --password ubuntu run "/bin/sh" "/home/ubuntu/core/Files/CoreStart.sh"
         # VBoxManage guestcontrol CoreUbuntu --username cj --password 1386 run /bin/ls  
         # VBoxManage guestcontrol UbuntuDefault --username ubuntu --password ubuntu run /bin/ls  
 
@@ -49,25 +52,32 @@ class CaptureController:
         '''
         print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
-
-    def core_start(self):
-        '''
-        Runs CoreCleanup.sh the calls CoreStart.sh
-        '''
-        # Run Core Cleanup
-        self.core_cleanup()
-
         # Wait 10 seconds
         for i in range(10):
             print(f"Waiting 10 seconds -> {i} seconds")
             time.sleep(1)
 
+        # TODO: Fix this to get all the pcap files, use the tmp directory as mentioned by Dr.Acosta
+        # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
+        # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello2.pcap")
+
+    def core_start(self):
+        '''
+        Runs CoreCleanup.sh the calls CoreStart.sh
+        '''
+        # Run Core Cleanup, a sleep will run for 10 seconds
+        # self.core_cleanup()
+
+        # Run the CoreStart.sh script
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
 
-        # wait 30 seconds
-        for i in range(15):
-            print(f"Waiting 15 seconds -> {i} seconds")
-            time.sleep(1)
+        # Decide wether we need to wait or not
+        # # wait 15 seconds
+        # for i in range(15):
+        #     print(f"Waiting 15 seconds -> {i} seconds")
+        #     time.sleep(1)
+
+
 
     def core_start_from_xml_file_path(self, xml_file_path):
         '''
@@ -147,41 +157,35 @@ class CaptureController:
         This method also deletes everything in the PCAPs directory
         If it doesnt exists it will create it
         '''
-
-        self.start_vm()
         
-        # Check if PCAPs folder exists, if not create it, if it does, delete everything in it
-        if not os.path.exists("PCAPs"):
-            os.makedirs("PCAPs")
-        else:
-            for the_file in os.listdir("PCAPs"):
-                file_path = os.path.join("PCAPs", the_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
-            os.rmdir("PCAPs")
-
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
-
-
-        # wait 35 seconds
-        for i in range(40):
-            print(f"Waiting 40 seconds -> {i} seconds")
-            time.sleep(1)
+        print("THe services method has been ran, yet to be implemnted....")
+        print("Scenario dict: ", self.scenario_dict)
         
-        self.core_cleanup()
+        # Check if PCAPs folder exists, if not create it
+        if not os.path.exists("pcaps"):
+            os.makedirs("pcaps")
 
-        # wait 10 seconds
-        for i in range(10):
-            print(f"Waiting 10 seconds -> {i} seconds")
-            time.sleep(1)
+        # TODO: This is hardcoded, figure out how to do this dynamically
+        # self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh");
+        # run this command sudo bash /home/ubuntu/core/Files/StartServices.sh hello1 hello2 0.0.0.0
+        # self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh hello1 hello2 0.0.0.0")
 
+        # # wait 35 seconds
+        # for i in range(30):
+        #     print(f"Waiting 40 seconds -> {i} seconds")
+        #     time.sleep(1)
+        
+        # self.core_cleanup()
+
+
+        # TODO: Decide whether this to be ran during core cleanup or during core start services ends
         # A file will be generated called /home/ubuntu/core/Files/pcaps/pcap1.pcap
         # use copy_from and store on host machine
         # self.copy_from("/home/ubuntu/core/Files/pcaps/pcap1.pcap", "PCAPs")
-        self.copy_from("PCAPs", "/home/ubuntu/core/Files/pcaps/pcap1.pcap")
+        # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
+        # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello2.pcap")
+
+
 
 
     def start_vm(self) -> bool:
