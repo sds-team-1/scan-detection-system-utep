@@ -108,6 +108,7 @@ sds_controller = SDSController()
 db_config_filename = 'conf/db_config.json'
 
 ip_counter = 0
+id_counter = 10
 MAC = 1000000000000
 
 def createWorkspaceWindow():
@@ -377,8 +378,9 @@ def addNode():
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    node_id = len(nodes_list)
-    sds_controller.insert_node(scenario_id, node_id, log, type, name, IP, MAC, \
+    global id_counter
+    id_counter +=1
+    sds_controller.insert_node(scenario_id, id_counter, log, type, name, IP, MAC, \
         subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
         max_parallel_runs, end_condition)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
@@ -401,17 +403,18 @@ def addSetNodes():
     scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
     scenario_id = sds_controller.get_scenario_id(scenario_name)
     nodes_list = sds_controller.get_all_nodes(scenario_name)
-    node_id = len(nodes_list)
     count = 1
     global MAC 
+    global id_counter
     
     for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]),1):
+        id_counter +=1
         MAC += 1
         node_mac = str(MAC)[1:]
         node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
         node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
         node_name = name + str(count)
-        sds_controller.insert_node(scenario_id, node_id, False, "PC", node_name, node_ip, node_mac, \
+        sds_controller.insert_node(scenario_id, id_counter, False, "PC", node_name, node_ip, node_mac, \
             True, False, "", "", "", 1, \
             1, "")
         count += 1
