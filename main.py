@@ -647,29 +647,6 @@ def delete_selection():
     pass
 
 
-# TODO: Store services in variables or objects.
-def store_core_sds_service():
-    core_sds_service = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
-    print(core_sds_service)
-
-
-def store_core_port_number():
-    core_port_number = captureManagerWindowUI.corePortNumberInput_captureManagerWindow.text()
-    print(core_port_number)
-
-
-def store_sds_vm_service():
-    sds_vm_service = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
-    print(sds_vm_service)
-
-
-def store_sds_docker_service():
-    sds_docker_service = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
-    # selected_scenario = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    # print(selected_scenario)
-    print(sds_docker_service)
-
-
 def closeCaptureManager():
     workspace_Window.show()
     generate_workspaces_list_window()
