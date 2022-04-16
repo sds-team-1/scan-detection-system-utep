@@ -1,11 +1,10 @@
 import os
 import sys
-import time
 import json
 import uuid
 
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
+from PyQt5.QtWidgets import QTreeWidgetItem
 
 from Models.modelClasses import Workspace
 from views.addNodeWindow import Ui_addNode_window
@@ -64,30 +63,6 @@ ip_counter = 0
 id_counter = 10
 MAC = 1000000000000
 
-def createWorkspaceWindow():
-    global createWorkspace_Window
-    createWorkspace_Window = QtWidgets.QDialog()
-    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-    sds_controller.start_new_workplace()
-    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-    createWorkspace_Window.show()
-
-
-def databaseConfigWindow():
-    global databaseConfig_Window
-    databaseConfig_Window = QtWidgets.QDialog()
-    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
-    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(databaseConfig_Window.close)
-    with open('conf/db_config.json') as mongo_ip_file:
-        database_ip_dict = json.load(mongo_ip_file)
-        ip = database_ip_dict['ip']
-        databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
-        port = database_ip_dict['port']
-        databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
-    databaseConfig_Window.show()
-
 
 def connect_database():
     global db_config_filename, mongo_connection
@@ -109,25 +84,6 @@ def connect_database():
         databaseConfig_Window.close()
     else:
         databaseError_Window.show()
-
-
-def createWorkspace():
-    # Get workspace name
-    ws_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-    # Check if valid input
-    if not ws_name:
-        missingFields_Window.show()
-    else:
-        # Insert into controller of new workspace. 
-        sds_controller.specify_workplace_name(ws_name)
-        workspace_injection_success: bool = sds_controller.finish_workplace_construction()
-        # TODO: Based on the success, insert another window if error
-        if not workspace_injection_success:
-            pass
-        else:
-            captureManager_Window.show()
-            createWorkspace_Window.close()
-            workspace_Window.close()
 
 
 def addNodeWindow():
@@ -276,14 +232,10 @@ def setup_ui():
 
 
 def initialize_signals():
-    workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
-    workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
-
-    databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
 
 def generate_workspaces_list_window():

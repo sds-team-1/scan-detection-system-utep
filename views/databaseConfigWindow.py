@@ -68,3 +68,7 @@ class Ui_databaseConfig_window(object):
         self.databaseConfigPortLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Database Port:           "))
         self.databaseConfigIPConnectButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Connect"))
         self.databaseConfigIPCancelButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Cancel"))
+
+        self.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
+        self.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+            databaseConfig_window.close)

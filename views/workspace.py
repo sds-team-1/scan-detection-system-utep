@@ -1,3 +1,4 @@
+import json
 import time
 
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -6,6 +7,8 @@ from PyQt5.QtWidgets import QAction, QTreeWidgetItem
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.captureManagerWindow import Ui_CaptureManagerWindow
+from views.createWorkspace import Ui_newWorkspace_window
+from views.databaseConfigWindow import Ui_databaseConfig_window
 
 
 class Ui_workspace_window(object):
@@ -95,6 +98,9 @@ class Ui_workspace_window(object):
         self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: self.analysisManagerWindow(workspace_window))
         self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
 
+        self.createWorkspaceButton_workspaceWindow.clicked.connect(lambda: self.createWorkspaceWindow(workspace_window))
+        self.dbConfigButton_workspaceWindow.clicked.connect(self.databaseConfigWindow)
+
     def context_menu_workspace(self, point):
         index = self.workspacesList_workspaceWindow.indexAt(point)
         if not index.isValid() or index.parent().isValid():
@@ -160,3 +166,24 @@ class Ui_workspace_window(object):
         #analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
         #analysisManager_Window.show()
         #workspace_Window.close()
+
+
+    def createWorkspaceWindow(self, workspace_window):
+        createWorkspace_Window = QtWidgets.QDialog()
+        createWorkspaceUI = Ui_newWorkspace_window()
+        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller)
+        self.sds_controller.start_new_workplace()
+        createWorkspace_Window.show()
+
+
+    def databaseConfigWindow(self):
+        databaseConfig_Window = QtWidgets.QDialog()
+        databaseConfigWindowUI = Ui_databaseConfig_window()
+        databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
+        with open('conf/db_config.json') as mongo_ip_file:
+            database_ip_dict = json.load(mongo_ip_file)
+            ip = database_ip_dict['ip']
+            databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
+            port = database_ip_dict['port']
+            databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
+        databaseConfig_Window.show()

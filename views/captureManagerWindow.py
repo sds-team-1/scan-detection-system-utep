@@ -409,4 +409,3 @@ class Ui_CaptureManagerWindow(object):
     def closeCaptureManager(self, CaptureManagerWindow):
         # IMPLEMENT THIS. Display workspace window before closing
         CaptureManagerWindow.close()
-        pass
