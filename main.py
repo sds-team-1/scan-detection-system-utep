@@ -755,7 +755,9 @@ def initialize_signals():
     # Scenario button functions
     captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
     captureManagerWindowUI.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(lambda: stop_restore_unit())
-    captureManagerWindowUI.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
+
+    # CAUSED AN ERROR!!
+    # captureManagerWindowUI.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
@@ -766,11 +768,6 @@ def initialize_signals():
     captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
     captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
-
-    #captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_core_sds_service)
-    #captureManagerWindowUI.corePortNumberInput_captureManagerWindow.textChanged[str].connect(store_core_port_number)
-    #captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_vm_service)
-    #captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.textChanged[str].connect(store_sds_docker_service)
 
     missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
