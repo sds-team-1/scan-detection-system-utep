@@ -169,7 +169,6 @@ def addNodeWindow():
     addNodeWindowUI.setupAddNode(addNode_Window)
     addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
     addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
-    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
     addNodeWindowUI.nodeIPAddressInput_addNodeWindow.setText(f"1.1.{ip_counter}.2")
     MAC += 1
     node_mac = str(MAC)[1:]
@@ -460,11 +459,6 @@ def import_project():
         project = json.load(json_file)
         sds_controller._enforce_state('init_workplace')
         sds_controller.import_project(project)
-
-
-def addNodeCheckboxStateChanged():
-    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
 
 
 def open_workspace():
