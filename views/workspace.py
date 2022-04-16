@@ -19,20 +19,6 @@ def analysisManagerWindow(workspace_Window):
     analysisManager_Window.show()
     workspace_Window.close()
 
-
-def databaseConfigWindow():
-    databaseConfig_Window = QtWidgets.QDialog()
-    databaseConfigWindowUI = Ui_databaseConfig_window()
-    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
-    with open('conf/db_config.json') as mongo_ip_file:
-        database_ip_dict = json.load(mongo_ip_file)
-        ip = database_ip_dict['ip']
-        databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
-        port = database_ip_dict['port']
-        databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
-    databaseConfig_Window.show()
-
-
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window, sds_controller):
         self.sds_controller = sds_controller
@@ -121,7 +107,7 @@ class Ui_workspace_window(object):
         self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
 
         self.createWorkspaceButton_workspaceWindow.clicked.connect(lambda: self.createWorkspaceWindow(workspace_window))
-        self.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
+        self.dbConfigButton_workspaceWindow.clicked.connect(self.databaseConfigWindow)
 
     def context_menu_workspace(self, point):
         index = self.workspacesList_workspaceWindow.indexAt(point)
@@ -186,4 +172,17 @@ class Ui_workspace_window(object):
         createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller)
         self.sds_controller.start_new_workplace()
         createWorkspace_Window.show()
+
+    def databaseConfigWindow(self):
+        databaseConfig_Window = QtWidgets.QDialog()
+        databaseConfigWindowUI = Ui_databaseConfig_window()
+        databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window, self.sds_controller,
+                                                   self.workspacesList_workspaceWindow)
+        with open('conf/db_config.json') as mongo_ip_file:
+            database_ip_dict = json.load(mongo_ip_file)
+            ip = database_ip_dict['ip']
+            databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
+            port = database_ip_dict['port']
+            databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
+        databaseConfig_Window.show()
 

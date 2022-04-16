@@ -4,11 +4,14 @@ import uuid
 
 from PyQt5 import QtCore, QtWidgets
 
+from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
 from views.databaseErrorWindow import Ui_databaseError_window
 
 
 class Ui_databaseConfig_window(object):
-    def setupDatabaseConfig(self, databaseConfig_window):
+    def setupDatabaseConfig(self, databaseConfig_window, sds_controller, workspacesList_workspaceWindow):
+        self.workspacesList_workspaceWindow = workspacesList_workspaceWindow
+        self.sds_controller = sds_controller
         db_config_filename = 'conf/db_config.json'
         databaseConfig_window.setObjectName("databaseConfig_window")
         databaseConfig_window.setEnabled(True)
@@ -94,7 +97,7 @@ class Ui_databaseConfig_window(object):
         # Try to set up controller w/ database again
         mongo_connection, connection_success = set_up_database_connection()
         if connection_success:
-            connect_subsystems_and_database()
+            connect_subsystems_and_database(self.workspacesList_workspaceWindow, self.sds_controller, mongo_connection)
             # If success -> close window
             databaseConfig_window.close()
         else:
