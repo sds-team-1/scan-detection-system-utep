@@ -1,6 +1,11 @@
+import time
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem
+
+from views.analysisManagerWindow import Ui_AnalysisManagerWindow
+from views.captureManagerWindow import Ui_CaptureManagerWindow
 
 
 class Ui_workspace_window(object):
@@ -87,6 +92,9 @@ class Ui_workspace_window(object):
         self.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.workspacesList_workspaceWindow.customContextMenuRequested.connect(self.context_menu_workspace)
 
+        self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: self.analysisManagerWindow(workspace_window))
+        self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
+
     def context_menu_workspace(self, point):
         index = self.workspacesList_workspaceWindow.indexAt(point)
         if not index.isValid() or index.parent().isValid():
@@ -111,3 +119,44 @@ class Ui_workspace_window(object):
         """ Removes the workspace. If projects don't exist in other workspaces then
         they will be deleted. Same rule for the scenarios and nodes."""
         self.sds_controller.delete_workspace_contents(selected_workspace)
+
+    def open_workspace(self, workspace_Window):
+        selected_workspace = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
+        current_workspace_name = selected_workspace
+        # Change sds_controller workspace context
+        # print(f'check if open_workspace is called')
+        self.sds_controller.change_workspace_context(current_workspace_name)
+        time.sleep(1)
+        captureManager_Window = QtWidgets.QMainWindow()
+        captureManagerWindowUI = Ui_CaptureManagerWindow()
+        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller)
+        captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
+        captureManager_Window.show()
+        workspace_Window.close()
+        # Get all project names related to workspace
+        project_names = self.sds_controller.list_all_projects(selected_workspace)
+        for project_name in project_names:
+            # Make TreeWidgetItem
+            project_tree_item = QTreeWidgetItem([project_name])
+            # Get all scenarios related to workspace and project
+            scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
+            for scenario_name in scenario_names:
+                # Make TreeWidgetItem
+                scenario_tree = QTreeWidgetItem([scenario_name])
+                # Add scenario tree to project tree
+                project_tree_item.addChild(scenario_tree)
+            captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+
+        captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
+        # Insert core options if saved
+    #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
+    #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
+
+    # IMPLEMENT THIS. Doesn't show analysis manager window
+    def analysisManagerWindow(self, workspace_Window):
+        pass
+        #analysisManager_Window = QtWidgets.QMainWindow()
+        #analysisManagerWindowUI = Ui_AnalysisManagerWindow()
+        #analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
+        #analysisManager_Window.show()
+        #workspace_Window.close()

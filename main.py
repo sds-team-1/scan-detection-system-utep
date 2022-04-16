@@ -89,14 +89,6 @@ def databaseConfigWindow():
     databaseConfig_Window.show()
 
 
-def analysisManagerWindow():
-    global analysisManager_Window
-    analysisManager_Window = QtWidgets.QMainWindow()
-    analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
-    workspace_Window.close()
-    analysisManager_Window.show()
-
-
 def connect_database():
     global db_config_filename, mongo_connection
     database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
@@ -271,55 +263,10 @@ def addSetNodes():
         captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
     addSetNodes_Window.close()
     captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        
-
-
-def define_workspace_path():
-    global workspace_path
-    dialog = QFileDialog()
-    workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
-    createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
-
-
-def open_workspace():
-    global current_workspace_name
-    selected_workspace = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
-    current_workspace_name = selected_workspace
-    # Change sds_controller workspace context
-    # print(f'check if open_workspace is called')
-    sds_controller.change_workspace_context(current_workspace_name)
-    time.sleep(1)
-    captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
-    captureManager_Window.show()
-    workspace_Window.close()
-    # Get all project names related to workspace
-    project_names = sds_controller.list_all_projects(selected_workspace)
-    for project_name in project_names:
-        # Make TreeWidgetItem
-        project_tree_item = QTreeWidgetItem([project_name])
-        # Get all scenarios related to workspace and project
-        scenario_names = sds_controller.list_all_scenario_units(selected_workspace, project_name)
-        for scenario_name in scenario_names:
-            # Make TreeWidgetItem
-            scenario_tree = QTreeWidgetItem([scenario_name])
-            # Add scenario tree to project tree
-            project_tree_item.addChild(scenario_tree)
-        captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
-
-    captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
-    #Insert core options if saved
-#    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
- #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
 
 def delete_selection():
     pass
-
-
-def closeCaptureManager():
-    workspace_Window.show()
-    generate_workspaces_list_window()
-    captureManager_Window.close()
 
 
 def setup_ui():
@@ -331,16 +278,10 @@ def setup_ui():
 def initialize_signals():
     workspaceUI.createWorkspaceButton_workspaceWindow.clicked.connect(createWorkspaceWindow)
     workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigWindow)
-    workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
-    # workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
-    # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
-    workspaceUI.workspacesList_workspaceWindow.doubleClicked.connect(open_workspace)
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
-
-    captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
 
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 

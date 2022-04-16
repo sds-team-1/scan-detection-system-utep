@@ -181,6 +181,8 @@ class Ui_CaptureManagerWindow(object):
         self.nodesList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_node)
         self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
 
+        self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(CaptureManagerWindow))
+
 
     def context_menu_project(self, point):
         index = self.projectsList_captureManagerWindow.indexAt(point)
@@ -403,3 +405,8 @@ class Ui_CaptureManagerWindow(object):
             newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow)
         self.sds_controller.start_new_project_phase()
         newProject_Window.show()
+
+    def closeCaptureManager(self, CaptureManagerWindow):
+        # IMPLEMENT THIS. Display workspace window before closing
+        CaptureManagerWindow.close()
+        pass
