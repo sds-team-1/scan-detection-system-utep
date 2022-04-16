@@ -1,9 +1,11 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QAction
 
 
 class Ui_workspace_window(object):
-    def setupWorkspaceUI(self, workspace_window):
+    def setupWorkspaceUI(self, workspace_window, sds_controller):
+        self.sds_controller = sds_controller
         workspace_window.setWindowIcon(QtGui.QIcon('network.png'))
         workspace_window.setObjectName("workspace_window")
         workspace_window.resize(780, 463)
@@ -82,3 +84,30 @@ class Ui_workspace_window(object):
         self.analysisManagerButton_workspaceWindow.setText(_translate("workspace_window", "Analysis Manager"))
         self.dbConfigButton_workspaceWindow.setText(_translate("workspace_window", "Database Configuration"))
 
+        self.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.workspacesList_workspaceWindow.customContextMenuRequested.connect(self.context_menu_workspace)
+
+    def context_menu_workspace(self, point):
+        index = self.workspacesList_workspaceWindow.indexAt(point)
+        if not index.isValid() or index.parent().isValid():
+            return
+        item = self.workspacesList_workspaceWindow.itemAt(point)
+        name = item.text(0)
+        menu = QtWidgets.QMenu()
+
+        action_edit_workspace = QAction("Edit Workspace Name")
+        action_delete_workspace = QAction("Delete Workspace")
+
+        menu.addAction(action_edit_workspace)
+        menu.addAction(action_delete_workspace)
+
+        # action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+        action_delete_workspace.triggered.connect(lambda: self.delete_workspace(name))
+
+        menu.exec_(self.workspacesList_workspaceWindow.mapToGlobal(point))
+
+    # TODO: Implement this
+    def delete_workspace(self, selected_workspace):
+        """ Removes the workspace. If projects don't exist in other workspaces then
+        they will be deleted. Same rule for the scenarios and nodes."""
+        self.sds_controller.delete_workspace_contents(selected_workspace)

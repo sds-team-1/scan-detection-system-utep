@@ -1,6 +1,9 @@
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem
+import json
 
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog
+
+from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 
 
@@ -153,6 +156,24 @@ class Ui_CaptureManagerWindow(object):
         # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
         self.addNodeButton_captureManagerWindow.setEnabled(False)
         self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+
+        # Project button functions
+        self.newButton_captureManagerWindow.clicked.connect(self.createProjectWindow)
+        self.saveButton_captureManagerWindow.clicked.connect(self.save_workspace)
+        self.exportButton_captureManagerWindow.clicked.connect(self.export_project)
+        self.importButton_captureManagerWindow.clicked.connect(lambda: self.import_project(CaptureManagerWindow))
+
+        # CAUSED AN ERROR!! Method doesn't exist
+        # self.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
+
+        # Virtual Machine button functions
+        self.startVirtualMachineButton_captureManagerWindow.clicked.connect(self.start_virtual_machine)
+        self.shutdownVMButton_captureManagerWindow.clicked.connect(self.shutdown_virtual_machine)
+
+        # Scenario button functions
+        self.runScenarioButton_captureManagerWindow.clicked.connect(self.set_up_scenario_unit)
+        self.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(
+            lambda: self.stop_restore_unit())
 
         self.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -312,3 +333,73 @@ class Ui_CaptureManagerWindow(object):
 
             self.nodesList_captureManagerWindow.header().setSectionResizeMode(
                 QtWidgets.QHeaderView.ResizeToContents)
+
+    def start_virtual_machine(self):
+        # Get input
+        # store input into workspace
+        # self.sds_controller.insert_core_sds_service(ip, port)
+        self.sds_controller.start_virtual_machine()
+        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
+        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+
+    def shutdown_virtual_machine(self):
+        print("shutdown virtual machine")
+        self.sds_controller.shutdown_virtual_machine()
+        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+
+    def stop_scenario_unit(self):
+        # self.sds_controller.stop()
+        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
+        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
+        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
+        pass
+
+    def restore_scenario_unit(self):
+        # self.sds_controller.restore()
+        pass
+
+    def stop_restore_unit(self):
+        self.sds_controller.stop_restore_core()
+
+    def start_services(self):
+        self.sds_controller.start_services()
+
+    def set_up_scenario_unit(self):
+        self.sds_controller._enforce_state('init_capture_network')
+        scenario_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
+        # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
+        # self.sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
+        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
+        # self.runScenarioButton_captureManagerWindow.setEnabled(False)
+        self.sds_controller.run_scenario_units(scenario_name)
+
+    def save_workspace(self):
+        # Everything is already saved. So we don't really need it. YW
+        pass
+
+    def export_project(self):
+        project_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
+        print(f'export path is: {export_path}')
+        self.sds_controller._enforce_state('init_project')
+        self.sds_controller.export_project(project_name, export_path[0])
+
+    def import_project(self, captureManager_Window):
+        dialog = QFileDialog()
+        json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+        if not json_path[0]:
+            return
+        with open(json_path[0]) as json_file:
+            project = json.load(json_file)
+            self.sds_controller._enforce_state('init_workplace')
+            self.sds_controller.import_project(project)
+
+    def createProjectWindow(self):
+        newProject_Window = QtWidgets.QDialog()
+        newProjectWindowUI = Ui_newProject_window()
+        newProjectWindowUI.setupNewProject(
+            newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow)
+        self.sds_controller.start_new_project_phase()
+        newProject_Window.show()

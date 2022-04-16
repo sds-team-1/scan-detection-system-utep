@@ -78,4 +78,5 @@ class Ui_newScenarioUnit_window(object):
                 s = QTreeWidgetItem([scenario_name])
                 p = projectsList_captureManagerWindow.selectedItems()[0]
                 p.addChild(s)
+                projectsList_captureManagerWindow.expandAll()
                 newScenarioUnit_Window.close()

@@ -4,8 +4,8 @@ import time
 import json
 import uuid
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
 
 from Models.modelClasses import Workspace
 from views.addNodeWindow import Ui_addNode_window
@@ -93,9 +93,6 @@ def analysisManagerWindow():
     global analysisManager_Window
     analysisManager_Window = QtWidgets.QMainWindow()
     analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
-    #databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    #databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-     #   databaseConfig_Window.close)
     workspace_Window.close()
     analysisManager_Window.show()
 
@@ -141,16 +138,6 @@ def createWorkspace():
             workspace_Window.close()
 
 
-def createProjectWindow():
-    global newProject_Window
-    newProject_Window = QtWidgets.QDialog()
-    newProjectWindowUI.setupNewProject(newProject_Window)
-    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
-    sds_controller.start_new_project_phase()
-    newProject_Window.show()
-
-
 def addNodeWindow():
     global addNode_Window
     global MAC
@@ -185,42 +172,6 @@ def deleteConfirmationWindow():
     deleteConfirmationWindowUI.cancelConfirmationButton_deleteConfirmationWindow.clicked.connect(
         deleteConfirmation_Window.close)
     deleteConfirmation_Window.show()
-
-
-def createProject():
-    project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
-    # print(project_name)
-    project_parallel = newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.value()
-
-    # If the input is incorrect show the missing fields window
-    if not project_name or project_parallel == 0:
-        missingFields_Window.show()
-    # Otherwise save the project
-    else:
-        p = QtWidgets.QTreeWidgetItem([project_name])
-        # print('creating project')
-        # print(project_name)
-        # Use the sds controller to save the project
-        sds_controller._enforce_state('workplace_construction')
-        # print('createproject showing currentworksspacename')
-        # print(current_workspace_name)
-        sds_controller._enforce_state('project_construction')
-        sds_controller.specify_project_name(project_name)
-        sds_controller.specify_num_parrallel_units(project_parallel)
-        success = sds_controller.finish_project_construction()
-
-        # print(success)
-        if not success:
-            # TODO: Add a warning message
-            pass
-        else:
-            # Adds the TreeWidgetItem to the project list
-            captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(p)
-
-            # Resets the values for the window
-            newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
-            newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
-            newProject_Window.close()
 
 
 def addNode():
@@ -330,29 +281,6 @@ def define_workspace_path():
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
 
 
-def save_workspace():
-    # Everything is already saved. So we don't really need it. YW
-    pass
-
-def export_project():
-    project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    export_path = QFileDialog().getSaveFileName(caption='Export Project',directory='~/untitled.json')
-    print(f'export path is: {export_path}')
-    sds_controller._enforce_state('init_project')
-    sds_controller.export_project(project_name, export_path[0]) 
-
-
-def import_project():
-    dialog = QFileDialog()
-    json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
-    if not json_path[0]:
-        return
-    with open(json_path[0]) as json_file:
-        project = json.load(json_file)
-        sds_controller._enforce_state('init_workplace')
-        sds_controller.import_project(project)
-
-
 def open_workspace():
     global current_workspace_name
     selected_workspace = workspaceUI.workspacesList_workspaceWindow.selectedItems()[0].text(0)
@@ -383,73 +311,6 @@ def open_workspace():
 #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
  #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
-# TODO: Implement this
-def delete_workspace(selected_workspace):
-    ''' Removes the workspace. If projects don't exist in other workspaces then
-    they will be deleted. Same rule for the scenarios and nodes.'''
-    sds_controller.delete_workspace_contents(selected_workspace)
-
-
-def set_up_scenario_unit():
-    sds_controller._enforce_state('init_capture_network')
-    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    # vm_ip = captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.text()
-    # docker_ip = captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.text()
-    # sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
-    # captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
-    # captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
-    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(False)
-    sds_controller.run_scenario_units(scenario_name)
-
-def start_virtual_machine():
-    # Get input
-    # store input into workspace
-    # sds_controller.insert_core_sds_service(ip, port)
-    sds_controller.start_virtual_machine()
-    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
-    # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-
-def shutdown_virtual_machine():
-    print("shutdown virtual machine")
-    sds_controller.shutdown_virtual_machine()
-    # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-
-def stop_scenario_unit():
-    #sds_controller.stop()
-    #captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
-    #captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
-    # captureManagerWindowUI.runScenarioButton_captureManagerWindow.setEnabled(True)
-    pass
-
-def restore_scenario_unit():
-    #sds_controller.restore()
-    pass
-
-def stop_restore_unit():
-    sds_controller.stop_restore_core()
-
-def start_services():
-    sds_controller.start_services()
-
-def context_menu_workspace(point):
-    index = workspaceUI.workspacesList_workspaceWindow.indexAt(point)
-    if not index.isValid() or index.parent().isValid():
-        return
-    item = workspaceUI.workspacesList_workspaceWindow.itemAt(point)
-    name = item.text(0)
-    menu = QtWidgets.QMenu()
-
-    action_edit_workspace = QAction("Edit Workspace Name")
-    action_delete_workspace = QAction("Delete Workspace")
-
-    menu.addAction(action_edit_workspace)
-    menu.addAction(action_delete_workspace)
-
-    #action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
-    action_delete_workspace.triggered.connect(lambda: delete_workspace(name))
-
-    menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
-
 
 def delete_selection():
     pass
@@ -462,7 +323,7 @@ def closeCaptureManager():
 
 
 def setup_ui():
-    workspaceUI.setupWorkspaceUI(workspace_Window)
+    workspaceUI.setupWorkspaceUI(workspace_Window, sds_controller)
     captureManagerWindowUI.setupCaptureManager(captureManager_Window, sds_controller)
     databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
@@ -473,26 +334,7 @@ def initialize_signals():
     workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
     # workspaceUI.analysisManagerButton_workspaceWindow.clicked.connect(analysisManagerWindow)
     # workspaceUI.dbConfigButton_workspaceWindow.clicked.connect(databaseConfigurationWindow)
-    workspaceUI.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
     workspaceUI.workspacesList_workspaceWindow.doubleClicked.connect(open_workspace)
-
-    # Project button functions
-    captureManagerWindowUI.newButton_captureManagerWindow.clicked.connect(createProjectWindow)
-    captureManagerWindowUI.saveButton_captureManagerWindow.clicked.connect(save_workspace)
-    captureManagerWindowUI.exportButton_captureManagerWindow.clicked.connect(export_project)
-    captureManagerWindowUI.importButton_captureManagerWindow.clicked.connect(import_project)
-
-    # Virtual Machine button functions
-    captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.clicked.connect(start_virtual_machine)
-    captureManagerWindowUI.shutdownVMButton_captureManagerWindow.clicked.connect(shutdown_virtual_machine)
-
-    # Scenario button functions
-    captureManagerWindowUI.runScenarioButton_captureManagerWindow.clicked.connect(set_up_scenario_unit)
-    captureManagerWindowUI.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(lambda: stop_restore_unit())
-
-    # CAUSED AN ERROR!!
-    # captureManagerWindowUI.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
 
     # Node button functions
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
