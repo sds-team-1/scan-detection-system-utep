@@ -1,8 +1,12 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QAction
+
+from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 
 
 class Ui_CaptureManagerWindow(object):
-    def setupCaptureManager(self, CaptureManagerWindow):
+    def setupCaptureManager(self, CaptureManagerWindow, sds_controller):
+        self.sds_controller = sds_controller
         CaptureManagerWindow.setObjectName("CaptureManagerWindow")
         CaptureManagerWindow.resize(1200, 700)
         CaptureManagerWindow.setMinimumSize(QtCore.QSize(1200, 700))
@@ -149,3 +153,81 @@ class Ui_CaptureManagerWindow(object):
         # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
         self.addNodeButton_captureManagerWindow.setEnabled(False)
         self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+
+        self.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.projectsList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_project)
+
+
+    def context_menu_project(self, point):
+        index = self.projectsList_captureManagerWindow.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        if not index.isValid() or index.parent().isValid():
+            item = self.projectsList_captureManagerWindow.itemAt(point)
+            if not item:
+                return
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_edit_scenario_unit = QAction("Edit Scenario Unit")
+            action_delete_scenario_unit = QAction("Delete Scenario Unit")
+
+            menu.addAction(action_edit_scenario_unit)
+            menu.addAction(action_delete_scenario_unit)
+
+            action_edit_scenario_unit.triggered.connect(lambda: self.edit_scenario_unit(name))
+            action_delete_scenario_unit.triggered.connect(lambda: self.delete_scenario_unit(name))
+
+            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+        if not index.isValid() or not index.parent().isValid():
+            item = self.projectsList_captureManagerWindow.itemAt(point)
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_add_scenario = QAction("Add Scenario Unit")
+            action_load_scenario = QAction("Load Scenario Unit")
+            action_edit_project = QAction("Edit Project")
+            action_delete_project = QAction("Delete Project")
+
+            menu.addAction(action_add_scenario)
+            menu.addAction(action_load_scenario)
+            menu.addAction(action_edit_project)
+            menu.addAction(action_delete_project)
+
+            action_add_scenario.triggered.connect(self.newScenarioUnitWindow)
+            action_load_scenario.triggered.connect(self.load_scenario_unit)
+            action_edit_project.triggered.connect(lambda: self.edit_project(name))
+            action_delete_project.triggered.connect(lambda: self.delete_project(name))
+
+            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+    def load_scenario_unit(self):
+        pass
+
+    def edit_project(self, selected_project):
+        pass
+
+    def delete_project(self, selected_project):
+        pass
+
+    def edit_scenario_unit(self, selected_scenario_unit):
+        pass
+
+    def delete_scenario_unit(self, selected_scenario_unit):
+        pass
+
+    def newScenarioUnitWindow(self):
+        newScenarioUnit_Window = QtWidgets.QDialog()
+        newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
+        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window, self.sds_controller,
+                                                     self.projectsList_captureManagerWindow,
+                                                     self.scenarioIterationsSpinbox_captureManagerWindow)
+        self.sds_controller.add_scenario_unit()
+        newScenarioUnit_Window.show()

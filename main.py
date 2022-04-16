@@ -151,17 +151,6 @@ def createProjectWindow():
     newProject_Window.show()
 
 
-def newScenarioUnitWindow():
-    global newScenarioUnit_Window
-    newScenarioUnit_Window = QtWidgets.QDialog()
-    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
-    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
-        newScenarioUnit_Window.close)
-    sds_controller.add_scenario_unit()
-    newScenarioUnit_Window.show()
-
-
 def addNodeWindow():
     global addNode_Window
     global MAC
@@ -232,50 +221,6 @@ def createProject():
             newProjectWindowUI.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
             newProjectWindowUI.newProjectNameInput_newProjectWindow.clear()
             newProject_Window.close()
-
-
-def createScenario():
-    scenario_name = newScenarioUnitWindowUI.newScenarioUnitNameInput_newScenarioUnitWindow.text()
-    if not scenario_name:
-        missingFields_Window.show()
-    else:
-        sds_controller._enforce_state('init_project')
-        sds_controller.add_scenario_unit()
-        sds_controller.insert_scenario_name(scenario_name)
-        # TODO: This causes an error when creating a scenario.
-        project_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-        # TODO: INSERT ITERATIONS HERE
-        su_iterations = captureManagerWindowUI.scenarioIterationsSpinbox_captureManagerWindow.value()
-        success = sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
-        if not success:
-            # TODO: Display error
-            pass
-        else:
-            # TODO: Test this
-            s = QTreeWidgetItem([scenario_name])
-            p = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0]
-            p.addChild(s)
-            newScenarioUnit_Window.close()
-
-
-def edit_project(selected_project):
-    pass
-
-
-def delete_project(selected_project):
-    pass
-
-
-def load_scenario_unit():
-    pass
-
-
-def edit_scenario_unit(selected_scenario_unit):
-    pass
-
-
-def delete_scenario_unit(selected_scenario_unit):
-    pass
 
 
 def edit_node(selected_node):
@@ -559,57 +504,6 @@ def context_menu_workspace(point):
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
 
 
-def context_menu_project(point):
-    index = captureManagerWindowUI.projectsList_captureManagerWindow.indexAt(point)
-
-    if not index.isValid():
-        return
-
-    if not index.isValid() or index.parent().isValid():
-        item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
-        if not item:
-            return
-        name = item.text(0)
-
-        menu = QtWidgets.QMenu()
-        action_edit_scenario_unit = QAction("Edit Scenario Unit")
-        action_delete_scenario_unit = QAction("Delete Scenario Unit")
-
-        menu.addAction(action_edit_scenario_unit)
-        menu.addAction(action_delete_scenario_unit)
-
-        action_edit_scenario_unit.triggered.connect(lambda: edit_scenario_unit(name))
-        action_delete_scenario_unit.triggered.connect(lambda: delete_scenario_unit(name))
-
-        menu.exec_(captureManagerWindowUI.projectsList_captureManagerWindow.mapToGlobal(point))
-
-        return
-
-    if not index.isValid() or not index.parent().isValid():
-        item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
-        name = item.text(0)
-
-        menu = QtWidgets.QMenu()
-        action_add_scenario = QAction("Add Scenario Unit")
-        action_load_scenario = QAction("Load Scenario Unit")
-        action_edit_project = QAction("Edit Project")
-        action_delete_project = QAction("Delete Project")
-
-        menu.addAction(action_add_scenario)
-        menu.addAction(action_load_scenario)
-        menu.addAction(action_edit_project)
-        menu.addAction(action_delete_project)
-
-        action_add_scenario.triggered.connect(newScenarioUnitWindow)
-        action_load_scenario.triggered.connect(load_scenario_unit)
-        action_edit_project.triggered.connect(lambda: edit_project(name))
-        action_delete_project.triggered.connect(lambda: delete_project(name))
-
-        menu.exec_(captureManagerWindowUI.projectsList_captureManagerWindow.mapToGlobal(point))
-
-        return
-
-
 def context_menu_node(point):
     index = captureManagerWindowUI.nodesList_captureManagerWindow.indexAt(point)
 
@@ -649,8 +543,7 @@ def closeCaptureManager():
 
 def setup_ui():
     workspaceUI.setupWorkspaceUI(workspace_Window)
-    captureManagerWindowUI.setupCaptureManager(captureManager_Window)
-    missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+    captureManagerWindowUI.setupCaptureManager(captureManager_Window, sds_controller)
     databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
 
 
@@ -687,13 +580,9 @@ def initialize_signals():
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
 
-    captureManagerWindowUI.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    captureManagerWindowUI.projectsList_captureManagerWindow.customContextMenuRequested.connect(context_menu_project)
     captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
     captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
     captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
-
-    missingFieldsWindowUI.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_Window.close)
 
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
 
