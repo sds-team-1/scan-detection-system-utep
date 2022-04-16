@@ -3,13 +3,19 @@ import json
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog
 
+from views.addNodeWindow import Ui_addNode_window
 from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
+from views.setNodesWindow import Ui_addSetNodes_window
 
 
 class Ui_CaptureManagerWindow(object):
     def setupCaptureManager(self, CaptureManagerWindow, sds_controller):
         self.sds_controller = sds_controller
+        self.ip_counter = 0
+        self.id_counter = 10
+        self.MAC = 1000000000000
+
         CaptureManagerWindow.setObjectName("CaptureManagerWindow")
         CaptureManagerWindow.resize(1200, 700)
         CaptureManagerWindow.setMinimumSize(QtCore.QSize(1200, 700))
@@ -181,7 +187,12 @@ class Ui_CaptureManagerWindow(object):
         self.nodesList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_node)
         self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
 
-        self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(CaptureManagerWindow))
+        self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(
+            CaptureManagerWindow))
+
+        # Node button functions
+        self.addNodeButton_captureManagerWindow.clicked.connect(self.addNodeWindow)
+        self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
 
 
     def context_menu_project(self, point):
@@ -406,6 +417,29 @@ class Ui_CaptureManagerWindow(object):
         self.sds_controller.start_new_project_phase()
         newProject_Window.show()
 
+    def addNodeWindow(self):
+        addNode_Window = QtWidgets.QDialog()
+        addNodeWindowUI = Ui_addNode_window()
+        addNodeWindowUI.setupAddNode(addNode_Window, self.sds_controller,
+                                     self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                     self.CentralLayout_captureManagerWindow,
+                                     self.ip_counter, self.MAC, self.id_counter)
+        addNode_Window.show()
+
+    def addSetNodesWindow(self):
+        addSetNodes_Window = QtWidgets.QDialog()
+        addSetNodesWindowUI = Ui_addSetNodes_window()
+        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window, self.sds_controller,
+                                             self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                             self.ip_counter, self.MAC, self.id_counter)
+        addSetNodes_Window.show()
+
     def closeCaptureManager(self, CaptureManagerWindow):
         # IMPLEMENT THIS. Display workspace window before closing
+        #workspace_Window = QtWidgets.QDialog()
+        #workspaceUI = Ui_workspace_window()
+        #workspaceUI.setupWorkspaceUI(workspace_Window, self.sds_controller)
+        #self.sds_controller.start_new_workplace()
+        # POPULATE WORKSPACE LIST
+        #workspace_Window.show()
         CaptureManagerWindow.close()

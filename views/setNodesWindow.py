@@ -1,8 +1,12 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QTreeWidgetItem
 
 
 class Ui_addSetNodes_window(object):
-    def setupAddSetNodes(self, addSetNodes_window):
+    def setupAddSetNodes(self, addSetNodes_window, sds_controller,
+                         projectsList_captureManagerWindow, nodesList_captureManagerWindow,
+                         ip_counter, MAC, id_counter):
+        self.sds_controller = sds_controller
         addSetNodes_window.setObjectName("addSetNodes_window")
         addSetNodes_window.setEnabled(True)
         addSetNodes_window.resize(513, 170)
@@ -67,3 +71,44 @@ class Ui_addSetNodes_window(object):
         self.numberVictimNodesLabel_addSetNodesWindow.setText(_translate("addSetNodes_window", "Number of Nodes: "))
         self.setNodesCreateButton_addSetNodesWindow.setText(_translate("addSetNodes_window", "Create"))
         self.setNodesCancelButton_addSetNodesWindow.setText(_translate("addSetNodes_window", "Cancel"))
+
+        self.setNodesCreateButton_addSetNodesWindow.clicked.connect(lambda: self.addSetNodes(
+            addSetNodes_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow, id_counter, MAC))
+        self.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_window.close)
+
+        self.startingIPInput_addSetNodesWindow.setText(f"1.1.{ip_counter}.2")
+
+    # TODO: To be implemented
+    def addSetNodes(self, addSetNodes_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
+                    id_counter, MAC):
+        starting_ip = self.startingIPInput_addSetNodesWindow.text()
+        name = self.startingNameInput_addSetNodesWindow.text()
+        split_starting_ip = starting_ip.split(".")
+        num_nodes = self.numberVictimNodesSpinbox_addSetNodesWindow.value()
+        scenario_name = projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        scenario_id = self.sds_controller.get_scenario_id(scenario_name)
+        nodes_list = self.sds_controller.get_all_nodes(scenario_name)
+        count = 1
+
+        for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]), 1):
+            id_counter += 1
+            MAC += 1
+            node_mac = str(MAC)[1:]
+            node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
+            node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
+            node_name = name + str(count)
+            self.sds_controller.insert_node(scenario_id, id_counter, False, "PC", node_name, node_ip, node_mac,
+                                            True, False, "", "", "", 1,
+                                            1, "")
+            count += 1
+
+        nodes_list = self.sds_controller.get_all_nodes(scenario_name)
+        nodesList_captureManagerWindow.clear()
+        for node in nodes_list:
+            node_item = QTreeWidgetItem([str(node['listening']),
+                                         node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
+            nodesList_captureManagerWindow.addTopLevelItem(node_item)
+        addSetNodes_window.close()
+        nodesList_captureManagerWindow.header().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
+

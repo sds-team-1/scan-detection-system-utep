@@ -1,114 +1,29 @@
-import os
 import sys
 import json
-import uuid
-
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QTreeWidgetItem
 
 from Models.modelClasses import Workspace
-from views.addNodeWindow import Ui_addNode_window
-from views.analysisManagerWindow import Ui_AnalysisManagerWindow
-from views.createWorkspace import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
-from views.databaseErrorWindow import Ui_databaseError_window
 from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
-from views.captureManagerWindow import Ui_CaptureManagerWindow
-from views.missingFieldsWindow import Ui_missingFields_window
-from views.newProject import Ui_newProject_window
-from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
-from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
 from Controllers.AnalysisManager import SDSAnalysisManager
 from Controllers.CaptureController import CaptureController
 from Controllers.SDSController import SDSController
 from Database.DatabaseHelper import SDSDatabaseHelper
 
- 
 app = QtWidgets.QApplication(sys.argv)
 workspace_Window = QtWidgets.QDialog()
-createWorkspace_Window = QtWidgets.QDialog()
-captureManager_Window = QtWidgets.QMainWindow()
-analysisManager_Window = QtWidgets.QMainWindow()
-newProject_Window = QtWidgets.QDialog()
-addNode_Window = QtWidgets.QDialog()
-addSetNodes_Window = QtWidgets.QDialog()
-missingFields_Window = QtWidgets.QDialog()
-newScenarioUnit_Window = QtWidgets.QDialog()
 deleteConfirmation_Window = QtWidgets.QDialog()
 databaseConfig_Window = QtWidgets.QDialog()
 databaseError_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
-createWorkspaceUI = Ui_newWorkspace_window()
-captureManagerWindowUI = Ui_CaptureManagerWindow()
-analysisManagerWindowUI = Ui_AnalysisManagerWindow()
-newProjectWindowUI = Ui_newProject_window()
-addNodeWindowUI = Ui_addNode_window()
-addSetNodesWindowUI = Ui_addSetNodes_window()
-missingFieldsWindowUI = Ui_missingFields_window()
-newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 databaseConfigWindowUI = Ui_databaseConfig_window()
-databaseErrorWindowUI = Ui_databaseError_window()
 
 workspace_object: Workspace = Workspace()
-current_workspace_name = workspace_object.name
-current_project_name = ''
 
 sds_controller = SDSController()
-db_config_filename = 'conf/db_config.json'
-
-ip_counter = 0
-id_counter = 10
-MAC = 1000000000000
-
-
-def connect_database():
-    global db_config_filename, mongo_connection
-    database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
-    # Edit config file to insert database ip
-    data = None
-    with open(db_config_filename, 'r') as config_file:
-        data = json.load(config_file)
-        data['ip'] = database_ip
-    tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
-    with open(tempfile, 'w') as config_file:
-        json.dump(data, config_file, indent=4)
-    os.replace(tempfile, db_config_filename)
-    # Try to set up controller w/ database again
-    mongo_connection, connection_success = set_up_database_connection()
-    if connection_success:
-        connect_subsystems_and_database()
-        # If success -> close window
-        databaseConfig_Window.close()
-    else:
-        databaseError_Window.show()
-
-
-def addNodeWindow():
-    global addNode_Window
-    global MAC
-    addNode_Window = QtWidgets.QDialog()
-    addNodeWindowUI.setupAddNode(addNode_Window)
-    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
-    addNodeWindowUI.nodeIPAddressInput_addNodeWindow.setText(f"1.1.{ip_counter}.2")
-    MAC += 1
-    node_mac = str(MAC)[1:]
-    node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
-    addNodeWindowUI.nodeMACAddressInput_addNodeWindow.setText(node_mac)
-    addNode_Window.show()
-
-
-def addSetNodesWindow():
-    global addSetNodes_Window
-    addSetNodes_Window = QtWidgets.QDialog()
-    addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window)
-    addSetNodesWindowUI.setNodesCreateButton_addSetNodesWindow.clicked.connect(addSetNodes)
-    addSetNodesWindowUI.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_Window.close)
-    addSetNodesWindowUI.startingIPInput_addSetNodesWindow.setText(f"1.1.{ip_counter}.2")
-    addSetNodes_Window.show()
 
 
 def deleteConfirmationWindow():
@@ -122,120 +37,8 @@ def deleteConfirmationWindow():
     deleteConfirmation_Window.show()
 
 
-def addNode():
-    # TODO: Implement this
-    global ip_counter
-    subnet = '0'
-    log = ''
-    if addNodeWindowUI.nodeLogNetNodeCheckBox_addNodeWindow.isChecked():
-        log = 'True'
-    else:
-        log = 'False'
-    type = addNodeWindowUI.nodeTypeComboBox_addNodeWindow.currentText()
-    if type == 'CORE' or type == 'VM':
-        type = 'PC'
-    elif type == 'VM' or type == 'Docker':
-        type = 'PC'  #temp solution
-    name = addNodeWindowUI.nodeNameInput_addNodeWindow.text()
-    MAC = addNodeWindowUI.nodeMACAddressInput_addNodeWindow.text()
-    IP = addNodeWindowUI.nodeIPAddressInput_addNodeWindow.text()
-    IP_parse = IP.split(".")
-    ip_counter = int(IP_parse[2])+1
-    # subnet = addNodeWindowUI.nodeSeparateSubNetNodeCheckBox_addNodeWindow.isChecked()
-    user_pw = ''
-    scanner_bin = ''
-    arguments = ''
-    num_iterations = 1
-    max_parallel_runs = 1
-    end_condition = ''
-    scanning = addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.isChecked()
-    if scanning:
-        user_pw = addNodeWindowUI.nodeUserPassInput_addNodeWindow.text()
-        scanner_bin = addNodeWindowUI.nodeScannerBinaryInput_addNodeWindow.text()
-        arguments = addNodeWindowUI.nodeNMapArgumentsInput_addNodeWindow.text() + "$$$" + addNodeWindowUI.nodeNiktoArgumentsInput_addNodeWindow.text()
-        num_iterations = addNodeWindowUI.nodeNumIterationsSpinBox_addNodeWindow.value()
-        max_parallel_runs = addNodeWindowUI.nodeMaxParallelRunsSpinBox_addNodeWindow.value()
-        if addNodeWindowUI.nodeEndConditionCombobox_addNodeWindow.currentText() == 'on-scan-complete':
-            end_condition = 'on-scan-complete'
-        else:
-            # TODO: Handle minutes and seconds.
-            minutes = str(addNodeWindowUI.minutesSpinbox_addNodeWindow.value())
-            seconds = str(addNodeWindowUI.secondsSpinbox_addNodeWindow.value())
-            end_condition = f'time-{minutes}:{seconds}'
-        toolButton = QtWidgets.QToolButton(captureManagerWindowUI.CentralLayout_captureManagerWindow)
-        toolButton.setText('Scanner')
-        #node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
-        #captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
-        #captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
-    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    scenario_id = sds_controller.get_scenario_id(scenario_name)
-    nodes_list = sds_controller.get_all_nodes(scenario_name)
-    global id_counter
-    id_counter +=1
-    sds_controller.insert_node(scenario_id, id_counter, log, type, name, IP, MAC, \
-        subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations), \
-        max_parallel_runs, end_condition)
-    nodes_list = sds_controller.get_all_nodes(scenario_name)
-    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
-    for node in nodes_list:
-        node_item = QTreeWidgetItem([ str(node['listening']), \
-            node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-        captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
-    addNode_Window.close()
-    captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-
-
-
-# TODO: To be implemented
-def addSetNodes():
-    starting_ip = addSetNodesWindowUI.startingIPInput_addSetNodesWindow.text()
-    name = addSetNodesWindowUI.startingNameInput_addSetNodesWindow.text()
-    split_starting_ip = starting_ip.split(".")
-    num_nodes = addSetNodesWindowUI.numberVictimNodesSpinbox_addSetNodesWindow.value()
-    scenario_name = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-    scenario_id = sds_controller.get_scenario_id(scenario_name)
-    nodes_list = sds_controller.get_all_nodes(scenario_name)
-    count = 1
-    global MAC 
-    global id_counter
-    
-    for i in range(int(split_starting_ip[3]), num_nodes + int(split_starting_ip[3]),1):
-        id_counter +=1
-        MAC += 1
-        node_mac = str(MAC)[1:]
-        node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
-        node_ip = f"{split_starting_ip[0]}.{split_starting_ip[1]}.{split_starting_ip[2]}.{i}"
-        node_name = name + str(count)
-        sds_controller.insert_node(scenario_id, id_counter, False, "PC", node_name, node_ip, node_mac, \
-            True, False, "", "", "", 1, \
-            1, "")
-        count += 1
-    
-    nodes_list = sds_controller.get_all_nodes(scenario_name)
-    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
-    for node in nodes_list:
-        node_item = QTreeWidgetItem([ str(node['listening']), \
-            node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-        captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
-    addSetNodes_Window.close()
-    captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-
-
 def delete_selection():
     pass
-
-
-def setup_ui():
-    workspaceUI.setupWorkspaceUI(workspace_Window, sds_controller)
-    captureManagerWindowUI.setupCaptureManager(captureManager_Window, sds_controller)
-    databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
-
-
-def initialize_signals():
-
-    # Node button functions
-    captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
-    captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
 
 
 def generate_workspaces_list_window():
@@ -283,9 +86,7 @@ def connect_subsystems_and_database():
     generate_workspaces_list_window()
 
 
-setup_ui()
-
-initialize_signals()
+workspaceUI.setupWorkspaceUI(workspace_Window, sds_controller)
 
 assert_database_connection()
 

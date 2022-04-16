@@ -30,11 +30,6 @@ class Ui_AnalysisManagerWindow(object):
 
     # self.iterate_packets(cap)
     def setupAnalysisManager(self, AnalysisManagerWindow):
-
-
-
-
-
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
         AnalysisManagerWindow.setMinimumSize(QtCore.QSize(812, 580))
@@ -136,29 +131,6 @@ class Ui_AnalysisManagerWindow(object):
         #                                  self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         # cap = pyshark.FileCapture('pcap1.pcap',
         #                           only_summaries=True)
         # for pkt in cap:
@@ -214,8 +186,6 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapList_analysisManagerWindow.headerItem().setText(4,  "Protocol")
         self.pcapList_analysisManagerWindow.headerItem().setText(5,  "Length")
         self.pcapList_analysisManagerWindow.headerItem().setText(6,  "Info")
-
-
 
         self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
         #self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
