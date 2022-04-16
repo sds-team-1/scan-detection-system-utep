@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem
 
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 
@@ -155,7 +155,10 @@ class Ui_CaptureManagerWindow(object):
         self.addSetNodeButton_captureManagerWindow.setEnabled(False)
 
         self.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.projectsList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_project)
+        self.nodesList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_node)
+        self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
 
 
     def context_menu_project(self, point):
@@ -231,3 +234,81 @@ class Ui_CaptureManagerWindow(object):
                                                      self.scenarioIterationsSpinbox_captureManagerWindow)
         self.sds_controller.add_scenario_unit()
         newScenarioUnit_Window.show()
+
+    def context_menu_node(self, point):
+        index = self.nodesList_captureManagerWindow.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        if not index.isValid() or index.parent().isValid():
+            item = self.nodesList_captureManagerWindow.itemAt(point)
+            if not item:
+                return
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_edit_node = QAction("Edit Node")
+            action_delete_node = QAction("Delete Node")
+
+            menu.addAction(action_edit_node)
+            menu.addAction(action_delete_node)
+
+            action_edit_node.triggered.connect(lambda: self.edit_node(name))
+            action_delete_node.triggered.connect(lambda: self.delete_node(name))
+
+            menu.exec_(self.nodesList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+    def edit_node(self, selected_node):
+        pass
+
+    def delete_node(self, selected_node):
+        pass
+
+    def item_project_selected(self):
+        # print(f'checking if item_project_selected went inside')
+        # Clear the window
+        self.nodesList_captureManagerWindow.clear()
+        if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
+            # This condition is for projects. Works with the project list which...
+            # contains projects and scenarios
+            # TODO: Check add node button(I was not able to create a project)
+            self.exportButton_captureManagerWindow.setEnabled(True)
+            self.addNodeButton_captureManagerWindow.setEnabled(False)
+            self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+            # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
+            # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        else:
+            # print(f'checking if else checked')
+            self.exportButton_captureManagerWindow.setEnabled(False)
+            self.addNodeButton_captureManagerWindow.setEnabled(True)
+            self.addSetNodeButton_captureManagerWindow.setEnabled(True)
+            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+            # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
+            # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
+            # Get all the nodes
+            scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+            # print(f'checking scenario id: {scenario_ID}')
+            self.sds_controller._enforce_state('init_project')
+            node_list = self.sds_controller.get_all_nodes(scenario_ID)
+            # Insert into vm and docker text saved values
+            vm_ip, docker_ip = self.sds_controller.get_scenario_vm_info(scenario_ID)
+            #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+            #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+            # print(f'checking if nodes list is anything: {node_list}')
+            # Insert all the nodes into the UI
+            if node_list:
+                # print(f'checking if nodes list is available for ui...{node_list}')
+                for node in node_list:
+                    node_item = QTreeWidgetItem([str(node['listening']), \
+                                                 node['type'], node['name'], node['mac'], node['ip'],
+                                                 str(node['scanning'])])
+                    self.nodesList_captureManagerWindow.addTopLevelItem(node_item)
+                    # TODO: Ask mauricio how this works
+                    # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
+
+            self.nodesList_captureManagerWindow.header().setSectionResizeMode(
+                QtWidgets.QHeaderView.ResizeToContents)

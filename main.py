@@ -223,14 +223,6 @@ def createProject():
             newProject_Window.close()
 
 
-def edit_node(selected_node):
-    pass
-
-
-def delete_node(selected_node):
-    pass
-
-
 def addNode():
     # TODO: Implement this
     global ip_counter
@@ -336,51 +328,6 @@ def define_workspace_path():
     dialog = QFileDialog()
     workspace_path = dialog.getExistingDirectory(createWorkspace_Window, 'Select Workspace Directory')
     createWorkspaceUI.workspaceLocationInput_newWorkspaceWindow.setText(workspace_path)
-
-
-def item_project_selected():
-    # print(f'checking if item_project_selected went inside')
-    # Clear the window
-    captureManagerWindowUI.nodesList_captureManagerWindow.clear()
-    if captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
-        # This condition is for projects. Works with the project list which...
-        # contains projects and scenarios
-        # TODO: Check add node button(I was not able to create a project)
-        captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        # captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        # captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(False)
-    else:
-        #print(f'checking if else checked')
-        captureManagerWindowUI.exportButton_captureManagerWindow.setEnabled(False)
-        captureManagerWindowUI.addNodeButton_captureManagerWindow.setEnabled(True)
-        captureManagerWindowUI.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        # captureManagerWindowUI.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-        # captureManagerWindowUI.stopScenarioButton_captureManagerWindow.setEnabled(True)
-        # captureManagerWindowUI.restoreScenarioButton_captureManagerWindow.setEnabled(True)
-        # Get all the nodes
-        scenario_ID = captureManagerWindowUI.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-        #print(f'checking scenario id: {scenario_ID}')
-        sds_controller._enforce_state('init_project')
-        node_list = sds_controller.get_all_nodes(scenario_ID)
-        # Insert into vm and docker text saved values
-        vm_ip, docker_ip = sds_controller.get_scenario_vm_info(scenario_ID)
-#        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
- #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
-        #print(f'checking if nodes list is anything: {node_list}')
-        # Insert all the nodes into the UI
-        if node_list:
-            #print(f'checking if nodes list is available for ui...{node_list}')
-            for node in node_list:
-                node_item = QTreeWidgetItem([str(node['listening']), \
-                    node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-                captureManagerWindowUI.nodesList_captureManagerWindow.addTopLevelItem(node_item)
-                # TODO: Ask mauricio how this works
-                # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
-
-        captureManagerWindowUI.nodesList_captureManagerWindow.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
 
 
 def save_workspace():
@@ -504,33 +451,6 @@ def context_menu_workspace(point):
     menu.exec_(workspaceUI.workspacesList_workspaceWindow.mapToGlobal(point))
 
 
-def context_menu_node(point):
-    index = captureManagerWindowUI.nodesList_captureManagerWindow.indexAt(point)
-
-    if not index.isValid():
-        return
-
-    if not index.isValid() or index.parent().isValid():
-        item = captureManagerWindowUI.nodesList_captureManagerWindow.itemAt(point)
-        if not item:
-            return
-        name = item.text(0)
-
-        menu = QtWidgets.QMenu()
-        action_edit_node = QAction("Edit Node")
-        action_delete_node = QAction("Delete Node")
-
-        menu.addAction(action_edit_node)
-        menu.addAction(action_delete_node)
-
-        action_edit_node.triggered.connect(lambda: edit_node(name))
-        action_delete_node.triggered.connect(lambda: delete_node(name))
-
-        menu.exec_(captureManagerWindowUI.nodesList_captureManagerWindow.mapToGlobal(point))
-
-        return
-
-
 def delete_selection():
     pass
 
@@ -557,8 +477,6 @@ def initialize_signals():
     workspaceUI.workspacesList_workspaceWindow.customContextMenuRequested.connect(context_menu_workspace)
     workspaceUI.workspacesList_workspaceWindow.doubleClicked.connect(open_workspace)
 
-    captureManagerWindowUI.projectsList_captureManagerWindow.itemSelectionChanged.connect(item_project_selected)
-
     # Project button functions
     captureManagerWindowUI.newButton_captureManagerWindow.clicked.connect(createProjectWindow)
     captureManagerWindowUI.saveButton_captureManagerWindow.clicked.connect(save_workspace)
@@ -580,8 +498,6 @@ def initialize_signals():
     captureManagerWindowUI.addNodeButton_captureManagerWindow.clicked.connect(addNodeWindow)
     captureManagerWindowUI.addSetNodeButton_captureManagerWindow.clicked.connect(addSetNodesWindow)
 
-    captureManagerWindowUI.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-    captureManagerWindowUI.nodesList_captureManagerWindow.customContextMenuRequested.connect(context_menu_node)
     captureManagerWindowUI.closeWorkspaceButton_captureManagerWindow.clicked.connect(closeCaptureManager)
 
     databaseErrorWindowUI.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_Window.close)
