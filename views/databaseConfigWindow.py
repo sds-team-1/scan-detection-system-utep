@@ -1,8 +1,18 @@
+import json
+import os
+import uuid
+
 from PyQt5 import QtCore, QtWidgets
+
+from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
+from views.databaseErrorWindow import Ui_databaseError_window
 
 
 class Ui_databaseConfig_window(object):
-    def setupDatabaseConfig(self, databaseConfig_window):
+    def setupDatabaseConfig(self, databaseConfig_window, sds_controller, workspacesList_workspaceWindow):
+        self.workspacesList_workspaceWindow = workspacesList_workspaceWindow
+        self.sds_controller = sds_controller
+        db_config_filename = 'conf/db_config.json'
         databaseConfig_window.setObjectName("databaseConfig_window")
         databaseConfig_window.setEnabled(True)
         databaseConfig_window.resize(513, 165)
@@ -68,3 +78,30 @@ class Ui_databaseConfig_window(object):
         self.databaseConfigPortLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Database Port:           "))
         self.databaseConfigIPConnectButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Connect"))
         self.databaseConfigIPCancelButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Cancel"))
+
+        self.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(lambda: self.connect_database(databaseConfig_window, db_config_filename))
+        self.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
+            databaseConfig_window.close)
+
+    def connect_database(self, databaseConfig_window, db_config_filename):
+        database_ip = self.databaseConfigIPInput_databaseConfigWindow.text()
+        # Edit config file to insert database ip
+        data = None
+        with open(db_config_filename, 'r') as config_file:
+            data = json.load(config_file)
+            data['ip'] = database_ip
+        tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
+        with open(tempfile, 'w') as config_file:
+            json.dump(data, config_file, indent=4)
+        os.replace(tempfile, db_config_filename)
+        # Try to set up controller w/ database again
+        mongo_connection, connection_success = set_up_database_connection()
+        if connection_success:
+            connect_subsystems_and_database(self.workspacesList_workspaceWindow, self.sds_controller, mongo_connection)
+            # If success -> close window
+            databaseConfig_window.close()
+        else:
+            databaseError_Window = QtWidgets.QDialog()
+            databaseErrorWindowUI = Ui_databaseError_window()
+            databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
+            databaseError_Window.show()

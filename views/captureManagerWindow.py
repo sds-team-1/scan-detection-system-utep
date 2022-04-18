@@ -1,8 +1,21 @@
+import json
+
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog
+
+from views.addNodeWindow import Ui_addNode_window
+from views.newProject import Ui_newProject_window
+from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
+from views.setNodesWindow import Ui_addSetNodes_window
 
 
 class Ui_CaptureManagerWindow(object):
-    def setupCaptureManager(self, CaptureManagerWindow):
+    def setupCaptureManager(self, CaptureManagerWindow, sds_controller):
+        self.sds_controller = sds_controller
+        self.ip_counter = 0
+        self.id_counter = 10
+        self.MAC = 1000000000000
+
         CaptureManagerWindow.setObjectName("CaptureManagerWindow")
         CaptureManagerWindow.resize(1200, 700)
         CaptureManagerWindow.setMinimumSize(QtCore.QSize(1200, 700))
@@ -149,3 +162,284 @@ class Ui_CaptureManagerWindow(object):
         # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
         self.addNodeButton_captureManagerWindow.setEnabled(False)
         self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+
+        # Project button functions
+        self.newButton_captureManagerWindow.clicked.connect(self.createProjectWindow)
+        self.saveButton_captureManagerWindow.clicked.connect(self.save_workspace)
+        self.exportButton_captureManagerWindow.clicked.connect(self.export_project)
+        self.importButton_captureManagerWindow.clicked.connect(lambda: self.import_project(CaptureManagerWindow))
+
+        # CAUSED AN ERROR!! Method doesn't exist
+        # self.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
+
+        # Virtual Machine button functions
+        self.startVirtualMachineButton_captureManagerWindow.clicked.connect(self.start_virtual_machine)
+        self.shutdownVMButton_captureManagerWindow.clicked.connect(self.shutdown_virtual_machine)
+
+        # Scenario button functions
+        self.runScenarioButton_captureManagerWindow.clicked.connect(self.set_up_scenario_unit)
+        self.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(
+            lambda: self.stop_restore_unit())
+
+        self.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.projectsList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_project)
+        self.nodesList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_node)
+        self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
+
+        self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(
+            CaptureManagerWindow))
+
+        # Node button functions
+        self.addNodeButton_captureManagerWindow.clicked.connect(self.addNodeWindow)
+        self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
+
+
+    def context_menu_project(self, point):
+        index = self.projectsList_captureManagerWindow.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        if not index.isValid() or index.parent().isValid():
+            item = self.projectsList_captureManagerWindow.itemAt(point)
+            if not item:
+                return
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_edit_scenario_unit = QAction("Edit Scenario Unit")
+            action_delete_scenario_unit = QAction("Delete Scenario Unit")
+
+            menu.addAction(action_edit_scenario_unit)
+            menu.addAction(action_delete_scenario_unit)
+
+            action_edit_scenario_unit.triggered.connect(lambda: self.edit_scenario_unit(name))
+            action_delete_scenario_unit.triggered.connect(lambda: self.delete_scenario_unit(name))
+
+            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+        if not index.isValid() or not index.parent().isValid():
+            item = self.projectsList_captureManagerWindow.itemAt(point)
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_add_scenario = QAction("Add Scenario Unit")
+            action_load_scenario = QAction("Load Scenario Unit")
+            action_edit_project = QAction("Edit Project")
+            action_delete_project = QAction("Delete Project")
+
+            menu.addAction(action_add_scenario)
+            menu.addAction(action_load_scenario)
+            menu.addAction(action_edit_project)
+            menu.addAction(action_delete_project)
+
+            action_add_scenario.triggered.connect(self.newScenarioUnitWindow)
+            action_load_scenario.triggered.connect(self.load_scenario_unit)
+            action_edit_project.triggered.connect(lambda: self.edit_project(name))
+            action_delete_project.triggered.connect(lambda: self.delete_project(name))
+
+            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+    def load_scenario_unit(self):
+        pass
+
+    def edit_project(self, selected_project):
+        pass
+
+    def delete_project(self, selected_project):
+        pass
+
+    def edit_scenario_unit(self, selected_scenario_unit):
+        pass
+
+    def delete_scenario_unit(self, selected_scenario_unit):
+        pass
+
+    def newScenarioUnitWindow(self):
+        newScenarioUnit_Window = QtWidgets.QDialog()
+        newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
+        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window, self.sds_controller,
+                                                     self.projectsList_captureManagerWindow,
+                                                     self.scenarioIterationsSpinbox_captureManagerWindow)
+        self.sds_controller.add_scenario_unit()
+        newScenarioUnit_Window.show()
+
+    def context_menu_node(self, point):
+        index = self.nodesList_captureManagerWindow.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        if not index.isValid() or index.parent().isValid():
+            item = self.nodesList_captureManagerWindow.itemAt(point)
+            if not item:
+                return
+            name = item.text(0)
+
+            menu = QtWidgets.QMenu()
+            action_edit_node = QAction("Edit Node")
+            action_delete_node = QAction("Delete Node")
+
+            menu.addAction(action_edit_node)
+            menu.addAction(action_delete_node)
+
+            action_edit_node.triggered.connect(lambda: self.edit_node(name))
+            action_delete_node.triggered.connect(lambda: self.delete_node(name))
+
+            menu.exec_(self.nodesList_captureManagerWindow.mapToGlobal(point))
+
+            return
+
+    def edit_node(self, selected_node):
+        pass
+
+    def delete_node(self, selected_node):
+        pass
+
+    def item_project_selected(self):
+        # print(f'checking if item_project_selected went inside')
+        # Clear the window
+        self.nodesList_captureManagerWindow.clear()
+        if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
+            # This condition is for projects. Works with the project list which...
+            # contains projects and scenarios
+            # TODO: Check add node button(I was not able to create a project)
+            self.exportButton_captureManagerWindow.setEnabled(True)
+            self.addNodeButton_captureManagerWindow.setEnabled(False)
+            self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+            # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
+            # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        else:
+            # print(f'checking if else checked')
+            self.exportButton_captureManagerWindow.setEnabled(False)
+            self.addNodeButton_captureManagerWindow.setEnabled(True)
+            self.addSetNodeButton_captureManagerWindow.setEnabled(True)
+            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+            # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
+            # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
+            # Get all the nodes
+            scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+            # print(f'checking scenario id: {scenario_ID}')
+            self.sds_controller._enforce_state('init_project')
+            node_list = self.sds_controller.get_all_nodes(scenario_ID)
+            # Insert into vm and docker text saved values
+            vm_ip, docker_ip = self.sds_controller.get_scenario_vm_info(scenario_ID)
+            #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+            #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+            # print(f'checking if nodes list is anything: {node_list}')
+            # Insert all the nodes into the UI
+            if node_list:
+                # print(f'checking if nodes list is available for ui...{node_list}')
+                for node in node_list:
+                    node_item = QTreeWidgetItem([str(node['listening']), \
+                                                 node['type'], node['name'], node['mac'], node['ip'],
+                                                 str(node['scanning'])])
+                    self.nodesList_captureManagerWindow.addTopLevelItem(node_item)
+                    # TODO: Ask mauricio how this works
+                    # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
+
+            self.nodesList_captureManagerWindow.header().setSectionResizeMode(
+                QtWidgets.QHeaderView.ResizeToContents)
+
+    def start_virtual_machine(self):
+        # Get input
+        # store input into workspace
+        # self.sds_controller.insert_core_sds_service(ip, port)
+        self.sds_controller.start_virtual_machine()
+        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
+        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+
+    def shutdown_virtual_machine(self):
+        print("shutdown virtual machine")
+        self.sds_controller.shutdown_virtual_machine()
+        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+
+    def stop_scenario_unit(self):
+        # self.sds_controller.stop()
+        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
+        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
+        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
+        pass
+
+    def restore_scenario_unit(self):
+        # self.sds_controller.restore()
+        pass
+
+    def stop_restore_unit(self):
+        self.sds_controller.stop_restore_core()
+
+    def start_services(self):
+        self.sds_controller.start_services()
+
+    def set_up_scenario_unit(self):
+        self.sds_controller._enforce_state('init_capture_network')
+        scenario_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
+        # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
+        # self.sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
+        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
+        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
+        # self.runScenarioButton_captureManagerWindow.setEnabled(False)
+        self.sds_controller.run_scenario_units(scenario_name)
+
+    def save_workspace(self):
+        # Everything is already saved. So we don't really need it. YW
+        pass
+
+    def export_project(self):
+        project_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
+        print(f'export path is: {export_path}')
+        self.sds_controller._enforce_state('init_project')
+        self.sds_controller.export_project(project_name, export_path[0])
+
+    def import_project(self, captureManager_Window):
+        dialog = QFileDialog()
+        json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+        if not json_path[0]:
+            return
+        with open(json_path[0]) as json_file:
+            project = json.load(json_file)
+            self.sds_controller._enforce_state('init_workplace')
+            self.sds_controller.import_project(project)
+
+    def createProjectWindow(self):
+        newProject_Window = QtWidgets.QDialog()
+        newProjectWindowUI = Ui_newProject_window()
+        newProjectWindowUI.setupNewProject(
+            newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow)
+        self.sds_controller.start_new_project_phase()
+        newProject_Window.show()
+
+    def addNodeWindow(self):
+        addNode_Window = QtWidgets.QDialog()
+        addNodeWindowUI = Ui_addNode_window()
+        addNodeWindowUI.setupAddNode(addNode_Window, self.sds_controller,
+                                     self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                     self.CentralLayout_captureManagerWindow,
+                                     self.ip_counter, self.MAC, self.id_counter)
+        addNode_Window.show()
+
+    def addSetNodesWindow(self):
+        addSetNodes_Window = QtWidgets.QDialog()
+        addSetNodesWindowUI = Ui_addSetNodes_window()
+        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window, self.sds_controller,
+                                             self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                             self.ip_counter, self.MAC, self.id_counter)
+        addSetNodes_Window.show()
+
+    def closeCaptureManager(self, CaptureManagerWindow):
+        # IMPLEMENT THIS. Display workspace window before closing
+        #workspace_Window = QtWidgets.QDialog()
+        #workspaceUI = Ui_workspace_window()
+        #workspaceUI.setupWorkspaceUI(workspace_Window, self.sds_controller)
+        #self.sds_controller.start_new_workplace()
+        # POPULATE WORKSPACE LIST
+        #workspace_Window.show()
+        CaptureManagerWindow.close()
