@@ -317,11 +317,12 @@ class SDSController:
 
     def run_scenario_units(self, scenario_name: str):
         self._ensure_subsystems()
-        if self._state is SDSStateEnum.INIT_CAPTURE_NETWORK:
-            # Do work here
-            scenario_dict = self.get_scenario_data(scenario_name)
-            self._cap_manager.start_services(scenario_dict)
-            self._state = SDSStateEnum.NETWORK_RUNNING
+
+        # Do work here
+        scenario_dict = self.get_scenario_data(scenario_name)
+        print(scenario_dict)
+        self._cap_manager.core_start_from_dictionary(scenario_dict)
+        self._state = SDSStateEnum.NETWORK_RUNNING
 
     def shutdown_virtual_machine(self):
         print("Shutting down virtual machine - sds controller")
@@ -336,6 +337,13 @@ class SDSController:
             # Do work here
             self._cap_manager.core_cleanup()
             self._state = SDSStateEnum.NETWORK_RUNNING
+
+    def stop_restore_core(self):
+        self._ensure_subsystems()
+        self._cap_manager.core_cleanup()
+
+    def start_services(self):
+        self._cap_manager.start_services()
 
     def scenarios_complete(self):
         self._ensure_subsystems()
