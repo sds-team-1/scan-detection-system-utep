@@ -128,7 +128,8 @@ class SDSController:
         self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
         # print(self._entire_workspace_context)
 
-    def delete_workspace_contents(self, workspace_name):
+    def delete_workspace_contents(self, workspace_name: str):
+        
         pass
 
     ###### Project related functions ######

@@ -614,6 +614,8 @@ def context_menu_project(point):
 
     if not index.isValid() or not index.parent().isValid():
         item = captureManagerWindowUI.projectsList_captureManagerWindow.itemAt(point)
+        if not item:
+            return
         name = item.text(0)
 
         menu = QtWidgets.QMenu()
