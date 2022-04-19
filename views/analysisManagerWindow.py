@@ -25,7 +25,7 @@ class Ui_AnalysisManagerWindow(object):
     # # test_pcap.create_json_file()
     # # test_pcap.to_json()
 
-    def setupAnalysisManager(self, AnalysisManagerWindow):
+    def setupAnalysisManager(self, AnalysisManagerWindow, InitialWorkspaceWindow):
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
         AnalysisManagerWindow.setMinimumSize(QtCore.QSize(812, 580))
@@ -94,7 +94,7 @@ class Ui_AnalysisManagerWindow(object):
 
         self.gridLayout_2.addLayout(self.upperLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
-        self.closeAnalysisManager_analysisManagerWindow.clicked.connect(AnalysisManagerWindow.close)
+        self.closeAnalysisManager_analysisManagerWindow.clicked.connect(lambda: self.closeAnalysisManager(AnalysisManagerWindow, InitialWorkspaceWindow))
 
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
@@ -177,6 +177,9 @@ class Ui_AnalysisManagerWindow(object):
         # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
         # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
 
+    def closeAnalysisManager(self, AnalysisManagerWindow, InitialWindow):
+        AnalysisManagerWindow.close()
+        InitialWindow.show()
 
     def iterate_packets(self, capture, filter, pcap):
         self.pcapList_analysisManagerWindow.clear()

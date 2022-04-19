@@ -182,7 +182,7 @@ class Ui_workspace_window(object):
     def analysisManagerWindow(self, workspace_Window):
         self.analysisManager_Window = QtWidgets.QMainWindow()
         self.analysisManagerWindowUI = Ui_AnalysisManagerWindow()
-        self.analysisManagerWindowUI.setupAnalysisManager(self.analysisManager_Window)
+        self.analysisManagerWindowUI.setupAnalysisManager(self.analysisManager_Window, workspace_Window)
         self.analysisManager_Window.show()
         workspace_Window.close()
 
