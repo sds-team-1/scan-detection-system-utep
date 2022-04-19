@@ -11,14 +11,6 @@ from views.createWorkspace import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
 
 
-# IMPLEMENT THIS. Doesn't show analysis manager window
-def analysisManagerWindow(workspace_Window):
-    analysisManager_Window = QtWidgets.QMainWindow()
-    analysisManagerWindowUI = Ui_AnalysisManagerWindow()
-    analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
-    analysisManager_Window.show()
-    workspace_Window.close()
-
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window, sds_controller):
         self.sds_controller = sds_controller
@@ -103,7 +95,7 @@ class Ui_workspace_window(object):
         self.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.workspacesList_workspaceWindow.customContextMenuRequested.connect(self.context_menu_workspace)
 
-        self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: analysisManagerWindow(workspace_window))
+        self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: self.analysisManagerWindow(workspace_window))
         self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
 
         self.createWorkspaceButton_workspaceWindow.clicked.connect(lambda: self.createWorkspaceWindow(workspace_window))
@@ -185,4 +177,12 @@ class Ui_workspace_window(object):
             port = database_ip_dict['port']
             databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
         databaseConfig_Window.show()
+
+
+    def analysisManagerWindow(self, workspace_Window):
+        self.analysisManager_Window = QtWidgets.QMainWindow()
+        self.analysisManagerWindowUI = Ui_AnalysisManagerWindow()
+        self.analysisManagerWindowUI.setupAnalysisManager(self.analysisManager_Window)
+        self.analysisManager_Window.show()
+        workspace_Window.close()
 
