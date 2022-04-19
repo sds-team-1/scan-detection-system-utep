@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import platform
@@ -7,8 +6,10 @@ import collections
 import matplotlib.pyplot as plt
 import numpy as np
 from Models.pcap import Pcap
+
+
 class Capture:
-    def __init__(self, name: str, parentPath:str) -> None:
+    def __init__(self, name: str, parentPath: str) -> None:
         self.name = name
         self.pcaps = []
         self.mergeFilePath = None
@@ -17,14 +18,14 @@ class Capture:
         self.totalPackets = 0
         self.protocols = None
         self.create_folder()
-        #self.create_merge_file()
+        # self.create_merge_file()
 
     def add_pcap(self, new: Pcap) -> list:
         self.pcaps.append(new)
-        #self.merge_pcaps()
+        # self.merge_pcaps()
         return self.pcaps
 
-    def del_pcap(self, old:Pcap)-> list:
+    def del_pcap(self, old: Pcap) -> list:
         self.pcaps.remove(old)
         if self.pcaps:
             self.merge_pcaps()
@@ -44,7 +45,7 @@ class Capture:
         new_pcap = Pcap("merged_pcap.pcap", self.path + "pcaps", "merged_pcap.pcap")
         self.add_pcap(new_pcap)
 
-    def create_folder(self)-> str:
+    def create_folder(self) -> str:
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
         return self.path
@@ -56,22 +57,23 @@ class Capture:
         fp = open(path, 'a')
         fp.close()
 
-    def save(self, f)-> None:
+    def save(self, f) -> None:
         f.write('{"name": "%s", "totalPackets": %s, "pcaps": [' % (self.name, self.totalPackets))
         for a in self.pcaps:
             a.save(f)
             if a != self.pcaps[-1]:
                 f.write(',')
         f.write(']}')
-    def iterate_file(self, filter:str, name:str):
+
+    def iterate_file(self, filter: str, name: str):
         print("reached here")
         if any(x.name == name for x in self.pcaps):
             print(self.path + name)
 
-            cap = pyshark.FileCapture(self.path + name, display_filter=filter ,
-                                  only_summaries=True)
+            cap = pyshark.FileCapture(self.path + name, display_filter=filter,
+                                      only_summaries=True)
 
-        pktlist= []
+        pktlist = []
         file_list = []
         # for pkt in cap:
         #     pktlist.append(pkt.protocol)
@@ -83,7 +85,6 @@ class Capture:
         #     file_list.append(str(pkt.length))
         #     file_list.append(str(pkt.info))
 
-
         # counter = collections.Counter(pktlist)
         #
         # plt.style.use('ggplot')
@@ -93,13 +94,8 @@ class Capture:
         # plt.ylabel("Frequency")
         # plt.xlabel("Protocol Name")
         # plt.savefig("ProtocolGraph.png")
-        #plt.show()
+        # plt.show()
         return cap
-
-
-
-
-
 
 # test_pcap = pcap.Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
 # test_pcap.create_json_file()

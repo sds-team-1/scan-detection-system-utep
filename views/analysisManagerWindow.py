@@ -1,11 +1,20 @@
 from PyQt5 import QtCore, QtWidgets
 
-from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
 import pyshark
 import os
 
 from Models.pcap import Pcap
 from Models.capture import Capture
+
+
+def add_pcaps(capture):
+    for filename in os.listdir(capture.path):
+        f = os.path.join(capture.path, filename)
+        if os.path.isfile(f):
+            if '.pcap' in filename or '.pcapng' in filename:
+                pcap = Pcap(filename, capture.path, filename)
+                capture.add_pcap(pcap)
 
 
 class Ui_AnalysisManagerWindow(object):
@@ -15,20 +24,7 @@ class Ui_AnalysisManagerWindow(object):
     # # test_pcap.to_json()
     # # test_pcap.create_json_file()
     # # test_pcap.to_json()
-    # test_capture.add_pcap(test_pcap)
-    # test_capture.add_pcap(test_pcap_2)
 
-    test_capture = Capture("", os.path.join(os.getcwd(), "pcaps"))
-    # test_capture.add_pcap(Pcap("/pcap1.pcap", "./pcaps", "pcap1.pcap"))
-    #test_capture.add_pcap(Pcap(os.path.join("pcap1.pcap"), "", "pcap1.pcap"))
-    #test_capture.add_pcap(Pcap(os.path.join("pcap2.pcapng"), "", "pcap2.pcap"))
-    #test_capture.add_pcap(Pcap(os.path.join("pcap3.pcapng"), "", "pcap3.pcap"))
-
-
-    #test_capture.create_merged_file()
-    #test_capture.merge_pcaps()
-
-    # self.iterate_packets(cap)
     def setupAnalysisManager(self, AnalysisManagerWindow):
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
@@ -37,6 +33,8 @@ class Ui_AnalysisManagerWindow(object):
         self.CentralLayout_analysisManagerWindow.setObjectName("CentralLayout_analysisManagerWindow")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.CentralLayout_analysisManagerWindow)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.upperLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
+        self.upperLayout_analysisManagerWindow.setObjectName("upperLayout_analysisManagerWindow")
         self.centralSectionLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.centralSectionLayout_analysisManagerWindow.setObjectName("centralSectionLayout_analysisManagerWindow")
         self.scenariosList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
@@ -50,17 +48,6 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsLayout_analysisManagerWindow.setObjectName("pcapsLayout_analysisManagerWindow")
         self.pcapsTabWidget_analysisManagerWindow = QtWidgets.QTabWidget(self.CentralLayout_analysisManagerWindow)
         self.pcapsTabWidget_analysisManagerWindow.setObjectName("pcapsTabWidget_analysisManagerWindow")
-        # self.Pcap_pcap = QtWidgets.QWidget()
-        # self.Pcap_pcap.setObjectName("Pcap_pcap")
-        # self.gridLayout = QtWidgets.QGridLayout(self.Pcap_pcap)
-        # self.gridLayout.setObjectName("gridLayout")
-        # self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
-        # self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
-        # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
-        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.Pcap_pcap, "")
-        #self.pcap_1 = QtWidgets.QWidget()
-        #self.pcap_1.setObjectName("pcap_1")
-        #self.pcapsTabWidget_analysisManagerWindow.addTab(self.pcap_1, "")
         self.pcapsLayout_analysisManagerWindow.addWidget(self.pcapsTabWidget_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.pcapsLayout_analysisManagerWindow)
         self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
@@ -70,32 +57,42 @@ class Ui_AnalysisManagerWindow(object):
         self.protocolStatsLayout_analysisManagerWindow.addWidget(self.protocolStatsList_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.protocolStatsLayout_analysisManagerWindow)
         self.centralSectionLayout_analysisManagerWindow.addLayout(self.scenariosLayout_analysisManagerWindow)
+
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
+
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-
-
         self.filterInput_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
         self.filterInput_analysisManagerWindow.setObjectName("filterInput_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filterInput_analysisManagerWindow)
-
         self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
-        self.filtersButton_analysisManagerWindow.clicked.connect(
-            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(), self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
         self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
-
-        self.mergeAllButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.mergeAllButton_analysisManagerWindow.setObjectName("mergeAllButton_analysisManagerWindow")
-        self.mergeAllButton_analysisManagerWindow.clicked.connect(
-            lambda: self.merge_all())
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeAllButton_analysisManagerWindow)
-
-
+        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
+        self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
+        self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
+        self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
-        self.gridLayout_2.addLayout(self.buttonsLayout_analysisManagerWindow, 0, 0, 1, 1)
+        self.upperLayout_analysisManagerWindow.addLayout(self.buttonsLayout_analysisManagerWindow)
+
+        self.layoutPcapsDirectory_analysisManagerWindow = QtWidgets.QHBoxLayout()
+        self.layoutPcapsDirectory_analysisManagerWindow.setObjectName("layoutPcapsDirectory_analysisManagerWindow")
+        self.inputPcapsDirectory_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
+        self.inputPcapsDirectory_analysisManagerWindow.setObjectName("inputPcapsDirectory_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.inputPcapsDirectory_analysisManagerWindow)
+        self.browsePcapsDirectory_analysisManagerWindow = QtWidgets.QPushButton(
+            self.CentralLayout_analysisManagerWindow)
+        self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
+        #spacerItem1 = QtWidgets.QSpacerItem(418, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        #self.layoutPcapsDirectory_analysisManagerWindow.addItem(spacerItem1)
+        self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
+
+        self.gridLayout_2.addLayout(self.upperLayout_analysisManagerWindow, 0, 0, 1, 1)
         AnalysisManagerWindow.setCentralWidget(self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.clicked.connect(AnalysisManagerWindow.close)
 
@@ -107,8 +104,6 @@ class Ui_AnalysisManagerWindow(object):
         __sortingEnabled = self.scenariosList_analysisManagerWindow.isSortingEnabled()
         self.scenariosList_analysisManagerWindow.setSortingEnabled(False)
         self.scenariosList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
-        #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
-        #self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow", "Protocol"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow", "Percent Packets"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow", "Packets"))
@@ -120,12 +115,32 @@ class Ui_AnalysisManagerWindow(object):
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow", "End Bits/s"))
         self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
         self.filtersButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Apply Filter      "))
-        self.mergeAllButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge All Pcaps      "))
+        self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
+        self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
+        self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
         self.closeAnalysisManager_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "Close Analysis Manager"))
-        #self.iterate_packets(self.test_capture, "", 0)
-        self.add_pcaps()
-        self.show_pcap_list()
+
+
+        self.scenariosList_analysisManagerWindow.clicked.connect(self.selectedPcapCheckbox)
+        self.scenariosList_analysisManagerWindow.itemSelectionChanged.connect(self.pcap_selected)
         self.scenariosList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab())
+        self.filtersButton_analysisManagerWindow.clicked.connect(
+            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
+                                         self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
+
+        self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge_all())
+
+        self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
+
+        self.filtersButton_analysisManagerWindow.setEnabled(False)
+        self.mergeButton_analysisManagerWindow.setEnabled(False)
+        self.exportButton_analysisManagerWindow.setEnabled(False)
+
+        self.browsePcapsDirectory_analysisManagerWindow.clicked.connect(self.browsePcapDir)
+
+
+
+
         # self.scenariosList_analysisManagerWindow.doubleClicked.connect(
         #     lambda: self.iterate_packets(self.test_capture, "",
         #                                  self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
@@ -145,7 +160,25 @@ class Ui_AnalysisManagerWindow(object):
         #     l1 = QTreeWidgetItem(l)
         #     self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
 
-    def iterate_packets(self,capture, filter, pcap):
+        # self.Pcap_pcap = QtWidgets.QWidget()
+        # self.Pcap_pcap.setObjectName("Pcap_pcap")
+        # self.gridLayout = QtWidgets.QGridLayout(self.Pcap_pcap)
+        # self.gridLayout.setObjectName("gridLayout")
+        # self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
+        # self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
+        # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.Pcap_pcap, "")
+        # self.pcap_1 = QtWidgets.QWidget()
+        # self.pcap_1.setObjectName("pcap_1")
+        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.pcap_1, "")
+
+        # self.iterate_packets(self.test_capture, "", 0)
+
+        # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
+        # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
+
+
+    def iterate_packets(self, capture, filter, pcap):
         self.pcapList_analysisManagerWindow.clear()
         packets = capture.iterate_file(filter, pcap)
 
@@ -161,12 +194,37 @@ class Ui_AnalysisManagerWindow(object):
             l1 = QTreeWidgetItem(l)
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
         packets.close()
-    def show_pcap_list(self):
+
+    def pcap_selected(self):
+        self.filtersButton_analysisManagerWindow.setEnabled(True)
+
+    def selectedPcapCheckbox(self):
+        checked = 0
+
+        for i in range(self.scenariosList_analysisManagerWindow.topLevelItemCount()):
+            top_item = self.scenariosList_analysisManagerWindow.topLevelItem(i)
+            print(top_item.text(0), top_item.checkState(0))
+            if top_item.checkState(0) == 2:
+                checked += 1
+
+        if checked > 1:
+            self.mergeButton_analysisManagerWindow.setEnabled(True)
+            self.exportButton_analysisManagerWindow.setEnabled(True)
+
+        else:
+            self.mergeButton_analysisManagerWindow.setEnabled(False)
+            self.exportButton_analysisManagerWindow.setEnabled(False)
+
+
+    def show_pcap_list(self, capture):
         self.scenariosList_analysisManagerWindow.clear()
-        for pcap in self.test_capture.pcaps:
+        for pcap in capture.pcaps:
             print(pcap.name)
             x = QtWidgets.QTreeWidgetItem([pcap.name])
+            x.setCheckState(0, QtCore.Qt.Unchecked)
             self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
+
+
     def open_tab(self):
         pcap = QtWidgets.QWidget()
         pcap.setObjectName(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
@@ -194,15 +252,18 @@ class Ui_AnalysisManagerWindow(object):
                              self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
         self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
 
-    def add_pcaps(self):
-        for filename in os.listdir(self.test_capture.path):
-            f = os.path.join(self.test_capture.path, filename)
-            if os.path.isfile(f):
-                print(filename)
-                pcap = Pcap(filename, self.test_capture.path, filename)
-                self.test_capture.add_pcap(pcap)
-
     def merge_all(self):
         self.test_capture.create_merged_file()
         self.test_capture.merge_pcaps()
         self.show_pcap_list()
+
+
+    def browsePcapDir(self):
+        dialog = QFileDialog()
+        directory = dialog.getExistingDirectory(self.inputPcapsDirectory_analysisManagerWindow, 'Select Pcaps Directory')
+
+        if directory:
+            self.inputPcapsDirectory_analysisManagerWindow.setText(directory)
+            self.test_capture = Capture("", directory)
+            add_pcaps(self.test_capture)
+            self.show_pcap_list(self.test_capture)
