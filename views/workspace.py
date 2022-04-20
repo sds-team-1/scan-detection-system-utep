@@ -135,7 +135,7 @@ class Ui_workspace_window(object):
         time.sleep(1)
         captureManager_Window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow()
-        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller)
+        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller, workspace_Window)
         captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
         captureManager_Window.show()
         workspace_Window.close()
@@ -161,7 +161,8 @@ class Ui_workspace_window(object):
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window()
-        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller)
+        createWorkspaceUI.setupCreateWorkspace(
+            createWorkspace_Window, workspace_window, self.sds_controller, self.workspacesList_workspaceWindow)
         self.sds_controller.start_new_workplace()
         createWorkspace_Window.show()
 
