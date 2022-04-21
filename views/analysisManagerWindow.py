@@ -156,6 +156,9 @@ class Ui_AnalysisManagerWindow(object):
 
         AnalysisManagerWindow.closeEvent = self.CloseEvent
 
+        self.pcapsTabWidget_analysisManagerWindow.setTabsClosable(True)
+        self.pcapsTabWidget_analysisManagerWindow.tabCloseRequested.connect(self.closeTab)
+
         # self.scenariosList_analysisManagerWindow.doubleClicked.connect(
         #     lambda: self.iterate_packets(self.test_capture, "",
         #                                  self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
@@ -249,8 +252,6 @@ class Ui_AnalysisManagerWindow(object):
             self.tabs_opened.append(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
             pcap = QtWidgets.QWidget()
             pcap.setObjectName(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
-            # gridLayout = QtWidgets.QGridLayout(pcap)
-            # gridLayout.setObjectName("gridLayout")
 
             self.gridLayout = QtWidgets.QGridLayout(pcap)
             self.gridLayout.setObjectName("gridLayout")
@@ -267,13 +268,15 @@ class Ui_AnalysisManagerWindow(object):
             self.pcapList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.pcapList_analysisManagerWindow.headerItem().setText(6, "Info")
 
-            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[
-                0].text(0))
-            # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
 
             self.iterate_packets(self.test_capture, "",
                                 self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
-            self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
+                                
+
+    def closeTab(self, currentIndex):
+        self.pcapsTabWidget_analysisManagerWindow.removeTab(currentIndex)
+        del self.tabs_opened[currentIndex]
 
     def merge(self):
         #self.test_capture.create_merged_file()
