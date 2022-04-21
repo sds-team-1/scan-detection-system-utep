@@ -143,7 +143,7 @@ class Ui_AnalysisManagerWindow(object):
             lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
                                          self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0)))
 
-        self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge_all())
+        self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge())
 
         self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
 
@@ -225,7 +225,6 @@ class Ui_AnalysisManagerWindow(object):
 
         for i in range(self.scenariosList_analysisManagerWindow.topLevelItemCount()):
             top_item = self.scenariosList_analysisManagerWindow.topLevelItem(i)
-            print(top_item.text(0), top_item.checkState(0))
             if top_item.checkState(0) == 2:
                 checked += 1
 
@@ -240,7 +239,6 @@ class Ui_AnalysisManagerWindow(object):
     def show_pcap_list(self, capture):
         self.scenariosList_analysisManagerWindow.clear()
         for pcap in capture.pcaps:
-            print(pcap.name)
             x = QtWidgets.QTreeWidgetItem([pcap.name])
             x.setCheckState(0, QtCore.Qt.Unchecked)
             self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
@@ -274,10 +272,21 @@ class Ui_AnalysisManagerWindow(object):
                              self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
         self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
 
-    def merge_all(self):
-        self.test_capture.create_merged_file()
-        self.test_capture.merge_pcaps()
-        self.show_pcap_list()
+    def merge(self):
+        #self.test_capture.create_merged_file()
+        selected_pcaps = []
+        merged_file, _ = QFileDialog.getSaveFileName(
+        self.mergeButton_analysisManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+        if merged_file:
+            for i in range(self.scenariosList_analysisManagerWindow.topLevelItemCount()):
+                top_item = self.scenariosList_analysisManagerWindow.topLevelItem(i)
+                if top_item.checkState(0) == 2:
+                    selected_pcaps.append(top_item.text(0))
+            filename = merged_file.split('/')
+            filename = filename[-1]
+            filepath = merged_file.replace(filename, '')
+            self.test_capture.merge_pcaps(merged_file, selected_pcaps, filename, filepath)
+            self.show_pcap_list(self.test_capture)
 
     def browsePcapDir(self):
         dialog = QFileDialog()

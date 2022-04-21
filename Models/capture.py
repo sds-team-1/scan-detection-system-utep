@@ -33,16 +33,19 @@ class Capture:
         old.remove()
         return self.pcaps
 
-    def merge_pcaps(self):
+    def merge_pcaps(self, merged_file, selected_pcaps, filename, filepath):
         pcap_paths = ""
         for pcap in self.pcaps:
-            pcap_paths += pcap.path + " "
+            if pcap.name in selected_pcaps:
+                pcap_paths += pcap.path + " "
         if platform.system() == 'Windows':
-            os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            #os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (merged_file, pcap_paths))
         else:
-            os.system('mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            #os.system('mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            os.system('mergecap -w %s %s' % (merged_file, pcap_paths))
 
-        new_pcap = Pcap("merged_pcap.pcap", self.path + "pcaps", "merged_pcap.pcap")
+        new_pcap = Pcap(filename, filepath + "pcaps", filename)
         self.add_pcap(new_pcap)
 
     def create_folder(self) -> str:
@@ -66,9 +69,7 @@ class Capture:
         f.write(']}')
 
     def iterate_file(self, filter: str, name: str):
-        print("reached here")
         if any(x.name == name for x in self.pcaps):
-            print(self.path + name)
 
             cap = pyshark.FileCapture(self.path + name, display_filter=filter,
                                       only_summaries=True)
