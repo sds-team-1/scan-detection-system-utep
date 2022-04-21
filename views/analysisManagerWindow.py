@@ -27,6 +27,7 @@ class Ui_AnalysisManagerWindow(object):
 
     def setupAnalysisManager(self, AnalysisManagerWindow, InitialWorkspaceWindow):
         self.InitialWorkspaceWindow = InitialWorkspaceWindow
+        self.tabs_opened = []
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
         AnalysisManagerWindow.setMinimumSize(QtCore.QSize(812, 580))
@@ -244,33 +245,35 @@ class Ui_AnalysisManagerWindow(object):
             self.scenariosList_analysisManagerWindow.addTopLevelItem(x)
 
     def open_tab(self):
-        pcap = QtWidgets.QWidget()
-        pcap.setObjectName(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
-        # gridLayout = QtWidgets.QGridLayout(pcap)
-        # gridLayout.setObjectName("gridLayout")
+        if self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0) not in self.tabs_opened:
+            self.tabs_opened.append(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+            pcap = QtWidgets.QWidget()
+            pcap.setObjectName(self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+            # gridLayout = QtWidgets.QGridLayout(pcap)
+            # gridLayout.setObjectName("gridLayout")
 
-        self.gridLayout = QtWidgets.QGridLayout(pcap)
-        self.gridLayout.setObjectName("gridLayout")
-        self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
-        self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
-        self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
-        self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[
-            0].text(0))
-        self.pcapList_analysisManagerWindow.headerItem().setText(0, "No.")
-        self.pcapList_analysisManagerWindow.headerItem().setText(1, "Time")
-        self.pcapList_analysisManagerWindow.headerItem().setText(2, "Source")
-        self.pcapList_analysisManagerWindow.headerItem().setText(3, "Destination")
-        self.pcapList_analysisManagerWindow.headerItem().setText(4, "Protocol")
-        self.pcapList_analysisManagerWindow.headerItem().setText(5, "Length")
-        self.pcapList_analysisManagerWindow.headerItem().setText(6, "Info")
+            self.gridLayout = QtWidgets.QGridLayout(pcap)
+            self.gridLayout.setObjectName("gridLayout")
+            self.pcapList_analysisManagerWindow = QtWidgets.QTreeWidget()
+            self.pcapList_analysisManagerWindow.setObjectName("pcapList_analysisManagerWindow")
+            self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[
+                0].text(0))
+            self.pcapList_analysisManagerWindow.headerItem().setText(0, "No.")
+            self.pcapList_analysisManagerWindow.headerItem().setText(1, "Time")
+            self.pcapList_analysisManagerWindow.headerItem().setText(2, "Source")
+            self.pcapList_analysisManagerWindow.headerItem().setText(3, "Destination")
+            self.pcapList_analysisManagerWindow.headerItem().setText(4, "Protocol")
+            self.pcapList_analysisManagerWindow.headerItem().setText(5, "Length")
+            self.pcapList_analysisManagerWindow.headerItem().setText(6, "Info")
 
-        self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[
-            0].text(0))
-        # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
+            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.scenariosList_analysisManagerWindow.selectedItems()[
+                0].text(0))
+            # self.gridLayout.addWidget(self.pcapList_analysisManagerWindow, 0, 0, 1, 1)
 
-        self.iterate_packets(self.test_capture, "",
-                             self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
-        self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
+            self.iterate_packets(self.test_capture, "",
+                                self.scenariosList_analysisManagerWindow.selectedItems()[0].text(0))
+            self.pcapsTabWidget_analysisManagerWindow.tabsClosable()
 
     def merge(self):
         #self.test_capture.create_merged_file()
