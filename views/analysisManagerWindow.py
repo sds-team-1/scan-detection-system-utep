@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 import pyshark
 import os
 
@@ -140,7 +140,6 @@ class Ui_AnalysisManagerWindow(object):
             _translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
         self.scenariosList_analysisManagerWindow.clicked.connect(self.selectedPcapCheckbox)
-        self.scenariosList_analysisManagerWindow.itemSelectionChanged.connect(self.pcap_selected)
         self.scenariosList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab())
         self.filtersButton_analysisManagerWindow.clicked.connect(
             lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
@@ -150,7 +149,6 @@ class Ui_AnalysisManagerWindow(object):
 
         self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
 
-        self.filtersButton_analysisManagerWindow.setEnabled(False)
         self.mergeButton_analysisManagerWindow.setEnabled(False)
         self.exportButton_analysisManagerWindow.setEnabled(False)
 
@@ -160,6 +158,9 @@ class Ui_AnalysisManagerWindow(object):
 
         self.pcapsTabWidget_analysisManagerWindow.setTabsClosable(True)
         self.pcapsTabWidget_analysisManagerWindow.tabCloseRequested.connect(self.closeTab)
+
+        self.scenariosList_analysisManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.scenariosList_analysisManagerWindow.customContextMenuRequested.connect(self.context_menu_pcaps)
 
         # self.scenariosList_analysisManagerWindow.doubleClicked.connect(
         #     lambda: self.iterate_packets(self.test_capture, "",
@@ -223,8 +224,7 @@ class Ui_AnalysisManagerWindow(object):
             self.pcapList_analysisManagerWindow.addTopLevelItem(l1)
         packets.close()
 
-    def pcap_selected(self):
-        self.filtersButton_analysisManagerWindow.setEnabled(True)
+    
 
     def selectedPcapCheckbox(self):
         checked = 0
@@ -311,3 +311,38 @@ class Ui_AnalysisManagerWindow(object):
             self.test_capture = Capture("", directory)
             add_pcaps(self.test_capture)
             self.show_pcap_list(self.test_capture)
+
+
+    def context_menu_pcaps(self, point):
+        index = self.scenariosList_analysisManagerWindow.indexAt(point)
+        if not index.isValid() or index.parent().isValid():
+            return
+        item = self.scenariosList_analysisManagerWindow.itemAt(point)
+        name = item.text(0)
+        menu = QtWidgets.QMenu()
+
+        action_open_pcap = QAction("Open pcap in Wireshark")
+        action_rename_pcap = QAction("Rename pcap")
+        action_delete_pcap = QAction("Delete pcap")
+
+        menu.addAction(action_open_pcap)
+        menu.addAction(action_rename_pcap)
+        menu.addAction(action_delete_pcap)
+
+        action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
+        action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
+
+        menu.exec_(self.scenariosList_analysisManagerWindow.mapToGlobal(point))
+
+
+    # # TODO: Implement
+    # def rename_pcap(self, name):
+    #     pass
+
+
+    # # TODO: Implement
+    # def delete_pcap(self, name):
+    #     pass
+
+    def open_pcap_wireshark(self, name):
+        pass

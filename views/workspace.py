@@ -115,7 +115,7 @@ class Ui_workspace_window(object):
         menu.addAction(action_edit_workspace)
         menu.addAction(action_delete_workspace)
 
-        # action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+        # action_edit_workspace.triggered.connect(lambda: self.edit_workspace(name))
         action_delete_workspace.triggered.connect(lambda: self.delete_workspace(name))
 
         menu.exec_(self.workspacesList_workspaceWindow.mapToGlobal(point))
