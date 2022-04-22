@@ -211,7 +211,7 @@ class Ui_CaptureManagerWindow(object):
             name = item.text(0)
 
             menu = QtWidgets.QMenu()
-            action_edit_scenario_unit = QAction("Edit Scenario Unit")
+            action_edit_scenario_unit = QAction("Rename Scenario Unit")
             action_delete_scenario_unit = QAction("Delete Scenario Unit")
 
             menu.addAction(action_edit_scenario_unit)
@@ -231,7 +231,7 @@ class Ui_CaptureManagerWindow(object):
             menu = QtWidgets.QMenu()
             action_add_scenario = QAction("Add Scenario Unit")
             action_load_scenario = QAction("Load Scenario Unit")
-            action_edit_project = QAction("Edit Project")
+            action_edit_project = QAction("Rename Project")
             action_delete_project = QAction("Delete Project")
 
             menu.addAction(action_add_scenario)

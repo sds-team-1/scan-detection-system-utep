@@ -109,7 +109,7 @@ class Ui_workspace_window(object):
         name = item.text(0)
         menu = QtWidgets.QMenu()
 
-        action_edit_workspace = QAction("Edit Workspace Name")
+        action_edit_workspace = QAction("Rename Workspace")
         action_delete_workspace = QAction("Delete Workspace")
 
         menu.addAction(action_edit_workspace)
