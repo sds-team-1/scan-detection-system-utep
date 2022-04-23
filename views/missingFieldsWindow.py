@@ -38,3 +38,5 @@ class Ui_missingFields_window(object):
         self.missingFieldsLabel1_missingFieldsWindow.setText(_translate("missingFields_window", "There are some fields that had not been filled."))
         self.missingFieldsLabel2_missingFieldsWindow.setText(_translate("missingFields_window", "Please, make sure that everything is correct before you confirm."))
         self.missingFieldsCloseButton_missingFieldsWindow.setText(_translate("missingFields_window", "  Close  "))
+
+        self.missingFieldsCloseButton_missingFieldsWindow.clicked.connect(missingFields_window.close)

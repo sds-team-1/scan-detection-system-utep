@@ -77,10 +77,15 @@ class SDSDatabaseHelper:
         return collection.find().distinct('_id')
     
     def get_workspace_context(self, workspace_name: str) -> dict:
+        print("workspace context " +  workspace_name)
         client = MongoClient(self.url)
         db = client.SDS
         collection = db['workspaces']
+        print("workspace context " +  workspace_name)
+        
         workspace_dict = collection.find_one({'_id': workspace_name})
+        print("workspace context " +  workspace_name)
+        
         # Replace all projects with data
         if 'projects' not in workspace_dict.keys():
             return workspace_dict
