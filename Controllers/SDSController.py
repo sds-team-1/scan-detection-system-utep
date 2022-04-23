@@ -129,7 +129,18 @@ class SDSController:
         # print(self._entire_workspace_context)
 
     def delete_workspace_contents(self, workspace_name: str):
-        
+        '''Deletes workspace. Cascades down the hierarchy. If the projects, 
+        scenarios, and nodes don't exist in other places (unique to workspace)
+        then it will be deleted as well.'''
+        context = self._entire_workspace_context
+        # Check if context is already loaded.
+        if workspace_name == context['_id']:
+            # Do the changes
+            self._db_connection.delete_workspace_down(workspace_name, context)
+        else:
+            # Get the context and send it
+            context = self._db_connection.get_workspace_context(workspace_name)
+            self._db_connection.delete_workspace_down(workspace_name, context)
         pass
 
     ###### Project related functions ######
@@ -318,7 +329,6 @@ class SDSController:
 
     def run_scenario_units(self, scenario_name: str):
         self._ensure_subsystems()
-
         # Do work here
         scenario_dict = self.get_scenario_data(scenario_name)
         print(scenario_dict)

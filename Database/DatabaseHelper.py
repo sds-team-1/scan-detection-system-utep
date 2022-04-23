@@ -47,6 +47,12 @@ class SDSDatabaseHelper:
         except:
             return False
 
+    def delete_workspace_down(self, workspace_name: str, context_dict: dict):
+        '''Deletes workspace and all projects, scenario units, and nodes unique
+        to it.'''
+        
+        pass
+
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
         client = MongoClient(self.url)
