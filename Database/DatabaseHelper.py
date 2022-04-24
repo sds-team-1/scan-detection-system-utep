@@ -60,6 +60,37 @@ class SDSDatabaseHelper:
                     pass
         pass
 
+    def delete_project_down(self, project_name: str):
+        '''Deletes the project and scenario units and nodes unique to it.'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['projects']
+        try:
+            pass
+        except:
+            pass
+
+    def delete_scenario_unit_down(self, scenario_id):
+        '''Deletes the scenario unit and all nodes unique to it.'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        try:
+            pass
+        except:
+            pass
+
+    def delete_node(self, node_id):
+        '''Deletes the node from the database'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['nodes']
+        try:
+            result = collection.remove_one({'_id': node_id})
+            return True if result.matched_count else False
+        except: 
+            return False
+
     def delete_project_down(self, project_name
 
     def create_project(self, workspace_name: str, project_name: str = '', 
