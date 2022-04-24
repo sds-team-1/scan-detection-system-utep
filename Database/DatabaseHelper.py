@@ -47,11 +47,20 @@ class SDSDatabaseHelper:
         except:
             return False
 
-    def delete_workspace_down(self, workspace_name: str, context_dict: dict):
+    def delete_workspace_down(self, context_dict: dict):
         '''Deletes workspace and all projects, scenario units, and nodes unique
         to it.'''
-        
+        # Remove the unique projects
+        for project in context_dict['projects']:
+            # Remove the unique scenarios
+            for scenario in project['scenarios']:
+                # Remove the unique nodes
+                for node in scenario['nodes']:
+                    # See if node id is in other scenarios
+                    pass
         pass
+
+    def delete_project_down(self, project_name
 
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:

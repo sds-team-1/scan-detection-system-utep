@@ -136,12 +136,11 @@ class SDSController:
         # Check if context is already loaded.
         if workspace_name == context['_id']:
             # Do the changes
-            self._db_connection.delete_workspace_down(workspace_name, context)
+            self._db_connection.delete_workspace_down(context)
         else:
             # Get the context and send it
             context = self._db_connection.get_workspace_context(workspace_name)
-            self._db_connection.delete_workspace_down(workspace_name, context)
-        pass
+            self._db_connection.delete_workspace_down(context)
 
     ###### Project related functions ######
     def import_project(self, project: dict) -> bool:
