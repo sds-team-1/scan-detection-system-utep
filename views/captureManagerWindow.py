@@ -252,13 +252,13 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def delete_project(self, selected_project):
-        pass
+        self.sds_controller.delete_project_contents(selected_project)
 
     def edit_scenario_unit(self, selected_scenario_unit):
         pass
 
     def delete_scenario_unit(self, selected_scenario_unit):
-        pass
+        self.sds_controller.delete_scenario_contents(selected_scenario_unit)
 
     def newScenarioUnitWindow(self):
         newScenarioUnit_Window = QtWidgets.QDialog()

@@ -2,6 +2,7 @@ from enum import Enum, unique
 import json
 import re
 from typing import Dict, List
+from bson.objectid import ObjectId
 from Database.DatabaseHelper import SDSDatabaseHelper
 from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
@@ -141,6 +142,24 @@ class SDSController:
             # Get the context and send it
             context = self._db_connection.get_workspace_context(workspace_name)
             self._db_connection.delete_workspace_down(context)
+        self.change_workspace_context(self._workspace_name)
+
+    def delete_project_contents(self, project_name: str):
+        '''Deletes project. Cascades down the hierarchy. If the scenarios and 
+        nodes don't exist in other projects (unique to project) then they will be
+        deleted as well'''
+        project_names = [name['_id'] for name in self._entire_workspace_context['projects']]
+        if project_name in project_names:
+            project_d = {}
+            for project_dictionary in self._entire_workspace_context['projects']:
+                if project_dictionary['_id'] == project_name:
+                    project_d = project_dictionary
+                    break
+            self._db_connection.delete_project_down(project_d)
+        else:
+            project_d = self._db_connection.retrieve_project(project_name)
+            project_d['scenario_units'] = [ObjectId(su) for su in project_d['scenario_units']]
+            self._db_connection.delete_project_down(project_d)
 
     ###### Project related functions ######
     def import_project(self, project: dict) -> bool:
@@ -268,6 +287,9 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             self._scenario_unit_construction['scenario_name'] = name
+    
+    def delete_scenario_contents(self, scenario_name: str):
+        pass
             
     def insert_node(self, scenario_id: str, node_id: str, listening: bool, \
         type: str, name: str, ip: str, mac: str, subnet: bool, scanning: bool, \
