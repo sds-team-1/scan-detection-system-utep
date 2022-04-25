@@ -3,6 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 import pyshark
 import os
+import subprocess
 
 from Models.pcap import Pcap
 from Models.capture import Capture
@@ -356,6 +357,7 @@ class Ui_AnalysisManagerWindow(object):
         menu.addAction(action_rename_pcap)
         menu.addAction(action_delete_pcap)
 
+        action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
         action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
         action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
 
@@ -372,7 +374,9 @@ class Ui_AnalysisManagerWindow(object):
     #     pass
 
     def open_pcap_wireshark(self, name):
-        pass
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                subprocess.Popen(["wireshark", "-r", pcap.path])
 
     def openPacketWireshark(self):
         pass
