@@ -2,6 +2,9 @@ from PyQt5 import QtCore, QtWidgets
 
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
 import pyshark
+import scapy
+from scapy.utils import PcapWriter
+from scapy.all import *
 import os
 import subprocess
 
@@ -232,6 +235,7 @@ class Ui_AnalysisManagerWindow(object):
     def open_tab(self, _translate):
         if self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0) not in self.tabs_opened:
             self.selected_packets = []
+            tab_name = self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)
             self.tabs_opened.append(self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
             pcap = QtWidgets.QWidget()
             pcap.setObjectName(self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
@@ -306,7 +310,7 @@ class Ui_AnalysisManagerWindow(object):
             lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
                                          self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
 
-            self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(self.openPacketWireshark)
+            self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
             self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
             self.removePacketsButton_captureManagerWindow.clicked.connect(self.removePackets)
 
@@ -378,8 +382,24 @@ class Ui_AnalysisManagerWindow(object):
             if pcap.name == name:
                 subprocess.Popen(["wireshark", "-r", pcap.path])
 
-    def openPacketWireshark(self):
-        pass
+    def openPacketWireshark(self, name):
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+        if os.path.exists("temp_cap.pcap"):
+            os.remove("temp_cap.pcap")
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                packets = self.test_capture.iterate_file('', pcap.name)
+                temp_cap = PcapWriter("temp_cap.pcap", append=True)
+                i_open_file = PcapReader(pcap.path)
+                packet = i_open_file.read_packet()
+        for p in packets:
+            packet = i_open_file.read_packet()
+            if str(p.no) in self.selected_packets:
+                temp_cap.write(packet)
+        subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
+        packets.close()
 
     def convertPackets(self):
         pass

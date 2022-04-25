@@ -39,10 +39,8 @@ class Capture:
             if pcap.name in selected_pcaps:
                 pcap_paths += pcap.path + " "
         if platform.system() == 'Windows':
-            #os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
             os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (merged_file, pcap_paths))
         else:
-            #os.system('mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
             os.system('mergecap -w %s %s' % (merged_file, pcap_paths))
 
         new_pcap = Pcap(filename, filepath + "pcaps", filename)
@@ -70,7 +68,6 @@ class Capture:
 
     def iterate_file(self, filter: str, name: str):
         if any(x.name == name for x in self.pcaps):
-
             cap = pyshark.FileCapture(self.path + name, display_filter=filter,
                                       only_summaries=True)
 
