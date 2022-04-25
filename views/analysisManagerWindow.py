@@ -29,7 +29,6 @@ class Ui_AnalysisManagerWindow(object):
         self.InitialWorkspaceWindow = InitialWorkspaceWindow
         self.tabs_opened = []
         self.selected_pcaps = []
-        self.selected_packets = []
         self.tab_index = 0
         AnalysisManagerWindow.setObjectName("AnalysisManagerWindow")
         AnalysisManagerWindow.resize(1131, 747)
@@ -67,12 +66,6 @@ class Ui_AnalysisManagerWindow(object):
 
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-        self.filterInput_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
-        self.filterInput_analysisManagerWindow.setObjectName("filterInput_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.filterInput_analysisManagerWindow)
-        self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
         self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
@@ -94,8 +87,6 @@ class Ui_AnalysisManagerWindow(object):
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
-        # spacerItem1 = QtWidgets.QSpacerItem(418, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
-        # self.layoutPcapsDirectory_analysisManagerWindow.addItem(spacerItem1)
         self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
 
         self.gridLayout_2.addLayout(self.upperLayout_analysisManagerWindow, 0, 0, 1, 1)
@@ -131,9 +122,6 @@ class Ui_AnalysisManagerWindow(object):
                                                                                         "End Bytes"))
         self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow",
                                                                                         "End Bits/s"))
-        self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
-        self.filtersButton_analysisManagerWindow.setText(
-            _translate("AnalysisManagerWindow", "      Apply Filter      "))
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
         self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
@@ -142,11 +130,7 @@ class Ui_AnalysisManagerWindow(object):
 
         self.pcapsList_analysisManagerWindow.clicked.connect(self.selectedPcapCheckbox)
 
-        self.pcapsList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab())
-
-        self.filtersButton_analysisManagerWindow.clicked.connect(
-            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
-                                         self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        self.pcapsList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab(_translate))
 
         self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge())
 
@@ -164,41 +148,6 @@ class Ui_AnalysisManagerWindow(object):
 
         self.pcapsList_analysisManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.pcapsList_analysisManagerWindow.customContextMenuRequested.connect(self.context_menu_pcaps)
-
-        # self.pcapsList_analysisManagerWindow.doubleClicked.connect(
-        #     lambda: self.iterate_packets(self.test_capture, "",
-        #                                  self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-
-        # cap = pyshark.FileCapture('pcap1.pcap',
-        #                           only_summaries=True)
-        # for pkt in cap:
-        #     l = []
-        #     l.append(str(pkt.no))
-        #     l.append(str(pkt.time))
-        #     l.append(str(pkt.source))
-        #     l.append(str(pkt.destination))
-        #     l.append(str(pkt.protocol))
-        #     l.append(str(pkt.length))
-        #     l.append(str(pkt.info))
-        #     l1 = QTreeWidgetItem(l)
-        #     self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
-
-        # self.Pcap_pcap = QtWidgets.QWidget()
-        # self.Pcap_pcap.setObjectName("Pcap_pcap")
-        # self.gridLayout = QtWidgets.QGridLayout(self.Pcap_pcap)
-        # self.gridLayout.setObjectName("gridLayout")
-        # self.packetsList_analysisManagerWindow = QtWidgets.QTreeWidget()
-        # self.packetsList_analysisManagerWindow.setObjectName("packetsList_analysisManagerWindow")
-        # self.gridLayout.addWidget(self.packetsList_analysisManagerWindow, 0, 0, 1, 1)
-        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.Pcap_pcap, "")
-        # self.pcap_1 = QtWidgets.QWidget()
-        # self.pcap_1.setObjectName("pcap_1")
-        # self.pcapsTabWidget_analysisManagerWindow.addTab(self.pcap_1, "")
-
-        # self.iterate_packets(self.test_capture, "", 0)
-
-        # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.Pcap_pcap), _translate("AnalysisManagerWindow", "Pcap.pcap"))
-        # self.pcapsTabWidget_analysisManagerWindow.setTabText(self.pcapsTabWidget_analysisManagerWindow.indexOf(self.pcap_1), _translate("AnalysisManagerWindow", "1.pcap"))
 
 
     def closeAnalysisManager(self, AnalysisManagerWindow):
@@ -251,13 +200,26 @@ class Ui_AnalysisManagerWindow(object):
 
 
     def selectedPacketCheckbox(self):
+        checked = 0
+
         for i in range(self.packetsList_analysisManagerWindow.topLevelItemCount()):
             top_item = self.packetsList_analysisManagerWindow.topLevelItem(i)
             if top_item.checkState(0) == 2:
+                checked += 1
                 if top_item.text(0) not in self.selected_packets:
                     self.selected_packets.append(top_item.text(0))
             if top_item.checkState(0) == 0 and top_item.text(0) in self.selected_packets:
                 self.selected_packets.remove(top_item.text(0))
+
+        if checked > 0:
+            self.openPacketWiresharkButton_captureManagerWindow.setEnabled(True)
+            self.convertPacketsButton_captureManagerWindow.setEnabled(True)
+            self.removePacketsButton_captureManagerWindow.setEnabled(True)
+
+        else:
+            self.openPacketWiresharkButton_captureManagerWindow.setEnabled(False)
+            self.convertPacketsButton_captureManagerWindow.setEnabled(False)
+            self.removePacketsButton_captureManagerWindow.setEnabled(False)
 
     def show_pcap_list(self, capture):
         self.pcapsList_analysisManagerWindow.clear()
@@ -266,17 +228,31 @@ class Ui_AnalysisManagerWindow(object):
             x.setCheckState(0, QtCore.Qt.Unchecked)
             self.pcapsList_analysisManagerWindow.addTopLevelItem(x)
 
-    def open_tab(self):
+    def open_tab(self, _translate):
         if self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0) not in self.tabs_opened:
+            self.selected_packets = []
             self.tabs_opened.append(self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
             pcap = QtWidgets.QWidget()
             pcap.setObjectName(self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
 
             self.gridLayout = QtWidgets.QGridLayout(pcap)
             self.gridLayout.setObjectName("gridLayout")
+
+            self.filterPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
+            self.filterPacketLayout_captureManagerWindow.setObjectName("filterPacketLayout_captureManagerWindow")
+
+            self.filterInput_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
+            self.filterInput_analysisManagerWindow.setObjectName("filterInput_analysisManagerWindow")
+            self.filterPacketLayout_captureManagerWindow.addWidget(self.filterInput_analysisManagerWindow)
+            self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
+            self.filterPacketLayout_captureManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
+            self.gridLayout.addLayout(self.filterPacketLayout_captureManagerWindow, 0, 0, 1, 1)
+
+
             self.packetsList_analysisManagerWindow = QtWidgets.QTreeWidget()
             self.packetsList_analysisManagerWindow.setObjectName("packetsList_analysisManagerWindow")
-            self.gridLayout.addWidget(self.packetsList_analysisManagerWindow, 0, 0, 1, 1)
+            self.gridLayout.addWidget(self.packetsList_analysisManagerWindow, 1, 0, 1, 1)
             self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.pcapsList_analysisManagerWindow.selectedItems()[
                 0].text(0))
             self.packetsList_analysisManagerWindow.headerItem().setText(0, "No.")
@@ -287,6 +263,34 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
 
+            self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
+            self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
+
+            self.openPacketWiresharkButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.openPacketWiresharkButton_captureManagerWindow.setObjectName("openPacketWiresharkButton_captureManagerWindow")
+            self.buttonsPacketLayout_captureManagerWindow.addWidget(self.openPacketWiresharkButton_captureManagerWindow)
+
+            self.convertPacketsButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.convertPacketsButton_captureManagerWindow.setObjectName("convertPacketsButton_captureManagerWindow")
+            self.buttonsPacketLayout_captureManagerWindow.addWidget(self.convertPacketsButton_captureManagerWindow)
+
+            self.removePacketsButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.removePacketsButton_captureManagerWindow.setObjectName("removePacketsButton_captureManagerWindow")
+            self.buttonsPacketLayout_captureManagerWindow.addWidget(self.removePacketsButton_captureManagerWindow)
+
+            self.openPacketWiresharkButton_captureManagerWindow.setEnabled(False)
+            self.convertPacketsButton_captureManagerWindow.setEnabled(False)
+            self.removePacketsButton_captureManagerWindow.setEnabled(False)
+
+            self.gridLayout.addLayout(self.buttonsPacketLayout_captureManagerWindow, 2, 0, 1, 1)
+
+            self.openPacketWiresharkButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected Packets in Wireshark"))
+            self.convertPacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Convert Selected Packets"))
+            self.removePacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Remove Selected Packets"))
+            self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
+            self.filtersButton_analysisManagerWindow.setText(
+            _translate("AnalysisManagerWindow", "      Apply Filter      "))
+
             self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
 
             self.iterate_packets(self.test_capture, "",
@@ -296,6 +300,14 @@ class Ui_AnalysisManagerWindow(object):
             self.pcapsTabWidget_analysisManagerWindow.setCurrentIndex(self.tab_index)
 
             self.packetsList_analysisManagerWindow.clicked.connect(self.selectedPacketCheckbox)
+
+            self.filtersButton_analysisManagerWindow.clicked.connect(
+            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
+                                         self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+
+            self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(self.openPacketWireshark)
+            self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
+            self.removePacketsButton_captureManagerWindow.clicked.connect(self.removePackets)
 
             self.tab_index += 1
                                 
@@ -360,4 +372,13 @@ class Ui_AnalysisManagerWindow(object):
     #     pass
 
     def open_pcap_wireshark(self, name):
+        pass
+
+    def openPacketWireshark(self):
+        pass
+
+    def convertPackets(self):
+        pass
+
+    def removePackets(self):
         pass
