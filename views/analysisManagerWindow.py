@@ -382,12 +382,12 @@ class Ui_AnalysisManagerWindow(object):
 
     def hier_stat(self, name):
         #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
-        os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         
         #Modal PopUp
         msg = QMessageBox()
         msg.setWindowTitle("Modal PopUp Title")
-        msg.setText("Sample Text")
+        msg.setText("Sample Protocol Hierarchy Statistics")
         
         x = msg.exec_()
 
