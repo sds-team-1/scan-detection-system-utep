@@ -248,13 +248,17 @@ class Ui_CaptureManagerWindow(object):
     def load_scenario_unit(self):
         pass
 
+    #TODO: Start the UI dialog
     def edit_project(self, selected_project):
+        '''Starts the UI and edits the project'''
         pass
 
     def delete_project(self, selected_project):
         self.sds_controller.delete_project_contents(selected_project)
 
+    #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
+        ''' Starts the UI and edits the scenario unit.'''
         pass
 
     def delete_scenario_unit(self, selected_scenario_unit):
@@ -295,7 +299,9 @@ class Ui_CaptureManagerWindow(object):
 
             return
 
+    #TODO: Add the UI and functionality.
     def edit_node(self, selected_node):
+        '''Starts the UI window for editing a node then changes it for the db.'''
         pass
 
     def delete_node(self, selected_node):

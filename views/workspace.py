@@ -123,16 +123,20 @@ class Ui_workspace_window(object):
         menu.addAction(action_edit_workspace)
         menu.addAction(action_delete_workspace)
 
-        # action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
+        action_edit_workspace.triggered.connect(lambda: edit_workspace(name))
         action_delete_workspace.triggered.connect(lambda: self.delete_workspace(name))
 
         menu.exec_(self.workspacesList_workspaceWindow.mapToGlobal(point))
 
-    # TODO: Implement this
     def delete_workspace(self, selected_workspace):
         """ Removes the workspace. If projects don't exist in other workspaces then
         they will be deleted. Same rule for the scenarios and nodes."""
         self.sds_controller.delete_workspace_contents(selected_workspace)
+
+    #TODO: Add the UI functionality
+    def edit_workspace(self, workspace_name: str):
+        '''Opens a new ui for editing. Then submits the change to the database.'''
+        pass
 
     def open_workspace(self, workspace_Window):
         selected_workspace = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
