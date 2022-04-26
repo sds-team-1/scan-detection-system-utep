@@ -289,7 +289,13 @@ class SDSController:
             self._scenario_unit_construction['scenario_name'] = name
     
     def delete_scenario_contents(self, scenario_name: str):
-        pass
+        '''Deletes the scenario unit and all nodes unique to it.'''
+        scenario_d = {}
+        for projects in self._entire_workspace_context['projects']:
+            for su in projects['scenario_units']:
+                if su['scenario_name'] == scenario_name:
+                    scenario_d = su
+        self._db_connection.delete_scenario_unit_down(scenario_d)
             
     def insert_node(self, scenario_id: str, node_id: str, listening: bool, \
         type: str, name: str, ip: str, mac: str, subnet: bool, scanning: bool, \
@@ -317,6 +323,16 @@ class SDSController:
             self._db_connection.create_node(scenario_id, node_dict)
             self.change_workspace_context(self._workspace_name)
             pass
+    
+    def delete_node_contents(self, node_name: str):
+        '''Deletes the node.'''
+        for project in self._entire_workspace_context['projects']:
+            for scenario_unit in project['scenario_units']:
+                for node in scenario_unit['nodes']:
+                    if node['name'] == node_name:
+                        self._db_connection.delete_node(node)
+                        return True
+        return False
     
     def finish_scenario_unit_construction(self, project_name: str, iterations: int):
         self._ensure_subsystems()

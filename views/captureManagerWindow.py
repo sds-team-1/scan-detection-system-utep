@@ -279,7 +279,7 @@ class Ui_CaptureManagerWindow(object):
             item = self.nodesList_captureManagerWindow.itemAt(point)
             if not item:
                 return
-            name = item.text(0)
+            name = item.text(2)
 
             menu = QtWidgets.QMenu()
             action_edit_node = QAction("Edit Node")
@@ -299,7 +299,7 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def delete_node(self, selected_node):
-        pass
+        self.sds_controller.delete_node_contents(selected_node)
 
     def item_project_selected(self):
         # print(f'checking if item_project_selected went inside')
