@@ -356,14 +356,17 @@ class Ui_AnalysisManagerWindow(object):
         action_open_pcap = QAction("Open pcap in Wireshark")
         action_rename_pcap = QAction("Rename pcap")
         action_delete_pcap = QAction("Delete pcap")
+        action_hier_stat = QAction("Protocol Hierarchy")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_rename_pcap)
         menu.addAction(action_delete_pcap)
+        menu.addAction(action_hier_stat)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
         action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
         action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
+        action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
 
@@ -376,6 +379,10 @@ class Ui_AnalysisManagerWindow(object):
     # # TODO: Implement
     # def delete_pcap(self, name):
     #     pass
+
+    def hier_stat(self, name):
+        print ("Wazzup")
+
 
     def open_pcap_wireshark(self, name):
         for pcap in self.test_capture.pcaps:
