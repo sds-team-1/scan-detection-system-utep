@@ -312,7 +312,7 @@ class Ui_AnalysisManagerWindow(object):
 
             self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
             self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
-            self.removePacketsButton_captureManagerWindow.clicked.connect(self.removePackets)
+            self.removePacketsButton_captureManagerWindow.clicked.connect(lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
 
             self.tab_index += 1
                                 
@@ -413,5 +413,47 @@ class Ui_AnalysisManagerWindow(object):
     def convertPackets(self):
         pass
 
-    def removePackets(self):
-        pass
+    def removePackets(self, name, packets_list):
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+        index = 0 
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                path = pcap.path.replace(pcap.name,"temp_cap.pcap")
+                if os.path.exists(path):
+                    os.remove(path)
+                packets = self.test_capture.iterate_file('', pcap.name)
+                path = pcap.path.replace(pcap.name, "temp_cap.pcap")
+                temp_cap = PcapWriter(path, append=True)
+                i_open_file = PcapReader(pcap.path)
+                packet = i_open_file.read_packet()
+                break
+            else:
+                index += 1
+        for p in packets:
+            packet = i_open_file.read_packet()
+            if str(p.no) not in self.selected_packets:
+                temp_cap.write(packet)
+        packets.close()
+        path_new = path.replace("temp_cap.pcap", name)
+        os.remove(path_new)
+        os.rename(path, path_new)
+
+        del self.test_capture.pcaps[index]
+
+        new_pcap = Pcap(name, self.test_capture.path, name)
+        self.test_capture.pcaps.insert(index, new_pcap)
+
+        while True:
+            if self.check(packets_list) is True:
+                break
+            
+    def check(self, packets_list):
+        for i in range(packets_list.topLevelItemCount()):
+            top_item = packets_list.topLevelItem(i)
+            if top_item.checkState(0) == 2:
+                packets_list.takeTopLevelItem(i)
+                return False
+        return True
+                
