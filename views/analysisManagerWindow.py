@@ -356,7 +356,7 @@ class Ui_AnalysisManagerWindow(object):
         action_open_pcap = QAction("Open pcap in Wireshark")
         action_rename_pcap = QAction("Rename pcap")
         action_delete_pcap = QAction("Delete pcap")
-        action_hier_stat = QAction("Protocol Hierarchy")
+        action_hier_stat = QAction("Protocol Stats")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_rename_pcap)
@@ -382,6 +382,8 @@ class Ui_AnalysisManagerWindow(object):
 
     def hier_stat(self, name):
         print ("Wazzup")
+        #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
+        os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
 
 
     def open_pcap_wireshark(self, name):
