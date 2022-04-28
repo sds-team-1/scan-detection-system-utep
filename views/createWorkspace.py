@@ -7,7 +7,7 @@ from views.missingFieldsWindow import Ui_missingFields_window
 
 
 class Ui_newWorkspace_window(object):
-    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller):
+    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller, input_to_edit = None):
         self.sds_controller = sds_controller
         newWorkspace_window.setObjectName("newWorkspace_window")
         newWorkspace_window.setEnabled(True)
@@ -41,13 +41,27 @@ class Ui_newWorkspace_window(object):
         QtCore.QMetaObject.connectSlotsByName(newWorkspace_window)
 
         _translate = QtCore.QCoreApplication.translate
-        newWorkspace_window.setWindowTitle(_translate("newWorkspace_window", "New Workspace"))
-        self.workspaceNameLabel_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Workspace Name:     "))
-        self.createWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Create"))
-        self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Cancel"))
+        # Switch between editing and creating.
+        if not input_to_edit:
+            newWorkspace_window.setWindowTitle(_translate("newWorkspace_window", "New Workspace"))
+            self.workspaceNameLabel_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Workspace Name:     "))
+            self.createWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Create"))
+            self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Cancel"))
 
-        self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.createWorkspace(newWorkspace_window, workspace_Window))
-        self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
+            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.createWorkspace(newWorkspace_window, workspace_Window))
+            self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
+        else:
+            newWorkspace_window.setWindowTitle(_translate('newWorkspace_window', 'Edit Workspace'))
+            self.workspaceNameLabel_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Workspace Name:     '))
+            self.createWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Save'))
+            self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Cancel'))
+
+            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.editWorkspace(newWorkspace_window, workspace_Window, input_to_edit))
+            self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
+            
+    def editWorkspace(self, editWorkspace_window, workspace_window, workspace_edit_name):
+        ''' Starts and populates the workspace window'''
+        pass
 
     def createWorkspace(self, createWorkspace_Window, workspace_Window):
         # Get workspace name

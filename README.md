@@ -1,6 +1,41 @@
 # scan-detection-system-utep
 The end goal of the Scan Detection System (SDS) is to provide users with the ability to capture and analyze network traffic data through a graphical workspace.
 
+## Windows Setup
+###Install Python 3 (Make sure that pip and "Add to Path" is checked)
+`https://www.python.org/ftp/python/3.10.4.python-3.10.4-amd64.exe`
+make sure to upgade pip to the latest verison. Run this command in the command prompt
+`pip install --upgrade pip`
+
+###Install MongoDB 5.0.7
+`https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.7-signed.msi`
+In Service Configuration, make sure to check off "Install MongoDB as a Service" and use the default "Run service as Network Service user". To access the shell navigate in the command prompt to `C:\Program Files\MongoDB\Server\5.0.7\bin\` and run `mongo`. When using the SDS, make sure that the service is running.
+
+###Install VirtualBox 6.1.34
+`https://download.virtualbox.org/virtualbox/6.1.34/VirtualBox-6.1.34-150636-Win.exe`
+
+###Install Git Bash
+Recommended to install Git Bash to clone and to run other commands. Select MinTTY as the terminal emulator.
+`https://github.com/git-for-windows/git/releases/download/v2.36.0.windows.1/Git-2.36.0-64-bit.exe`
+
+## Ubuntu 18+ Setup
+###Install Python3 pip
+`sudo apt-get install python3-pip`
+
+###Install MongoDB 5.0.7
+`sudo apt-get install gnupg`
+`wget -q0 - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -`
+
+###Install VirtualBox 6.1.34
+Ubuntu 18
+`https://download.virtualbox.org/virtualbox/6.1.34/virtualbox-6.1_6.1.34-150636~Ubuntu~bionic_amd64.deb`
+Ubuntu 20
+`https://download.virtualbox.org/virtualbox/6.1.34/virtualbox-6.1_6.1.34-150636~Ubuntu~eoan_amd64.deb`
+
+## General Setup
+If using Windows 10, use the Git Bash terminal from now on.
+### Download the CORE VM
+`https://drive.google.com/uc?export=download&id=1bbdw8_pDO4eXvqUg7PgyIsW9fomhfpJt`
 
 ## To start, open terminal on the root folder and run the following command to install requirements
 `pip3 install -r ./requirements.txt`
