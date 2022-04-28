@@ -384,7 +384,7 @@ class Ui_AnalysisManagerWindow(object):
         #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
         #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         
-        output = subprocess.getoutput('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        output = subprocess.getoutput('tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         #print (output)
         #Modal PopUp
         msg = QMessageBox()
