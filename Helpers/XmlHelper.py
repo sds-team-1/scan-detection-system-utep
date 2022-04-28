@@ -178,23 +178,23 @@ class XmlHelper:
             elif linksList[i]["type"] == "PC":
                 name = "eth0"
                 self.links_str = self.links_str + xmltodict.unparse(
-                {'link': {'@node1': linksList[i]["link"], '@node2': linksList[i]["id"],"iface2":{"@id":str(self.id_counter+100),"@name": name, "@mac": linksList[i]["mac"], "@ip4": linksList[i]["ip"], "@ip4_mask": linksList[i]["ip4_mask"], "@ip6": "", "@ip6_mask": "64"},
+                {'link': {'@node1': linksList[i]["link"], '@node2': linksList[i]["id"],"iface2":{"@id":str(self.id_counter+100),"@name": name, "@mac": linksList[i]["mac"], "@ip4": linksList[i]["ip"], "@ip4_mask": "24", "@ip6": "", "@ip6_mask": "64"},
                 "options":{"@delay": "0", "@bandwith": "0", "@loss": "0.0", "@dup": "0", "@jitter": "0", "@unidirectional": "0", "@buffer": "0"}}
                 }, short_empty_elements=True).replace('<?xml version="1.0" encoding="utf-8"?>\n', "")
             
                 links_dict["links"].update(
-                {'link': {'@node1': linksList[i]["link"], '@node2': linksList[i]["id"],"iface2":{"@id":str(self.id_counter+100),"@name": name, "@mac": linksList[i]["mac"], "@ip4": linksList[i]["ip"], "@ip4_mask": linksList[i]["ip4_mask"], "@ip6": "", "@ip6_mask": "64"},
+                {'link': {'@node1': linksList[i]["link"], '@node2': linksList[i]["id"],"iface2":{"@id":str(self.id_counter+100),"@name": name, "@mac": linksList[i]["mac"], "@ip4": linksList[i]["ip"], "@ip4_mask": "24", "@ip6": "", "@ip6_mask": "64"},
                 "options":{"@delay": "0", "@bandwith": "0", "@loss": "0.0", "@dup": "0", "@jitter": "0", "@unidirectional": "0", "@buffer": "0"}}
                 })
             elif linksList[i]["type"] == "SWITCH":
                 name = "eth" + str(ethCount)
                 self.links_str = self.links_str + xmltodict.unparse(
-                {'link': {'@node1': linksList[i]["id"], '@node2': "999","iface2":{"@id":str(self.id_counter+1000),"@name": name, "@ip4": linksList[i]["ip"], "@ip4_mask": linksList[i]["ip4_mask"], "@ip6": "2001::1", "@ip6_mask": "64"},
+                {'link': {'@node1': linksList[i]["id"], '@node2': "999","iface2":{"@id":str(self.id_counter+1000),"@name": name, "@ip4": linksList[i]["ip"], "@ip4_mask": "24", "@ip6": "2001::1", "@ip6_mask": "64"},
                 "options":{"@delay": "0", "@bandwith": "0", "@loss": "0.0", "@dup": "0", "@jitter": "0", "@unidirectional": "0", "@buffer": "0"}}
                 }, short_empty_elements=True).replace('<?xml version="1.0" encoding="utf-8"?>\n', "")
             
                 links_dict["links"].update(
-                {'link': {'@node1': linksList[i]["id"], '@node2': "999","iface2":{"@id":str(self.id_counter+1000),"@name": name, "@ip4": linksList[i]["ip"], "@ip4_mask": linksList[i]["ip4_mask"], "@ip6": "2001::1", "@ip6_mask": "64"},
+                {'link': {'@node1': linksList[i]["id"], '@node2': "999","iface2":{"@id":str(self.id_counter+1000),"@name": name, "@ip4": linksList[i]["ip"], "@ip4_mask": "24", "@ip6": "2001::1", "@ip6_mask": "64"},
                 "options":{"@delay": "0", "@bandwith": "0", "@loss": "0.0", "@dup": "0", "@jitter": "0", "@unidirectional": "0", "@buffer": "0"}}
                 })
                 self.id_counter += 1

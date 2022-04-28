@@ -27,6 +27,17 @@ class SDSDatabaseHelper:
             return False
         return True
 
+    def update_workspace_projects(self, workspace_name: str, project_name: str) -> bool:
+        client = MongoClient(self.url)
+        db = client['SDS']
+        collection = db['workspaces']
+        try:
+            collection.update_one({'_id': workspace_name}, {'$push': {'projects': project_name}})
+            return True
+        except:
+            return False
+
+
     def save_workspace(self, workspace_name: str, data: dict):
         client = MongoClient(self.url)
         db = client.SDS
@@ -42,8 +53,6 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url)
         db = client['SDS_DB']
         collection = db['projects']
-        #print('dbhelper showing project...')
-        #print(project)
         if not project:
             try:
                 collection.insert_one({'_id': project_name, 'parallel_units': par_units,
@@ -59,9 +68,6 @@ class SDSDatabaseHelper:
                 return False
         collection = db['workspaces']
         query = {'_id': workspace_name}
-        #print('createproject showing update...')
-        #print(query)
-        #print(update)
         success = collection.update_one(query, update)
         return False if success == 0 else True
 
@@ -72,11 +78,18 @@ class SDSDatabaseHelper:
         return collection.find().distinct('_id')
     
     def get_workspace_context(self, workspace_name: str) -> dict:
+        print("workspace context " +  workspace_name)
         client = MongoClient(self.url)
         db = client.SDS
         collection = db['workspaces']
+        print("workspace context " +  workspace_name)
+        
         workspace_dict = collection.find_one({'_id': workspace_name})
+        print("workspace context " +  workspace_name)
+        
         # Replace all projects with data
+        if 'projects' not in workspace_dict.keys():
+            return workspace_dict
         projects_to_remove = [project_name for project_name in workspace_dict['projects']]
         for project_name in projects_to_remove:
             # Get project Data
@@ -170,8 +183,9 @@ class SDSDatabaseHelper:
             data['nodes'] = []
 
             #Saves the scenario and retrieves the id
+            print(f'{data}')
             scenario_objid = collection.insert_one(data).inserted_id
-
+            print('succuss')
             #Insert all the keys if there 
             node_keys = nodes.keys()
             for n in node_keys:

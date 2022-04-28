@@ -1,4 +1,3 @@
-
 import os
 import shutil
 import platform
@@ -7,8 +6,10 @@ import collections
 import matplotlib.pyplot as plt
 import numpy as np
 from Models.pcap import Pcap
+
+
 class Capture:
-    def __init__(self, name: str, parentPath:str) -> None:
+    def __init__(self, name: str, parentPath: str) -> None:
         self.name = name
         self.pcaps = []
         self.mergeFilePath = None
@@ -17,14 +18,14 @@ class Capture:
         self.totalPackets = 0
         self.protocols = None
         self.create_folder()
-        #self.create_merge_file()
+        # self.create_merge_file()
 
     def add_pcap(self, new: Pcap) -> list:
         self.pcaps.append(new)
-        #self.merge_pcaps()
+        # self.merge_pcaps()
         return self.pcaps
 
-    def del_pcap(self, old:Pcap)-> list:
+    def del_pcap(self, old: Pcap) -> list:
         self.pcaps.remove(old)
         if self.pcaps:
             self.merge_pcaps()
@@ -32,42 +33,45 @@ class Capture:
         old.remove()
         return self.pcaps
 
-    def merge_pcaps(self):
+    def merge_pcaps(self, merged_file, selected_pcaps, filename, filepath):
         pcap_paths = ""
         for pcap in self.pcaps:
-            pcap_paths += pcap.path + " "
+            if pcap.name in selected_pcaps:
+                pcap_paths += pcap.path + " "
         if platform.system() == 'Windows':
-            os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            os.system('cd "C:\\Program Files\\Wireshark\\" & mergecap -w %s %s' % (merged_file, pcap_paths))
         else:
-            os.system('mergecap -w %s %s' % (self.mergeFilePath, pcap_paths))
+            os.system('mergecap -w %s %s' % (merged_file, pcap_paths))
 
-    def create_folder(self)-> str:
+        new_pcap = Pcap(filename, filepath + "pcaps", filename)
+        self.add_pcap(new_pcap)
+
+    def create_folder(self) -> str:
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
         return self.path
 
     def create_merged_file(self):
-        filename = self.name + ".pcap"
+        filename = "merged_pcap" + ".pcap"
         path = os.path.join(self.path, filename)
         self.mergeFilePath = path
         fp = open(path, 'a')
         fp.close()
 
-    def save(self, f)-> None:
+    def save(self, f) -> None:
         f.write('{"name": "%s", "totalPackets": %s, "pcaps": [' % (self.name, self.totalPackets))
         for a in self.pcaps:
             a.save(f)
             if a != self.pcaps[-1]:
                 f.write(',')
         f.write(']}')
-    def iterate_file(self, filter:str, name:str):
-        print("reached here")
-        if any(x.name == name for x in self.pcaps):
-            print(self.path + name)
 
-            cap = pyshark.FileCapture(self.path + name, display_filter=filter ,
-                                  only_summaries=True)
-        pktlist= []
+    def iterate_file(self, filter: str, name: str):
+        if any(x.name == name for x in self.pcaps):
+            cap = pyshark.FileCapture(self.path + name, display_filter=filter,
+                                      only_summaries=True)
+
+        pktlist = []
         file_list = []
         # for pkt in cap:
         #     pktlist.append(pkt.protocol)
@@ -79,7 +83,6 @@ class Capture:
         #     file_list.append(str(pkt.length))
         #     file_list.append(str(pkt.info))
 
-
         # counter = collections.Counter(pktlist)
         #
         # plt.style.use('ggplot')
@@ -89,13 +92,8 @@ class Capture:
         # plt.ylabel("Frequency")
         # plt.xlabel("Protocol Name")
         # plt.savefig("ProtocolGraph.png")
-        #plt.show()
+        # plt.show()
         return cap
-
-
-
-
-
 
 # test_pcap = pcap.Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
 # test_pcap.create_json_file()

@@ -1,8 +1,11 @@
 from PyQt5 import QtCore, QtWidgets
 
+from views.missingFieldsWindow import Ui_missingFields_window
+
 
 class Ui_newProject_window(object):
-    def setupNewProject(self, newProject_window : QtWidgets.QDialog):
+    def setupNewProject(self, newProject_window, sds_controller, projectsList_captureManagerWindow):
+        self.sds_controller = sds_controller
         newProject_window.setObjectName("newProject_window")
         newProject_window.setEnabled(True)
         newProject_window.resize(487, 135)
@@ -53,3 +56,44 @@ class Ui_newProject_window(object):
                                                                                          "Parallel:"))
         self.newProjectCreateButton_newProjectWindow.setText(_translate("newProject_window", "Create"))
         self.newProjectCancelButton_newProjectWindow.setText(_translate("newProject_window", "Cancel"))
+
+        self.newProjectCreateButton_newProjectWindow.clicked.connect(
+            lambda: self.createProject(projectsList_captureManagerWindow, newProject_window))
+        self.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_window.close)
+
+    def createProject(self, projectsList_captureManagerWindow, newProject_window):
+        project_name = self.newProjectNameInput_newProjectWindow.text()
+        # print(project_name)
+        project_parallel = self.newProjectMaxUnitsSpinbox_newProjectWindow.value()
+
+        # If the input is incorrect show the missing fields window
+        if not project_name or project_parallel == 0:
+            missingFields_Window = QtWidgets.QDialog()
+            missingFieldsWindowUI = Ui_missingFields_window()
+            missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+            missingFields_Window.show()
+        # Otherwise save the project
+        else:
+            p = QtWidgets.QTreeWidgetItem([project_name])
+            # print('creating project')
+            # print(project_name)
+            # Use the sds controller to save the project
+            self.sds_controller._enforce_state('workplace_construction')
+            # print('createproject showing currentworksspacename')
+            # print(current_workspace_name)
+            self.sds_controller._enforce_state('project_construction')
+            self.sds_controller.specify_project_name(project_name)
+            self.sds_controller.specify_num_parrallel_units(project_parallel)
+            success = self.sds_controller.finish_project_construction()
+
+            # print(success)
+            if not success:
+                # TODO: Add a warning message
+                pass
+            else:
+                # Adds the TreeWidgetItem to the project list
+                projectsList_captureManagerWindow.addTopLevelItem(p)
+                # Resets the values for the window
+                self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
+                self.newProjectNameInput_newProjectWindow.clear()
+                newProject_window.close()

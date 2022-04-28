@@ -1,26 +1,18 @@
+<<<<<<< HEAD
 # Imports
 import os
+=======
+>>>>>>> 6d72ead37dacf87e2e6e0a5fffb4f651d42e1ebd
 import sys
-import time
-import json
-import uuid
+from PyQt5 import QtWidgets
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction
-
-from views.addNodeWindow import Ui_addNode_window
-from views.analysisManagerWindow import Ui_AnalysisManagerWindow
-from views.createWorkspace import Ui_newWorkspace_window
+from Database.databaseFunctions import connect_subsystems_and_database, set_up_database_connection
+from Models.modelClasses import Workspace
 from views.databaseConfigWindow import Ui_databaseConfig_window
-from views.databaseErrorWindow import Ui_databaseError_window
 from views.deleteConfirmationWindow import Ui_deleteConfirmation_window
-from views.captureManagerWindow import Ui_CaptureManagerWindow
-from views.missingFieldsWindow import Ui_missingFields_window
-from views.newProject import Ui_newProject_window
-from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
-from views.setNodesWindow import Ui_addSetNodes_window
 from views.workspace import Ui_workspace_window
 from Controllers.SDSController import SDSController
+<<<<<<< HEAD
 from Controllers.AnalysisManager import SDSAnalysisManager
 from Controllers.CaptureController import CaptureController
 from Database.DatabaseHelper import SDSDatabaseHelper
@@ -79,153 +71,22 @@ class ScannerNode(Node):
         self.end_condition = end_condition
 
 ################ END CLASSES ################
+=======
+>>>>>>> 6d72ead37dacf87e2e6e0a5fffb4f651d42e1ebd
 
 app = QtWidgets.QApplication(sys.argv)
 workspace_Window = QtWidgets.QDialog()
-createWorkspace_Window = QtWidgets.QDialog()
-captureManager_Window = QtWidgets.QMainWindow()
-analysisManager_Window = QtWidgets.QMainWindow()
-newProject_Window = QtWidgets.QDialog()
-addNode_Window = QtWidgets.QDialog()
-addSetNodes_Window = QtWidgets.QDialog()
-missingFields_Window = QtWidgets.QDialog()
-newScenarioUnit_Window = QtWidgets.QDialog()
 deleteConfirmation_Window = QtWidgets.QDialog()
 databaseConfig_Window = QtWidgets.QDialog()
 databaseError_Window = QtWidgets.QDialog()
 
 workspaceUI = Ui_workspace_window()
-createWorkspaceUI = Ui_newWorkspace_window()
-captureManagerWindowUI = Ui_CaptureManagerWindow()
-analysisManagerWindowUI = Ui_AnalysisManagerWindow()
-newProjectWindowUI = Ui_newProject_window()
-addNodeWindowUI = Ui_addNode_window()
-addSetNodesWindowUI = Ui_addSetNodes_window()
-missingFieldsWindowUI = Ui_missingFields_window()
-newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
 deleteConfirmationWindowUI = Ui_deleteConfirmation_window()
 databaseConfigWindowUI = Ui_databaseConfig_window()
-databaseErrorWindowUI = Ui_databaseError_window()
 
 workspace_object: Workspace = Workspace()
-current_workspace_name = workspace_object.name
-current_project_name = ''
 
 sds_controller = SDSController()
-db_config_filename = 'conf/db_config.json'
-
-
-def createWorkspaceWindow():
-    global createWorkspace_Window
-    createWorkspace_Window = QtWidgets.QDialog()
-    createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window)
-    sds_controller.start_new_workplace()
-    createWorkspaceUI.createWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace)
-    createWorkspaceUI.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(createWorkspace_Window.close)
-    createWorkspace_Window.show()
-
-
-def databaseConfigWindow():
-    global databaseError_Window
-    databaseError_Window = QtWidgets.QDialog()
-    databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
-    databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-        databaseConfig_Window.close)
-    databaseConfig_Window.show()
-
-
-def analysisManagerWindow():
-    global analysisManager_Window
-    analysisManager_Window = QtWidgets.QMainWindow()
-    analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
-    #databaseConfigWindowUI.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(connect_database)
-    #databaseConfigWindowUI.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
-     #   databaseConfig_Window.close)
-    workspace_Window.close()
-    analysisManager_Window.show()
-
-
-def connect_database():
-    global db_config_filename, mongo_connection
-    database_ip = databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.text()
-    # Edit config file to insert database ip
-    data = None
-    with open(db_config_filename, 'r') as config_file:
-        data = json.load(config_file)
-        data['ip'] = database_ip
-    tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
-    with open(tempfile, 'w') as config_file:
-        json.dump(data, config_file, indent=4)
-    os.replace(tempfile, db_config_filename)
-    # Try to set up controller w/ database again
-    mongo_connection, connection_success = set_up_database_connection()
-    if connection_success:
-        connect_subsystems_and_database()
-        # If success -> close window
-        databaseConfig_Window.close()
-    else:
-        databaseError_Window.show()
-
-
-def createWorkspace():
-    # Get workspace name
-    ws_name = createWorkspaceUI.workspaceNameInput_newWorkspaceWindow.text()
-    # Check if valid input
-    if not ws_name:
-        missingFields_Window.show()
-    else:
-        # Insert into controller of new workspace. 
-        sds_controller.specify_workplace_name(ws_name)
-        workspace_injection_success: bool = sds_controller.finish_workplace_construction()
-        # TODO: Based on the success, insert another window if error
-        if not workspace_injection_success:
-            pass
-        else:
-            workspace_object.name = ws_name
-            captureManager_Window.show()
-            createWorkspace_Window.close()
-            workspace_Window.close()
-
-
-def createProjectWindow():
-    global newProject_Window
-    newProject_Window = QtWidgets.QDialog()
-    newProjectWindowUI.setupNewProject(newProject_Window)
-    newProjectWindowUI.newProjectCreateButton_newProjectWindow.clicked.connect(createProject)
-    newProjectWindowUI.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_Window.close)
-    sds_controller.start_new_project_phase()
-    newProject_Window.show()
-
-
-def newScenarioUnitWindow():
-    global newScenarioUnit_Window
-    newScenarioUnit_Window = QtWidgets.QDialog()
-    newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window)
-    newScenarioUnitWindowUI.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(createScenario)
-    newScenarioUnitWindowUI.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
-        newScenarioUnit_Window.close)
-    sds_controller.add_scenario_unit()
-    newScenarioUnit_Window.show()
-
-
-def addNodeWindow():
-    global addNode_Window
-    addNode_Window = QtWidgets.QDialog()
-    addNodeWindowUI.setupAddNode(addNode_Window)
-    addNodeWindowUI.addNodeButton_addNodeWindow.clicked.connect(addNode)
-    addNodeWindowUI.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_Window.close)
-    addNodeWindowUI.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(addNodeCheckboxStateChanged)
-    addNode_Window.show()
-
-
-def addSetNodesWindow():
-    global addSetNodes_Window
-    addSetNodes_Window = QtWidgets.QDialog()
-    addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window)
-    addSetNodesWindowUI.setNodesCreateButton_addSetNodesWindow.clicked.connect(addSetNodes)
-    addSetNodesWindowUI.setNodesCancelButton_addSetNodesWindow.clicked.connect(addSetNodes_Window.close)
-    addSetNodes_Window.show()
 
 
 def deleteConfirmationWindow():
@@ -239,6 +100,7 @@ def deleteConfirmationWindow():
     deleteConfirmation_Window.show()
 
 
+<<<<<<< HEAD
 def createProject():
     project_name = newProjectWindowUI.newProjectNameInput_newProjectWindow.text()
     # print(project_name)
@@ -649,10 +511,13 @@ def context_menu_node(point):
         return
 
 
+=======
+>>>>>>> 6d72ead37dacf87e2e6e0a5fffb4f651d42e1ebd
 def delete_selection():
     pass
 
 
+<<<<<<< HEAD
 # TODO: Store services in variables or objects.
 def store_core_sds_service():
     core_sds_service = captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.text()
@@ -744,29 +609,21 @@ def set_up_database_connection():
         return None, False
 
 
+=======
+>>>>>>> 6d72ead37dacf87e2e6e0a5fffb4f651d42e1ebd
 def assert_database_connection():
     global sds_controller, mongo_connection
     mongo_connection, db_connection_success = set_up_database_connection()
 
     if db_connection_success:
-        connect_subsystems_and_database()
+        connect_subsystems_and_database(workspaceUI.workspacesList_workspaceWindow, sds_controller, mongo_connection)
         workspace_Window.show()
     else:
         workspace_Window.show()
         databaseError_Window.show()
 
 
-def connect_subsystems_and_database():
-    sds_controller.add_mongo_connection(mongo_connection)
-    sds_controller.add_capture_manager(CaptureController())
-    sds_controller.add_analysis_manager(SDSAnalysisManager())
-    # sds controller implementation for filling workspaces
-    generate_workspaces_list_window()
-
-
-setup_ui()
-
-initialize_signals()
+workspaceUI.setupWorkspaceUI(workspace_Window, sds_controller)
 
 assert_database_connection()
 

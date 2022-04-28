@@ -38,3 +38,5 @@ class Ui_databaseError_window(object):
         self.databaseErrorLabel1_databaseErrorWindow.setText(_translate("databaseError_window", "The database connection was not successful."))
         self.databaseErrorLabel2_databaseErrorWindow.setText(_translate("databaseError_window", "Please, try again."))
         self.databaseErrorCloseButton_databaseErrorWindow.setText(_translate("databaseError_window", "  Close  "))
+
+        self.databaseErrorCloseButton_databaseErrorWindow.clicked.connect(databaseError_window.close)
