@@ -10,7 +10,7 @@ from Database.databaseFunctions import generate_workspaces_list_window
 
 
 class Ui_newWorkspace_window(object):
-    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller, workspace_list, input_to_edit = None):
+    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller, workspace_list = None, input_to_edit = None):
         self.sds_controller = sds_controller
         newWorkspace_window.setObjectName("newWorkspace_window")
         newWorkspace_window.setEnabled(True)
@@ -79,7 +79,7 @@ class Ui_newWorkspace_window(object):
                 editWorkspace_window.close()
                 generate_workspaces_list_window(workspaceList, self.sds_controller)
 
-    def createWorkspace(self, createWorkspace_Window, workspace_Window, workspacesList_workspaceWindow):
+    def createWorkspace(self, createWorkspace_Window, workspace_Window):
         # Get workspace name
         ws_name = self.workspaceNameInput_newWorkspaceWindow.text()
         # Check if valid input
@@ -98,7 +98,6 @@ class Ui_newWorkspace_window(object):
                 pass
             else:
                 time.sleep(1)
-                generate_workspaces_list_window(workspacesList_workspaceWindow, self.sds_controller)
                 captureManager_Window = QtWidgets.QMainWindow()
                 captureManagerWindowUI = Ui_CaptureManagerWindow()
                 captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller, workspace_Window)
