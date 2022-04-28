@@ -139,7 +139,7 @@ class Ui_workspace_window(object):
         '''Opens a new ui for editing. Then submits the change to the database.'''
         edit_workspace_window = QtWidgets.QDialog()
         edit_window = Ui_newWorkspace_window()
-        edit_window.setupCreateWorkspace(edit_window, self._workspace_window, self.sds_controller, workspace_name)
+        edit_window.setupCreateWorkspace(edit_workspace_window, self._workspace_window, self.sds_controller, self.workspacesList_workspaceWindow, workspace_name)
         # self.sds_controller._enforce_state('')
         edit_workspace_window.show()
 
@@ -178,7 +178,7 @@ class Ui_workspace_window(object):
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window()
-        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller)
+        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller, self.workspacesList_workspaceWindow)
         self.sds_controller.start_new_workplace()
         createWorkspace_Window.show()
 

@@ -5,9 +5,11 @@ from PyQt5 import QtCore, QtWidgets
 from views.captureManagerWindow import Ui_CaptureManagerWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 
+from Database.databaseFunctions import generate_workspaces_list_window
+
 
 class Ui_newWorkspace_window(object):
-    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller, input_to_edit = None):
+    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, sds_controller, workspace_list, input_to_edit = None):
         self.sds_controller = sds_controller
         newWorkspace_window.setObjectName("newWorkspace_window")
         newWorkspace_window.setEnabled(True)
@@ -55,13 +57,27 @@ class Ui_newWorkspace_window(object):
             self.workspaceNameLabel_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Workspace Name:     '))
             self.createWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Save'))
             self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Cancel'))
-
-            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.editWorkspace(newWorkspace_window, workspace_Window, input_to_edit))
+            self.workspaceNameInput_newWorkspaceWindow.setText(input_to_edit)
+            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.editWorkspace(newWorkspace_window, workspace_list, workspace_Window, input_to_edit))
             self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
             
-    def editWorkspace(self, editWorkspace_window, workspace_window, workspace_edit_name):
+    def editWorkspace(self, editWorkspace_window, workspaceList, workspace_window, workspace_edit_name):
         ''' Starts and populates the workspace window'''
-        pass
+        # Get new workspace name 
+        new_ws_name = self.workspaceNameInput_newWorkspaceWindow.text()
+        # Check if its valid
+        if not new_ws_name:
+            missingFields_window = QtWidgets.QDialog()
+            missingFieldsWindowUI = Ui_missingFields_window()
+            missingFieldsWindowUI.setupMissingFields(missingFields_window)
+            missingFields_window.show()
+        else:
+            success = self.sds_controller.edit_workspace_name(workspace_edit_name, new_ws_name)
+            if not success:
+                pass
+            else:
+                editWorkspace_window.close()
+                generate_workspaces_list_window(workspaceList, self.sds_controller)
 
     def createWorkspace(self, createWorkspace_Window, workspace_Window):
         # Get workspace name
