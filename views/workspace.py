@@ -13,6 +13,7 @@ from views.databaseConfigWindow import Ui_databaseConfig_window
 
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window, sds_controller):
+        self._workspace_window = workspace_window
         self.sds_controller = sds_controller
         workspace_window.setWindowIcon(QtGui.QIcon('network.png'))
         workspace_window.setObjectName("workspace_window")
@@ -115,16 +116,24 @@ class Ui_workspace_window(object):
         menu.addAction(action_edit_workspace)
         menu.addAction(action_delete_workspace)
 
-        # action_edit_workspace.triggered.connect(lambda: self.edit_workspace(name))
+        action_edit_workspace.triggered.connect(lambda: self.edit_workspace(name))
         action_delete_workspace.triggered.connect(lambda: self.delete_workspace(name))
 
         menu.exec_(self.workspacesList_workspaceWindow.mapToGlobal(point))
 
-    # TODO: Implement this
     def delete_workspace(self, selected_workspace):
         """ Removes the workspace. If projects don't exist in other workspaces then
         they will be deleted. Same rule for the scenarios and nodes."""
         self.sds_controller.delete_workspace_contents(selected_workspace)
+
+    #TODO: Add the UI functionality
+    def edit_workspace(self, workspace_name: str):
+        '''Opens a new ui for editing. Then submits the change to the database.'''
+        edit_workspace_window = QtWidgets.QDialog()
+        edit_window = Ui_newWorkspace_window()
+        edit_window.setupCreateWorkspace(edit_workspace_window, self._workspace_window, self.sds_controller, self.workspacesList_workspaceWindow, workspace_name)
+        # self.sds_controller._enforce_state('')
+        edit_workspace_window.show()
 
     def open_workspace(self, workspace_Window):
         selected_workspace = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
@@ -161,8 +170,7 @@ class Ui_workspace_window(object):
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window()
-        createWorkspaceUI.setupCreateWorkspace(
-            createWorkspace_Window, workspace_window, self.sds_controller, self.workspacesList_workspaceWindow)
+        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller, self.workspacesList_workspaceWindow)
         self.sds_controller.start_new_workplace()
         createWorkspace_Window.show()
 

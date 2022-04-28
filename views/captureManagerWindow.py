@@ -251,17 +251,21 @@ class Ui_CaptureManagerWindow(object):
     def load_scenario_unit(self):
         pass
 
+    #TODO: Start the UI dialog
     def edit_project(self, selected_project):
+        '''Starts the UI and edits the project'''
         pass
 
     def delete_project(self, selected_project):
-        pass
+        self.sds_controller.delete_project_contents(selected_project)
 
+    #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
+        ''' Starts the UI and edits the scenario unit.'''
         pass
 
     def delete_scenario_unit(self, selected_scenario_unit):
-        pass
+        self.sds_controller.delete_scenario_contents(selected_scenario_unit)
 
     def newScenarioUnitWindow(self):
         newScenarioUnit_Window = QtWidgets.QDialog()
@@ -282,7 +286,7 @@ class Ui_CaptureManagerWindow(object):
             item = self.nodesList_captureManagerWindow.itemAt(point)
             if not item:
                 return
-            name = item.text(0)
+            name = item.text(2)
 
             menu = QtWidgets.QMenu()
             action_edit_node = QAction("Edit Node")
@@ -298,11 +302,13 @@ class Ui_CaptureManagerWindow(object):
 
             return
 
+    #TODO: Add the UI and functionality.
     def edit_node(self, selected_node):
+        '''Starts the UI window for editing a node then changes it for the db.'''
         pass
 
     def delete_node(self, selected_node):
-        pass
+        self.sds_controller.delete_node_contents(selected_node)
 
     def item_project_selected(self):
         # print(f'checking if item_project_selected went inside')

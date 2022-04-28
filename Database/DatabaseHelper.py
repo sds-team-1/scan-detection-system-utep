@@ -1,6 +1,7 @@
 # DatabaseHelper 
 from pprint import pprint
 from typing import List
+from matplotlib.style import context
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
@@ -45,6 +46,80 @@ class SDSDatabaseHelper:
             result = collection.update_one({'_id': workspace_name}, {'$set': data})
             return True if result.matched_count else False
         except:
+            return False
+
+    def delete_workspace_down(self, context_dict: dict):
+        '''Deletes workspace and all projects, scenario units, and nodes unique
+        to it.'''
+        print('dbh.delete_workspace_down called')
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['workspaces']
+        try:
+            # Check all workspaces for each project
+            for project in context_dict['projects']:
+                query = collection.find({'projects': project['_id']})
+                # If there is only one then it is unique
+                count = len(list(query))
+                if count == 1:
+                    # Delete the project
+                    self.delete_project_down(project)
+            result = collection.delete_one({'_id': context_dict['_id']})
+            return True if result.deleted_count else False
+        except Exception as e:
+            print(f'dbh.delete_workspace_down exception: {e}')
+            return False
+
+    def delete_project_down(self, project_dict: dict):
+        '''Deletes the project and scenario units and nodes unique to it.'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['projects']
+        try:
+            # Check all projects for each scenario unit
+            for su in project_dict['scenario_units']:
+                query = collection.find({'scenario_units': su['_id']})
+                # If there is only one then it is unique
+                if len(list(query)) == 1:
+                    # Delete the scenario unit
+                    self.delete_scenario_unit_down(su)
+            result = collection.delete_one({'_id': project_dict['_id']})
+            return True if result.deleted_count else False
+        except Exception as e:
+            print(f'dbh.delete_project_down exception: {e}')
+            return False
+
+    def delete_scenario_unit_down(self, scenario_dict: dict):
+        '''Deletes the scenario unit and all nodes unique to it.'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['scenarios']
+        try:
+            # Check all scenarios for all nodes if they exist.
+            for node in scenario_dict['nodes']:
+                # Find the scenarios that have the node
+                query = collection.find({'nodes': node['_id']})
+                # If there is only one then it is unique
+                if len(list(query))== 1:
+                    # Delete the node
+                    self.delete_node(node['_id'])
+            # Delete the scenario unit
+            result = collection.delete_one({'_id': scenario_dict['_id']})
+            return True if result.deleted_count else False
+        except Exception as e:
+            print(f'dbh.delete_scenario_down exception: {e}')
+            return False
+
+    def delete_node(self, node_id):
+        '''Deletes the node from the database'''
+        client = MongoClient(self.url)
+        db = client.SDS
+        collection = db['nodes']
+        try:
+            result = collection.delete_one({'_id': node_id})
+            return True if result.deleted_count else False
+        except Exception as e: 
+            print(f'dbh.delete_node exception: {e}')
             return False
 
     def create_project(self, workspace_name: str, project_name: str = '', 
@@ -239,10 +314,3 @@ class SDSDatabaseHelper:
         except:
             print('Error: Database Helper could not insert the node')
         return True if result.matched_count else False
-
-    #TODO: Implement this
-    def retrieve_all_nodes_for_scenario(self, scenario_object_id: str) -> dict:
-        client = MongoClient(self.url)
-        db = client.SDS
-        
-        pass

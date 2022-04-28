@@ -2,6 +2,7 @@ from enum import Enum, unique
 import json
 import re
 from typing import Dict, List
+from bson.objectid import ObjectId
 from Database.DatabaseHelper import SDSDatabaseHelper
 from Controllers.CaptureController import CaptureController
 from Controllers.AnalysisManager import SDSAnalysisManager
@@ -128,8 +129,37 @@ class SDSController:
         self._entire_workspace_context = self._db_connection.get_workspace_context(self._workspace_name)
         # print(self._entire_workspace_context)
 
-    def delete_workspace_contents(self, workspace_name):
-        pass
+    def delete_workspace_contents(self, workspace_name: str):
+        '''Deletes workspace. Cascades down the hierarchy. If the projects, 
+        scenarios, and nodes don't exist in other places (unique to workspace)
+        then it will be deleted as well.'''
+        context = self._entire_workspace_context
+        # Check if context is already loaded.
+        if workspace_name == context['_id']:
+            # Do the changes
+            self._db_connection.delete_workspace_down(context)
+        else:
+            # Get the context and send it
+            context = self._db_connection.get_workspace_context(workspace_name)
+            self._db_connection.delete_workspace_down(context)
+        self.change_workspace_context(self._workspace_name)
+
+    def delete_project_contents(self, project_name: str):
+        '''Deletes project. Cascades down the hierarchy. If the scenarios and 
+        nodes don't exist in other projects (unique to project) then they will be
+        deleted as well'''
+        project_names = [name['_id'] for name in self._entire_workspace_context['projects']]
+        if project_name in project_names:
+            project_d = {}
+            for project_dictionary in self._entire_workspace_context['projects']:
+                if project_dictionary['_id'] == project_name:
+                    project_d = project_dictionary
+                    break
+            self._db_connection.delete_project_down(project_d)
+        else:
+            project_d = self._db_connection.retrieve_project(project_name)
+            project_d['scenario_units'] = [ObjectId(su) for su in project_d['scenario_units']]
+            self._db_connection.delete_project_down(project_d)
 
     ###### Project related functions ######
     def import_project(self, project: dict) -> bool:
@@ -257,6 +287,15 @@ class SDSController:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.SCENARIO_UNIT_CONSTRUCTION:
             self._scenario_unit_construction['scenario_name'] = name
+    
+    def delete_scenario_contents(self, scenario_name: str):
+        '''Deletes the scenario unit and all nodes unique to it.'''
+        scenario_d = {}
+        for projects in self._entire_workspace_context['projects']:
+            for su in projects['scenario_units']:
+                if su['scenario_name'] == scenario_name:
+                    scenario_d = su
+        self._db_connection.delete_scenario_unit_down(scenario_d)
             
     def insert_node(self, scenario_id: str, node_id: str, listening: bool, \
         type: str, name: str, ip: str, mac: str, subnet: bool, scanning: bool, \
@@ -284,6 +323,16 @@ class SDSController:
             self._db_connection.create_node(scenario_id, node_dict)
             self.change_workspace_context(self._workspace_name)
             pass
+    
+    def delete_node_contents(self, node_name: str):
+        '''Deletes the node.'''
+        for project in self._entire_workspace_context['projects']:
+            for scenario_unit in project['scenario_units']:
+                for node in scenario_unit['nodes']:
+                    if node['name'] == node_name:
+                        self._db_connection.delete_node(node)
+                        return True
+        return False
     
     def finish_scenario_unit_construction(self, project_name: str, iterations: int):
         self._ensure_subsystems()
@@ -317,7 +366,6 @@ class SDSController:
 
     def run_scenario_units(self, scenario_name: str):
         self._ensure_subsystems()
-
         # Do work here
         scenario_dict = self.get_scenario_data(scenario_name)
         print(scenario_dict)
