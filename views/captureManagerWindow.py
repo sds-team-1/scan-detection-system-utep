@@ -10,11 +10,12 @@ from views.setNodesWindow import Ui_addSetNodes_window
 
 
 class Ui_CaptureManagerWindow(object):
-    def setupCaptureManager(self, CaptureManagerWindow, sds_controller):
+    def setupCaptureManager(self, CaptureManagerWindow, sds_controller, InitialWorkspaceWindow):
         self.sds_controller = sds_controller
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
+        self.InitialWorkspaceWindow = InitialWorkspaceWindow
 
         CaptureManagerWindow.setObjectName("CaptureManagerWindow")
         CaptureManagerWindow.resize(1200, 700)
@@ -194,6 +195,8 @@ class Ui_CaptureManagerWindow(object):
         self.addNodeButton_captureManagerWindow.clicked.connect(self.addNodeWindow)
         self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
 
+        CaptureManagerWindow.closeEvent = self.CloseEvent
+
 
     def context_menu_project(self, point):
         index = self.projectsList_captureManagerWindow.indexAt(point)
@@ -208,7 +211,7 @@ class Ui_CaptureManagerWindow(object):
             name = item.text(0)
 
             menu = QtWidgets.QMenu()
-            action_edit_scenario_unit = QAction("Edit Scenario Unit")
+            action_edit_scenario_unit = QAction("Rename Scenario Unit")
             action_delete_scenario_unit = QAction("Delete Scenario Unit")
 
             menu.addAction(action_edit_scenario_unit)
@@ -228,7 +231,7 @@ class Ui_CaptureManagerWindow(object):
             menu = QtWidgets.QMenu()
             action_add_scenario = QAction("Add Scenario Unit")
             action_load_scenario = QAction("Load Scenario Unit")
-            action_edit_project = QAction("Edit Project")
+            action_edit_project = QAction("Rename Project")
             action_delete_project = QAction("Delete Project")
 
             menu.addAction(action_add_scenario)
@@ -440,12 +443,11 @@ class Ui_CaptureManagerWindow(object):
                                              self.ip_counter, self.MAC, self.id_counter)
         addSetNodes_Window.show()
 
+
     def closeCaptureManager(self, CaptureManagerWindow):
-        # IMPLEMENT THIS. Display workspace window before closing
-        #workspace_Window = QtWidgets.QDialog()
-        #workspaceUI = Ui_workspace_window()
-        #workspaceUI.setupWorkspaceUI(workspace_Window, self.sds_controller)
-        #self.sds_controller.start_new_workplace()
-        # POPULATE WORKSPACE LIST
-        #workspace_Window.show()
         CaptureManagerWindow.close()
+        self.InitialWorkspaceWindow.show()
+
+
+    def CloseEvent(self, event):
+        self.InitialWorkspaceWindow.show()

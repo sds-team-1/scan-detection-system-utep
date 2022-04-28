@@ -11,14 +11,6 @@ from views.createWorkspace import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
 
 
-# IMPLEMENT THIS. Doesn't show analysis manager window
-def analysisManagerWindow(workspace_Window):
-    analysisManager_Window = QtWidgets.QMainWindow()
-    analysisManagerWindowUI = Ui_AnalysisManagerWindow()
-    analysisManagerWindowUI.setupAnalysisManager(analysisManager_Window)
-    analysisManager_Window.show()
-    workspace_Window.close()
-
 class Ui_workspace_window(object):
     def setupWorkspaceUI(self, workspace_window, sds_controller):
         self._workspace_window = workspace_window
@@ -104,7 +96,7 @@ class Ui_workspace_window(object):
         self.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.workspacesList_workspaceWindow.customContextMenuRequested.connect(self.context_menu_workspace)
 
-        self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: analysisManagerWindow(workspace_window))
+        self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: self.analysisManagerWindow(workspace_window))
         self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
 
         self.createWorkspaceButton_workspaceWindow.clicked.connect(lambda: self.createWorkspaceWindow(workspace_window))
@@ -118,7 +110,7 @@ class Ui_workspace_window(object):
         name = item.text(0)
         menu = QtWidgets.QMenu()
 
-        action_edit_workspace = QAction("Edit Workspace Name")
+        action_edit_workspace = QAction("Rename Workspace")
         action_delete_workspace = QAction("Delete Workspace")
 
         menu.addAction(action_edit_workspace)
@@ -152,7 +144,7 @@ class Ui_workspace_window(object):
         time.sleep(1)
         captureManager_Window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow()
-        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller)
+        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller, workspace_Window)
         captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
         captureManager_Window.show()
         workspace_Window.close()
@@ -194,4 +186,12 @@ class Ui_workspace_window(object):
             port = database_ip_dict['port']
             databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
         databaseConfig_Window.show()
+
+
+    def analysisManagerWindow(self, workspace_Window):
+        self.analysisManager_Window = QtWidgets.QMainWindow()
+        self.analysisManagerWindowUI = Ui_AnalysisManagerWindow()
+        self.analysisManagerWindowUI.setupAnalysisManager(self.analysisManager_Window, workspace_Window)
+        self.analysisManager_Window.show()
+        workspace_Window.close()
 
