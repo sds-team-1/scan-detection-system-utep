@@ -383,8 +383,8 @@ class Ui_AnalysisManagerWindow(object):
     def hier_stat(self, name):
         #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
         #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        
-        output = subprocess.getoutput('tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        output = subprocess.getoutput('cd %s && tshark -r %s -q -z io,phs' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         #print (output)
         #Modal PopUp
         msg = QMessageBox()
