@@ -2,6 +2,7 @@ import time
 
 from PyQt5 import QtCore, QtWidgets
 
+from Database.databaseFunctions import generate_workspaces_list_window
 from views.captureManagerWindow import Ui_CaptureManagerWindow
 from views.missingFieldsWindow import Ui_missingFields_window
 
@@ -49,7 +50,6 @@ class Ui_newWorkspace_window(object):
             self.workspaceNameLabel_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Workspace Name:     "))
             self.createWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Create"))
             self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Cancel"))
-
             self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.createWorkspace(newWorkspace_window, workspace_Window))
             self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
         else:
@@ -79,7 +79,7 @@ class Ui_newWorkspace_window(object):
                 editWorkspace_window.close()
                 generate_workspaces_list_window(workspaceList, self.sds_controller)
 
-    def createWorkspace(self, createWorkspace_Window, workspace_Window):
+    def createWorkspace(self, createWorkspace_Window, workspace_Window, workspacesList_workspaceWindow):
         # Get workspace name
         ws_name = self.workspaceNameInput_newWorkspaceWindow.text()
         # Check if valid input
@@ -98,9 +98,10 @@ class Ui_newWorkspace_window(object):
                 pass
             else:
                 time.sleep(1)
+                generate_workspaces_list_window(workspacesList_workspaceWindow, self.sds_controller)
                 captureManager_Window = QtWidgets.QMainWindow()
                 captureManagerWindowUI = Ui_CaptureManagerWindow()
-                captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller)
+                captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller, workspace_Window)
                 captureManager_Window.setWindowTitle(ws_name + ' - Scan Detection System')
                 captureManager_Window.show()
                 createWorkspace_Window.close()
