@@ -8,6 +8,7 @@ from bson.objectid import ObjectId
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"
     TIMEOUT_MS = 5000
+    db_name = 'SDS_DB'
 
     def __init__(self, ip_port: str):
         self.url = ip_port
@@ -18,7 +19,7 @@ class SDSDatabaseHelper:
     """Create Project scenario"""
     def create_workspace(self, workspace_name) -> bool:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['workspaces']
         try:
             collection.insert_one({'_id': workspace_name, 'projects': [], \
@@ -29,7 +30,7 @@ class SDSDatabaseHelper:
 
     def update_workspace_projects(self, workspace_name: str, project_name: str) -> bool:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['workspaces']
         try:
             collection.update_one({'_id': workspace_name}, {'$push': {'projects': project_name}})
@@ -40,7 +41,7 @@ class SDSDatabaseHelper:
 
     def save_workspace(self, workspace_name: str, data: dict):
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['workspaces']
         try:
             result = collection.update_one({'_id': workspace_name}, {'$set': data})
@@ -53,7 +54,7 @@ class SDSDatabaseHelper:
         to it.'''
         print('dbh.delete_workspace_down called')
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['workspaces']
         try:
             # Check all workspaces for each project
@@ -73,7 +74,7 @@ class SDSDatabaseHelper:
     def delete_project_down(self, project_dict: dict):
         '''Deletes the project and scenario units and nodes unique to it.'''
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['projects']
         try:
             # Check all projects for each scenario unit
@@ -92,7 +93,7 @@ class SDSDatabaseHelper:
     def delete_scenario_unit_down(self, scenario_dict: dict):
         '''Deletes the scenario unit and all nodes unique to it.'''
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['scenarios']
         try:
             # Check all scenarios for all nodes if they exist.
@@ -113,7 +114,7 @@ class SDSDatabaseHelper:
     def delete_node(self, node_id):
         '''Deletes the node from the database'''
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['nodes']
         try:
             result = collection.delete_one({'_id': node_id})
@@ -125,7 +126,7 @@ class SDSDatabaseHelper:
     def create_project(self, workspace_name: str, project_name: str = '', 
         par_units: int = 1, scenario_units: List = [], project: dict = None) -> bool:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['projects']
         if not project:
             try:
@@ -147,14 +148,14 @@ class SDSDatabaseHelper:
 
     def retrieve_workspaces(self) -> List[str]:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['workspaces']
         return collection.find().distinct('_id')
     
     def get_workspace_context(self, workspace_name: str) -> dict:
         print("workspace context " +  workspace_name)
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['workspaces']
         print("workspace context " +  workspace_name)
         
@@ -202,7 +203,7 @@ class SDSDatabaseHelper:
 
     def retrieve_projects(self, workspace_name: str) -> List[dict]:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['workspaces']
         workspace_dict = collection.find_one({'_id': workspace_name})
         projects = workspace_dict['projects']
@@ -216,7 +217,7 @@ class SDSDatabaseHelper:
     """Export Project"""
     def retrieve_project(self, project_name: str) -> dict:
         client = MongoClient(self.url)
-        db = client['SDS']
+        db = client[self.db_name]
         collection = db['projects']
         data = collection.find_one({'_id': project_name})
         if data:
@@ -230,7 +231,7 @@ class SDSDatabaseHelper:
     """Save Project"""
     def save_project(self, project_name: str, new_data: dict) -> bool:
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['projects']
         try:
             result = collection.update_one({'_id': project_name}, {'$push': new_data})
@@ -248,7 +249,7 @@ class SDSDatabaseHelper:
         """
         # Create an empty scenario unit with its keys and insert the data.
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['scenarios']
         scenario_objid: str = ''
         try:
@@ -277,7 +278,7 @@ class SDSDatabaseHelper:
 
     def retrieve_scenario_unit(self, scenario_id: str) -> dict:
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['scenarios']
         # Convert str into object id
         try:
@@ -290,7 +291,7 @@ class SDSDatabaseHelper:
 
     def save_scenario_unit(self, scenario_id: str, data: dict) -> bool:
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['scenarios']
         try:
             result = collection.update_one({'_id': scenario_id}, {'$set': data})
@@ -302,7 +303,7 @@ class SDSDatabaseHelper:
     def create_node(self, scenario_object_id, node_data: dict) -> bool:
         # Insert the node to the database
         client = MongoClient(self.url)
-        db = client.SDS
+        db = client[self.db_name]
         collection = db['nodes']
         result = False
         try:
