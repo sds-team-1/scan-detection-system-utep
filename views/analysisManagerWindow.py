@@ -219,11 +219,13 @@ class Ui_AnalysisManagerWindow(object):
             self.openPacketWiresharkButton_captureManagerWindow.setEnabled(True)
             self.convertPacketsButton_captureManagerWindow.setEnabled(True)
             self.removePacketsButton_captureManagerWindow.setEnabled(True)
+            self.openInJsonButton_captureManagerWindow.setEnabled(True)
 
         else:
             self.openPacketWiresharkButton_captureManagerWindow.setEnabled(False)
             self.convertPacketsButton_captureManagerWindow.setEnabled(False)
             self.removePacketsButton_captureManagerWindow.setEnabled(False)
+            self.openInJsonButton_captureManagerWindow.setEnabled(False)
 
     def show_pcap_list(self, capture):
         self.pcapsList_analysisManagerWindow.clear()
@@ -279,6 +281,10 @@ class Ui_AnalysisManagerWindow(object):
             self.convertPacketsButton_captureManagerWindow.setObjectName("convertPacketsButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.convertPacketsButton_captureManagerWindow)
 
+            self.openInJsonButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.openInJsonButton_captureManagerWindow.setObjectName("openInJson_captureManagerWindow")
+            self.buttonsPacketLayout_captureManagerWindow.addWidget(self.openInJsonButton_captureManagerWindow)
+
             self.removePacketsButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
             self.removePacketsButton_captureManagerWindow.setObjectName("removePacketsButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.removePacketsButton_captureManagerWindow)
@@ -286,11 +292,13 @@ class Ui_AnalysisManagerWindow(object):
             self.openPacketWiresharkButton_captureManagerWindow.setEnabled(False)
             self.convertPacketsButton_captureManagerWindow.setEnabled(False)
             self.removePacketsButton_captureManagerWindow.setEnabled(False)
+            self.openInJsonButton_captureManagerWindow.setEnabled(False)
 
             self.gridLayout.addLayout(self.buttonsPacketLayout_captureManagerWindow, 2, 0, 1, 1)
 
             self.openPacketWiresharkButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected Packets in Wireshark"))
             self.convertPacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Convert Selected Packets"))
+            self.openInJsonButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open in Json"))
             self.removePacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Remove Selected Packets"))
             self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
             self.filtersButton_analysisManagerWindow.setText(
@@ -313,7 +321,7 @@ class Ui_AnalysisManagerWindow(object):
             self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
             self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
             self.removePacketsButton_captureManagerWindow.clicked.connect(lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
-
+            self.openInJsonButton_captureManagerWindow.clicked.connect(lambda: self.openPacketJson(tab_name))
             self.tab_index += 1
                                 
 
@@ -416,6 +424,43 @@ class Ui_AnalysisManagerWindow(object):
                 temp_cap.write(packet)
         subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         packets.close()
+
+    def openPacketJson(self, name):
+        path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+        if os.path.exists("%s\\temp_cap.pcap"% path):
+            os.remove("%s\\temp_cap.pcap"% path)
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                packets = self.test_capture.iterate_file('', pcap.name)
+                temp_cap = PcapWriter("%s\\temp_cap.pcap"% path, append=True)
+                i_open_file = PcapReader(pcap.path)
+                packet = i_open_file.read_packet()
+        for p in packets:
+            packet = i_open_file.read_packet()
+            if str(p.no) in self.selected_packets:
+                temp_cap.write(packet)
+        #subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
+        output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+
+        packets.close()
+
+
+
+
+        msg = QMessageBox()
+        msg.setWindowTitle("Packet")
+        msg.setWindowModality(False)
+        msg.setWindowModality(False)
+        msg.setText(output)
+
+
+
+
+        x = msg.exec()
+        pass
 
     def convertPackets(self):
         pass
