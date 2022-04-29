@@ -13,12 +13,12 @@ import Database.DatabaseHelper
 
 class Ui_CaptureManagerWindow(object):
     
-    current_workspace : Workspace
+    workspace_object : Workspace
     db_helper:Database.DatabaseHelper.SDSDatabaseHelper
 
-    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace=None):
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace_object:Workspace):
         self.db_helper = db_helper
-        self.workspace = workspace
+        self.workspace_object = workspace_object
 
     def setupCaptureManager(self, CaptureManagerWindow, workspace_Window):
         self.InitialWorkspaceWindow = workspace_Window
@@ -210,9 +210,7 @@ class Ui_CaptureManagerWindow(object):
 
 
     def generate_projects(self):
-        ws = self.db_helper.get_workspace_by_id(self.workspace)
-        self.current_workspace = ws
-        for project in self.current_workspace.projects:
+        for project in self.workspace_object.projects:
             # Make TreeWidgetItem
             project_tree_item = QTreeWidgetItem([project.name])
             for scenario in project.scenarios:

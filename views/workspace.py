@@ -139,14 +139,15 @@ class Ui_workspace_window(object):
         edit_workspace_window.show()
 
     def open_workspace(self, workspace_Window):
-        selected_workspace = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
+        selected_workspace_name = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
+        selected_workspace_object = self.db_helper.get_workspace_by_id(selected_workspace_name)
         # Change sds_controller workspace context
         # print(f'check if open_workspace is called')
         time.sleep(1)
         captureManager_Window = QtWidgets.QMainWindow()
-        captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper, selected_workspace)
+        captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper, selected_workspace_object)
         captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
-        captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
+        captureManager_Window.setWindowTitle(selected_workspace_name + ' - Scan Detection System')
         captureManager_Window.show()
         workspace_Window.close()
 
