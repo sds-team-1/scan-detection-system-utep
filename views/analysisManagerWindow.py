@@ -270,6 +270,8 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
 
+
+            self.packetsList_analysisManagerWindow.setSortingEnabled(True)
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
