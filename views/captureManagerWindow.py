@@ -10,12 +10,10 @@ from views.setNodesWindow import Ui_addSetNodes_window
 
 
 class Ui_CaptureManagerWindow(object):
-    def setupCaptureManager(self, CaptureManagerWindow, sds_controller, InitialWorkspaceWindow):
-        self.sds_controller = sds_controller
+    def setupCaptureManager(self, CaptureManagerWindow):
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
-        self.InitialWorkspaceWindow = InitialWorkspaceWindow
 
         CaptureManagerWindow.setObjectName("CaptureManagerWindow")
         CaptureManagerWindow.resize(1200, 700)
@@ -257,7 +255,7 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def delete_project(self, selected_project):
-        self.sds_controller.delete_project_contents(selected_project)
+        pass
 
     #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
@@ -265,15 +263,14 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def delete_scenario_unit(self, selected_scenario_unit):
-        self.sds_controller.delete_scenario_contents(selected_scenario_unit)
+        pass
 
     def newScenarioUnitWindow(self):
         newScenarioUnit_Window = QtWidgets.QDialog()
         newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
-        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window, self.sds_controller,
+        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window,
                                                      self.projectsList_captureManagerWindow,
                                                      self.scenarioIterationsSpinbox_captureManagerWindow)
-        self.sds_controller.add_scenario_unit()
         newScenarioUnit_Window.show()
 
     def context_menu_node(self, point):
@@ -308,8 +305,7 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def delete_node(self, selected_node):
-        self.sds_controller.delete_node_contents(selected_node)
-
+        pass
     def item_project_selected(self):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
@@ -335,67 +331,51 @@ class Ui_CaptureManagerWindow(object):
             # Get all the nodes
             scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
             # print(f'checking scenario id: {scenario_ID}')
-            self.sds_controller._enforce_state('init_project')
-            node_list = self.sds_controller.get_all_nodes(scenario_ID)
-            # Insert into vm and docker text saved values
-            vm_ip, docker_ip = self.sds_controller.get_scenario_vm_info(scenario_ID)
+        
             #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
             #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
             # print(f'checking if nodes list is anything: {node_list}')
             # Insert all the nodes into the UI
-            if node_list:
-                # print(f'checking if nodes list is available for ui...{node_list}')
-                for node in node_list:
-                    node_item = QTreeWidgetItem([str(node['listening']), \
-                                                 node['type'], node['name'], node['mac'], node['ip'],
-                                                 str(node['scanning'])])
-                    self.nodesList_captureManagerWindow.addTopLevelItem(node_item)
-                    # TODO: Ask mauricio how this works
-                    # captureManagerWindowUI.nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
+
 
             self.nodesList_captureManagerWindow.header().setSectionResizeMode(
                 QtWidgets.QHeaderView.ResizeToContents)
 
     def start_virtual_machine(self):
+        pass
         # Get input
         # store input into workspace
-        # self.sds_controller.insert_core_sds_service(ip, port)
-        self.sds_controller.start_virtual_machine()
+       
         # self.runScenarioButton_captureManagerWindow.setEnabled(True)
         # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
 
     def shutdown_virtual_machine(self):
         print("shutdown virtual machine")
-        self.sds_controller.shutdown_virtual_machine()
+
         # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
     def stop_scenario_unit(self):
-        # self.sds_controller.stop()
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
         # self.runScenarioButton_captureManagerWindow.setEnabled(True)
         pass
 
     def restore_scenario_unit(self):
-        # self.sds_controller.restore()
         pass
 
     def stop_restore_unit(self):
-        self.sds_controller.stop_restore_core()
+        pass
 
     def start_services(self):
-        self.sds_controller.start_services()
+        pass
 
     def set_up_scenario_unit(self):
-        self.sds_controller._enforce_state('init_capture_network')
         scenario_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
         # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
         # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
-        # self.sds_controller.insert_vm_service(scenario_name, vm_ip, docker_ip)
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.runScenarioButton_captureManagerWindow.setEnabled(False)
-        self.sds_controller.run_scenario_units(scenario_name)
 
     def save_workspace(self):
         # Everything is already saved. So we don't really need it. YW
@@ -405,8 +385,6 @@ class Ui_CaptureManagerWindow(object):
         project_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
         export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
         print(f'export path is: {export_path}')
-        self.sds_controller._enforce_state('init_project')
-        self.sds_controller.export_project(project_name, export_path[0])
 
     def import_project(self, captureManager_Window):
         dialog = QFileDialog()
@@ -415,21 +393,19 @@ class Ui_CaptureManagerWindow(object):
             return
         with open(json_path[0]) as json_file:
             project = json.load(json_file)
-            self.sds_controller._enforce_state('init_workplace')
-            self.sds_controller.import_project(project)
+   
 
     def createProjectWindow(self):
         newProject_Window = QtWidgets.QDialog()
         newProjectWindowUI = Ui_newProject_window()
         newProjectWindowUI.setupNewProject(
-            newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow)
-        self.sds_controller.start_new_project_phase()
+            newProject_Window, self.projectsList_captureManagerWindow)
         newProject_Window.show()
 
     def addNodeWindow(self):
         addNode_Window = QtWidgets.QDialog()
         addNodeWindowUI = Ui_addNode_window()
-        addNodeWindowUI.setupAddNode(addNode_Window, self.sds_controller,
+        addNodeWindowUI.setupAddNode(addNode_Window,
                                      self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
                                      self.CentralLayout_captureManagerWindow,
                                      self.ip_counter, self.MAC, self.id_counter)
@@ -438,7 +414,7 @@ class Ui_CaptureManagerWindow(object):
     def addSetNodesWindow(self):
         addSetNodes_Window = QtWidgets.QDialog()
         addSetNodesWindowUI = Ui_addSetNodes_window()
-        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window, self.sds_controller,
+        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window,
                                              self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
                                              self.ip_counter, self.MAC, self.id_counter)
         addSetNodes_Window.show()

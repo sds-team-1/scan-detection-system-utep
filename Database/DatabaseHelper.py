@@ -5,6 +5,8 @@ from matplotlib.style import context
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
+from Models.modelClasses import Project, Scenario, Workspace
+
 class SDSDatabaseHelper:
     url = "mongodb://localhost:27017"
     TIMEOUT_MS = 5000
@@ -15,6 +17,54 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url, serverSelectionTimeoutMS = self.TIMEOUT_MS)
         db = client.SDS
         serverStatusResult = db.command("serverStatus")
+
+    def get_all_workspace_names() -> list:
+        '''
+        TODO: finish this
+        '''
+        return ['workspace1', 'workspace2']
+
+    def get_all_workspaces_objects() -> list :
+        '''
+        TODO: contact db to get this
+        '''
+        ws :Workspace = Workspace(id, [])
+
+        p1 : Project = Project("projectname1", 2, [])
+        p2 : Project = Project("projectname2", 2, [])
+        p3 : Project = Project("projectname3", 2, [])
+        p4 : Project = Project("projectname4", 2, [])
+
+        s1 : Scenario = Scenario("scenarioname1", [], [])
+
+        p3.scenarios = [s1]
+        
+        ws.projects = [p1, p2, p3, p4]
+
+        return [ws, ws]
+
+    def get_workspace_by_id(id:str) -> Workspace :
+        ws :Workspace = Workspace(id, [])
+
+        p1 : Project = Project("projectname1", 2, [])
+        p2 : Project = Project("projectname2", 2, [])
+        p3 : Project = Project("projectname3", 2, [])
+        p4 : Project = Project("projectname4", 2, [])
+
+        s1 : Scenario = Scenario("scenarioname1", [], [])
+
+        p3.scenarios = [s1]
+
+        ws.projects = [p1, p2, p3, p4]
+
+        return ws
+
+    def save_workspace_obj_to_database(workspace : Workspace):
+        print("Saved workspace to db")
+        return
+
+
+
 
     """Create Project scenario"""
     def create_workspace(self, workspace_name) -> bool:

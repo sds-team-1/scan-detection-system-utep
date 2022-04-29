@@ -5,9 +5,8 @@ from views.missingFieldsWindow import Ui_missingFields_window
 
 
 class Ui_newScenarioUnit_window(object):
-    def setupNewScenarioUnit(self, newScenarioUnit_window, sds_controller,
+    def setupNewScenarioUnit(self, newScenarioUnit_window,
                              projectsList_captureManagerWindow, scenarioIterationsSpinbox_captureManagerWindow):
-        self.sds_controller = sds_controller
         newScenarioUnit_window.setObjectName("newScenarioUnit_window")
         newScenarioUnit_window.setEnabled(True)
         newScenarioUnit_window.resize(513, 115)
@@ -62,21 +61,14 @@ class Ui_newScenarioUnit_window(object):
             missingFieldsWindowUI.setupMissingFields(missingFields_Window)
             missingFields_Window.show()
         else:
-            self.sds_controller._enforce_state('init_project')
-            self.sds_controller.add_scenario_unit()
-            self.sds_controller.insert_scenario_name(scenario_name)
             # TODO: This causes an error when creating a scenario.
             project_name = projectsList_captureManagerWindow.selectedItems()[0].text(0)
             # TODO: INSERT ITERATIONS HERE
             su_iterations = scenarioIterationsSpinbox_captureManagerWindow.value()
-            success = self.sds_controller.finish_scenario_unit_construction(project_name, su_iterations)
-            if not success:
-                # TODO: Display error
-                pass
-            else:
+
                 # TODO: Test this
-                s = QTreeWidgetItem([scenario_name])
-                p = projectsList_captureManagerWindow.selectedItems()[0]
-                p.addChild(s)
-                projectsList_captureManagerWindow.expandAll()
-                newScenarioUnit_Window.close()
+            s = QTreeWidgetItem([scenario_name])
+            p = projectsList_captureManagerWindow.selectedItems()[0]
+            p.addChild(s)
+            projectsList_captureManagerWindow.expandAll()
+            newScenarioUnit_Window.close()

@@ -12,11 +12,12 @@ class Project:
 
 
 class Scenario:
-    def __init__(self, id, name, networks: list, devices: list, links: list):
-        self.id = id
+    def __init__(self, name : str, links : list, nodes : list):
         self.name = name
-        self.networks = networks
-        self.devices = devices
+        # self.networks = networks
+        # self.devices = devices
+        # self.links = links
+        self.nodes = nodes
         self.links = links
 
 
