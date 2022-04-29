@@ -62,7 +62,6 @@ class Ui_newProject_window(object):
 
     def createProject(self, projectsList_captureManagerWindow, newProject_window):
         project_name = self.newProjectNameInput_newProjectWindow.text()
-        # print(project_name)
         project_parallel = self.newProjectMaxUnitsSpinbox_newProjectWindow.value()
 
         # If the input is incorrect show the missing fields window
@@ -73,8 +72,8 @@ class Ui_newProject_window(object):
             missingFields_Window.show()
         # Otherwise save the project
         else:
+            # TODO: INSERT PROJECT TO THE DATABASE AND CREATE THE PROJECT OBJECT AND INSERT IT TO THE WORKSPACE OBJECT
             p = QtWidgets.QTreeWidgetItem([project_name])
-
             # Adds the TreeWidgetItem to the project list
             projectsList_captureManagerWindow.addTopLevelItem(p)
             # Resets the values for the window

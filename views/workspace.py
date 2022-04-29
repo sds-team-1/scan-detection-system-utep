@@ -4,17 +4,21 @@ import time
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem
+from Models.modelClasses import Workspace
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.captureManagerWindow import Ui_CaptureManagerWindow
 from views.createWorkspace import Ui_newWorkspace_window
-from views.databaseConfigWindow import Ui_databaseConfig_window
-
+import Database.DatabaseHelper
 
 class Ui_workspace_window(object):
-    def setupWorkspaceUI(self, workspace_window, sds_controller):
+    db_helper:Database.DatabaseHelper.SDSDatabaseHelper
+
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper):
+        self.db_helper = db_helper
+
+    def setupWorkspaceUI(self, workspace_window):
         self._workspace_window = workspace_window
-        self.sds_controller = sds_controller
         workspace_window.setWindowIcon(QtGui.QIcon('network.png'))
         workspace_window.setObjectName("workspace_window")
         workspace_window.resize(780, 463)
@@ -70,10 +74,6 @@ class Ui_workspace_window(object):
         self.analysisManagerButton_workspaceWindow.setObjectName("analysisManagerButton_workspaceWindow")
         self.createWorkspaceLayout_workspaceWindow.addWidget(self.analysisManagerButton_workspaceWindow)
 
-        self.dbConfigButton_workspaceWindow = QtWidgets.QPushButton(workspace_window)
-        self.dbConfigButton_workspaceWindow.setObjectName("dbConfigButton_workspaceWindow")
-        self.createWorkspaceLayout_workspaceWindow.addWidget(self.dbConfigButton_workspaceWindow)
-
         self.mainLayout_workspaceWindow.addLayout(self.createWorkspaceLayout_workspaceWindow)
         self.gridLayout.addLayout(self.mainLayout_workspaceWindow, 0, 0, 1, 1)
 
@@ -91,16 +91,27 @@ class Ui_workspace_window(object):
         self.versionLabel_workspaceWindow.setText(_translate("workspace_window", "Version 2022.1.0"))
         self.createWorkspaceButton_workspaceWindow.setText(_translate("workspace_window", "Create New Workspace"))
         self.analysisManagerButton_workspaceWindow.setText(_translate("workspace_window", "Analysis Manager"))
-        self.dbConfigButton_workspaceWindow.setText(_translate("workspace_window", "Database Configuration"))
-
         self.workspacesList_workspaceWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.workspacesList_workspaceWindow.customContextMenuRequested.connect(self.context_menu_workspace)
 
         self.analysisManagerButton_workspaceWindow.clicked.connect(lambda: self.analysisManagerWindow(workspace_window))
         self.workspacesList_workspaceWindow.doubleClicked.connect(lambda: self.open_workspace(workspace_window))
-
         self.createWorkspaceButton_workspaceWindow.clicked.connect(lambda: self.createWorkspaceWindow(workspace_window))
-        self.dbConfigButton_workspaceWindow.clicked.connect(self.databaseConfigWindow)
+        
+        self.generate_workspaces_list_window()
+
+    def generate_workspaces_list_window(self):
+        # workspacesList_workspaceWindow.clear()
+        # workspaces_c = sds_controller.list_all_workplaces()
+        # if workspaces_c:
+        #     for workspace_c in workspaces_c:
+        #         l1 = QtWidgets.QTreeWidgetItem([workspace_c])
+        #         workspacesList_workspaceWindow.addTopLevelItem(l1)
+        self.workspacesList_workspaceWindow.clear()
+        workspace_names = self.db_helper.get_all_workspace_names()
+        for ws_name in workspace_names:
+            list1 = QtWidgets.QTreeWidgetItem([ws_name])
+            self.workspacesList_workspaceWindow.addTopLevelItem(list1)
 
     def context_menu_workspace(self, point):
         index = self.workspacesList_workspaceWindow.indexAt(point)
@@ -124,7 +135,6 @@ class Ui_workspace_window(object):
     def delete_workspace(self, selected_workspace):
         """ Removes the workspace. If projects don't exist in other workspaces then
         they will be deleted. Same rule for the scenarios and nodes."""
-        self.sds_controller.delete_workspace_contents(selected_workspace)
 
     #TODO: Add the UI functionality
     def edit_workspace(self, workspace_name: str):
@@ -132,35 +142,32 @@ class Ui_workspace_window(object):
         edit_workspace_window = QtWidgets.QDialog()
         edit_window = Ui_newWorkspace_window()
         edit_window.setupCreateWorkspace(edit_workspace_window, self._workspace_window, self.sds_controller, self.workspacesList_workspaceWindow, workspace_name)
-        # self.sds_controller._enforce_state('')
         edit_workspace_window.show()
 
     def open_workspace(self, workspace_Window):
         selected_workspace = self.workspacesList_workspaceWindow.selectedItems()[0].text(0)
-        current_workspace_name = selected_workspace
         # Change sds_controller workspace context
         # print(f'check if open_workspace is called')
-        self.sds_controller.change_workspace_context(current_workspace_name)
         time.sleep(1)
         captureManager_Window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow()
-        captureManagerWindowUI.setupCaptureManager(captureManager_Window, self.sds_controller, workspace_Window)
+        captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
         captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
         captureManager_Window.show()
         workspace_Window.close()
         # Get all project names related to workspace
-        project_names = self.sds_controller.list_all_projects(selected_workspace)
-        for project_name in project_names:
+       # project_names = self.sds_controller.list_all_projects(selected_workspace)
+       # for project_name in project_names:
             # Make TreeWidgetItem
-            project_tree_item = QTreeWidgetItem([project_name])
+            #project_tree_item = QTreeWidgetItem([project_name])
             # Get all scenarios related to workspace and project
-            scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
-            for scenario_name in scenario_names:
+          #  scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
+         #   for scenario_name in scenario_names:
                 # Make TreeWidgetItem
-                scenario_tree = QTreeWidgetItem([scenario_name])
+                #scenario_tree = QTreeWidgetItem([scenario_name])
                 # Add scenario tree to project tree
-                project_tree_item.addChild(scenario_tree)
-            captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+               # project_tree_item.addChild(scenario_tree)
+           # captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
 
         captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
         # Insert core options if saved
@@ -170,22 +177,8 @@ class Ui_workspace_window(object):
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window()
-        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.sds_controller, self.workspacesList_workspaceWindow)
-        self.sds_controller.start_new_workplace()
+        createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.workspacesList_workspaceWindow)
         createWorkspace_Window.show()
-
-    def databaseConfigWindow(self):
-        databaseConfig_Window = QtWidgets.QDialog()
-        databaseConfigWindowUI = Ui_databaseConfig_window()
-        databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window, self.sds_controller,
-                                                   self.workspacesList_workspaceWindow)
-        with open('conf/db_config.json') as mongo_ip_file:
-            database_ip_dict = json.load(mongo_ip_file)
-            ip = database_ip_dict['ip']
-            databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
-            port = database_ip_dict['port']
-            databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
-        databaseConfig_Window.show()
 
 
     def analysisManagerWindow(self, workspace_Window):

@@ -4,20 +4,29 @@ import uuid
 
 from PyQt5 import QtCore, QtWidgets
 
-from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
-from views.databaseErrorWindow import Ui_databaseError_window
+# from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
+# from views.databaseErrorWindow import Ui_databaseError_window
+
+import Database.DatabaseHelper
+from views.workspace import Ui_workspace_window
 
 
 class Ui_databaseConfig_window(object):
-    def setupDatabaseConfig(self, databaseConfig_window, sds_controller, workspacesList_workspaceWindow):
-        self.workspacesList_workspaceWindow = workspacesList_workspaceWindow
-        self.sds_controller = sds_controller
+    db_helper:Database.DatabaseHelper.SDSDatabaseHelper = None
+    parent_window : QtWidgets.QDialog
+
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper):
+        self.db_helper = db_helper
+
+    def setupDatabaseConfig(self, databaseConfig_window):
+        #self.workspacesList_workspaceWindow = workspacesList_workspaceWindow
+        #self.sds_controller = sds_controller
         db_config_filename = 'conf/db_config.json'
         databaseConfig_window.setObjectName("databaseConfig_window")
         databaseConfig_window.setEnabled(True)
-        databaseConfig_window.resize(513, 165)
-        databaseConfig_window.setMinimumSize(QtCore.QSize(513, 165))
-        databaseConfig_window.setMaximumSize(QtCore.QSize(513, 165))
+        databaseConfig_window.resize(513, 200)
+        databaseConfig_window.setMinimumSize(QtCore.QSize(513, 200))
+        databaseConfig_window.setMaximumSize(QtCore.QSize(513, 200))
         self.DatabaseConfigWindowLayout = QtWidgets.QGridLayout(databaseConfig_window)
         self.DatabaseConfigWindowLayout.setObjectName("DatabaseConfigWindowLayout")
         self.mainLayout_databaseConfigWindow = QtWidgets.QVBoxLayout()
@@ -36,25 +45,46 @@ class Ui_databaseConfig_window(object):
         self.mainLayout_databaseConfigWindow.addLayout(self.databaseConfigProtocolLayout_databaseConfigWindow)
 
 
-        self.databaseConfigIPLayout_databaseConfigWindow = QtWidgets.QHBoxLayout()
-        self.databaseConfigIPLayout_databaseConfigWindow.setObjectName("databaseConfigIPLayout_databaseConfigWindow")
-        self.databaseConfigIPLabel_databaseConfigWindow = QtWidgets.QLabel(databaseConfig_window)
-        self.databaseConfigIPLabel_databaseConfigWindow.setObjectName("databaseConfigIPLabel_databaseConfigWindow")
-        self.databaseConfigIPLayout_databaseConfigWindow.addWidget(self.databaseConfigIPLabel_databaseConfigWindow)
-        self.databaseConfigIPInput_databaseConfigWindow = QtWidgets.QLineEdit(databaseConfig_window)
-        self.databaseConfigIPInput_databaseConfigWindow.setObjectName("databaseConfigIPInput_databaseConfigWindow")
-        self.databaseConfigIPLayout_databaseConfigWindow.addWidget(self.databaseConfigIPInput_databaseConfigWindow)
-        self.mainLayout_databaseConfigWindow.addLayout(self.databaseConfigIPLayout_databaseConfigWindow)
+        # self.databaseConfigIPLayout_databaseConfigWindow = QtWidgets.QHBoxLayout()
+        # self.databaseConfigIPLayout_databaseConfigWindow.setObjectName("databaseConfigIPLayout_databaseConfigWindow")
+
+        # self.databaseConfigIPLabel_databaseConfigWindow = QtWidgets.QLabel(databaseConfig_window)
+        # self.databaseConfigIPLabel_databaseConfigWindow.setObjectName("databaseConfigIPLabel_databaseConfigWindow")
+        # self.databaseConfigIPLayout_databaseConfigWindow.addWidget(self.databaseConfigIPLabel_databaseConfigWindow)
+
+        # self.databaseConfigIPInput_databaseConfigWindow = QtWidgets.QLineEdit(databaseConfig_window)
+        # self.databaseConfigIPInput_databaseConfigWindow.setObjectName("databaseConfigIPInput_databaseConfigWindow")
+        # self.databaseConfigIPInput_databaseConfigWindow.setText(self.db_helper.DATABASE_URL)
+
+        # self.databaseConfigIPLayout_databaseConfigWindow.addWidget(self.databaseConfigIPInput_databaseConfigWindow)
+        # self.mainLayout_databaseConfigWindow.addLayout(self.databaseConfigIPLayout_databaseConfigWindow)
 
         self.databaseConfigPortLayout_databaseConfigWindow = QtWidgets.QHBoxLayout()
         self.databaseConfigPortLayout_databaseConfigWindow.setObjectName("databaseConfigPortLayout_databaseConfigWindow")
+
         self.databaseConfigPortLabel_databaseConfigWindow = QtWidgets.QLabel(databaseConfig_window)
         self.databaseConfigPortLabel_databaseConfigWindow.setObjectName("databaseConfigPortLabel_databaseConfigWindow")
         self.databaseConfigPortLayout_databaseConfigWindow.addWidget(self.databaseConfigPortLabel_databaseConfigWindow)
+
         self.databaseConfigPortInput_databaseConfigWindow = QtWidgets.QLineEdit(databaseConfig_window)
         self.databaseConfigPortInput_databaseConfigWindow.setObjectName("databaseConfigPortInput_databaseConfigWindow")
+
+        self.databaseConfigPortInput_databaseConfigWindow.setText(self.db_helper.DATABASE_URL)
+
         self.databaseConfigPortLayout_databaseConfigWindow.addWidget(self.databaseConfigPortInput_databaseConfigWindow)
+
+
+        self.databaseConfigErrorMessageLayout_databaseConfigWindow = QtWidgets.QHBoxLayout()
+        self.databaseConfigErrorMessageLayout_databaseConfigWindow.setObjectName("databaseConfigErrorMessageLayout_databaseConfigWindow")
+
+        self.databaseConfigErrorMessage = QtWidgets.QLabel(databaseConfig_window)
+        self.databaseConfigErrorMessage.setObjectName("databaseConfigErrorMessage")
+        self.databaseConfigErrorMessage.setText("")
+
+        self.databaseConfigErrorMessageLayout_databaseConfigWindow.addWidget(self.databaseConfigErrorMessage)
+
         self.mainLayout_databaseConfigWindow.addLayout(self.databaseConfigPortLayout_databaseConfigWindow)
+        self.mainLayout_databaseConfigWindow.addLayout(self.databaseConfigErrorMessageLayout_databaseConfigWindow)
 
 
         self.databaseConfigIPButtonsLayout_databaseConfigWindow = QtWidgets.QHBoxLayout()
@@ -72,36 +102,57 @@ class Ui_databaseConfig_window(object):
 
         _translate = QtCore.QCoreApplication.translate
         databaseConfig_window.setWindowTitle(_translate("databaseConfig_window", "Database Configuration"))
-        self.databaseConfigProtocolLabel_databaseConfigWindow.setText( _translate("databaseConfig_window", "Database Protocol:"))
-        self.databaseConfigProtocolLabel2_databaseConfigWindow.setText(_translate("databaseConfig_window", "    mongodb://"))
-        self.databaseConfigIPLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Database IP Address:"))
-        self.databaseConfigPortLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Database Port:           "))
+
+        # self.databaseConfigProtocolLabel_databaseConfigWindow.setText( _translate("databaseConfig_window", "Database Protocol:"))
+        # self.databaseConfigProtocolLabel2_databaseConfigWindow.setText(_translate("databaseConfig_window", "    mongodb://"))
+
+        # self.databaseConfigIPLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Database IP Address:"))
+        self.databaseConfigPortLabel_databaseConfigWindow.setText(_translate("databaseConfig_window", "Mongo Database URL:           "))
         self.databaseConfigIPConnectButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Connect"))
         self.databaseConfigIPCancelButton_databaseConfigWindow.setText(_translate("databaseConfig_window", "Cancel"))
 
-        self.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(lambda: self.connect_database(databaseConfig_window, db_config_filename))
+        self.databaseConfigIPConnectButton_databaseConfigWindow.clicked.connect(lambda: self.connect_database(databaseConfig_window))
         self.databaseConfigIPCancelButton_databaseConfigWindow.clicked.connect(
             databaseConfig_window.close)
 
-    def connect_database(self, databaseConfig_window, db_config_filename):
-        database_ip = self.databaseConfigIPInput_databaseConfigWindow.text()
-        # Edit config file to insert database ip
-        data = None
-        with open(db_config_filename, 'r') as config_file:
-            data = json.load(config_file)
-            data['ip'] = database_ip
-        tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
-        with open(tempfile, 'w') as config_file:
-            json.dump(data, config_file, indent=4)
-        os.replace(tempfile, db_config_filename)
-        # Try to set up controller w/ database again
-        mongo_connection, connection_success = set_up_database_connection()
-        if connection_success:
-            connect_subsystems_and_database(self.workspacesList_workspaceWindow, self.sds_controller, mongo_connection)
-            # If success -> close window
-            databaseConfig_window.close()
+        self.parent_window = databaseConfig_window
+
+    # def connect_database(self, databaseConfig_window, db_config_filename):
+    #     database_ip = self.databaseConfigIPInput_databaseConfigWindow.text()
+    #     # Edit config file to insert database ip
+    #     data = None
+    #     with open(db_config_filename, 'r') as config_file:
+    #         data = json.load(config_file)
+    #         data['ip'] = database_ip
+    #     tempfile = os.path.join(os.path.dirname(db_config_filename), str(uuid.uuid4()))
+    #     with open(tempfile, 'w') as config_file:
+    #         json.dump(data, config_file, indent=4)
+    #     os.replace(tempfile, db_config_filename)
+    #     # Try to set up controller w/ database again
+    #     mongo_connection, connection_success = set_up_database_connection()
+    #     if connection_success:
+    #         connect_subsystems_and_database(self.workspacesList_workspaceWindow, self.sds_controller, mongo_connection)
+    #         # If success -> close window
+    #         databaseConfig_window.close()
+    #     else:
+    #         databaseError_Window = QtWidgets.QDialog()
+    #         databaseErrorWindowUI = Ui_databaseError_window()
+    #         databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
+    #         databaseError_Window.show()
+
+    def connect_database(self, databaseConfig_window):
+        temp_db_helper : Database.DatabaseHelper.SDSDatabaseHelper = Database.DatabaseHelper.SDSDatabaseHelper(
+            self.databaseConfigPortInput_databaseConfigWindow.text()
+        )
+
+        if not temp_db_helper.test_connection():
+            self.databaseConfigErrorMessage.setText("There was an error connection") 
         else:
-            databaseError_Window = QtWidgets.QDialog()
-            databaseErrorWindowUI = Ui_databaseError_window()
-            databaseErrorWindowUI.setupDatabaseError(databaseError_Window)
-            databaseError_Window.show()
+            workspace_Window = QtWidgets.QDialog()
+            workspaceWindowUI = Ui_workspace_window(db_helper=temp_db_helper)
+            workspaceWindowUI.setupWorkspaceUI(workspace_Window)
+            workspace_Window.setWindowTitle('Scan Detection System')
+            workspace_Window.show()   
+            databaseConfig_window.close()
+
+        self.databaseConfigErrorMessage.repaint()

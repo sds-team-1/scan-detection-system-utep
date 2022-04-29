@@ -39,7 +39,7 @@ class SDSDatabaseHelper:
         '''
         TODO: finish this
         '''
-        return ['workspace1', 'workspace2']
+        return ['workspace1', 'workspace2', 'asdflksdf']
 
     def get_all_workspaces_objects(self) -> list :
         '''
@@ -87,6 +87,8 @@ class SDSDatabaseHelper:
         true if successful,
         false otherwise
         '''
+        print("Trying to connect to db with url" + self.DATABASE_URL)
+
         client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
         try:
             client.server_info()

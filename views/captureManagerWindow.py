@@ -10,7 +10,8 @@ from views.setNodesWindow import Ui_addSetNodes_window
 
 
 class Ui_CaptureManagerWindow(object):
-    def setupCaptureManager(self, CaptureManagerWindow):
+    def setupCaptureManager(self, CaptureManagerWindow, workspace_Window):
+        self.InitialWorkspaceWindow = workspace_Window
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
