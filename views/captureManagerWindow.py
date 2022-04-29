@@ -210,6 +210,7 @@ class Ui_CaptureManagerWindow(object):
 
 
     def generate_projects(self):
+        self.projectsList_captureManagerWindow.clear()
         for project in self.workspace_object.projects:
             # Make TreeWidgetItem
             project_tree_item = QTreeWidgetItem([project.name])
@@ -430,7 +431,7 @@ class Ui_CaptureManagerWindow(object):
         newProject_Window = QtWidgets.QDialog()
         newProjectWindowUI = Ui_newProject_window()
         newProjectWindowUI.setupNewProject(
-            newProject_Window, self.projectsList_captureManagerWindow)
+            newProject_Window, self)
         newProject_Window.show()
 
     def addNodeWindow(self):

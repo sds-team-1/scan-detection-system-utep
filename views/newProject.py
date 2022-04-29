@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
-
+from Models.modelClasses import Project
+from PyQt5.QtWidgets import QMessageBox
 from views.missingFieldsWindow import Ui_missingFields_window
 
 
@@ -60,23 +61,35 @@ class Ui_newProject_window(object):
             lambda: self.createProject(projectsList_captureManagerWindow, newProject_window))
         self.newProjectCancelButton_newProjectWindow.clicked.connect(newProject_window.close)
 
-    def createProject(self, projectsList_captureManagerWindow, newProject_window):
+    def createProject(self, captureManagerWindow, newProject_window):
         project_name = self.newProjectNameInput_newProjectWindow.text()
         project_parallel = self.newProjectMaxUnitsSpinbox_newProjectWindow.value()
-
-        # If the input is incorrect show the missing fields window
-        if not project_name or project_parallel == 0:
-            missingFields_Window = QtWidgets.QDialog()
-            missingFieldsWindowUI = Ui_missingFields_window()
-            missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-            missingFields_Window.show()
-        # Otherwise save the project
-        else:
-            # TODO: INSERT PROJECT TO THE DATABASE AND CREATE THE PROJECT OBJECT AND INSERT IT TO THE WORKSPACE OBJECT
-            p = QtWidgets.QTreeWidgetItem([project_name])
-            # Adds the TreeWidgetItem to the project list
-            projectsList_captureManagerWindow.addTopLevelItem(p)
-            # Resets the values for the window
-            self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
-            self.newProjectNameInput_newProjectWindow.clear()
+        dup =  False
+        for project in captureManagerWindow.workspace_object.projects:
+            if project.name ==  project_name:
+                dup = True
+                msg = QMessageBox()
+                msg.setWindowTitle("Project Name Already Exists")
+                msg.setText('The Project name is already defined in the database.')
+                x = msg.exec_()
+        if dup == False:
+            newProject = Project(project_name,project_parallel,[])
+            captureManagerWindow.workspace_object.projects.append(newProject)
+            captureManagerWindow.generate_projects()
             newProject_window.close()
+        # If the input is incorrect show the missing fields window
+        # if not project_name or project_parallel == 0:
+        #     missingFields_Window = QtWidgets.QDialog()
+        #     missingFieldsWindowUI = Ui_missingFields_window()
+        #     missingFieldsWindowUI.setupMissingFields(missingFields_Window)
+        #     missingFields_Window.show()
+        # # Otherwise save the project
+        # else:
+        #     # TODO: INSERT PROJECT TO THE DATABASE AND CREATE THE PROJECT OBJECT AND INSERT IT TO THE WORKSPACE OBJECT
+        #     p = QtWidgets.QTreeWidgetItem([project_name])
+        #     # Adds the TreeWidgetItem to the project list
+        #     captureManagerWindow.addTopLevelItem(p)
+        #     # Resets the values for the window
+        #     self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
+        #     self.newProjectNameInput_newProjectWindow.clear()
+
