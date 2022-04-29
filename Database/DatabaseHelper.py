@@ -87,7 +87,7 @@ class SDSDatabaseHelper:
         true if successful,
         false otherwise
         '''
-        client = MongoClient(self.url)
+        client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
         try:
             client.server_info()
             return True

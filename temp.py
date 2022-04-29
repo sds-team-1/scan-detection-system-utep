@@ -12,3 +12,6 @@ workspace_obb : Workspace = dbHelper.get_workspace_by_id("wosdkfjsdf")
 print(workspace_obb)
 
 print(workspace_obb.projects[2].scenarios[0].name)
+
+
+print(dbHelper.test_connection())
