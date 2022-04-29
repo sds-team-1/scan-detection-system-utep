@@ -251,7 +251,6 @@ class Ui_CaptureManagerWindow(object):
     def load_scenario_unit(self):
         pass
 
-    #TODO: Start the UI dialog
     def edit_project(self, selected_project):
         '''Starts the UI and edits the project'''
         print('cmw.edit_project called')
@@ -267,7 +266,13 @@ class Ui_CaptureManagerWindow(object):
     #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
         ''' Starts the UI and edits the scenario unit.'''
-        pass
+        editScenario_Window = QtWidgets.QDialog()
+        editProjectWindowUI = Ui_newScenarioUnit_window()
+        editProjectWindowUI.setupNewScenarioUnit(editScenario_Window, self.sds_controller,
+            self.projectsList_captureManagerWindow, self.scenarioIterationsSpinbox_captureManagerWindow,
+            selected_scenario_unit)
+        #self.sds_controller._ensure_State('')
+        editScenario_Window.show()
 
     def delete_scenario_unit(self, selected_scenario_unit):
         self.sds_controller.delete_scenario_contents(selected_scenario_unit)

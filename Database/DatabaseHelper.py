@@ -329,6 +329,18 @@ class SDSDatabaseHelper:
             return True if result.matched_count else False
         except: 
             return False
+
+    def edit_scenario_unit(self, scenario_id, new_scenario_name):
+        client = MongoClient(self.url)
+        db = client[self.db_name]
+        collection = db['scenarios']
+        try:
+            scenario_id = ObjectId(scenario_id)
+            result = collection.update_one({'_id': scenario_id}, {'$set': {'scenario_name': new_scenario_name}})
+            return True if result.matched_count else False
+        except Exception as e:
+            print(e)
+            return False
     
     #TODO: Test this
     def create_node(self, scenario_object_id, node_data: dict) -> bool:

@@ -356,6 +356,11 @@ class SDSController:
             self._state = SDSStateEnum.INIT_PROJECT
             return success
 
+    def edit_scenario_unit(self, scenario_id, new_scenario_name: str):
+        result = self._db_connection.edit_scenario_unit(scenario_id, new_scenario_name)
+        return result
+        
+
     ###### CORE Related functinos ######
     def start_virtual_machine(self):
         self._ensure_subsystems()
@@ -409,10 +414,6 @@ class SDSController:
         if self._state is SDSStateEnum.NETWORK_RUNNING:
             # Do work here
             self._state = SDSStateEnum.INIT_CAPTURE_NETWORK
-
-    def gather_data_to_DB(self):
-        self._ensure_subsystems()
-        pass
 
     #UI needs all the nodes of a scenario unit
     def get_all_nodes(self, scenario_name: str):

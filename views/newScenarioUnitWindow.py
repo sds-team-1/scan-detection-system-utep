@@ -1,3 +1,4 @@
+from typing import List
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 
@@ -6,7 +7,8 @@ from views.missingFieldsWindow import Ui_missingFields_window
 
 class Ui_newScenarioUnit_window(object):
     def setupNewScenarioUnit(self, newScenarioUnit_window, sds_controller,
-                             projectsList_captureManagerWindow, scenarioIterationsSpinbox_captureManagerWindow):
+                             projectsList_captureManagerWindow, scenarioIterationsSpinbox_captureManagerWindow, 
+                             scenario_to_edit=None):
         self.sds_controller = sds_controller
         newScenarioUnit_window.setObjectName("newScenarioUnit_window")
         newScenarioUnit_window.setEnabled(True)
@@ -41,16 +43,41 @@ class Ui_newScenarioUnit_window(object):
         QtCore.QMetaObject.connectSlotsByName(newScenarioUnit_window)
 
         _translate = QtCore.QCoreApplication.translate
-        newScenarioUnit_window.setWindowTitle(_translate("newScenarioUnit_window", "New Scenario Unit"))
-        self.newScenarioUnitNameLabel_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Scenario Unit Name"))
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Create"))
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Cancel"))
+        if not scenario_to_edit:
+            newScenarioUnit_window.setWindowTitle(_translate("newScenarioUnit_window", "New Scenario Unit"))
+            self.newScenarioUnitNameLabel_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Scenario Unit Name"))
+            self.newScenarioUnitCreateButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Create"))
+            self.newScenarioUnitCancelButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Cancel"))
 
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(
-            lambda: self.createScenario(newScenarioUnit_window, projectsList_captureManagerWindow,
-                                                     scenarioIterationsSpinbox_captureManagerWindow))
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
-            newScenarioUnit_window.close)
+            self.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(
+                lambda: self.createScenario(newScenarioUnit_window, projectsList_captureManagerWindow,
+                                                        scenarioIterationsSpinbox_captureManagerWindow))
+            self.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
+                newScenarioUnit_window.close)
+        else: 
+            newScenarioUnit_window.setWindowTitle(_translate('newScenarioUnit_window', 'Edit Scenario Unit'))
+            self.newScenarioUnitNameLabel_newScenarioUnitWindow.setText(_translate('newScenarioUnit_window', 'Scenario Unit Name'))
+            self.newScenarioUnitCreateButton_newScenarioUnitWindow.setText(_translate('newScenarioUnit_window', 'Save'))
+            self.newScenarioUnitCancelButton_newScenarioUnitWindow.setText(_translate('newScenarioUnit_window', 'Cancel'))
+            self.newScenarioUnitNameInput_newScenarioUnitWindow.setText(scenario_to_edit)
+            
+            self.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(
+                lambda: self.edit_scenario(newScenarioUnit_window, projectsList_captureManagerWindow,
+                    scenario_to_edit)
+            )
+            self.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(newScenarioUnit_window.close)
+        
+    def edit_scenario(self, editScenarioUnit_Window, projectsList_captureManagerWindow,
+        old_scenario_name):
+        '''Edits the scenario unit'''
+        new_scenario_name = self.newScenarioUnitNameInput_newScenarioUnitWindow.text()
+        scenario_id = self.sds_controller.get_scenario_id(old_scenario_name)
+        success = self.sds_controller.edit_scenario_unit(scenario_id, new_scenario_name)
+        if success:
+            editScenarioUnit_Window.close()
+            '''items: List[QtWidgets.QTreeWidgetItem] = projectsList_captureManagerWindow.findItems(old_scenario_name, QtCore.Qt.MatchFlag.MatchExactly, column=1)
+            print(items)
+            items[0].setText(0, new_scenario_name)'''
 
     def createScenario(
             self, newScenarioUnit_Window, projectsList_captureManagerWindow,
