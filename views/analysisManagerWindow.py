@@ -1,17 +1,13 @@
-import matplotlib.pyplot as plt
-from PyQt5 import QtCore, QtWidgets
-
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
-import pyshark
-import scapy
-from scapy.utils import PcapWriter
-from scapy.all import *
 import os
 import subprocess
+#import qjsonmodel
 import numpy as np
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
+from scapy.all import *
 
-from Models.pcap import Pcap
 from Models.capture import Capture
+from Models.pcap import Pcap
 
 
 def add_pcaps(capture):
@@ -344,7 +340,7 @@ class Ui_AnalysisManagerWindow(object):
                 self.test_capture,self.filterInput_analysisManagerWindow.text(), tab_name))
 
             self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
-            self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
+            self.convertPacketsButton_captureManagerWindow.clicked.connect(lambda:self.convertPackets(tab_name,self.packetsList_analysisManagerWindow))
             self.removePacketsButton_captureManagerWindow.clicked.connect(lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
             self.openInJsonButton_captureManagerWindow.clicked.connect(lambda: self.openPacketJson(tab_name))
             self.tab_index += 1
@@ -525,8 +521,39 @@ class Ui_AnalysisManagerWindow(object):
         x = msg.exec()
         pass
 
-    def convertPackets(self):
-        pass
+    def convertPackets(self,name, packets_list):
+
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+        if filtered_file:
+            # filename = filtered_file.split('/')
+            # filename = filename[-1]
+            # filepath = filtered_file.replace(filename, '')
+            packets = ''
+            temp_cap = ''
+            i_open_file = ''
+            index = 0
+            for pcap in self.test_capture.pcaps:
+                if pcap.name == name:
+
+                    packets = self.test_capture.iterate_file('', pcap.name)
+                    temp_cap = PcapWriter(filtered_file, append=True)
+                    i_open_file = PcapReader(pcap.path)
+            for p in packets:
+                packet = i_open_file.read_packet()
+                if str(p.no) in self.selected_packets:
+                    temp_cap.write(packet)
+            packets.close()
+            filtered_file = filtered_file.split('/')
+            filtered_file = filtered_file[-1]
+            new_pcap = Pcap(filtered_file,self.test_capture.path,filtered_file)
+            self.test_capture.add_pcap(new_pcap)
+
+            self.show_pcap_list(self.test_capture)
+
+
+
+
 
     def removePackets(self, name, packets_list):
         packets = ''
@@ -563,7 +590,33 @@ class Ui_AnalysisManagerWindow(object):
         while True:
             if self.check(packets_list) is True:
                 break
-            
+
+    def removePackets(self, name, packets_list):
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+        index = 0
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                path = pcap.path.replace(pcap.name,"temp_cap.pcap")
+                if os.path.exists(path):
+                    os.remove(path)
+                packets = self.test_capture.iterate_file('', pcap.name)
+                path = pcap.path.replace(pcap.name, "temp_cap.pcap")
+                temp_cap = PcapWriter(path, append=True)
+                i_open_file = PcapReader(pcap.path)
+                packet = i_open_file.read_packet()
+                break
+            else:
+                index += 1
+        for p in packets:
+            packet = i_open_file.read_packet()
+            if str(p.no) not in self.selected_packets:
+                temp_cap.write(packet)
+        packets.close()
+        path_new = path.replace("temp_cap.pcap", name)
+        os.remove(path_new)
+        os.rename(path, path_new)
     def check(self, packets_list):
         for i in range(packets_list.topLevelItemCount()):
             top_item = packets_list.topLevelItem(i)
