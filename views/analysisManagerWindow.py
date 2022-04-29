@@ -183,6 +183,19 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
         packets.close()
 
+    def save_filter(self,capture, filter, pcap):
+
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.makeFilteredPcapButton_analysisManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+        if filtered_file:
+            #filename = filtered_file.split('/')
+            #filename = filename[-1]
+            #filepath = filtered_file.replace(filename, '')
+            cap = capture.save_filter_file(filter, pcap, filtered_file)
+
+            self.show_pcap_list(self.test_capture)
+
+
 
     def selectedPcapCheckbox(self):
         checked = 0
@@ -256,6 +269,11 @@ class Ui_AnalysisManagerWindow(object):
             self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
             self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
             self.filterPacketLayout_captureManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
+            self.makeFilteredPcapButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.makeFilteredPcapButton_analysisManagerWindow.setObjectName("makeFilteredPcapButton_analysisManagerWindow")
+            self.filterPacketLayout_captureManagerWindow.addWidget(self.makeFilteredPcapButton_analysisManagerWindow)
+
+
             self.gridLayout.addLayout(self.filterPacketLayout_captureManagerWindow, 0, 0, 1, 1)
 
 
@@ -305,6 +323,9 @@ class Ui_AnalysisManagerWindow(object):
             self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
             self.filtersButton_analysisManagerWindow.setText(
             _translate("AnalysisManagerWindow", "      Apply Filter      "))
+            self.makeFilteredPcapButton_analysisManagerWindow.setText(
+            _translate("AnalysisManagerWindow", "      New Pcap From Filter      "))
+
 
             self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
 
@@ -319,6 +340,8 @@ class Ui_AnalysisManagerWindow(object):
             self.filtersButton_analysisManagerWindow.clicked.connect(
             lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
                                          self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+            self.makeFilteredPcapButton_analysisManagerWindow.clicked.connect(lambda: self.save_filter(
+                self.test_capture,self.filterInput_analysisManagerWindow.text(), tab_name))
 
             self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
             self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
