@@ -1,6 +1,7 @@
 # DatabaseHelper 
 from pprint import pprint
 from typing import List
+from matplotlib.collections import Collection
 from matplotlib.style import context
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -8,23 +9,39 @@ from bson.objectid import ObjectId
 from Models.modelClasses import Project, Scenario, Workspace
 
 class SDSDatabaseHelper:
-    url = "mongodb://localhost:27017"
     TIMEOUT_MS = 5000
-    db_name = 'SDS_DB'
 
-    def __init__(self, ip_port: str):
-        self.url = ip_port
-        client = MongoClient(self.url, serverSelectionTimeoutMS = self.TIMEOUT_MS)
-        db = client.SDS
-        serverStatusResult = db.command("serverStatus")
+    DATABASE_URL : str = "mongodb://localhost:27017"
+    DATABASE_NAME : str = 'SDS_DB'
+    WORKSPACES_COLLECTION_NAME = 'workspaces'
 
-    def get_all_workspace_names() -> list:
+    workspaces : Collection = None
+
+
+    def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
+        '''
+        Appends port number to url if it is not already there
+        '''
+
+        self.DATABASE_URL = url
+        self.DATABASE_NAME = db_name
+
+        client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
+
+        db = client[self.DATABASE_NAME]
+        workspaces = db[self.WORKSPACES_COLLECTION_NAME]
+        self.workspaces = workspaces
+
+        print(f'DatabaseHelper initialized with url: {self.DATABASE_URL} and db: {self.DATABASE_NAME}')
+
+
+    def get_all_workspace_names(self) -> list:
         '''
         TODO: finish this
         '''
         return ['workspace1', 'workspace2']
 
-    def get_all_workspaces_objects() -> list :
+    def get_all_workspaces_objects(self) -> list :
         '''
         TODO: contact db to get this
         '''
@@ -43,7 +60,7 @@ class SDSDatabaseHelper:
 
         return [ws, ws]
 
-    def get_workspace_by_id(id:str) -> Workspace :
+    def get_workspace_by_id(self, id:str) -> Workspace :
         ws :Workspace = Workspace(id, [])
 
         p1 : Project = Project("projectname1", 2, [])
@@ -59,7 +76,7 @@ class SDSDatabaseHelper:
 
         return ws
 
-    def save_workspace_obj_to_database(workspace : Workspace):
+    def save_workspace_obj_to_database(self, workspace : Workspace):
         print("Saved workspace to db")
         return
 
