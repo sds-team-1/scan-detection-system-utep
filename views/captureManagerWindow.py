@@ -212,7 +212,7 @@ class Ui_CaptureManagerWindow(object):
     def generate_projects(self):
         ws = self.db_helper.get_workspace_by_id(self.workspace)
         self.current_workspace = ws
-        for project in self.current_workspace:
+        for project in self.current_workspace.projects:
             # Make TreeWidgetItem
             project_tree_item = QTreeWidgetItem([project.name])
             for scenario in project.scenarios:
