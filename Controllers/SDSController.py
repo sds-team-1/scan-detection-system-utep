@@ -106,6 +106,12 @@ class SDSController:
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
             self._workspace_name = workspace_name
 
+    def edit_workspace_name(self, old_name: str, new_name: str):
+        '''Edits the name of the workspace'''
+        result = self._db_connection.edit_workspace_name(old_name, new_name)
+        self.change_workspace_context(new_name)
+        return result
+
     def finish_workplace_construction(self) -> bool:
         self._ensure_subsystems()
         if self._state is SDSStateEnum.WORKPLACE_CONSTRUCTION:
