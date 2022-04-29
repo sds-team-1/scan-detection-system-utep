@@ -342,36 +342,38 @@ class Ui_CaptureManagerWindow(object):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
         self.nodesList_captureManagerWindow.clear()
-        if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
-            # This condition is for projects. Works with the project list which...
-            # contains projects and scenarios
-            # TODO: Check add node button(I was not able to create a project)
-            self.exportButton_captureManagerWindow.setEnabled(True)
-            self.addNodeButton_captureManagerWindow.setEnabled(False)
-            self.addSetNodeButton_captureManagerWindow.setEnabled(False)
-            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-            # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
-            # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
-        else:
-            # print(f'checking if else checked')
-            self.exportButton_captureManagerWindow.setEnabled(False)
-            self.addNodeButton_captureManagerWindow.setEnabled(True)
-            self.addSetNodeButton_captureManagerWindow.setEnabled(True)
-            # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-            # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
-            # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
-            # Get all the nodes
-            scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-            # print(f'checking scenario id: {scenario_ID}')
-        
-            #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
-            #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
-            # print(f'checking if nodes list is anything: {node_list}')
-            # Insert all the nodes into the UI
+        # if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
+        #     # This condition is for projects. Works with the project list which...
+        #     # contains projects and scenarios
+        #     # TODO: Check add node button(I was not able to create a project)
+        #     self.exportButton_captureManagerWindow.setEnabled(True)
+        #     self.addNodeButton_captureManagerWindow.setEnabled(False)
+        #     self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
+        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        # else:
+        #     # print(f'checking if else checked')
+        #     self.exportButton_captureManagerWindow.setEnabled(False)
+        #     self.addNodeButton_captureManagerWindow.setEnabled(True)
+        #     self.addSetNodeButton_captureManagerWindow.setEnabled(True)
+        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
+        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
+        #     # Get all the nodes
 
 
-            self.nodesList_captureManagerWindow.header().setSectionResizeMode(
-                QtWidgets.QHeaderView.ResizeToContents)
+        # scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        # print(f'checking scenario id: {scenario_ID}')
+    
+        #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+        #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+        # print(f'checking if nodes list is anything: {node_list}')
+        # Insert all the nodes into the UI
+
+
+        self.nodesList_captureManagerWindow.header().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
     def start_virtual_machine(self):
         pass
