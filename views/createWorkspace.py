@@ -1,6 +1,7 @@
 import time
 
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 import Database
 
 from Database.databaseFunctions import generate_workspaces_list_window
@@ -95,12 +96,18 @@ class Ui_newWorkspace_window(object):
             missingFieldsWindowUI.setupMissingFields(missingFields_Window)
             missingFields_Window.show()
         else:
-            time.sleep(1)
-            captureManager_Window = QtWidgets.QMainWindow()
-            captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper)
-            captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
-            captureManager_Window.setWindowTitle(ws_name + ' - Scan Detection System')
-            captureManager_Window.show()
-            createWorkspace_Window.close()
-            # TODO: SAVE NEW WORKSPACE TO DB AND CREATE THE OBJECT
-            workspace_Window.close()
+            if ws_name not in self.db_helper.get_all_workspace_names():
+                time.sleep(1)
+                captureManager_Window = QtWidgets.QMainWindow()
+                captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper)
+                captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
+                captureManager_Window.setWindowTitle(ws_name + ' - Scan Detection System')
+                captureManager_Window.show()
+                createWorkspace_Window.close()
+                # TODO: SAVE NEW WORKSPACE TO DB AND CREATE THE OBJECT
+                workspace_Window.close()
+            else:
+                msg = QMessageBox()
+                msg.setWindowTitle("Workspace Already Exists")
+                msg.setText('The workspace name is already defined in the database.')
+                x = msg.exec_()
