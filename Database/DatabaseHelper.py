@@ -161,6 +161,26 @@ class SDSDatabaseHelper:
         query = {'_id': workspace_name}
         success = collection.update_one(query, update)
         return False if success == 0 else True
+    
+    def edit_project(self, workspace_name: str, old_name: str, new_name: str, par_units: int):
+        '''Edits a project'''
+        client = MongoClient(self.url)
+        db = client[self.db_name]
+        collection = db['workspaces']
+        # Pull old project
+        try:
+            doc = db['projects'].find_one_and_delete({'_id': old_name})
+            # Change the name and parallel units
+            doc['_id'] = new_name
+            doc['parallel_units'] = par_units
+            # Create a new project in the database
+            self.create_project(workspace_name, project=doc)
+            # Pull out the old project name
+            collection.update_many({'projects': old_name}, {'$pull': {'projects': old_name}})
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def retrieve_workspaces(self) -> List[str]:
         client = MongoClient(self.url)
@@ -173,12 +193,7 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url)
         db = client[self.db_name]
         collection = db['workspaces']
-        print("workspace context " +  workspace_name)
-        
         workspace_dict = collection.find_one({'_id': workspace_name})
-        print("workspace context " +  workspace_name)
-        print(f'dbh.workspace_dict: {workspace_dict}')
-        
         # Replace all projects with data
         if 'projects' not in workspace_dict.keys():
             return workspace_dict

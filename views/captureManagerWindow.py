@@ -254,7 +254,12 @@ class Ui_CaptureManagerWindow(object):
     #TODO: Start the UI dialog
     def edit_project(self, selected_project):
         '''Starts the UI and edits the project'''
-        pass
+        print('cmw.edit_project called')
+        editProject_Window = QtWidgets.QDialog()
+        editProjectWindowUI = Ui_newProject_window()
+        editProjectWindowUI.setupNewProject(editProject_Window, self.sds_controller, self.projectsList_captureManagerWindow, self.InitialWorkspaceWindow, selected_project)
+        #self.sds_controller._enforce_state()
+        editProject_Window.show()
 
     def delete_project(self, selected_project):
         self.sds_controller.delete_project_contents(selected_project)
@@ -422,7 +427,7 @@ class Ui_CaptureManagerWindow(object):
         newProject_Window = QtWidgets.QDialog()
         newProjectWindowUI = Ui_newProject_window()
         newProjectWindowUI.setupNewProject(
-            newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow)
+            newProject_Window, self.sds_controller, self.projectsList_captureManagerWindow, self.InitialWorkspaceWindow)
         self.sds_controller.start_new_project_phase()
         newProject_Window.show()
 

@@ -221,6 +221,11 @@ class SDSController:
             self.change_workspace_context(self._workspace_name)
             self._state = SDSStateEnum.INIT_PROJECT
             return success
+    
+    def edit_project(self, old_name: str, new_name: str, par_units: int):
+        ''' Edits the project.'''
+        result = self._db_connection.edit_project(self._workspace_name, old_name, new_name, par_units)
+        return result
 
     def export_project(self, project_name: str, directory: str) -> bool:
         self._ensure_subsystems()
