@@ -80,6 +80,20 @@ class SDSDatabaseHelper:
         print("Saved workspace to db")
         return
 
+    def test_connection(self) -> bool:
+        '''
+        Attempts to connect to 
+        the provided url, returns
+        true if successful,
+        false otherwise
+        '''
+        client = MongoClient(self.url)
+        try:
+            client.server_info()
+            return True
+        except:
+            return False
+
 
 
 
