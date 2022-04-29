@@ -56,12 +56,12 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsTabWidget_analysisManagerWindow.setObjectName("pcapsTabWidget_analysisManagerWindow")
         self.pcapsLayout_analysisManagerWindow.addWidget(self.pcapsTabWidget_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.pcapsLayout_analysisManagerWindow)
-        self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
-        self.protocolStatsLayout_analysisManagerWindow.setObjectName("protocolStatsLayout_analysisManagerWindow")
-        self.protocolStatsList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
-        self.protocolStatsList_analysisManagerWindow.setObjectName("protocolStatsList_analysisManagerWindow")
-        self.protocolStatsLayout_analysisManagerWindow.addWidget(self.protocolStatsList_analysisManagerWindow)
-        self.scenariosLayout_analysisManagerWindow.addLayout(self.protocolStatsLayout_analysisManagerWindow)
+        #self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
+        #self.protocolStatsLayout_analysisManagerWindow.setObjectName("protocolStatsLayout_analysisManagerWindow")
+        #self.protocolStatsList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
+        #self.protocolStatsList_analysisManagerWindow.setObjectName("protocolStatsList_analysisManagerWindow")
+        #self.protocolStatsLayout_analysisManagerWindow.addWidget(self.protocolStatsList_analysisManagerWindow)
+        #self.scenariosLayout_analysisManagerWindow.addLayout(self.protocolStatsLayout_analysisManagerWindow)
         self.centralSectionLayout_analysisManagerWindow.addLayout(self.scenariosLayout_analysisManagerWindow)
 
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
@@ -106,24 +106,24 @@ class Ui_AnalysisManagerWindow(object):
         __sortingEnabled = self.pcapsList_analysisManagerWindow.isSortingEnabled()
         self.pcapsList_analysisManagerWindow.setSortingEnabled(False)
         self.pcapsList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow",
-                                                                                        "Protocol"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow",
-                                                                                        "Percent Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow",
-                                                                                        "Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(3, _translate("AnalysisManagerWindow",
-                                                                                        "Percent Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(4,
-                                                                          _translate("AnalysisManagerWindow", "Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(5,
-                                                                          _translate("AnalysisManagerWindow", "Bits/s"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(6, _translate("AnalysisManagerWindow",
-                                                                                        "End Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow",
-                                                                                        "End Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow",
-                                                                                        "End Bits/s"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow",
+        #                                                                                 "Protocol"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow",
+        #                                                                                 "Percent Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow",
+        #                                                                                 "Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(3, _translate("AnalysisManagerWindow",
+        #                                                                                 "Percent Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(4,
+        #                                                                   _translate("AnalysisManagerWindow", "Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(5,
+        #                                                                   _translate("AnalysisManagerWindow", "Bits/s"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(6, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Bits/s"))
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
         self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
@@ -286,6 +286,7 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
 
+            self.packetsList_analysisManagerWindow.setSortingEnabled(True)
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
