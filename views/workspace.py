@@ -101,12 +101,6 @@ class Ui_workspace_window(object):
         self.generate_workspaces_list_window()
 
     def generate_workspaces_list_window(self):
-        # workspacesList_workspaceWindow.clear()
-        # workspaces_c = sds_controller.list_all_workplaces()
-        # if workspaces_c:
-        #     for workspace_c in workspaces_c:
-        #         l1 = QtWidgets.QTreeWidgetItem([workspace_c])
-        #         workspacesList_workspaceWindow.addTopLevelItem(l1)
         self.workspacesList_workspaceWindow.clear()
         workspace_names = self.db_helper.get_all_workspace_names()
         for ws_name in workspace_names:
@@ -150,24 +144,11 @@ class Ui_workspace_window(object):
         # print(f'check if open_workspace is called')
         time.sleep(1)
         captureManager_Window = QtWidgets.QMainWindow()
-        captureManagerWindowUI = Ui_CaptureManagerWindow()
+        captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper, selected_workspace)
         captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
         captureManager_Window.setWindowTitle(selected_workspace + ' - Scan Detection System')
         captureManager_Window.show()
         workspace_Window.close()
-        # Get all project names related to workspace
-       # project_names = self.sds_controller.list_all_projects(selected_workspace)
-       # for project_name in project_names:
-            # Make TreeWidgetItem
-            #project_tree_item = QTreeWidgetItem([project_name])
-            # Get all scenarios related to workspace and project
-          #  scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
-         #   for scenario_name in scenario_names:
-                # Make TreeWidgetItem
-                #scenario_tree = QTreeWidgetItem([scenario_name])
-                # Add scenario tree to project tree
-               # project_tree_item.addChild(scenario_tree)
-           # captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
 
         captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
         # Insert core options if saved
@@ -176,7 +157,7 @@ class Ui_workspace_window(object):
 
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
-        createWorkspaceUI = Ui_newWorkspace_window()
+        createWorkspaceUI = Ui_newWorkspace_window(self.db_helper)
         createWorkspaceUI.setupCreateWorkspace(createWorkspace_Window, workspace_window, self.workspacesList_workspaceWindow)
         createWorkspace_Window.show()
 

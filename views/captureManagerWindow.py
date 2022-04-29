@@ -8,8 +8,16 @@ from views.newProject import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.setNodesWindow import Ui_addSetNodes_window
 
+import Database.DatabaseHelper
 
 class Ui_CaptureManagerWindow(object):
+
+    db_helper:Database.DatabaseHelper.SDSDatabaseHelper
+
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace=None):
+        self.db_helper = db_helper
+        self.workspace = workspace
+
     def setupCaptureManager(self, CaptureManagerWindow, workspace_Window):
         self.InitialWorkspaceWindow = workspace_Window
         self.ip_counter = 0
@@ -195,6 +203,27 @@ class Ui_CaptureManagerWindow(object):
         self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
 
         CaptureManagerWindow.closeEvent = self.CloseEvent
+
+        self.generate_projects()
+
+
+    def generate_projects(self):
+        ws = self.db_helper.get_workspace_by_id(self.workspace)
+        for project in ws.projects:
+            # Make TreeWidgetItem
+            project_tree_item = QTreeWidgetItem([project.name])
+            for scenario in project.scenarios:
+                scenario_tree = QTreeWidgetItem([scenario.name])
+                project_tree_item.addChild(scenario_tree)
+            self.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+            # Get all scenarios related to workspace and project
+          #  scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
+         #   for scenario_name in scenario_names:
+                # Make TreeWidgetItem
+                #scenario_tree = QTreeWidgetItem([scenario_name])
+                # Add scenario tree to project tree
+               # project_tree_item.addChild(scenario_tree)
+           # captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
 
 
     def context_menu_project(self, point):

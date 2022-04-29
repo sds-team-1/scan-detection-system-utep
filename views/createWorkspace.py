@@ -1,6 +1,7 @@
 import time
 
 from PyQt5 import QtCore, QtWidgets
+import Database
 
 from Database.databaseFunctions import generate_workspaces_list_window
 from views.captureManagerWindow import Ui_CaptureManagerWindow
@@ -10,6 +11,12 @@ from Database.databaseFunctions import generate_workspaces_list_window
 
 
 class Ui_newWorkspace_window(object):
+
+    db_helper:Database.DatabaseHelper.SDSDatabaseHelper
+
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper):
+        self.db_helper = db_helper
+        
     def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, workspace_list = None, input_to_edit = None):
         newWorkspace_window.setObjectName("newWorkspace_window")
         newWorkspace_window.setEnabled(True)
@@ -90,7 +97,7 @@ class Ui_newWorkspace_window(object):
         else:
             time.sleep(1)
             captureManager_Window = QtWidgets.QMainWindow()
-            captureManagerWindowUI = Ui_CaptureManagerWindow()
+            captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper)
             captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
             captureManager_Window.setWindowTitle(ws_name + ' - Scan Detection System')
             captureManager_Window.show()
