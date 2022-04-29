@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from PyQt5 import QtCore, QtWidgets
 
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
@@ -7,6 +8,7 @@ from scapy.utils import PcapWriter
 from scapy.all import *
 import os
 import subprocess
+import numpy as np
 
 from Models.pcap import Pcap
 from Models.capture import Capture
@@ -365,16 +367,19 @@ class Ui_AnalysisManagerWindow(object):
         action_rename_pcap = QAction("Rename pcap")
         action_delete_pcap = QAction("Delete pcap")
         action_hier_stat = QAction("Protocol Stats")
+        action_statistics = QAction("Statistics Graph")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_rename_pcap)
         menu.addAction(action_delete_pcap)
         menu.addAction(action_hier_stat)
+        menu.addAction(action_statistics)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
         action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
         action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
         action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
+        action_statistics.triggered.connect(lambda: self.show_statistics(name))
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
 
@@ -405,6 +410,40 @@ class Ui_AnalysisManagerWindow(object):
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
                 subprocess.Popen(["wireshark", "-r", pcap.path])
+
+    def show_statistics(self,name):
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+
+
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                packets = self.test_capture.iterate_file('', pcap.name)
+        pktlist = []
+        file_list = []
+        for pkt in packets:
+            pktlist.append(pkt.protocol)
+            file_list.append(str(pkt.no))
+            file_list.append(str(pkt.time))
+            file_list.append(str(pkt.source))
+            file_list.append(str(pkt.destination))
+            file_list.append(str(pkt.protocol))
+            file_list.append(str(pkt.length))
+            file_list.append(str(pkt.info))
+
+        packets.close()
+        counter = collections.Counter(pktlist)
+        plt.title(name)
+        plt.style.use('ggplot')
+        y_pos = np.arange(len(list(counter.keys())))
+        plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
+        plt.xticks(y_pos, list(counter.keys()))
+        plt.ylabel("Frequency")
+        plt.xlabel("Protocol Name")
+        plt.savefig("ProtocolGraph.png")
+        plt.show()
+
 
     def openPacketWireshark(self, name):
         packets = ''
@@ -454,7 +493,8 @@ class Ui_AnalysisManagerWindow(object):
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        msg.setText(output)
+        print(output)
+
 
 
 
@@ -508,4 +548,26 @@ class Ui_AnalysisManagerWindow(object):
                 packets_list.takeTopLevelItem(i)
                 return False
         return True
-                
+
+
+class Ui_Form(object):
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(444, 335)
+        self.gridLayout_2 = QtWidgets.QGridLayout(Form)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.scrollArea = QtWidgets.QScrollArea(Form)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 418, 309))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "Form"))
