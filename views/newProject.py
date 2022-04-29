@@ -97,3 +97,4 @@ class Ui_newProject_window(object):
                 self.newProjectMaxUnitsSpinbox_newProjectWindow.setValue(0)
                 self.newProjectNameInput_newProjectWindow.clear()
                 newProject_window.close()
+                print(f'Closing new project window. Context: {self.sds_controller}')
