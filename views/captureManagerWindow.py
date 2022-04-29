@@ -2,6 +2,7 @@ import json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog
+from Models.modelClasses import Workspace
 
 from views.addNodeWindow import Ui_addNode_window
 from views.newProject import Ui_newProject_window
@@ -11,7 +12,8 @@ from views.setNodesWindow import Ui_addSetNodes_window
 import Database.DatabaseHelper
 
 class Ui_CaptureManagerWindow(object):
-
+    
+    current_workspace : Workspace
     db_helper:Database.DatabaseHelper.SDSDatabaseHelper
 
     def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace=None):
@@ -209,7 +211,8 @@ class Ui_CaptureManagerWindow(object):
 
     def generate_projects(self):
         ws = self.db_helper.get_workspace_by_id(self.workspace)
-        for project in ws.projects:
+        self.current_workspace = ws
+        for project in self.current_workspace.projects:
             # Make TreeWidgetItem
             project_tree_item = QTreeWidgetItem([project.name])
             for scenario in project.scenarios:
