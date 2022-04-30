@@ -12,26 +12,40 @@ class Project:
 
 
 class Scenario:
-    def __init__(self, name : str, links : list, nodes : list):
+    def __init__(self, name : str, devices : list, nodes : list, networks : list=[]):
         self.name = name
-        # self.networks = networks
-        # self.devices = devices
+        self.networks = networks
+        self.devices = devices
         # self.links = links
         self.nodes = nodes
-        self.links = links
 
 
 class Node:
-    def __init__(self, id: int, listening: bool, node_type: str, name: str,
-                 IP: str, port: int, MAC: str, network: int):
+    def __init__(
+    self, 
+    id: int, 
+    listening: bool, 
+    node_type: str,
+    name: str,
+    ip: str, 
+    port: int, 
+    mac: str, 
+    network: int
+    ):
+        # attributes for xml
         self.id = id
-        self.listening = listening
-        self.type = node_type
         self.name = name
-        self.IP = IP
+        self.type = node_type
+        self.mac = mac
+        self.ip = ip
+        self.ip4_mask = "24"
+
+        # attributes for core
+        self.listening = listening
+        self.ip = ip
         self.port = port
-        self.MAC = MAC
-        self.network = network
+        # self.network = network
+
 
 
 class ScannerNode(Node):

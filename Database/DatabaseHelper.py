@@ -69,8 +69,9 @@ class SDSDatabaseHelper:
         p4 : Project = Project("projectname4", 2, [])
 
         s1 : Scenario = Scenario("scenarioname1", [], [])
+        s2 : Scenario = Scenario("scenarioname2", [], [])
 
-        p3.scenarios = [s1]
+        p3.scenarios = [s1, s2]
 
         ws.projects = [p1, p2, p3, p4]
 
