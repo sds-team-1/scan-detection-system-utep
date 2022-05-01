@@ -42,16 +42,15 @@ class Ui_databaseConfig_window(object):
         self.q_label_port.setText("Mongo Database Url:")
 
         # create a line edit that will hold the port number
-        self.q_line_edit_port_input = QtWidgets.QLineEdit(parent_window)
-        self.q_line_edit_port_input.setObjectName("databaseConfigPortInput_databaseConfigWindow")
-        self.q_line_edit_port_input.setText(self.DEFAULT_URL_STRING)
+        self.q_line_edit_url_input = QtWidgets.QLineEdit(parent_window)
+        self.q_line_edit_url_input.setObjectName("databaseConfigPortInput_databaseConfigWindow")
+        self.q_line_edit_url_input.setText(self.DEFAULT_URL_STRING)
         
         # Add the label and line edit to a row layout
         self.q_row_box_layout_port_label_and_input = QtWidgets.QHBoxLayout()
         self.q_row_box_layout_port_label_and_input.setObjectName("databaseConfigPortLayout_databaseConfigWindow")
         self.q_row_box_layout_port_label_and_input.addWidget(self.q_label_port)
-        self.q_row_box_layout_port_label_and_input.addWidget(self.q_line_edit_port_input)
-
+        self.q_row_box_layout_port_label_and_input.addWidget(self.q_line_edit_url_input)
 
         # Create a label for the error message, set it to empty string (will update when error occurs)
         self.q_label_error_message = QtWidgets.QLabel(parent_window)
@@ -102,9 +101,13 @@ class Ui_databaseConfig_window(object):
         )
 
     def connect_button_clicked(self, database_config_window):
+        '''
+        This function is called when the connect button is clicked.
+        Uses input from the database config window to connect to the database.
+        '''
         try:
             temp_db_helper : Database.DatabaseHelper.SDSDatabaseHelper = Database.DatabaseHelper.SDSDatabaseHelper(
-                self.q_line_edit_port_input.text()
+                self.q_line_edit_url_input.text()
             )
             temp_db_helper.test_connection()
         except Exception as e:

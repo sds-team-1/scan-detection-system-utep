@@ -94,6 +94,11 @@ class Ui_newWorkspace_window(object):
             parent_window.close)
 
     def create_workspace_button_clicked(self, parent_window: QtWidgets.QDialog, on_create_workspace_button_clicked_function):
+        '''
+        Runs when create workspace button is clicked,
+        validates the input then calls on_create_workspace_button_clicked_function
+        if the input is valid
+        '''
         # Get workspace name
         workspace_name = self.q_line_edit_input_workspace_name_text.text()
         # If the workspace name is empty
