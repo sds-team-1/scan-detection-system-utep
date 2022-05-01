@@ -21,6 +21,10 @@ class Ui_newWorkspace_window(object):
         parent_window: QtWidgets.QDialog,
         on_create_workspace_button_clicked_function
     ):
+        '''
+        Sets up the create workspace window,
+        takes in the parent window and the function to call when the create workspace button is clicked
+        '''
         parent_window.setObjectName("newWorkspace_window")
         parent_window.setEnabled(True)
         parent_window.resize(487, 120)
