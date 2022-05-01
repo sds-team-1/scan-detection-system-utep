@@ -489,8 +489,11 @@ class Ui_CaptureManagerWindow(object):
     def create_project_button_clicked(self):
         newProject_Window = QtWidgets.QDialog()
         newProjectWindowUI = Ui_newProject_window()
-        newProjectWindowUI.setupNewProject(
-            newProject_Window, self)
+        newProjectWindowUI.setupNewProjectWindowUi(
+            newProject_Window,
+            self,
+            self.create_project
+        )
         newProject_Window.show()
 
     def create_project(self, project_to_add:Project):
@@ -499,8 +502,8 @@ class Ui_CaptureManagerWindow(object):
         list of projects in the workspace.
         '''
         self.workspace_object.projects.append(project_to_add)
-        
-        
+        self.render_projects_in_project_tree()
+
 
     def add_node_button_clicked(self):
         addNode_Window = QtWidgets.QDialog()

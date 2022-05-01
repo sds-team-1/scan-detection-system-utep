@@ -4,15 +4,19 @@ from PyQt5.QtWidgets import QMessageBox
 
 
 class Ui_newProject_window(object):
-    def setupNewProject(self, parent_window, projectsList_captureManagerWindow):
-
+    def setupNewProjectWindowUi(self, parent_window:QtWidgets.QDialog, capture_manager_window, create_project_function):
+        '''
+        parent_window: the parent window that this window will be added to
+        capture_manager_window: the capture manager window that this window will be added to
+        create_project_function: the function that will be called when the user clicks the create project button
+        '''
         # Set up parent window properties
         parent_window.setObjectName("newProject_window")
         parent_window.setEnabled(True)
         parent_window.resize(487, 135)
         parent_window.setMinimumSize(QtCore.QSize(487, 135))
         parent_window.setMaximumSize(QtCore.QSize(487, 135))
-        parent_window.setTitle("New Project")
+        parent_window.setWindowTitle("New Project")
 
 
         # Label that says Project Name:
@@ -83,7 +87,7 @@ class Ui_newProject_window(object):
 
         # Connect the buttons to the functions
         self.q_button_create_project.clicked.connect(
-            lambda: self.createProject(projectsList_captureManagerWindow, parent_window))
+            lambda: self.createProject(capture_manager_window, parent_window, create_project_function))
 
         self.q_button_cancel_button.clicked.connect(parent_window.close)
 
