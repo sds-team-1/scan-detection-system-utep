@@ -2,7 +2,7 @@ import json
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog
-from Models.modelClasses import Workspace
+from Models.modelClasses import Workspace, Project, Node
 
 from views.addNodeWindow import Ui_addNode_window
 from views.newProject import Ui_newProject_window
@@ -21,223 +21,277 @@ class Ui_CaptureManagerWindow(object):
         self.workspace_object = workspace_object
 
     def setupCaptureManager(self, parent_window:QMainWindow, choose_workspace_parent_window:QDialog):
-        self.choose_workspace_window:QMainWindow = choose_workspace_parent_window
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
 
         parent_window.setObjectName("CaptureManagerWindow")
-        parent_window.resize(1200, 700)
-        parent_window.setMinimumSize(QtCore.QSize(1200, 700))
+        parent_window.resize(1400, 700)
+        parent_window.setMinimumSize(QtCore.QSize(1400, 700))
         parent_window.setWindowTitle(self.workspace_object.name + " - Capture Manager")
 
         self.CentralLayout_captureManagerWindow = QtWidgets.QWidget(parent_window)
         self.CentralLayout_captureManagerWindow.setObjectName("CentralLayout_captureManagerWindow")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.CentralLayout_captureManagerWindow)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.buttonsLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
-        self.buttonsLayout_captureManagerWindow.setObjectName("buttonsLayout_captureManagerWindow")
-
-        self.projectButtonsLabel = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.projectButtonsLabel.setObjectName("projectButtonsLabel")
-        self.buttonsLayout_captureManagerWindow.addWidget(self.projectButtonsLabel)
         
-        self.newButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.newButton_captureManagerWindow.setObjectName("newButton_captureManagerWindow")
-        self.buttonsLayout_captureManagerWindow.addWidget(self.newButton_captureManagerWindow)
-        self.saveButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.saveButton_captureManagerWindow.setObjectName("saveButton_captureManagerWindow")
-        self.buttonsLayout_captureManagerWindow.addWidget(self.saveButton_captureManagerWindow)
-        self.importButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.importButton_captureManagerWindow.setObjectName("importButton_captureManagerWindow")
-        self.buttonsLayout_captureManagerWindow.addWidget(self.importButton_captureManagerWindow)
-        self.exportButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.exportButton_captureManagerWindow.setObjectName("exportButton_captureManagerWindow")
-        self.buttonsLayout_captureManagerWindow.addWidget(self.exportButton_captureManagerWindow)
+        # Label for project functions buttons
+        self.q_label_project_functions = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        self.q_label_project_functions.setObjectName("projectButtonsLabel")
+        self.q_label_project_functions.setText("Project Functions")
+
+
+        # Save project button
+        self.q_button_save_project = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_save_project.setObjectName("saveButton_captureManagerWindow")
+        self.q_button_save_project.setToolTip("Will save the current state all projects project")
+        self.q_button_save_project.setText("Save Projects")
+
+        # New Project button
+        self.q_button_new_project = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_new_project.setObjectName("newButton_captureManagerWindow")
+        self.q_button_new_project.setToolTip("This will create a new project under the selected workspace")
+        self.q_button_new_project.setText("New Project")
+
+        # Import Project button
+        self.q_button_import_project = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_import_project.setObjectName("importButton_captureManagerWindow")
+        self.q_button_import_project.setToolTip("Import a project from a json file")
+        self.q_button_import_project.setText("Import Project")
+
+        # Export Project button
+        self.q_button_export_project = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_export_project.setObjectName("exportButton_captureManagerWindow")
+        self.q_button_export_project.setToolTip("Export a project to a json file")
+        self.q_button_export_project.setText("Export Project")
+
+        # Spacer item
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonsLayout_captureManagerWindow.addItem(spacerItem)
-        self.gridLayout_2.addLayout(self.buttonsLayout_captureManagerWindow, 0, 0, 1, 1)
-        self.centralSectionLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
-        self.centralSectionLayout_captureManagerWindow.setObjectName("centralSectionLayout_captureManagerWindow")
-        self.projectsList_captureManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
-        self.projectsList_captureManagerWindow.setMinimumSize(QtCore.QSize(220, 0))
-        self.projectsList_captureManagerWindow.setMaximumSize(QtCore.QSize(220, 16777215))
-        self.projectsList_captureManagerWindow.setObjectName("projectsList_captureManagerWindow")
-        self.centralSectionLayout_captureManagerWindow.addWidget(self.projectsList_captureManagerWindow)
-        self.scenarioLayout_captureManagerWindow = QtWidgets.QVBoxLayout()
-        self.scenarioLayout_captureManagerWindow.setObjectName("scenarioLayout_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
-        self.scenarioRunLayout_captureManagerWindow.setObjectName("scenarioRunLayout_captureManagerWindow")
-        self.scenarioIterationsLabel_captureManagerWindow = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.scenarioIterationsLabel_captureManagerWindow.setObjectName("scenarioIterationsLabel_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.scenarioIterationsLabel_captureManagerWindow)
 
-        self.scenarioIterationsSpinbox_captureManagerWindow = QtWidgets.QSpinBox(self.CentralLayout_captureManagerWindow)
-        self.scenarioIterationsSpinbox_captureManagerWindow.setObjectName("scenarioIterationsSpinbox_captureManagerWindow")
-        self.scenarioIterationsSpinbox_captureManagerWindow.setValue(1)
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.scenarioIterationsSpinbox_captureManagerWindow)
+        # Create a row and add the label, buttons, and spacer to it.
+        self.q_row_buttons_project_options = QtWidgets.QHBoxLayout()
+        self.q_row_buttons_project_options.setObjectName("buttonsLayout_captureManagerWindow")
+        self.q_row_buttons_project_options.addWidget(self.q_label_project_functions)
+        self.q_row_buttons_project_options.addWidget(self.q_button_new_project)
+        self.q_row_buttons_project_options.addWidget(self.q_button_save_project)
+        self.q_row_buttons_project_options.addWidget(self.q_button_import_project)
+        self.q_row_buttons_project_options.addWidget(self.q_button_export_project)
+        self.q_row_buttons_project_options.addItem(spacerItem)
 
-        self.startVirtualMachineButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.startVirtualMachineButton_captureManagerWindow.setObjectName("startVirtualMachineButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.startVirtualMachineButton_captureManagerWindow)
 
-        self.shutdownVMButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.shutdownVMButton_captureManagerWindow.setObjectName("shutdownVMButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.shutdownVMButton_captureManagerWindow)
 
-        self.runScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.runScenarioButton_captureManagerWindow.setObjectName("runScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.runScenarioButton_captureManagerWindow)
+        # Set up a label for scenario iterations
+        self.q_label_scenario_iterations = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        self.q_label_scenario_iterations.setObjectName("scenarioIterationsLabel_captureManagerWindow")
+        self.q_label_scenario_iterations.setText("Scenario Iterations")
 
-        self.stopRestoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.stopRestoreScenarioButton_captureManagerWindow.setObjectName("stopScenarioButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.stopRestoreScenarioButton_captureManagerWindow)
+        # Set up a spin box that decides the scenario iterations
+        self.q_spin_box_scenario_iterations = QtWidgets.QSpinBox(self.CentralLayout_captureManagerWindow)
+        self.q_spin_box_scenario_iterations.setObjectName("scenarioIterationsSpinbox_captureManagerWindow")
+        self.q_spin_box_scenario_iterations.setValue(1)
 
-        # self.restoreScenarioButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        # self.restoreScenarioButton_captureManagerWindow.setObjectName("restoreScenarioButton_captureManagerWindow")
-        # self.scenarioRunLayout_captureManagerWindow.addWidget(self.restoreScenarioButton_captureManagerWindow)
 
-        self.closeWorkspaceButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.closeWorkspaceButton_captureManagerWindow.setObjectName("closeWorkspaceButton_captureManagerWindow")
-        self.scenarioRunLayout_captureManagerWindow.addWidget(self.closeWorkspaceButton_captureManagerWindow)
+        # Set up a button for start vm
+        self.q_button_start_vm = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_start_vm.setObjectName("startVirtualMachineButton_captureManagerWindow")
+        self.q_button_start_vm.setText("Start VM")
 
+        # Button for shutdown vm
+        self.q_button_shutdown_vm = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_shutdown_vm.setObjectName("shutdownVMButton_captureManagerWindow")
+        self.q_button_shutdown_vm.setText("Shutdown VM")
+
+        # button for run scenario
+        self.q_button_run_scenario = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_run_scenario.setObjectName("runScenarioButton_captureManagerWindow")
+        self.q_button_run_scenario.setText("Run Scenario")
+
+        # Button for stop and restoring
+        self.q_button_stop_and_restore_scenario = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_stop_and_restore_scenario.setObjectName("stopScenarioButton_captureManagerWindow")
+        self.q_button_stop_and_restore_scenario.setText("Stop and restore scenario")
+
+
+        # Button for starting service
+        self.q_button_start_services_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_start_services_button.setObjectName("startServicesButton_captureManagerWindow")
+        self.q_button_start_services_button.setText("Start Services")
+
+
+        # Button for clsing the workspace
+        # TODO: it is not good ui design to have this button next to the other buttons, perhaps put it somewhere else
+        self.q_button_close_workspace_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_close_workspace_button.setObjectName("closeWorkspaceButton_captureManagerWindow")
+        self.q_button_close_workspace_button.setText("Close workspace button")
+        
+        # Spacer item
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.scenarioRunLayout_captureManagerWindow.addItem(spacerItem1)
-        self.scenarioLayout_captureManagerWindow.addLayout(self.scenarioRunLayout_captureManagerWindow)
-        self.nodesList_captureManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
-        self.nodesList_captureManagerWindow.setObjectName("nodesList_captureManagerWindow")
-        self.scenarioLayout_captureManagerWindow.addWidget(self.nodesList_captureManagerWindow)
-        self.nodeLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
-        self.nodeLayout_captureManagerWindow.setObjectName("nodeLayout_captureManagerWindow")
-        self.scenarioStatusLabel_captureManagerWindow = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.scenarioStatusLabel_captureManagerWindow.setObjectName("scenarioStatusLabel_captureManagerWindow")
-        self.nodeLayout_captureManagerWindow.addWidget(self.scenarioStatusLabel_captureManagerWindow)
-        self.scenarioStatus_captureManagerWindow = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.scenarioStatus_captureManagerWindow.setObjectName("scenarioStatus_captureManagerWindow")
-        self.nodeLayout_captureManagerWindow.addWidget(self.scenarioStatus_captureManagerWindow)
+
+
+        # Set up a row and add the label, buttons, and spacer to it.
+        self.q_row_scenario_buttons_row = QtWidgets.QHBoxLayout()
+        self.q_row_scenario_buttons_row.setObjectName("scenarioRunLayout_captureManagerWindow")
+        self.q_row_scenario_buttons_row.addWidget(self.q_label_scenario_iterations)
+        self.q_row_scenario_buttons_row.addWidget(self.q_spin_box_scenario_iterations)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_start_vm)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_shutdown_vm)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_run_scenario)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_stop_and_restore_scenario)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_start_services_button)
+        self.q_row_scenario_buttons_row.addWidget(self.q_button_close_workspace_button)
+        self.q_row_scenario_buttons_row.addItem(spacerItem1)
+
+
+        # Label for scenario status
+        self.q_label_scenario_status_label = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        self.q_label_scenario_status_label.setObjectName("scenarioStatusLabel_captureManagerWindow")
+        self.q_label_scenario_status_label.setText("Scenario Status:")
+
+        # Label to hold the value of the scenario status
+        self.q_label_scenario_status_value = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        self.q_label_scenario_status_value.setObjectName("scenarioStatus_captureManagerWindow")
+        self.q_label_scenario_status_value.setText("This is the text area for holding the value of the scenario status")
+
+        # Spacer item
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.nodeLayout_captureManagerWindow.addItem(spacerItem2)
-        self.addNodeButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.addNodeButton_captureManagerWindow.setObjectName("addNodeButton_captureManagerWindow")
-        self.nodeLayout_captureManagerWindow.addWidget(self.addNodeButton_captureManagerWindow)
-        self.addSetNodeButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.addSetNodeButton_captureManagerWindow.setObjectName("addSetNodeButton_captureManagerWindow")
-        self.nodeLayout_captureManagerWindow.addWidget(self.addSetNodeButton_captureManagerWindow)
-        self.scenarioLayout_captureManagerWindow.addLayout(self.nodeLayout_captureManagerWindow)
-        self.centralSectionLayout_captureManagerWindow.addLayout(self.scenarioLayout_captureManagerWindow)
-        self.gridLayout_2.addLayout(self.centralSectionLayout_captureManagerWindow, 1, 0, 1, 1)
+
+        # Add node button
+        self.q_button_add_node = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_add_node.setObjectName("addNodeButton_captureManagerWindow")
+        self.q_button_add_node.setText("Add Node")
+
+        # Add set of victim nodes button
+        self.q_button_add_set_of_victim_nodes = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        self.q_button_add_set_of_victim_nodes.setObjectName("addSetNodeButton_captureManagerWindow")
+        self.q_button_add_set_of_victim_nodes.setText("Add Set of Victim Nodes")
+        
+
+        # Set up a row to hold the label for scenario status and the add node/ set nodes buttons
+        self.q_row_buttons_node_buttons = QtWidgets.QHBoxLayout()
+        self.q_row_buttons_node_buttons.setObjectName("nodeLayout_captureManagerWindow")
+        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
+        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
+        self.q_row_buttons_node_buttons.addItem(spacerItem2)
+        self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
+        self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
+
+
+        # Q tree widget for holding nodes
+        self.q_tree_widget_nodes_list = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
+        self.q_tree_widget_nodes_list.setObjectName("nodesList_captureManagerWindow")
+        self.q_tree_widget_nodes_list.headerItem().setText(0, "Log Net Traffic")
+        self.q_tree_widget_nodes_list.headerItem().setText(1, "Type")
+        self.q_tree_widget_nodes_list.headerItem().setText(2, "Name")
+        self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
+        self.q_tree_widget_nodes_list.headerItem().setText(4, "IP")
+        self.q_tree_widget_nodes_list.headerItem().setText(5, "Scanner/Victim")
+
+
+        # Create a column and the scenario buttons row, the q tree widget and the row for the nodes buttons
+        self.q_col_vm_buttons_nodes_list_and_nodes_buttons = QtWidgets.QVBoxLayout()
+        self.q_col_vm_buttons_nodes_list_and_nodes_buttons.setObjectName("scenarioLayout_captureManagerWindow")
+        self.q_col_vm_buttons_nodes_list_and_nodes_buttons.addLayout(self.q_row_scenario_buttons_row)
+        self.q_col_vm_buttons_nodes_list_and_nodes_buttons.addWidget(self.q_tree_widget_nodes_list)
+        self.q_col_vm_buttons_nodes_list_and_nodes_buttons.addLayout(self.q_row_buttons_node_buttons)
+
+
+        # Set up a q tree widget for the projects lists
+        self.q_tree_widget_projects_list = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
+        self.q_tree_widget_projects_list.setMinimumSize(QtCore.QSize(220, 0))
+        self.q_tree_widget_projects_list.setMaximumSize(QtCore.QSize(220, 16777215))
+        self.q_tree_widget_projects_list.setObjectName("projectsList_captureManagerWindow")
+        self.q_tree_widget_projects_list.headerItem().setText(0, "Projects")
+
+
+        # Create a row and add the projects list widget to it, then add the column that holds the vm buttons, the nodes list and the nodes buttons
+        self.q_row_main_projects_and_nodes_row = QtWidgets.QHBoxLayout()
+        self.q_row_main_projects_and_nodes_row.setObjectName("centralSectionLayout_captureManagerWindow")
+        self.q_row_main_projects_and_nodes_row.addWidget(self.q_tree_widget_projects_list)
+        self.q_row_main_projects_and_nodes_row.addLayout(self.q_col_vm_buttons_nodes_list_and_nodes_buttons)
+
+        
+        # Set up a q grid layout and add the project buttons row as well as the row for projects and nodes
+        self.q_grid_layout = QtWidgets.QVBoxLayout(self.CentralLayout_captureManagerWindow)
+        self.q_grid_layout.setObjectName("gridLayout_2")
+        self.q_grid_layout.addLayout(self.q_row_buttons_project_options)
+        self.q_grid_layout.addLayout(self.q_row_main_projects_and_nodes_row)
+
+
+        # Add the central layout to the parent window
         parent_window.setCentralWidget(self.CentralLayout_captureManagerWindow)
-        self.exportButton_captureManagerWindow.setEnabled(False)
 
-        QtCore.QMetaObject.connectSlotsByName(parent_window)
+        # Now we set up event listeners
 
-        _translate = QtCore.QCoreApplication.translate
-        parent_window.setWindowTitle(_translate("CaptureManagerWindow", "Scan Detection System"))
-        self.newButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "New Project"))
-        self.projectButtonsLabel.setText(_translate("CaptureManagerWindow", "  Project Functions  "))
-        self.newButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  New  "))
-        self.saveButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "Save Project"))
-        self.saveButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  Save  "))
-        self.importButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "Import Project"))
-        self.importButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Import"))
-        self.exportButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "Export Project"))
-        self.exportButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Export"))
-        self.projectsList_captureManagerWindow.headerItem().setText(0, _translate("CaptureManagerWindow", "Projects"))
-        __sortingEnabled = self.projectsList_captureManagerWindow.isSortingEnabled()
-        self.projectsList_captureManagerWindow.setSortingEnabled(False)
-        self.projectsList_captureManagerWindow.setSortingEnabled(__sortingEnabled)
-        self.scenarioIterationsLabel_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Scenario Iterations:   "))
+        # Add event listeners to project buttons
+        self.q_button_new_project.clicked.connect(self.createProjectWindow)
+        self.q_button_save_project.clicked.connect(self.save_workspace)
+        self.q_button_export_project.clicked.connect(self.export_project)
+        self.q_button_import_project.clicked.connect(lambda: self.import_project(parent_window))
 
-        self.startVirtualMachineButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Start VM"))
-        self.shutdownVMButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Shutdown VM"))
-
-        self.runScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Run Scenario"))
-        self.stopRestoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Stop/Restore Scenario"))
-        #self.restoreScenarioButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Restore State"))
-        self.closeWorkspaceButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Close Workspace"))
-        self.nodesList_captureManagerWindow.headerItem().setText(0, _translate("CaptureManagerWindow", "Log Net Traffic"))
-        self.nodesList_captureManagerWindow.headerItem().setText(1, _translate("CaptureManagerWindow", "Type"))
-        self.nodesList_captureManagerWindow.headerItem().setText(2, _translate("CaptureManagerWindow", "Name"))
-        self.nodesList_captureManagerWindow.headerItem().setText(3, _translate("CaptureManagerWindow", "MAC"))
-        self.nodesList_captureManagerWindow.headerItem().setText(4, _translate("CaptureManagerWindow", "IP"))
-        #self.nodesList_captureManagerWindow.headerItem().setText(6, _translate("CaptureManagerWindow", "Port"))
-        self.nodesList_captureManagerWindow.headerItem().setText(5, _translate("CaptureManagerWindow", "Scanner/Victim"))
-        self.scenarioStatusLabel_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Status:"))
-        self.scenarioStatus_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Active"))
-        self.addNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "    Add Node    "))
-        self.addSetNodeButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "Set of Victim Nodes"))
-
-        # Temporarily having all buttons enabled
-        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        # self.runScenarioButton_captureManagerWindow.setEnabled(False)
-        # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
-        self.addNodeButton_captureManagerWindow.setEnabled(False)
-        self.addSetNodeButton_captureManagerWindow.setEnabled(False)
-
-        # Project button functions
-        self.newButton_captureManagerWindow.clicked.connect(self.createProjectWindow)
-        self.saveButton_captureManagerWindow.clicked.connect(self.save_workspace)
-        self.exportButton_captureManagerWindow.clicked.connect(self.export_project)
-        self.importButton_captureManagerWindow.clicked.connect(lambda: self.import_project(parent_window))
-
-        # CAUSED AN ERROR!! Method doesn't exist
-        # self.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
 
         # Virtual Machine button functions
-        self.startVirtualMachineButton_captureManagerWindow.clicked.connect(self.start_virtual_machine)
-        self.shutdownVMButton_captureManagerWindow.clicked.connect(self.shutdown_virtual_machine)
+        self.q_button_start_vm.clicked.connect(self.start_virtual_machine)
+        self.q_button_shutdown_vm.clicked.connect(self.shutdown_virtual_machine)
 
         # Scenario button functions
-        self.runScenarioButton_captureManagerWindow.clicked.connect(self.set_up_scenario_unit)
-        self.stopRestoreScenarioButton_captureManagerWindow.clicked.connect(
-            lambda: self.stop_restore_unit())
+        self.q_button_run_scenario.clicked.connect(self.set_up_scenario_unit)
+        self.q_button_stop_and_restore_scenario.clicked.connect(self.stop_restore_unit)
 
-        self.projectsList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.nodesList_captureManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.projectsList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_project)
-        self.nodesList_captureManagerWindow.customContextMenuRequested.connect(self.context_menu_node)
-        self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
+        # Start services
+        self.q_button_start_services_button.clicked.connect(lambda: print("Not yet implemented!"))
 
-        self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(
-            parent_window))
+        self.q_button_close_workspace_button.clicked.connect(
+            lambda: 
+                self.closeCaptureManager(parent_window, choose_workspace_parent_window
+            )
+        )
+
+        # Set up context menu for when user right clicks on a project
+        self.q_tree_widget_projects_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.create_project_right_clicked_context_menu)
+
+        # Set up event listener for when user clicks on a project on the projects list
+        self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.item_project_selected)
+
+
+        # Set up context menu for when user right clicks on a node
+        self.q_tree_widget_nodes_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.q_tree_widget_nodes_list.customContextMenuRequested.connect(self.context_menu_node)
+
 
         # Node button functions
-        self.addNodeButton_captureManagerWindow.clicked.connect(self.addNodeWindow)
-        self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
+        self.q_button_add_node.clicked.connect(self.addNodeWindow)
+        self.q_button_add_set_of_victim_nodes.clicked.connect(self.addSetNodesWindow)
 
-        parent_window.closeEvent = self.CloseEvent
 
+        # This doesnt work, idk why
+        # What i thought this was for is to show the choose workspace window
+        # when the user clicks on the close window button (not the close button defined above)
+        # instead it just ends the program lmao
+        # parent_window.closeEvent = choose_workspace_parent_window.show()
+
+        # Lastly we populate the projects list
         self.generate_projects()
 
 
     def generate_projects(self):
-        self.projectsList_captureManagerWindow.clear()
+        self.q_tree_widget_projects_list.clear()
         for project in self.workspace_object.projects:
             # Make TreeWidgetItem
             project_tree_item = QTreeWidgetItem([project.name])
             for scenario in project.scenarios:
                 scenario_tree = QTreeWidgetItem([scenario.name])
                 project_tree_item.addChild(scenario_tree)
-            self.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
-            # Get all scenarios related to workspace and project
-          #  scenario_names = self.sds_controller.list_all_scenario_units(selected_workspace, project_name)
-         #   for scenario_name in scenario_names:
-                # Make TreeWidgetItem
-                #scenario_tree = QTreeWidgetItem([scenario_name])
-                # Add scenario tree to project tree
-               # project_tree_item.addChild(scenario_tree)
-           # captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+
+            self.q_tree_widget_projects_list.addTopLevelItem(project_tree_item)
 
 
-    def context_menu_project(self, point):
-        index = self.projectsList_captureManagerWindow.indexAt(point)
+    def create_project_right_clicked_context_menu(self, point):
+        index = self.q_tree_widget_projects_list.indexAt(point)
 
         if not index.isValid():
             return
 
-        if not index.isValid() or index.parent().isValid():
-            item = self.projectsList_captureManagerWindow.itemAt(point)
+        if index.parent().isValid():
+            item = self.q_tree_widget_projects_list.itemAt(point)
             if not item:
                 return
             name = item.text(0)
@@ -252,12 +306,12 @@ class Ui_CaptureManagerWindow(object):
             action_edit_scenario_unit.triggered.connect(lambda: self.edit_scenario_unit(name))
             action_delete_scenario_unit.triggered.connect(lambda: self.delete_scenario_unit(name))
 
-            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+            menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
 
             return
 
         if not index.isValid() or not index.parent().isValid():
-            item = self.projectsList_captureManagerWindow.itemAt(point)
+            item = self.q_tree_widget_projects_list.itemAt(point)
             name = item.text(0)
 
             menu = QtWidgets.QMenu()
@@ -276,7 +330,7 @@ class Ui_CaptureManagerWindow(object):
             action_edit_project.triggered.connect(lambda: self.edit_project(name))
             action_delete_project.triggered.connect(lambda: self.delete_project(name))
 
-            menu.exec_(self.projectsList_captureManagerWindow.mapToGlobal(point))
+            menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
 
             return
 
@@ -303,18 +357,18 @@ class Ui_CaptureManagerWindow(object):
         newScenarioUnit_Window = QtWidgets.QDialog()
         newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
         newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window,
-                                                     self.projectsList_captureManagerWindow,
-                                                     self.scenarioIterationsSpinbox_captureManagerWindow)
+                                                     self.q_tree_widget_projects_list,
+                                                     self.q_spin_box_scenario_iterations)
         newScenarioUnit_Window.show()
 
     def context_menu_node(self, point):
-        index = self.nodesList_captureManagerWindow.indexAt(point)
+        index = self.q_tree_widget_nodes_list.indexAt(point)
 
         if not index.isValid():
             return
 
         if not index.isValid() or index.parent().isValid():
-            item = self.nodesList_captureManagerWindow.itemAt(point)
+            item = self.q_tree_widget_nodes_list.itemAt(point)
             if not item:
                 return
             name = item.text(2)
@@ -329,7 +383,7 @@ class Ui_CaptureManagerWindow(object):
             action_edit_node.triggered.connect(lambda: self.edit_node(name))
             action_delete_node.triggered.connect(lambda: self.delete_node(name))
 
-            menu.exec_(self.nodesList_captureManagerWindow.mapToGlobal(point))
+            menu.exec_(self.q_tree_widget_nodes_list.mapToGlobal(point))
 
             return
 
@@ -343,7 +397,7 @@ class Ui_CaptureManagerWindow(object):
     def item_project_selected(self):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
-        self.nodesList_captureManagerWindow.clear()
+        self.q_tree_widget_nodes_list.clear()
         # if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
         #     # This condition is for projects. Works with the project list which...
         #     # contains projects and scenarios
@@ -374,7 +428,7 @@ class Ui_CaptureManagerWindow(object):
         # Insert all the nodes into the UI
 
 
-        self.nodesList_captureManagerWindow.header().setSectionResizeMode(
+        self.q_tree_widget_nodes_list.header().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeToContents)
 
     def start_virtual_machine(self):
@@ -406,7 +460,7 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def set_up_scenario_unit(self):
-        scenario_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        scenario_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
         # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
         # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
@@ -418,7 +472,7 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def export_project(self):
-        project_name = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
         export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
         print(f'export path is: {export_path}')
 
@@ -442,7 +496,7 @@ class Ui_CaptureManagerWindow(object):
         addNode_Window = QtWidgets.QDialog()
         addNodeWindowUI = Ui_addNode_window()
         addNodeWindowUI.setupAddNode(addNode_Window,
-                                     self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                     self.q_tree_widget_projects_list, self.q_tree_widget_nodes_list,
                                      self.CentralLayout_captureManagerWindow,
                                      self.ip_counter, self.MAC, self.id_counter)
         addNode_Window.show()
@@ -451,15 +505,10 @@ class Ui_CaptureManagerWindow(object):
         addSetNodes_Window = QtWidgets.QDialog()
         addSetNodesWindowUI = Ui_addSetNodes_window()
         addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window,
-                                             self.projectsList_captureManagerWindow, self.nodesList_captureManagerWindow,
+                                             self.q_tree_widget_projects_list, self.q_tree_widget_nodes_list,
                                              self.ip_counter, self.MAC, self.id_counter)
         addSetNodes_Window.show()
 
-
-    def closeCaptureManager(self, CaptureManagerWindow):
-        CaptureManagerWindow.close()
-        self.choose_workspace_window.show()
-
-
-    def CloseEvent(self, event):
-        self.choose_workspace_window.show()
+    def closeCaptureManager(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
+        capture_manager_window.close()
+        choose_workspace_window.show()
