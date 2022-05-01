@@ -2,7 +2,7 @@ import os
 import subprocess
 #import qjsonmodel
 import numpy as np
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets,Qt
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
 from scapy.all import *
 
@@ -285,8 +285,8 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(4, "Protocol")
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
-
-            self.packetsList_analysisManagerWindow.setSortingEnabled(True)
+            #self.packetsList_analysisManagerWindow.headerItem().setData()
+            #self.packetsList_analysisManagerWindow.setSortingEnabled(True)
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
@@ -313,10 +313,10 @@ class Ui_AnalysisManagerWindow(object):
 
             self.gridLayout.addLayout(self.buttonsPacketLayout_captureManagerWindow, 2, 0, 1, 1)
 
-            self.openPacketWiresharkButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected Packets in Wireshark"))
-            self.convertPacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Convert Selected Packets"))
-            self.openInJsonButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open in Json"))
-            self.removePacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Remove Selected Packets"))
+            self.openPacketWiresharkButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected in Wireshark"))
+            self.convertPacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "New Pcap From Selected"))
+            self.openInJsonButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected in Json"))
+            self.removePacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Remove Selected "))
             self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
             self.filtersButton_analysisManagerWindow.setText(
             _translate("AnalysisManagerWindow", "      Apply Filter      "))
@@ -341,7 +341,7 @@ class Ui_AnalysisManagerWindow(object):
                 self.test_capture,self.filterInput_analysisManagerWindow.text(), tab_name))
 
             self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
-            self.convertPacketsButton_captureManagerWindow.clicked.connect(lambda:self.convertPackets(tab_name,self.packetsList_analysisManagerWindow))
+            self.convertPacketsButton_captureManagerWindow.clicked.connect(lambda:self.convertPackets(tab_name))
             self.removePacketsButton_captureManagerWindow.clicked.connect(lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
             self.openInJsonButton_captureManagerWindow.clicked.connect(lambda: self.openPacketJson(tab_name))
             self.tab_index += 1
@@ -388,18 +388,21 @@ class Ui_AnalysisManagerWindow(object):
         action_delete_pcap = QAction("Delete pcap")
         action_hier_stat = QAction("Protocol Stats")
         action_statistics = QAction("Statistics Graph")
+        action_toJson = QAction("Convert To Json")
 
         menu.addAction(action_open_pcap)
-        menu.addAction(action_rename_pcap)
-        menu.addAction(action_delete_pcap)
+        #menu.addAction(action_rename_pcap)
+        #menu.addAction(action_delete_pcap)
         menu.addAction(action_hier_stat)
         menu.addAction(action_statistics)
+        menu.addAction(action_toJson)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
-        action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
-        action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
+        #action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
+        #action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
         action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
         action_statistics.triggered.connect(lambda: self.show_statistics(name))
+        action_toJson.triggered.connect(lambda:self.pcapToJson(name))
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
 
@@ -444,7 +447,7 @@ class Ui_AnalysisManagerWindow(object):
         file_list = []
         for pkt in packets:
             pktlist.append(pkt.protocol)
-            file_list.append(str(pkt.no))
+            file_list.append( str(pkt.no))
             file_list.append(str(pkt.time))
             file_list.append(str(pkt.source))
             file_list.append(str(pkt.destination))
@@ -464,7 +467,19 @@ class Ui_AnalysisManagerWindow(object):
         plt.savefig("ProtocolGraph.png")
         plt.show()
 
+    def pcapToJson(self,name):
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "json Files (*.json)")
+        if filtered_file:
+            os.system('tshark -r %s -T json > %s' % (self.test_capture.path + name, filtered_file))
 
+        pass
+    def pcapToCSV(self,name):
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "json Files (*.json)")
+        if filtered_file:
+            os.system('tshark -r %s -T json > %s' % (self.test_capture.path + name, filtered_file))
+        pass
     def openPacketWireshark(self, name):
         packets = ''
         temp_cap = ''
@@ -503,6 +518,8 @@ class Ui_AnalysisManagerWindow(object):
                 temp_cap.write(packet)
         #subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        #f = open("temp.json", "w")
+        #f.write(output)
 
         packets.close()
 
@@ -522,7 +539,7 @@ class Ui_AnalysisManagerWindow(object):
         x = msg.exec()
         pass
 
-    def convertPackets(self,name, packets_list):
+    def convertPackets(self,name):
 
         filtered_file, _ = QFileDialog.getSaveFileName(
             self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
@@ -592,32 +609,7 @@ class Ui_AnalysisManagerWindow(object):
             if self.check(packets_list) is True:
                 break
 
-    def removePackets(self, name, packets_list):
-        packets = ''
-        temp_cap = ''
-        i_open_file = ''
-        index = 0
-        for pcap in self.test_capture.pcaps:
-            if pcap.name == name:
-                path = pcap.path.replace(pcap.name,"temp_cap.pcap")
-                if os.path.exists(path):
-                    os.remove(path)
-                packets = self.test_capture.iterate_file('', pcap.name)
-                path = pcap.path.replace(pcap.name, "temp_cap.pcap")
-                temp_cap = PcapWriter(path, append=True)
-                i_open_file = PcapReader(pcap.path)
-                packet = i_open_file.read_packet()
-                break
-            else:
-                index += 1
-        for p in packets:
-            packet = i_open_file.read_packet()
-            if str(p.no) not in self.selected_packets:
-                temp_cap.write(packet)
-        packets.close()
-        path_new = path.replace("temp_cap.pcap", name)
-        os.remove(path_new)
-        os.rename(path, path_new)
+
     def check(self, packets_list):
         for i in range(packets_list.topLevelItemCount()):
             top_item = packets_list.topLevelItem(i)
@@ -627,24 +619,3 @@ class Ui_AnalysisManagerWindow(object):
         return True
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(444, 335)
-        self.gridLayout_2 = QtWidgets.QGridLayout(Form)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.scrollArea = QtWidgets.QScrollArea(Form)
-        self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 418, 309))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-        self.gridLayout_2.addWidget(self.scrollArea, 0, 0, 1, 1)
-
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
-
-    def retranslateUi(self, Form):
-        _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
