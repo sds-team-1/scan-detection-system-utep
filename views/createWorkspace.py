@@ -6,7 +6,6 @@ import Database
 
 from Database.databaseFunctions import generate_workspaces_list_window
 from views.captureManagerWindow import Ui_CaptureManagerWindow
-from views.missingFieldsWindow import Ui_missingFields_window
 
 from Database.databaseFunctions import generate_workspaces_list_window
 

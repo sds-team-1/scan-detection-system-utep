@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from Models.modelClasses import Project
 from PyQt5.QtWidgets import QMessageBox
-from views.missingFieldsWindow import Ui_missingFields_window
 
 
 class Ui_newProject_window(object):

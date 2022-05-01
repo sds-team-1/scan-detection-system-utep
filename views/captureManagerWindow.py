@@ -221,45 +221,46 @@ class Ui_CaptureManagerWindow(object):
         # Now we set up event listeners
 
         # Add event listeners to project buttons
-        self.q_button_new_project.clicked.connect(self.createProjectWindow)
-        self.q_button_save_project.clicked.connect(self.save_workspace)
-        self.q_button_export_project.clicked.connect(self.export_project)
-        self.q_button_import_project.clicked.connect(lambda: self.import_project(parent_window))
+        self.q_button_new_project.clicked.connect(self.create_project_button_clicked)
+        self.q_button_save_project.clicked.connect(self.save_workspaces_button_clicked)
+        self.q_button_export_project.clicked.connect(self.export_project_button_clicked)
+        self.q_button_import_project.clicked.connect(lambda: self.import_project_button_clicked(parent_window))
 
 
         # Virtual Machine button functions
-        self.q_button_start_vm.clicked.connect(self.start_virtual_machine)
-        self.q_button_shutdown_vm.clicked.connect(self.shutdown_virtual_machine)
+        self.q_button_start_vm.clicked.connect(self.start_vm_button_clicked)
+        self.q_button_shutdown_vm.clicked.connect(self.shut_down_vm_button_clicked)
 
         # Scenario button functions
-        self.q_button_run_scenario.clicked.connect(self.set_up_scenario_unit)
-        self.q_button_stop_and_restore_scenario.clicked.connect(self.stop_restore_unit)
+        self.q_button_run_scenario.clicked.connect(self.run_scenario_button_clicked)
+        self.q_button_stop_and_restore_scenario.clicked.connect(self.stop_and_restore_scenario_button_clicked)
 
-        # Start services
+        # Start services button
         self.q_button_start_services_button.clicked.connect(lambda: print("Not yet implemented!"))
 
+        # Close workspace button
         self.q_button_close_workspace_button.clicked.connect(
             lambda: 
-                self.closeCaptureManager(parent_window, choose_workspace_parent_window
+                self.close_workspace_button_clicked(parent_window, choose_workspace_parent_window
             )
         )
 
         # Set up context menu for when user right clicks on a project
         self.q_tree_widget_projects_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.create_project_right_clicked_context_menu)
+        self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.project_right_clicked)
 
         # Set up event listener for when user clicks on a project on the projects list
-        self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.item_project_selected)
+        self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.project_item_clicked)
 
 
         # Set up context menu for when user right clicks on a node
         self.q_tree_widget_nodes_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.q_tree_widget_nodes_list.customContextMenuRequested.connect(self.context_menu_node)
+        self.q_tree_widget_nodes_list.customContextMenuRequested.connect(self.node_right_clicked)
 
 
         # Node button functions
-        self.q_button_add_node.clicked.connect(self.addNodeWindow)
-        self.q_button_add_set_of_victim_nodes.clicked.connect(self.addSetNodesWindow)
+        self.q_button_add_node.clicked.connect(self.add_node_button_clicked)
+        self.q_button_add_set_of_victim_nodes.clicked.connect(self.add_set_node_button_clicked)
 
 
         # This doesnt work, idk why
@@ -269,10 +270,10 @@ class Ui_CaptureManagerWindow(object):
         # parent_window.closeEvent = choose_workspace_parent_window.show()
 
         # Lastly we populate the projects list
-        self.generate_projects()
+        self.render_projects_in_project_tree()
 
 
-    def generate_projects(self):
+    def render_projects_in_project_tree(self):
         self.q_tree_widget_projects_list.clear()
         for project in self.workspace_object.projects:
             # Make TreeWidgetItem
@@ -284,12 +285,13 @@ class Ui_CaptureManagerWindow(object):
             self.q_tree_widget_projects_list.addTopLevelItem(project_tree_item)
 
 
-    def create_project_right_clicked_context_menu(self, point):
+    def project_right_clicked(self, point):
         index = self.q_tree_widget_projects_list.indexAt(point)
 
         if not index.isValid():
             return
-
+        
+        # If the right clicked element has a valid parent, a scenario unit was clicked
         if index.parent().isValid():
             item = self.q_tree_widget_projects_list.itemAt(point)
             if not item:
@@ -307,32 +309,31 @@ class Ui_CaptureManagerWindow(object):
             action_delete_scenario_unit.triggered.connect(lambda: self.delete_scenario_unit(name))
 
             menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
-
             return
 
-        if not index.isValid() or not index.parent().isValid():
-            item = self.q_tree_widget_projects_list.itemAt(point)
-            name = item.text(0)
+        # Else a project was right clicked
+        item = self.q_tree_widget_projects_list.itemAt(point)
+        name = item.text(0)
 
-            menu = QtWidgets.QMenu()
-            action_add_scenario = QAction("Add Scenario Unit")
-            action_load_scenario = QAction("Load Scenario Unit")
-            action_edit_project = QAction("Rename Project")
-            action_delete_project = QAction("Delete Project")
+        menu = QtWidgets.QMenu()
+        action_add_scenario = QAction("Add Scenario Unit")
+        action_load_scenario = QAction("Load Scenario Unit")
+        action_edit_project = QAction("Rename Project")
+        action_delete_project = QAction("Delete Project")
 
-            menu.addAction(action_add_scenario)
-            menu.addAction(action_load_scenario)
-            menu.addAction(action_edit_project)
-            menu.addAction(action_delete_project)
+        menu.addAction(action_add_scenario)
+        menu.addAction(action_load_scenario)
+        menu.addAction(action_edit_project)
+        menu.addAction(action_delete_project)
 
-            action_add_scenario.triggered.connect(self.newScenarioUnitWindow)
-            action_load_scenario.triggered.connect(self.load_scenario_unit)
-            action_edit_project.triggered.connect(lambda: self.edit_project(name))
-            action_delete_project.triggered.connect(lambda: self.delete_project(name))
+        action_add_scenario.triggered.connect(self.newScenarioUnitWindow)
+        action_load_scenario.triggered.connect(self.load_scenario_unit)
+        action_edit_project.triggered.connect(lambda: self.edit_project(name))
+        action_delete_project.triggered.connect(lambda: self.delete_project(name))
 
-            menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
+        menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
 
-            return
+        return
 
     def load_scenario_unit(self):
         pass
@@ -361,7 +362,7 @@ class Ui_CaptureManagerWindow(object):
                                                      self.q_spin_box_scenario_iterations)
         newScenarioUnit_Window.show()
 
-    def context_menu_node(self, point):
+    def node_right_clicked(self, point):
         index = self.q_tree_widget_nodes_list.indexAt(point)
 
         if not index.isValid():
@@ -394,7 +395,7 @@ class Ui_CaptureManagerWindow(object):
 
     def delete_node(self, selected_node):
         pass
-    def item_project_selected(self):
+    def project_item_clicked(self):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
         self.q_tree_widget_nodes_list.clear()
@@ -431,7 +432,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.header().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeToContents)
 
-    def start_virtual_machine(self):
+    def start_vm_button_clicked(self):
         pass
         # Get input
         # store input into workspace
@@ -439,7 +440,7 @@ class Ui_CaptureManagerWindow(object):
         # self.runScenarioButton_captureManagerWindow.setEnabled(True)
         # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
 
-    def shutdown_virtual_machine(self):
+    def shut_down_vm_button_clicked(self):
         print("shutdown virtual machine")
 
         # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
@@ -453,13 +454,13 @@ class Ui_CaptureManagerWindow(object):
     def restore_scenario_unit(self):
         pass
 
-    def stop_restore_unit(self):
+    def stop_and_restore_scenario_button_clicked(self):
         pass
 
     def start_services(self):
         pass
 
-    def set_up_scenario_unit(self):
+    def run_scenario_button_clicked(self):
         scenario_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
         # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
         # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
@@ -467,16 +468,16 @@ class Ui_CaptureManagerWindow(object):
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.runScenarioButton_captureManagerWindow.setEnabled(False)
 
-    def save_workspace(self):
+    def save_workspaces_button_clicked(self):
         # Everything is already saved. So we don't really need it. YW
         pass
 
-    def export_project(self):
+    def export_project_button_clicked(self):
         project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
         export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
         print(f'export path is: {export_path}')
 
-    def import_project(self, captureManager_Window):
+    def import_project_button_clicked(self, captureManager_Window):
         dialog = QFileDialog()
         json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
         if not json_path[0]:
@@ -485,14 +486,14 @@ class Ui_CaptureManagerWindow(object):
             project = json.load(json_file)
    
 
-    def createProjectWindow(self):
+    def create_project_button_clicked(self):
         newProject_Window = QtWidgets.QDialog()
         newProjectWindowUI = Ui_newProject_window()
         newProjectWindowUI.setupNewProject(
             newProject_Window, self)
         newProject_Window.show()
 
-    def addNodeWindow(self):
+    def add_node_button_clicked(self):
         addNode_Window = QtWidgets.QDialog()
         addNodeWindowUI = Ui_addNode_window()
         addNodeWindowUI.setupAddNode(addNode_Window,
@@ -501,7 +502,7 @@ class Ui_CaptureManagerWindow(object):
                                      self.ip_counter, self.MAC, self.id_counter)
         addNode_Window.show()
 
-    def addSetNodesWindow(self):
+    def add_set_node_button_clicked(self):
         addSetNodes_Window = QtWidgets.QDialog()
         addSetNodesWindowUI = Ui_addSetNodes_window()
         addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window,
@@ -509,6 +510,6 @@ class Ui_CaptureManagerWindow(object):
                                              self.ip_counter, self.MAC, self.id_counter)
         addSetNodes_Window.show()
 
-    def closeCaptureManager(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
+    def close_workspace_button_clicked(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
         capture_manager_window.close()
         choose_workspace_window.show()
