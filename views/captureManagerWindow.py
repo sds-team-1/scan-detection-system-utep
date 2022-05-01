@@ -283,6 +283,7 @@ class Ui_CaptureManagerWindow(object):
 
 
     def project_right_clicked(self, point):
+        # TODO: finish load scenario unit
         index = self.q_tree_widget_projects_list.indexAt(point)
 
         if not index.isValid():
@@ -293,18 +294,18 @@ class Ui_CaptureManagerWindow(object):
 
         menu = QtWidgets.QMenu()
         action_add_scenario = QAction("Add Scenario Unit")
-        action_load_scenario = QAction("Load Scenario Unit")
+        # action_load_scenario = QAction("Load Scenario Unit")
         action_edit_project = QAction("Rename Project")
         action_delete_project = QAction("Delete Project")
 
         menu.addAction(action_add_scenario)
-        menu.addAction(action_load_scenario)
+        # menu.addAction(action_load_scenario)
         menu.addAction(action_edit_project)
         menu.addAction(action_delete_project)
 
         action_add_scenario.triggered.connect(lambda: self.add_scenario_for_project_clicked(name))
-        action_load_scenario.triggered.connect(self.load_scenario_unit)
-        action_edit_project.triggered.connect(lambda: self.edit_project(name))
+        # action_load_scenario.triggered.connect(self.load_scenario_unit)
+        action_edit_project.triggered.connect(lambda: self.edit_project_name_clicked(name))
         action_delete_project.triggered.connect(lambda: self.delete_project(name))
 
         menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
@@ -314,10 +315,22 @@ class Ui_CaptureManagerWindow(object):
     def load_scenario_unit(self):
         pass
 
-    #TODO: Start the UI dialog
-    def edit_project(self, selected_project):
-        '''Starts the UI and edits the project'''
-        pass
+
+    def edit_project_name_clicked(self, selected_project_name):
+        # new_name, ok = editBox.getText(self, "Rename Project", "New Project Name:", text=selected_project.name)
+        new_q_dialog = QtWidgets.QInputDialog()
+        editBox = QtWidgets.QInputDialog()
+        new_name, ok = editBox.getText(new_q_dialog, "Rename Project", "New Project Name:", text=selected_project_name)
+
+        if ok:
+            for project in self.workspace_object.projects:
+                if project.name == selected_project_name:
+                    project.name = new_name
+                    self.render_projects_in_project_tree()
+                    break
+            self.render_projects_in_project_tree()
+        
+
 
     def delete_project(self, selected_project):
         pass
