@@ -332,8 +332,20 @@ class Ui_CaptureManagerWindow(object):
         
 
 
-    def delete_project(self, selected_project):
-        pass
+    def delete_project(self, selected_project_name):
+        # Show confimation dialog
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setText("Are you sure you want to delete this project?")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
+        ret = msgBox.exec_()
+
+        if ret == QtWidgets.QMessageBox.Yes:
+            for project in self.workspace_object.projects:
+                if project.name == selected_project_name:
+                    self.workspace_object.projects.remove(project)
+                    self.render_projects_in_project_tree()
+                    break
 
     #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
