@@ -16,6 +16,9 @@ class SDSDatabaseHelper:
     WORKSPACES_COLLECTION_NAME = 'workspaces'
 
     workspaces : Collection = None
+    mongo_client : MongoClient = None
+
+    mock_workspace_names = ["workspace 1", "workspace 2", "workspace 3"]
 
 
     def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
@@ -26,20 +29,19 @@ class SDSDatabaseHelper:
         self.DATABASE_URL = url
         self.DATABASE_NAME = db_name
 
-        client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
+        self.mongo_client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
 
-        db = client[self.DATABASE_NAME]
+        db = self.mongo_client[self.DATABASE_NAME]
         workspaces = db[self.WORKSPACES_COLLECTION_NAME]
         self.workspaces = workspaces
 
         print(f'DatabaseHelper initialized with url: {self.DATABASE_URL} and db: {self.DATABASE_NAME}')
 
-
     def get_all_workspace_names(self) -> list:
         '''
         TODO: finish this
         '''
-        return ['workspace1', 'workspace2', 'asdflksdf']
+        return self.mock_workspace_names
 
     def get_all_workspaces_objects(self) -> list :
         '''
@@ -81,6 +83,19 @@ class SDSDatabaseHelper:
         print("Saved workspace to db")
         return
 
+    def delete_workspace(self, workspace_name):
+        print("Deleting workspace with name: " + workspace_name)
+        self.mock_workspace_names.remove(workspace_name)
+
+    def rename_workspace(self, workspace_name: str, new_name: str):
+        print("Renaming workspace: " + workspace_name + " to " + new_name)
+        self.mock_workspace_names.remove(workspace_name)
+        self.mock_workspace_names.append(new_name)
+
+    def create_new_workspace(self, workspace_name:str):
+        print("Creating new workspace with name: " + workspace_name)
+        self.mock_workspace_names.append(workspace_name)
+
     def test_connection(self) -> bool:
         '''
         Attempts to connect to 
@@ -94,9 +109,9 @@ class SDSDatabaseHelper:
         try:
             client.server_info()
             return True
+        # throw exception if connection fails
         except:
-            return False
-
+            raise Exception("Could not connect to database")
 
 
 

@@ -1,7 +1,7 @@
 import json
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog
 from Models.modelClasses import Workspace
 
 from views.addNodeWindow import Ui_addNode_window
@@ -20,16 +20,18 @@ class Ui_CaptureManagerWindow(object):
         self.db_helper = db_helper
         self.workspace_object = workspace_object
 
-    def setupCaptureManager(self, CaptureManagerWindow, workspace_Window):
-        self.InitialWorkspaceWindow = workspace_Window
+    def setupCaptureManager(self, parent_window:QMainWindow, choose_workspace_parent_window:QDialog):
+        self.choose_workspace_window:QMainWindow = choose_workspace_parent_window
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
 
-        CaptureManagerWindow.setObjectName("CaptureManagerWindow")
-        CaptureManagerWindow.resize(1200, 700)
-        CaptureManagerWindow.setMinimumSize(QtCore.QSize(1200, 700))
-        self.CentralLayout_captureManagerWindow = QtWidgets.QWidget(CaptureManagerWindow)
+        parent_window.setObjectName("CaptureManagerWindow")
+        parent_window.resize(1200, 700)
+        parent_window.setMinimumSize(QtCore.QSize(1200, 700))
+        parent_window.setWindowTitle(self.workspace_object.name + " - Capture Manager")
+
+        self.CentralLayout_captureManagerWindow = QtWidgets.QWidget(parent_window)
         self.CentralLayout_captureManagerWindow.setObjectName("CentralLayout_captureManagerWindow")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.CentralLayout_captureManagerWindow)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -124,13 +126,13 @@ class Ui_CaptureManagerWindow(object):
         self.scenarioLayout_captureManagerWindow.addLayout(self.nodeLayout_captureManagerWindow)
         self.centralSectionLayout_captureManagerWindow.addLayout(self.scenarioLayout_captureManagerWindow)
         self.gridLayout_2.addLayout(self.centralSectionLayout_captureManagerWindow, 1, 0, 1, 1)
-        CaptureManagerWindow.setCentralWidget(self.CentralLayout_captureManagerWindow)
+        parent_window.setCentralWidget(self.CentralLayout_captureManagerWindow)
         self.exportButton_captureManagerWindow.setEnabled(False)
 
-        QtCore.QMetaObject.connectSlotsByName(CaptureManagerWindow)
+        QtCore.QMetaObject.connectSlotsByName(parent_window)
 
         _translate = QtCore.QCoreApplication.translate
-        CaptureManagerWindow.setWindowTitle(_translate("CaptureManagerWindow", "Scan Detection System"))
+        parent_window.setWindowTitle(_translate("CaptureManagerWindow", "Scan Detection System"))
         self.newButton_captureManagerWindow.setToolTip(_translate("CaptureManagerWindow", "New Project"))
         self.projectButtonsLabel.setText(_translate("CaptureManagerWindow", "  Project Functions  "))
         self.newButton_captureManagerWindow.setText(_translate("CaptureManagerWindow", "  New  "))
@@ -177,7 +179,7 @@ class Ui_CaptureManagerWindow(object):
         self.newButton_captureManagerWindow.clicked.connect(self.createProjectWindow)
         self.saveButton_captureManagerWindow.clicked.connect(self.save_workspace)
         self.exportButton_captureManagerWindow.clicked.connect(self.export_project)
-        self.importButton_captureManagerWindow.clicked.connect(lambda: self.import_project(CaptureManagerWindow))
+        self.importButton_captureManagerWindow.clicked.connect(lambda: self.import_project(parent_window))
 
         # CAUSED AN ERROR!! Method doesn't exist
         # self.startServicesButton_captureManagerWindow.clicked.connect(lambda: start_services())
@@ -198,13 +200,13 @@ class Ui_CaptureManagerWindow(object):
         self.projectsList_captureManagerWindow.itemSelectionChanged.connect(self.item_project_selected)
 
         self.closeWorkspaceButton_captureManagerWindow.clicked.connect(lambda: self.closeCaptureManager(
-            CaptureManagerWindow))
+            parent_window))
 
         # Node button functions
         self.addNodeButton_captureManagerWindow.clicked.connect(self.addNodeWindow)
         self.addSetNodeButton_captureManagerWindow.clicked.connect(self.addSetNodesWindow)
 
-        CaptureManagerWindow.closeEvent = self.CloseEvent
+        parent_window.closeEvent = self.CloseEvent
 
         self.generate_projects()
 
@@ -456,8 +458,8 @@ class Ui_CaptureManagerWindow(object):
 
     def closeCaptureManager(self, CaptureManagerWindow):
         CaptureManagerWindow.close()
-        self.InitialWorkspaceWindow.show()
+        self.choose_workspace_window.show()
 
 
     def CloseEvent(self, event):
-        self.InitialWorkspaceWindow.show()
+        self.choose_workspace_window.show()

@@ -1,16 +1,16 @@
 import sys
 from PyQt5 import QtWidgets
-from views.workspace import Ui_workspace_window
+from views.chooseWorkspace import Ui_workspace_window
 import json
 import Database.DatabaseHelper
 from views.databaseConfigWindow import Ui_databaseConfig_window
 
-dbHelper : Database.DatabaseHelper.SDSDatabaseHelper = Database.DatabaseHelper.SDSDatabaseHelper()
+# dbHelper : Database.DatabaseHelper.SDSDatabaseHelper = Database.DatabaseHelper.SDSDatabaseHelper()
 
 app = QtWidgets.QApplication(sys.argv)
 
 databaseConfig_Window = QtWidgets.QDialog()
-databaseConfigWindowUI = Ui_databaseConfig_window(dbHelper)
+databaseConfigWindowUI = Ui_databaseConfig_window()
 databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
 
 # Commenting out for now to prevent dependencies

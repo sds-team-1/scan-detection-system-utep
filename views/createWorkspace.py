@@ -12,102 +12,106 @@ from Database.databaseFunctions import generate_workspaces_list_window
 
 
 class Ui_newWorkspace_window(object):
+    db_helper: Database.DatabaseHelper.SDSDatabaseHelper
 
-    db_helper:Database.DatabaseHelper.SDSDatabaseHelper
-
-    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper):
+    def __init__(self, db_helper: Database.DatabaseHelper.SDSDatabaseHelper):
         self.db_helper = db_helper
-        
-    def setupCreateWorkspace(self, newWorkspace_window, workspace_Window, workspace_list = None, input_to_edit = None):
-        newWorkspace_window.setObjectName("newWorkspace_window")
-        newWorkspace_window.setEnabled(True)
-        newWorkspace_window.resize(487, 120)
-        newWorkspace_window.setMinimumSize(QtCore.QSize(487, 120))
-        newWorkspace_window.setMaximumSize(QtCore.QSize(487, 120))
-        self.NewProjectWindowLayout = QtWidgets.QGridLayout(newWorkspace_window)
+
+    def setupCreateWorkspace(
+        self,
+        parent_window: QtWidgets.QDialog,
+        on_create_workspace_button_clicked_function
+    ):
+        parent_window.setObjectName("newWorkspace_window")
+        parent_window.setEnabled(True)
+        parent_window.resize(487, 120)
+        parent_window.setMinimumSize(QtCore.QSize(487, 120))
+        parent_window.setMaximumSize(QtCore.QSize(487, 120))
+        parent_window.setWindowTitle("New Workspace")
+
+        # Create label and input line
+        self.q_label_workspace_name = QtWidgets.QLabel(parent_window)
+        self.q_label_workspace_name.setObjectName(
+            "workspaceNameLabel_newWorkspaceWindow")
+        self.q_label_workspace_name.setText("Workspace Name")
+
+        self.q_line_edit_input_workspace_name_text = QtWidgets.QLineEdit(
+            parent_window)
+        self.q_line_edit_input_workspace_name_text.setObjectName(
+            "workspaceNameInput_newWorkspaceWindow")
+        self.q_line_edit_input_workspace_name_text.setFocus()
+
+        # Create a row and add the label and input line to it
+        self.q_row_layout_workspace_dialog_and_button = QtWidgets.QHBoxLayout()
+        self.q_row_layout_workspace_dialog_and_button.setObjectName(
+            "newWorkspaceNameLayout_newWorkspaceWindow")
+        self.q_row_layout_workspace_dialog_and_button.addWidget(
+            self.q_label_workspace_name)
+        self.q_row_layout_workspace_dialog_and_button.addWidget(
+            self.q_line_edit_input_workspace_name_text)
+
+        # Create the create workspace button
+        self.createWorkspaceButton_newWorkspaceWindow = QtWidgets.QPushButton(
+            parent_window)
+        self.createWorkspaceButton_newWorkspaceWindow.setObjectName(
+            "createWorkspaceButton_newWorkspaceWindow")
+        self.createWorkspaceButton_newWorkspaceWindow.setText(
+            "Create Workspace")
+
+        # Create the cancel button
+        self.cancelWorkspaceButton_newWorkspaceWindow = QtWidgets.QPushButton(
+            parent_window)
+        self.cancelWorkspaceButton_newWorkspaceWindow.setObjectName(
+            "cancelWorkspaceButton_newWorkspaceWindow")
+        self.cancelWorkspaceButton_newWorkspaceWindow.setText("Cancel")
+
+        # Create the row and add the buttons to the row
+        self.q_row_layout_create_cancel_buttons = QtWidgets.QHBoxLayout()
+        self.q_row_layout_create_cancel_buttons.setObjectName(
+            "newWorkspaceButtonsLayout_newWorkspaceWindow")
+        self.q_row_layout_create_cancel_buttons.addWidget(
+            self.createWorkspaceButton_newWorkspaceWindow)
+        self.q_row_layout_create_cancel_buttons.addWidget(
+            self.cancelWorkspaceButton_newWorkspaceWindow)
+
+        # Create a column and add the 2 rows
+        self.q_col_layout_main = QtWidgets.QVBoxLayout()
+        self.q_col_layout_main.setObjectName("newWorkspaceLayout")
+        self.q_col_layout_main.addLayout(
+            self.q_row_layout_workspace_dialog_and_button)
+        self.q_col_layout_main.addLayout(
+            self.q_row_layout_create_cancel_buttons)
+
+        # Create a gridlayout and add the column to it
+        self.NewProjectWindowLayout = QtWidgets.QGridLayout(parent_window)
         self.NewProjectWindowLayout.setObjectName("NewProjectWindowLayout")
-        self.newWorkspaceLayout = QtWidgets.QVBoxLayout()
-        self.newWorkspaceLayout.setObjectName("newWorkspaceLayout")
-        self.newWorkspaceNameLayout_newWorkspaceWindow = QtWidgets.QHBoxLayout()
-        self.newWorkspaceNameLayout_newWorkspaceWindow.setObjectName("newWorkspaceNameLayout_newWorkspaceWindow")
-        self.workspaceNameLabel_newWorkspaceWindow = QtWidgets.QLabel(newWorkspace_window)
-        self.workspaceNameLabel_newWorkspaceWindow.setObjectName("workspaceNameLabel_newWorkspaceWindow")
-        self.newWorkspaceNameLayout_newWorkspaceWindow.addWidget(self.workspaceNameLabel_newWorkspaceWindow)
-        self.workspaceNameInput_newWorkspaceWindow = QtWidgets.QLineEdit(newWorkspace_window)
-        self.workspaceNameInput_newWorkspaceWindow.setObjectName("workspaceNameInput_newWorkspaceWindow")
-        self.newWorkspaceNameLayout_newWorkspaceWindow.addWidget(self.workspaceNameInput_newWorkspaceWindow)
-        self.newWorkspaceLayout.addLayout(self.newWorkspaceNameLayout_newWorkspaceWindow)
-        self.newWorkspaceButtonsLayout_newWorkspaceWindow = QtWidgets.QHBoxLayout()
-        self.newWorkspaceButtonsLayout_newWorkspaceWindow.setObjectName("newWorkspaceButtonsLayout_newWorkspaceWindow")
-        self.createWorkspaceButton_newWorkspaceWindow = QtWidgets.QPushButton(newWorkspace_window)
-        self.createWorkspaceButton_newWorkspaceWindow.setObjectName("createWorkspaceButton_newWorkspaceWindow")
-        self.newWorkspaceButtonsLayout_newWorkspaceWindow.addWidget(self.createWorkspaceButton_newWorkspaceWindow)
-        self.cancelWorkspaceButton_newWorkspaceWindow = QtWidgets.QPushButton(newWorkspace_window)
-        self.cancelWorkspaceButton_newWorkspaceWindow.setObjectName("cancelWorkspaceButton_newWorkspaceWindow")
-        self.newWorkspaceButtonsLayout_newWorkspaceWindow.addWidget(self.cancelWorkspaceButton_newWorkspaceWindow)
-        self.newWorkspaceLayout.addLayout(self.newWorkspaceButtonsLayout_newWorkspaceWindow)
-        self.NewProjectWindowLayout.addLayout(self.newWorkspaceLayout, 0, 0, 1, 1)
+        self.NewProjectWindowLayout.addLayout(
+            self.q_col_layout_main, 0, 0, 1, 1)
 
-        QtCore.QMetaObject.connectSlotsByName(newWorkspace_window)
+        # Add event listeners to the buttons
+        self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(
+            lambda: self.create_workspace_button_clicked(parent_window, on_create_workspace_button_clicked_function))
+        self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(
+            parent_window.close)
 
-        _translate = QtCore.QCoreApplication.translate
-        # Switch between editing and creating.
-        if not input_to_edit:
-            newWorkspace_window.setWindowTitle(_translate("newWorkspace_window", "New Workspace"))
-            self.workspaceNameLabel_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Workspace Name:     "))
-            self.createWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Create"))
-            self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate("newWorkspace_window", "Cancel"))
-            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.createWorkspace(newWorkspace_window, workspace_Window))
-            self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
-        else:
-            newWorkspace_window.setWindowTitle(_translate('newWorkspace_window', 'Edit Workspace'))
-            self.workspaceNameLabel_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Workspace Name:     '))
-            self.createWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Save'))
-            self.cancelWorkspaceButton_newWorkspaceWindow.setText(_translate('newWorkspace_window', 'Cancel'))
-            self.workspaceNameInput_newWorkspaceWindow.setText(input_to_edit)
-            self.createWorkspaceButton_newWorkspaceWindow.clicked.connect(lambda: self.editWorkspace(newWorkspace_window, workspace_list, workspace_Window, input_to_edit))
-            self.cancelWorkspaceButton_newWorkspaceWindow.clicked.connect(newWorkspace_window.close)
-            
-    def editWorkspace(self, editWorkspace_window, workspaceList, workspace_window, workspace_edit_name):
-        ''' Starts and populates the workspace window'''
-        # Get new workspace name 
-        new_ws_name = self.workspaceNameInput_newWorkspaceWindow.text()
-        # Check if its valid
-        if not new_ws_name:
-            missingFields_window = QtWidgets.QDialog()
-            missingFieldsWindowUI = Ui_missingFields_window()
-            missingFieldsWindowUI.setupMissingFields(missingFields_window)
-            missingFields_window.show()
-        else:
-           # success = self.sds_controller.edit_workspace_name(workspace_edit_name, new_ws_name)
-            #if not success:
-                pass
-            #else:
-             #   editWorkspace_window.close()
-              #  generate_workspaces_list_window(workspaceList, self.sds_controller)
-
-    def createWorkspace(self, createWorkspace_Window, workspace_Window):
+    def create_workspace_button_clicked(self, parent_window: QtWidgets.QDialog, on_create_workspace_button_clicked_function):
         # Get workspace name
-        ws_name = self.workspaceNameInput_newWorkspaceWindow.text()
-        # Check if valid input
-        if not ws_name:
-            missingFields_Window = QtWidgets.QDialog()
-            missingFieldsWindowUI = Ui_missingFields_window()
-            missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-            missingFields_Window.show()
-        else:
-            if ws_name not in self.db_helper.get_all_workspace_names():
-                time.sleep(1)
-                captureManager_Window = QtWidgets.QMainWindow()
-                captureManagerWindowUI = Ui_CaptureManagerWindow(self.db_helper)
-                captureManagerWindowUI.setupCaptureManager(captureManager_Window, workspace_Window)
-                captureManager_Window.setWindowTitle(ws_name + ' - Scan Detection System')
-                captureManager_Window.show()
-                createWorkspace_Window.close()
-                # TODO: SAVE NEW WORKSPACE TO DB AND CREATE THE OBJECT
-                workspace_Window.close()
-            else:
-                msg = QMessageBox()
-                msg.setWindowTitle("Workspace Already Exists")
-                msg.setText('The workspace name is already defined in the database.')
-                x = msg.exec_()
+        workspace_name = self.q_line_edit_input_workspace_name_text.text()
+        # If the workspace name is empty
+        if not workspace_name:
+            # Show error box and return
+            error_box = QMessageBox()
+            error_box.setText("Workspace name cannot be empty")
+            error_box.exec()
+            return
+
+        if workspace_name in self.db_helper.get_all_workspace_names():
+            msg = QMessageBox()
+            msg.setWindowTitle("Workspace Already Exists")
+            msg.setText('This workspace name is already taken!')
+            msg.exec_()
+            return
+
+        # Create the workspace
+        parent_window.close()
+        on_create_workspace_button_clicked_function(workspace_name)
