@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, 
 from Models.modelClasses import Workspace, Project, Node
 
 from views.addNodeWindow import Ui_addNode_window
-from views.newProject import Ui_newProject_window
+from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.setNodesWindow import Ui_addSetNodes_window
 
@@ -492,6 +492,15 @@ class Ui_CaptureManagerWindow(object):
         newProjectWindowUI.setupNewProject(
             newProject_Window, self)
         newProject_Window.show()
+
+    def create_project(self, project_to_add:Project):
+        '''
+        Takes in a Project object and adds it to the
+        list of projects in the workspace.
+        '''
+        self.workspace_object.projects.append(project_to_add)
+        
+        
 
     def add_node_button_clicked(self):
         addNode_Window = QtWidgets.QDialog()

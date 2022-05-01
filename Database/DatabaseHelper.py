@@ -18,7 +18,7 @@ class SDSDatabaseHelper:
     workspaces : Collection = None
     mongo_client : MongoClient = None
 
-    mock_workspace_names = ["workspace 1", "workspace 2", "workspace 3"]
+    mock_database:map = {}
 
 
     def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
@@ -41,60 +41,37 @@ class SDSDatabaseHelper:
         '''
         TODO: finish this
         '''
-        return self.mock_workspace_names
+        # If there are 0 keys in the database, then there are no workspaces return []
+        if len(self.mock_database) == 0:
+            return []
+        
+        # Return keys
+        return list(self.mock_database.keys())
 
     def get_all_workspaces_objects(self) -> list :
         '''
         TODO: contact db to get this
         '''
-        ws :Workspace = Workspace(id, [])
-
-        p1 : Project = Project("projectname1", 2, [])
-        p2 : Project = Project("projectname2", 2, [])
-        p3 : Project = Project("projectname3", 2, [])
-        p4 : Project = Project("projectname4", 2, [])
-
-        s1 : Scenario = Scenario("scenarioname1", [], [])
-
-        p3.scenarios = [s1]
-        
-        ws.projects = [p1, p2, p3, p4]
-
-        return [ws, ws]
+        # Return map as list
+        return list(self.mock_database.values())
 
     def get_workspace_by_id(self, id:str) -> Workspace :
-        ws :Workspace = Workspace(id, [])
-
-        p1 : Project = Project("projectname1", 2, [])
-        p2 : Project = Project("projectname2", 2, [])
-        p3 : Project = Project("projectname3", 2, [])
-        p4 : Project = Project("projectname4", 2, [])
-
-        s1 : Scenario = Scenario("scenarioname1", [], [])
-        s2 : Scenario = Scenario("scenarioname2", [], [])
-
-        p3.scenarios = [s1, s2]
-
-        ws.projects = [p1, p2, p3, p4]
-
-        return ws
+        return self.mock_database[id]
 
     def save_workspace_obj_to_database(self, workspace : Workspace):
-        print("Saved workspace to db")
-        return
+        self.mock_database[workspace.name] = workspace
 
-    def delete_workspace(self, workspace_name):
-        print("Deleting workspace with name: " + workspace_name)
-        self.mock_workspace_names.remove(workspace_name)
+    def delete_workspace(self, workspace_id):
+        self.mock_database.pop(workspace_id)
 
     def rename_workspace(self, workspace_name: str, new_name: str):
-        print("Renaming workspace: " + workspace_name + " to " + new_name)
-        self.mock_workspace_names.remove(workspace_name)
-        self.mock_workspace_names.append(new_name)
+        old_workspace = self.mock_database[workspace_name]
+        old_workspace.name = new_name
+        self.mock_database[new_name] = old_workspace
+        self.mock_database.pop(workspace_name)
 
     def create_new_workspace(self, workspace_name:str):
-        print("Creating new workspace with name: " + workspace_name)
-        self.mock_workspace_names.append(workspace_name)
+        self.mock_database[workspace_name] = Workspace(workspace_name)
 
     def test_connection(self) -> bool:
         '''
