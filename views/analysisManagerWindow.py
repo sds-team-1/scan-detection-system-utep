@@ -1,15 +1,13 @@
-from PyQt5 import QtCore, QtWidgets
-
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
-import pyshark
-import scapy
-from scapy.utils import PcapWriter
-from scapy.all import *
 import os
 import subprocess
+# import qjsonmodel
+import numpy as np
+from PyQt5 import QtCore, QtWidgets, Qt
+from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
+from scapy.all import *
 
-from Models.pcap import Pcap
 from Models.capture import Capture
+from Models.pcap import Pcap
 
 
 def add_pcaps(capture):
@@ -58,12 +56,12 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsTabWidget_analysisManagerWindow.setObjectName("pcapsTabWidget_analysisManagerWindow")
         self.pcapsLayout_analysisManagerWindow.addWidget(self.pcapsTabWidget_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.pcapsLayout_analysisManagerWindow)
-        self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
-        self.protocolStatsLayout_analysisManagerWindow.setObjectName("protocolStatsLayout_analysisManagerWindow")
-        self.protocolStatsList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
-        self.protocolStatsList_analysisManagerWindow.setObjectName("protocolStatsList_analysisManagerWindow")
-        self.protocolStatsLayout_analysisManagerWindow.addWidget(self.protocolStatsList_analysisManagerWindow)
-        self.scenariosLayout_analysisManagerWindow.addLayout(self.protocolStatsLayout_analysisManagerWindow)
+        # self.protocolStatsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
+        # self.protocolStatsLayout_analysisManagerWindow.setObjectName("protocolStatsLayout_analysisManagerWindow")
+        # self.protocolStatsList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
+        # self.protocolStatsList_analysisManagerWindow.setObjectName("protocolStatsList_analysisManagerWindow")
+        # self.protocolStatsLayout_analysisManagerWindow.addWidget(self.protocolStatsList_analysisManagerWindow)
+        # self.scenariosLayout_analysisManagerWindow.addLayout(self.protocolStatsLayout_analysisManagerWindow)
         self.centralSectionLayout_analysisManagerWindow.addLayout(self.scenariosLayout_analysisManagerWindow)
 
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
@@ -104,28 +102,28 @@ class Ui_AnalysisManagerWindow(object):
         AnalysisManagerWindow.setWindowTitle(
             _translate("AnalysisManagerWindow", "Scan Detection System - Analysis Manager"))
         self.pcapsList_analysisManagerWindow.headerItem().setText(0,
-                                                                      _translate("AnalysisManagerWindow", "Pcap Files"))
+                                                                  _translate("AnalysisManagerWindow", "Pcap Files"))
         __sortingEnabled = self.pcapsList_analysisManagerWindow.isSortingEnabled()
         self.pcapsList_analysisManagerWindow.setSortingEnabled(False)
         self.pcapsList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow",
-                                                                                        "Protocol"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow",
-                                                                                        "Percent Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow",
-                                                                                        "Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(3, _translate("AnalysisManagerWindow",
-                                                                                        "Percent Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(4,
-                                                                          _translate("AnalysisManagerWindow", "Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(5,
-                                                                          _translate("AnalysisManagerWindow", "Bits/s"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(6, _translate("AnalysisManagerWindow",
-                                                                                        "End Packets"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow",
-                                                                                        "End Bytes"))
-        self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow",
-                                                                                        "End Bits/s"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(0, _translate("AnalysisManagerWindow",
+        #                                                                                 "Protocol"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(1, _translate("AnalysisManagerWindow",
+        #                                                                                 "Percent Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(2, _translate("AnalysisManagerWindow",
+        #                                                                                 "Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(3, _translate("AnalysisManagerWindow",
+        #                                                                                 "Percent Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(4,
+        #                                                                   _translate("AnalysisManagerWindow", "Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(5,
+        #                                                                   _translate("AnalysisManagerWindow", "Bits/s"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(6, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Packets"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(7, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Bytes"))
+        # self.protocolStatsList_analysisManagerWindow.headerItem().setText(8, _translate("AnalysisManagerWindow",
+        #                                                                                 "End Bits/s"))
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
         self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
@@ -153,15 +151,12 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsList_analysisManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.pcapsList_analysisManagerWindow.customContextMenuRequested.connect(self.context_menu_pcaps)
 
-
     def closeAnalysisManager(self, AnalysisManagerWindow):
         AnalysisManagerWindow.close()
         self.InitialWorkspaceWindow.show()
 
-
     def CloseEvent(self, event):
         self.InitialWorkspaceWindow.show()
-
 
     def iterate_packets(self, capture, filter, pcap):
         self.packetsList_analysisManagerWindow.clear()
@@ -181,6 +176,17 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
         packets.close()
 
+    def save_filter(self, capture, filter, pcap):
+
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.makeFilteredPcapButton_analysisManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+        if filtered_file:
+            # filename = filtered_file.split('/')
+            # filename = filename[-1]
+            # filepath = filtered_file.replace(filename, '')
+            cap = capture.save_filter_file(filter, pcap, filtered_file)
+
+            self.show_pcap_list(self.test_capture)
 
     def selectedPcapCheckbox(self):
         checked = 0
@@ -201,7 +207,6 @@ class Ui_AnalysisManagerWindow(object):
         else:
             self.mergeButton_analysisManagerWindow.setEnabled(False)
             self.exportButton_analysisManagerWindow.setEnabled(False)
-
 
     def selectedPacketCheckbox(self):
         checked = 0
@@ -254,8 +259,13 @@ class Ui_AnalysisManagerWindow(object):
             self.filtersButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
             self.filtersButton_analysisManagerWindow.setObjectName("filtersButton_analysisManagerWindow")
             self.filterPacketLayout_captureManagerWindow.addWidget(self.filtersButton_analysisManagerWindow)
-            self.gridLayout.addLayout(self.filterPacketLayout_captureManagerWindow, 0, 0, 1, 1)
+            self.makeFilteredPcapButton_analysisManagerWindow = QtWidgets.QPushButton(
+                self.CentralLayout_analysisManagerWindow)
+            self.makeFilteredPcapButton_analysisManagerWindow.setObjectName(
+                "makeFilteredPcapButton_analysisManagerWindow")
+            self.filterPacketLayout_captureManagerWindow.addWidget(self.makeFilteredPcapButton_analysisManagerWindow)
 
+            self.gridLayout.addLayout(self.filterPacketLayout_captureManagerWindow, 0, 0, 1, 1)
 
             self.packetsList_analysisManagerWindow = QtWidgets.QTreeWidget()
             self.packetsList_analysisManagerWindow.setObjectName("packetsList_analysisManagerWindow")
@@ -269,15 +279,19 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(4, "Protocol")
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
-
+            # self.packetsList_analysisManagerWindow.headerItem().setData()
+            # self.packetsList_analysisManagerWindow.setSortingEnabled(True)
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
-            self.openPacketWiresharkButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-            self.openPacketWiresharkButton_captureManagerWindow.setObjectName("openPacketWiresharkButton_captureManagerWindow")
+            self.openPacketWiresharkButton_captureManagerWindow = QtWidgets.QPushButton(
+                self.CentralLayout_analysisManagerWindow)
+            self.openPacketWiresharkButton_captureManagerWindow.setObjectName(
+                "openPacketWiresharkButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.openPacketWiresharkButton_captureManagerWindow)
 
-            self.convertPacketsButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.convertPacketsButton_captureManagerWindow = QtWidgets.QPushButton(
+                self.CentralLayout_analysisManagerWindow)
             self.convertPacketsButton_captureManagerWindow.setObjectName("convertPacketsButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.convertPacketsButton_captureManagerWindow)
 
@@ -285,7 +299,8 @@ class Ui_AnalysisManagerWindow(object):
             self.openInJsonButton_captureManagerWindow.setObjectName("openInJson_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.openInJsonButton_captureManagerWindow)
 
-            self.removePacketsButton_captureManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+            self.removePacketsButton_captureManagerWindow = QtWidgets.QPushButton(
+                self.CentralLayout_analysisManagerWindow)
             self.removePacketsButton_captureManagerWindow.setObjectName("removePacketsButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.removePacketsButton_captureManagerWindow)
 
@@ -296,34 +311,43 @@ class Ui_AnalysisManagerWindow(object):
 
             self.gridLayout.addLayout(self.buttonsPacketLayout_captureManagerWindow, 2, 0, 1, 1)
 
-            self.openPacketWiresharkButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open Selected Packets in Wireshark"))
-            self.convertPacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Convert Selected Packets"))
-            self.openInJsonButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Open in Json"))
-            self.removePacketsButton_captureManagerWindow.setText(_translate("AnalysisManagerWindow", "Remove Selected Packets"))
+            self.openPacketWiresharkButton_captureManagerWindow.setText(
+                _translate("AnalysisManagerWindow", "Open Selected in Wireshark"))
+            self.convertPacketsButton_captureManagerWindow.setText(
+                _translate("AnalysisManagerWindow", "New Pcap From Selected"))
+            self.openInJsonButton_captureManagerWindow.setText(
+                _translate("AnalysisManagerWindow", "Open Selected in Json"))
+            self.removePacketsButton_captureManagerWindow.setText(
+                _translate("AnalysisManagerWindow", "Remove Selected "))
             self.filtersButton_analysisManagerWindow.setToolTip(_translate("AnalysisManagerWindow", "New Project"))
             self.filtersButton_analysisManagerWindow.setText(
-            _translate("AnalysisManagerWindow", "      Apply Filter      "))
+                _translate("AnalysisManagerWindow", "      Apply Filter      "))
+            self.makeFilteredPcapButton_analysisManagerWindow.setText(
+                _translate("AnalysisManagerWindow", "      New Pcap From Filter      "))
 
-            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
+            self.pcapsTabWidget_analysisManagerWindow.addTab(pcap, self.pcapsList_analysisManagerWindow.selectedItems()[
+                0].text(0))
 
             self.iterate_packets(self.test_capture, "",
-                                self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
-
+                                 self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0))
 
             self.pcapsTabWidget_analysisManagerWindow.setCurrentIndex(self.tab_index)
 
             self.packetsList_analysisManagerWindow.clicked.connect(self.selectedPacketCheckbox)
 
             self.filtersButton_analysisManagerWindow.clicked.connect(
-            lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
-                                         self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+                lambda: self.iterate_packets(self.test_capture, self.filterInput_analysisManagerWindow.text(),
+                                             self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+            self.makeFilteredPcapButton_analysisManagerWindow.clicked.connect(lambda: self.save_filter(
+                self.test_capture, self.filterInput_analysisManagerWindow.text(), tab_name))
 
-            self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(lambda: self.openPacketWireshark(tab_name))
-            self.convertPacketsButton_captureManagerWindow.clicked.connect(self.convertPackets)
-            self.removePacketsButton_captureManagerWindow.clicked.connect(lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
+            self.openPacketWiresharkButton_captureManagerWindow.clicked.connect(
+                lambda: self.openPacketWireshark(tab_name))
+            self.convertPacketsButton_captureManagerWindow.clicked.connect(lambda: self.convertPackets(tab_name))
+            self.removePacketsButton_captureManagerWindow.clicked.connect(
+                lambda: self.removePackets(tab_name, self.packetsList_analysisManagerWindow))
             self.openInJsonButton_captureManagerWindow.clicked.connect(lambda: self.openPacketJson(tab_name))
             self.tab_index += 1
-                                
 
     def closeTab(self, currentIndex):
         self.pcapsTabWidget_analysisManagerWindow.removeTab(currentIndex)
@@ -331,9 +355,9 @@ class Ui_AnalysisManagerWindow(object):
         self.tab_index -= 1
 
     def merge(self):
-        #self.test_capture.create_merged_file()
+        # self.test_capture.create_merged_file()
         merged_file, _ = QFileDialog.getSaveFileName(
-        self.mergeButton_analysisManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+            self.mergeButton_analysisManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
         if merged_file:
             filename = merged_file.split('/')
             filename = filename[-1]
@@ -352,7 +376,6 @@ class Ui_AnalysisManagerWindow(object):
             add_pcaps(self.test_capture)
             self.show_pcap_list(self.test_capture)
 
-
     def context_menu_pcaps(self, point):
         index = self.pcapsList_analysisManagerWindow.indexAt(point)
         if not index.isValid() or index.parent().isValid():
@@ -365,46 +388,98 @@ class Ui_AnalysisManagerWindow(object):
         action_rename_pcap = QAction("Rename pcap")
         action_delete_pcap = QAction("Delete pcap")
         action_hier_stat = QAction("Protocol Stats")
+        action_statistics = QAction("Statistics Graph")
+        action_toJson = QAction("Convert To Json")
 
         menu.addAction(action_open_pcap)
-        menu.addAction(action_rename_pcap)
-        menu.addAction(action_delete_pcap)
+        # menu.addAction(action_rename_pcap)
+        # menu.addAction(action_delete_pcap)
         menu.addAction(action_hier_stat)
+        menu.addAction(action_statistics)
+        menu.addAction(action_toJson)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
-        action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
-        action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
+        # action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
+        # action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
         action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
+        action_statistics.triggered.connect(lambda: self.show_statistics(name))
+        action_toJson.triggered.connect(lambda: self.pcapToJson(name))
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
-
 
     # # TODO: Implement
     # def rename_pcap(self, name):
     #     pass
-
 
     # # TODO: Implement
     # def delete_pcap(self, name):
     #     pass
 
     def hier_stat(self, name):
-        #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
-        #os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        # os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
+        # os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r %s -q -z io,phs' % (self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         path = self.inputPcapsDirectory_analysisManagerWindow.text()
-        output = subprocess.getoutput('cd %s && tshark -r %s -q -z io,phs' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        #print (output)
-        #Modal PopUp
+        output = subprocess.getoutput('cd %s && tshark -r %s -q -z io,phs' % (
+        path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        # print (output)
+        # Modal PopUp
         msg = QMessageBox()
         msg.setWindowTitle("Hierarchy")
         msg.setText(output)
-        
+
         x = msg.exec_()
 
     def open_pcap_wireshark(self, name):
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
                 subprocess.Popen(["wireshark", "-r", pcap.path])
+
+    def show_statistics(self, name):
+        packets = ''
+        temp_cap = ''
+        i_open_file = ''
+
+        for pcap in self.test_capture.pcaps:
+            if pcap.name == name:
+                packets = self.test_capture.iterate_file('', pcap.name)
+        pktlist = []
+        file_list = []
+        for pkt in packets:
+            pktlist.append(pkt.protocol)
+            file_list.append(str(pkt.no))
+            file_list.append(str(pkt.time))
+            file_list.append(str(pkt.source))
+            file_list.append(str(pkt.destination))
+            file_list.append(str(pkt.protocol))
+            file_list.append(str(pkt.length))
+            file_list.append(str(pkt.info))
+
+        packets.close()
+        counter = collections.Counter(pktlist)
+        plt.title(name)
+        plt.style.use('ggplot')
+        y_pos = np.arange(len(list(counter.keys())))
+        plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
+        plt.xticks(y_pos, list(counter.keys()))
+        plt.ylabel("Frequency")
+        plt.xlabel("Protocol Name")
+        plt.savefig("ProtocolGraph.png")
+        plt.show()
+
+    def pcapToJson(self, name):
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "json Files (*.json)")
+        if filtered_file:
+            os.system('tshark -r %s -T json > %s' % (self.test_capture.path + name, filtered_file))
+
+        pass
+
+    def pcapToCSV(self, name):
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "json Files (*.json)")
+        if filtered_file:
+            os.system('tshark -r %s -T json > %s' % (self.test_capture.path + name, filtered_file))
+        pass
 
     def openPacketWireshark(self, name):
         packets = ''
@@ -430,49 +505,72 @@ class Ui_AnalysisManagerWindow(object):
         packets = ''
         temp_cap = ''
         i_open_file = ''
-        if os.path.exists("%s\\temp_cap.pcap"% path):
-            os.remove("%s\\temp_cap.pcap"% path)
+        if os.path.exists("%s\\temp_cap.pcap" % path):
+            os.remove("%s\\temp_cap.pcap" % path)
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
                 packets = self.test_capture.iterate_file('', pcap.name)
-                temp_cap = PcapWriter("%s\\temp_cap.pcap"% path, append=True)
+                temp_cap = PcapWriter("%s\\temp_cap.pcap" % path, append=True)
                 i_open_file = PcapReader(pcap.path)
                 packet = i_open_file.read_packet()
         for p in packets:
             packet = i_open_file.read_packet()
             if str(p.no) in self.selected_packets:
                 temp_cap.write(packet)
-        #subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
-        output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
+        output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
+        path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        # f = open("temp.json", "w")
+        # f.write(output)
 
         packets.close()
-
-
-
 
         msg = QMessageBox()
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        msg.setText(output)
-
-
-
+        print(output)
 
         x = msg.exec()
         pass
 
-    def convertPackets(self):
-        pass
+    def convertPackets(self, name):
+
+        filtered_file, _ = QFileDialog.getSaveFileName(
+            self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "pcap Files (*.pcap *.pcapng)")
+        if filtered_file:
+            # filename = filtered_file.split('/')
+            # filename = filename[-1]
+            # filepath = filtered_file.replace(filename, '')
+            packets = ''
+            temp_cap = ''
+            i_open_file = ''
+            index = 0
+            for pcap in self.test_capture.pcaps:
+                if pcap.name == name:
+                    packets = self.test_capture.iterate_file('', pcap.name)
+                    temp_cap = PcapWriter(filtered_file, append=True)
+                    i_open_file = PcapReader(pcap.path)
+            for p in packets:
+                packet = i_open_file.read_packet()
+                if str(p.no) in self.selected_packets:
+                    temp_cap.write(packet)
+            packets.close()
+            filtered_file = filtered_file.split('/')
+            filtered_file = filtered_file[-1]
+            new_pcap = Pcap(filtered_file, self.test_capture.path, filtered_file)
+            self.test_capture.add_pcap(new_pcap)
+
+            self.show_pcap_list(self.test_capture)
 
     def removePackets(self, name, packets_list):
         packets = ''
         temp_cap = ''
         i_open_file = ''
-        index = 0 
+        index = 0
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
-                path = pcap.path.replace(pcap.name,"temp_cap.pcap")
+                path = pcap.path.replace(pcap.name, "temp_cap.pcap")
                 if os.path.exists(path):
                     os.remove(path)
                 packets = self.test_capture.iterate_file('', pcap.name)
@@ -500,7 +598,7 @@ class Ui_AnalysisManagerWindow(object):
         while True:
             if self.check(packets_list) is True:
                 break
-            
+
     def check(self, packets_list):
         for i in range(packets_list.topLevelItemCount()):
             top_item = packets_list.topLevelItem(i)
@@ -508,4 +606,4 @@ class Ui_AnalysisManagerWindow(object):
                 packets_list.takeTopLevelItem(i)
                 return False
         return True
-                
+

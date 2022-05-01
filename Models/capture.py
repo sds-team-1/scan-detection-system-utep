@@ -65,7 +65,17 @@ class Capture:
             if a != self.pcaps[-1]:
                 f.write(',')
         f.write(']}')
-
+    def save_filter_file(self, filter:str,name:str, new_name:str):
+        if any(x.name == name for x in self.pcaps):
+            print("reached here")
+            cap = pyshark.FileCapture(self.path + name, display_filter=filter,
+                                      output_file= new_name)
+            cap.load_packets()
+            cap.close()
+            new_name = new_name.split('/')
+            new_name = new_name[-1]
+            new_pcap = Pcap(new_name, self.path + "pcaps", new_name)
+            self.add_pcap(new_pcap)
     def iterate_file(self, filter: str, name: str):
         if any(x.name == name for x in self.pcaps):
             cap = pyshark.FileCapture(self.path + name, display_filter=filter,
