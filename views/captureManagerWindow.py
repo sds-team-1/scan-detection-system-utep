@@ -38,11 +38,10 @@ class Ui_CaptureManagerWindow(object):
         self.q_label_project_functions.setObjectName("projectButtonsLabel")
         self.q_label_project_functions.setText("Project Functions")
 
-
         # Save project button
         self.q_button_save_project = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.q_button_save_project.setObjectName("saveButton_captureManagerWindow")
-        self.q_button_save_project.setToolTip("Will save the current state all projects project")
+        self.q_button_save_project.setToolTip("Will save the current state all projects")
         self.q_button_save_project.setText("Save Projects")
 
         # New Project button
@@ -70,12 +69,11 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_buttons_project_options = QtWidgets.QHBoxLayout()
         self.q_row_buttons_project_options.setObjectName("buttonsLayout_captureManagerWindow")
         self.q_row_buttons_project_options.addWidget(self.q_label_project_functions)
-        self.q_row_buttons_project_options.addWidget(self.q_button_new_project)
         self.q_row_buttons_project_options.addWidget(self.q_button_save_project)
+        self.q_row_buttons_project_options.addWidget(self.q_button_new_project)
         self.q_row_buttons_project_options.addWidget(self.q_button_import_project)
         self.q_row_buttons_project_options.addWidget(self.q_button_export_project)
         self.q_row_buttons_project_options.addItem(spacerItem)
-
 
 
         # Set up a label for scenario iterations
@@ -87,7 +85,6 @@ class Ui_CaptureManagerWindow(object):
         self.q_spin_box_scenario_iterations = QtWidgets.QSpinBox(self.CentralLayout_captureManagerWindow)
         self.q_spin_box_scenario_iterations.setObjectName("scenarioIterationsSpinbox_captureManagerWindow")
         self.q_spin_box_scenario_iterations.setValue(1)
-
 
         # Set up a button for start vm
         self.q_button_start_vm = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
@@ -222,7 +219,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Add event listeners to project buttons
         self.q_button_new_project.clicked.connect(self.create_project_button_clicked)
-        self.q_button_save_project.clicked.connect(self.save_workspaces_button_clicked)
+        self.q_button_save_project.clicked.connect(self.save_everything_button_clicked)
         self.q_button_export_project.clicked.connect(self.export_project_button_clicked)
         self.q_button_import_project.clicked.connect(lambda: self.import_project_button_clicked(parent_window))
 
@@ -468,7 +465,7 @@ class Ui_CaptureManagerWindow(object):
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.runScenarioButton_captureManagerWindow.setEnabled(False)
 
-    def save_workspaces_button_clicked(self):
+    def save_everything_button_clicked(self):
         # Everything is already saved. So we don't really need it. YW
         pass
 
