@@ -21,6 +21,11 @@ class Ui_CaptureManagerWindow(object):
         self.workspace_object = workspace_object
 
     def setupCaptureManager(self, parent_window:QMainWindow, choose_workspace_parent_window:QDialog):
+        '''
+        Sets up the capture manager UI.
+        parent_window: The main window of the application.
+        choose_workspace_parent_window: The parent window of the choose workspace dialog. (needed in order to navigate back to the choose workspace dialog)
+        '''
         self.ip_counter = 0
         self.id_counter = 10
         self.MAC = 1000000000000
@@ -271,6 +276,12 @@ class Ui_CaptureManagerWindow(object):
 
 
     def render_projects_in_project_tree(self):
+        '''
+        This function renders the projects in the project tree widget
+        gets the projects attribute from the capture manager window
+        and populates with tree widget items
+        and their respective scenarios
+        '''
         self.q_tree_widget_projects_list.clear()
         for project in self.workspace_object.projects:
             # Make TreeWidgetItem
@@ -283,6 +294,11 @@ class Ui_CaptureManagerWindow(object):
 
 
     def project_right_clicked(self, point):
+        '''
+        Triggered when user right clicks on a project
+        shows the context menu
+        '''
+        # TODO: finish load scenario unit
         index = self.q_tree_widget_projects_list.indexAt(point)
 
         if not index.isValid():
@@ -293,34 +309,64 @@ class Ui_CaptureManagerWindow(object):
 
         menu = QtWidgets.QMenu()
         action_add_scenario = QAction("Add Scenario Unit")
-        action_load_scenario = QAction("Load Scenario Unit")
+        # action_load_scenario = QAction("Load Scenario Unit")
         action_edit_project = QAction("Rename Project")
         action_delete_project = QAction("Delete Project")
 
         menu.addAction(action_add_scenario)
-        menu.addAction(action_load_scenario)
+        # menu.addAction(action_load_scenario)
         menu.addAction(action_edit_project)
         menu.addAction(action_delete_project)
 
         action_add_scenario.triggered.connect(lambda: self.add_scenario_for_project_clicked(name))
-        action_load_scenario.triggered.connect(self.load_scenario_unit)
-        action_edit_project.triggered.connect(lambda: self.edit_project(name))
-        action_delete_project.triggered.connect(lambda: self.delete_project(name))
+        # action_load_scenario.triggered.connect(self.load_scenario_unit)
+        action_edit_project.triggered.connect(lambda: self.edit_project_name_clicked(name))
+        action_delete_project.triggered.connect(lambda: self.delete_project_clicked(name))
 
         menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
-
         return
+
 
     def load_scenario_unit(self):
         pass
 
-    #TODO: Start the UI dialog
-    def edit_project(self, selected_project):
-        '''Starts the UI and edits the project'''
-        pass
+    def edit_project_name_clicked(self, selected_project_name):
+        '''
+        Triggered when user clicks on the edit project name button
+        '''
+        # new_name, ok = editBox.getText(self, "Rename Project", "New Project Name:", text=selected_project.name)
+        new_q_dialog = QtWidgets.QInputDialog()
+        editBox = QtWidgets.QInputDialog()
+        new_name, ok = editBox.getText(new_q_dialog, "Rename Project", "New Project Name:", text=selected_project_name)
 
-    def delete_project(self, selected_project):
-        pass
+        if ok:
+            for project in self.workspace_object.projects:
+                if project.name == selected_project_name:
+                    project.name = new_name
+                    self.render_projects_in_project_tree()
+                    break
+            self.render_projects_in_project_tree()
+        
+
+
+    def delete_project_clicked(self, selected_project_name):
+        '''
+        Triggered when user clicks on the delete project button
+        '''
+        # Show confimation dialog
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setText("Are you sure you want to delete this project?")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
+        ret = msgBox.exec_()
+
+        # If user picked yes, delete project
+        if ret == QtWidgets.QMessageBox.Yes:
+            for project in self.workspace_object.projects:
+                if project.name == selected_project_name:
+                    self.workspace_object.projects.remove(project)
+                    self.render_projects_in_project_tree()
+                    break
 
     #TODO: Start the UI dialog
     def edit_scenario_unit(self, selected_scenario_unit):
@@ -331,6 +377,10 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def add_scenario_for_project_clicked(self, project_name):
+        '''
+        Triggered when user clicks on the add scenario unit button
+        Shows dialog box to input name of scenario
+        '''
         # Get the project from the workspace object
         selected_project:Project
         for project in self.workspace_object.projects:
@@ -344,11 +394,20 @@ class Ui_CaptureManagerWindow(object):
         newScenarioUnit_Window.show()
 
     def create_new_scenario_for_project(self, project:Project, scenario_name):
+        '''
+        Called from the UI dialog when the user clicks the create scenario unit button
+        Creates a new scenario unit and adds it to the project
+        '''
         project.scenarios.append(Scenario(scenario_name))
         self.render_projects_in_project_tree()
 
 
     def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
+        '''
+        Triggered when user right clicks on a node
+        shows the context menu that has edit node,
+        and delete node options
+        '''
         index = self.q_tree_widget_nodes_list.indexAt(point)
 
         if not index.isValid():
@@ -381,6 +440,8 @@ class Ui_CaptureManagerWindow(object):
 
     def delete_node(self, selected_node):
         pass
+
+    
     def project_item_clicked(self):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
