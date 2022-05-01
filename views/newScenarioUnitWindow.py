@@ -1,74 +1,94 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtWidgets import QTreeWidgetItem, QMessageBox
+from Models.modelClasses import Project
 
 from views.missingFieldsWindow import Ui_missingFields_window
 
 
 class Ui_newScenarioUnit_window(object):
-    def setupNewScenarioUnit(self, newScenarioUnit_window,
-                             projectsList_captureManagerWindow, scenarioIterationsSpinbox_captureManagerWindow):
-        newScenarioUnit_window.setObjectName("newScenarioUnit_window")
-        newScenarioUnit_window.setEnabled(True)
-        newScenarioUnit_window.resize(513, 115)
-        newScenarioUnit_window.setMinimumSize(QtCore.QSize(513, 115))
-        newScenarioUnit_window.setMaximumSize(QtCore.QSize(513, 115))
-        self.NewScenarioUnitWindowLayout = QtWidgets.QGridLayout(newScenarioUnit_window)
-        self.NewScenarioUnitWindowLayout.setObjectName("NewScenarioUnitWindowLayout")
-        self.mainLayout_newScenarioUnitWindow = QtWidgets.QVBoxLayout()
-        self.mainLayout_newScenarioUnitWindow.setObjectName("mainLayout_newScenarioUnitWindow")
-        self.newScenarioUnitNameLayout_newScenarioUnitWindow = QtWidgets.QHBoxLayout()
-        self.newScenarioUnitNameLayout_newScenarioUnitWindow.setObjectName("newScenarioUnitNameLayout_newScenarioUnitWindow")
-        self.newScenarioUnitNameLabel_newScenarioUnitWindow = QtWidgets.QLabel(newScenarioUnit_window)
-        self.newScenarioUnitNameLabel_newScenarioUnitWindow.setObjectName("newScenarioUnitNameLabel_newScenarioUnitWindow")
-        self.newScenarioUnitNameLayout_newScenarioUnitWindow.addWidget(self.newScenarioUnitNameLabel_newScenarioUnitWindow)
-        self.newScenarioUnitNameInput_newScenarioUnitWindow = QtWidgets.QLineEdit(newScenarioUnit_window)
-        self.newScenarioUnitNameInput_newScenarioUnitWindow.setObjectName("newScenarioUnitNameInput_newScenarioUnitWindow")
-        self.newScenarioUnitNameLayout_newScenarioUnitWindow.addWidget(self.newScenarioUnitNameInput_newScenarioUnitWindow)
-        self.mainLayout_newScenarioUnitWindow.addLayout(self.newScenarioUnitNameLayout_newScenarioUnitWindow)
+    def setupNewScenarioUnit(self, parent_window:QtWidgets.QDialog, selected_project:Project, create_new_scenario_function):
 
-        self.newScenarioUnitButtonsLayout_newScenarioUnitWindow = QtWidgets.QHBoxLayout()
-        self.newScenarioUnitButtonsLayout_newScenarioUnitWindow.setObjectName("newScenarioUnitButtonsLayout_newScenarioUnitWindow")
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow = QtWidgets.QPushButton(newScenarioUnit_window)
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow.setObjectName("newScenarioUnitCreateButton_newScenarioUnitWindow")
-        self.newScenarioUnitButtonsLayout_newScenarioUnitWindow.addWidget(self.newScenarioUnitCreateButton_newScenarioUnitWindow)
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow = QtWidgets.QPushButton(newScenarioUnit_window)
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow.setObjectName("newScenarioUnitCancelButton_newScenarioUnitWindow")
-        self.newScenarioUnitButtonsLayout_newScenarioUnitWindow.addWidget(self.newScenarioUnitCancelButton_newScenarioUnitWindow)
-        self.mainLayout_newScenarioUnitWindow.addLayout(self.newScenarioUnitButtonsLayout_newScenarioUnitWindow)
-        self.NewScenarioUnitWindowLayout.addLayout(self.mainLayout_newScenarioUnitWindow, 0, 0, 1, 1)
+        # Set up parent window properties
+        parent_window.setObjectName("newScenarioUnit_window")
+        parent_window.setEnabled(True)
+        parent_window.resize(513, 115)
+        parent_window.setMinimumSize(QtCore.QSize(513, 115))
+        parent_window.setMaximumSize(QtCore.QSize(513, 115))
+        parent_window.setWindowTitle("New Scenario Unit")
 
-        QtCore.QMetaObject.connectSlotsByName(newScenarioUnit_window)
 
-        _translate = QtCore.QCoreApplication.translate
-        newScenarioUnit_window.setWindowTitle(_translate("newScenarioUnit_window", "New Scenario Unit"))
-        self.newScenarioUnitNameLabel_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Scenario Unit Name"))
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Create"))
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow.setText(_translate("newScenarioUnit_window", "Cancel"))
+        # Label that says "Scenario Name"
+        self.q_label_new_scenario_label = QtWidgets.QLabel(parent_window)
+        self.q_label_new_scenario_label.setObjectName("newScenarioUnitNameLabel_newScenarioUnitWindow")
+        self.q_label_new_scenario_label.setText("Scenario Unit Name")
 
-        self.newScenarioUnitCreateButton_newScenarioUnitWindow.clicked.connect(
-            lambda: self.createScenario(newScenarioUnit_window, projectsList_captureManagerWindow,
-                                                     scenarioIterationsSpinbox_captureManagerWindow))
-        self.newScenarioUnitCancelButton_newScenarioUnitWindow.clicked.connect(
-            newScenarioUnit_window.close)
+        # Input for scenario name
+        self.q_line_input_scenario_name = QtWidgets.QLineEdit(parent_window)
+        self.q_line_input_scenario_name.setObjectName("newScenarioUnitNameInput_newScenarioUnitWindow")
+
+        # Row that holds the scenario name input and the label
+        self.q_row_new_scenario_label_and_input_row = QtWidgets.QHBoxLayout()
+        self.q_row_new_scenario_label_and_input_row.setObjectName("newScenarioUnitNameLayout_newScenarioUnitWindow")
+        self.q_row_new_scenario_label_and_input_row.addWidget(self.q_label_new_scenario_label)
+        self.q_row_new_scenario_label_and_input_row.addWidget(self.q_line_input_scenario_name)
+
+        # Button for create scenario
+        self.q_button_create_new_scenario = QtWidgets.QPushButton(parent_window)
+        self.q_button_create_new_scenario.setObjectName("newScenarioUnitCreateButton_newScenarioUnitWindow")
+        self.q_button_create_new_scenario.setText("Create Scenario")
+
+        # Cancel button
+        self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+        self.q_button_cancel_button.setObjectName("newScenarioUnitCancelButton_newScenarioUnitWindow")
+        self.q_button_cancel_button.setText("Cancel")
+
+
+        # Row that holds the create scenario button and the cancel button
+        self.q_row_buttons_row = QtWidgets.QHBoxLayout()
+        self.q_row_buttons_row.setObjectName("newScenarioUnitButtonsLayout_newScenarioUnitWindow")
+        self.q_row_buttons_row.addWidget(self.q_button_create_new_scenario)
+        self.q_row_buttons_row.addWidget(self.q_button_cancel_button)
+
+
+        # Column that holds the rows created for input and buttons
+        self.q_col_main_column = QtWidgets.QVBoxLayout()
+        self.q_col_main_column.setObjectName("mainLayout_newScenarioUnitWindow")
+        self.q_col_main_column.addLayout(self.q_row_new_scenario_label_and_input_row)
+        self.q_col_main_column.addLayout(self.q_row_buttons_row)
+
+        # Main layout
+        self.q_grid_layout_main = QtWidgets.QGridLayout(parent_window)
+        self.q_grid_layout_main.setObjectName("NewScenarioUnitWindowLayout")
+        self.q_grid_layout_main.addLayout(self.q_col_main_column, 0, 0, 1, 1)
+
+        # Connect event listeners
+        self.q_button_create_new_scenario.clicked.connect(
+            lambda: self.createScenario(parent_window, selected_project, create_new_scenario_function)
+        )
+
+        self.q_button_cancel_button.clicked.connect(
+            parent_window.destroy
+        )
 
     def createScenario(
-            self, newScenarioUnit_Window, projectsList_captureManagerWindow,
-            scenarioIterationsSpinbox_captureManagerWindow):
-        scenario_name = self.newScenarioUnitNameInput_newScenarioUnitWindow.text()
-        if not scenario_name:
-            missingFields_Window = QtWidgets.QDialog()
-            missingFieldsWindowUI = Ui_missingFields_window()
-            missingFieldsWindowUI.setupMissingFields(missingFields_Window)
-            missingFields_Window.show()
-        else:
-            # TODO: This causes an error when creating a scenario.
-            project_name = projectsList_captureManagerWindow.selectedItems()[0].text(0)
-            # TODO: INSERT ITERATIONS HERE
-            su_iterations = scenarioIterationsSpinbox_captureManagerWindow.value()
+            self, 
+            create_new_scenario_window:QtWidgets.QDialog, 
+            selected_project:Project,
+            create_new_scenario_function
+        ):
 
-                # TODO: Test this
-            s = QTreeWidgetItem([scenario_name])
-            p = projectsList_captureManagerWindow.selectedItems()[0]
-            p.addChild(s)
-            projectsList_captureManagerWindow.expandAll()
-            newScenarioUnit_Window.close()
+        scenario_name = self.q_line_input_scenario_name.text()
+
+        if scenario_name == "":
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Please enter a scenario name.")
+            msg.setWindowTitle("Missing Fields")
+            msg.exec_()
+            return
+
+        create_new_scenario_window.destroy()
+        create_new_scenario_function(selected_project, scenario_name)
+
+
+

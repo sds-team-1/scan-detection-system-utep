@@ -91,17 +91,17 @@ class Ui_newProject_window(object):
 
         self.q_button_cancel_button.clicked.connect(parent_window.close)
 
-    def createProject(self, captureManagerWindow, newProject_window, create_project_function):
+    def createProject(self, capture_manager_window, new_project_window, create_project_function):
         project_name = self.q_line_edit_project_name_input.text()
         project_parallel = self.q_spin_box_max_units_value.value()
 
         # Check for empty project name or project parallel is less than one
         if project_name == "" or project_parallel < 1:
-            QMessageBox.about(newProject_window, "Error", "Project name and parallel must be filled in and greater than 0")
+            QMessageBox.about(new_project_window, "Error", "Project name and parallel must be filled in and greater than 0")
             return
 
         # Check if there is a project with the same name
-        for project in captureManagerWindow.workspace_object.projects:
+        for project in capture_manager_window.workspace_object.projects:
             if project.name ==  project_name:
                 msg = QMessageBox()
                 msg.setWindowTitle("Project Name Already Exists")
@@ -112,5 +112,5 @@ class Ui_newProject_window(object):
         # Call the create project function and close the window
         newProject = Project(project_name,project_parallel,[])
         create_project_function(newProject)
-        newProject_window.destroy()
+        new_project_window.destroy()
 

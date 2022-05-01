@@ -1,8 +1,8 @@
 import json
 
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog
-from Models.modelClasses import Workspace, Project, Node
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox
+from Models.modelClasses import Workspace, Project, Scenario, Node
 
 from views.addNodeWindow import Ui_addNode_window
 from views.newProjectWindow import Ui_newProject_window
@@ -252,7 +252,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Set up context menu for when user right clicks on a node
         self.q_tree_widget_nodes_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.q_tree_widget_nodes_list.customContextMenuRequested.connect(self.node_right_clicked)
+        self.q_tree_widget_nodes_list.customContextMenuRequested.connect(lambda point_clicked: self.node_right_clicked(point_clicked, parent_window))
 
 
         # Node button functions
@@ -287,28 +287,7 @@ class Ui_CaptureManagerWindow(object):
 
         if not index.isValid():
             return
-        
-        # If the right clicked element has a valid parent, a scenario unit was clicked
-        if index.parent().isValid():
-            item = self.q_tree_widget_projects_list.itemAt(point)
-            if not item:
-                return
-            name = item.text(0)
 
-            menu = QtWidgets.QMenu()
-            action_edit_scenario_unit = QAction("Rename Scenario Unit")
-            action_delete_scenario_unit = QAction("Delete Scenario Unit")
-
-            menu.addAction(action_edit_scenario_unit)
-            menu.addAction(action_delete_scenario_unit)
-
-            action_edit_scenario_unit.triggered.connect(lambda: self.edit_scenario_unit(name))
-            action_delete_scenario_unit.triggered.connect(lambda: self.delete_scenario_unit(name))
-
-            menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
-            return
-
-        # Else a project was right clicked
         item = self.q_tree_widget_projects_list.itemAt(point)
         name = item.text(0)
 
@@ -323,7 +302,7 @@ class Ui_CaptureManagerWindow(object):
         menu.addAction(action_edit_project)
         menu.addAction(action_delete_project)
 
-        action_add_scenario.triggered.connect(self.newScenarioUnitWindow)
+        action_add_scenario.triggered.connect(lambda: self.add_scenario_for_project_clicked(name))
         action_load_scenario.triggered.connect(self.load_scenario_unit)
         action_edit_project.triggered.connect(lambda: self.edit_project(name))
         action_delete_project.triggered.connect(lambda: self.delete_project(name))
@@ -351,15 +330,25 @@ class Ui_CaptureManagerWindow(object):
     def delete_scenario_unit(self, selected_scenario_unit):
         pass
 
-    def newScenarioUnitWindow(self):
+    def add_scenario_for_project_clicked(self, project_name):
+        # Get the project from the workspace object
+        selected_project:Project
+        for project in self.workspace_object.projects:
+            if project.name == project_name:
+                # Start the UI dialog
+                selected_project = project
+
         newScenarioUnit_Window = QtWidgets.QDialog()
         newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
-        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window,
-                                                     self.q_tree_widget_projects_list,
-                                                     self.q_spin_box_scenario_iterations)
+        newScenarioUnitWindowUI.setupNewScenarioUnit(newScenarioUnit_Window, selected_project, self.create_new_scenario_for_project)
         newScenarioUnit_Window.show()
 
-    def node_right_clicked(self, point):
+    def create_new_scenario_for_project(self, project:Project, scenario_name):
+        project.scenarios.append(Scenario(scenario_name))
+        self.render_projects_in_project_tree()
+
+
+    def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
         index = self.q_tree_widget_nodes_list.indexAt(point)
 
         if not index.isValid():
@@ -471,6 +460,13 @@ class Ui_CaptureManagerWindow(object):
         with the current state of the UI
         '''
         self.db_helper.update_workspace(self.workspace_object)
+        # Show a pop up that the workspace has been saved
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("Workspace Saved")
+        msg.setWindowTitle("The current workspace has been saved")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
 
     def export_project_button_clicked(self):
         project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)

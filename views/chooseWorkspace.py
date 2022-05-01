@@ -251,9 +251,6 @@ class Ui_workspace_window(object):
         selected_workspace_object = self.db_helper.get_workspace_by_id(
             selected_workspace_name)
 
-        print("Opening workspace with name " + selected_workspace_name)
-        print("Project count is " + str(len(selected_workspace_object.projects)))
-
         capture_manager_parent_window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow(
             self.db_helper, selected_workspace_object)

@@ -48,7 +48,7 @@ class SDSDatabaseHelper:
         print("Getting workspace with id: " + workspace_name)
         try:
             result = self.workspaces_collection.find_one({'_id': workspace_name})
-            return Workspace(result['_id'], result['projects'])
+            return Workspace.create_workspace_from_mongo_encoded_workspace(result)
         except Exception as e:
             print(f'dbh.get_workspace_by_id exception: {e}')
             return None
@@ -72,7 +72,7 @@ class SDSDatabaseHelper:
         Creates a new workspace with the given name
         '''
         print(f'Creating new workspace: {workspace_name}')
-        self.workspaces_collection.insert_one({'_id': workspace_name, 'projects': []})
+        self.workspaces_collection.insert_one({'_id': workspace_name, 'name': workspace_name, 'projects': []})
 
     def update_workspace(self, workspace:Workspace):
         '''
@@ -99,7 +99,6 @@ class SDSDatabaseHelper:
         # throw exception if connection fails
         except:
             raise Exception("Could not connect to database")
-
 
 
     """Create Project scenario"""
