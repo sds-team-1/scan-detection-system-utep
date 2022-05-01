@@ -280,7 +280,7 @@ class Ui_AnalysisManagerWindow(object):
             self.packetsList_analysisManagerWindow.headerItem().setText(5, "Length")
             self.packetsList_analysisManagerWindow.headerItem().setText(6, "Info")
             # self.packetsList_analysisManagerWindow.headerItem().setData()
-            # self.packetsList_analysisManagerWindow.setSortingEnabled(True)
+            self.packetsList_analysisManagerWindow.setSortingEnabled(True)
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
@@ -388,32 +388,67 @@ class Ui_AnalysisManagerWindow(object):
         action_rename_pcap = QAction("Rename pcap")
         action_delete_pcap = QAction("Delete pcap")
         action_hier_stat = QAction("Protocol Stats")
-        action_statistics = QAction("Statistics Graph")
-        action_toJson = QAction("Convert To Json")
+        action_port_number = QAction("Port Number")
 
         menu.addAction(action_open_pcap)
-        # menu.addAction(action_rename_pcap)
-        # menu.addAction(action_delete_pcap)
+        menu.addAction(action_rename_pcap)
+        menu.addAction(action_delete_pcap)
         menu.addAction(action_hier_stat)
-        menu.addAction(action_statistics)
-        menu.addAction(action_toJson)
+        menu.addAction(action_port_number)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
-        # action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
-        # action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
+        action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
+        action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
         action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
-        action_statistics.triggered.connect(lambda: self.show_statistics(name))
-        action_toJson.triggered.connect(lambda: self.pcapToJson(name))
+        action_port_number.triggered.connect(lambda: self.port_num(name))
+
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
+
+
+
+    def context_menu_packets(self, point):
+        index = self.packetsList_analysisManagerWindow.indexAt(point)
+        if not index.isValid() or index.parent().isValid():
+            return
+        item = self.packetsList_analysisManagerWindow.itemAt(point)
+        name = item.text(0)
+        menu = QtWidgets.QMenu()
+
+        action_port_number = QAction("Port Number")
+
+
+      
+        menu.addAction(action_port_number)
+
+
+        action_port_number.triggered.connect(lambda: self.port_num(name))
+
+        menu.exec_(self.packetsList_analysisManagerWindow.mapToGlobal(point))
 
     # # TODO: Implement
     # def rename_pcap(self, name):
     #     pass
 
-    # # TODO: Implement
-    # def delete_pcap(self, name):
-    #     pass
+
+
+    def delete_pcap(self, name):
+        path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        subprocess.run('echo "Hello World"')
+
+        # subprocess.run('cd %s && rm %s' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+
+
+    def port_num(self, name):
+        # tshark -r pcap3.pcap -q -z conv,tcp -z conv,udp
+        path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        output = subprocess.getoutput('cd %s && tshark -r %s -q -z conv,tcp -z conv,udp' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        msg = QMessageBox()
+        msg.setWindowTitle("Port Info")
+        msg.setText(output)
+        
+        x = msg.exec_()
+
 
     def hier_stat(self, name):
         # os.system('cd "C:\\Program Files\\Wireshark\\" & tshark -r pcap1.pcap -q -z io,phs')
