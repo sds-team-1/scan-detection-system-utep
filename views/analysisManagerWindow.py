@@ -389,18 +389,24 @@ class Ui_AnalysisManagerWindow(object):
         action_delete_pcap = QAction("Delete pcap")
         action_hier_stat = QAction("Protocol Stats")
         action_port_number = QAction("Port Number")
+        action_statistics = QAction("Statistics Graph")
+        action_toJson = QAction("Convert To Json")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_rename_pcap)
         menu.addAction(action_delete_pcap)
         menu.addAction(action_hier_stat)
         menu.addAction(action_port_number)
+        menu.addAction(action_statistics)
+        menu.addAction(action_toJson)
 
         action_open_pcap.triggered.connect(lambda: self.open_pcap_wireshark(name))
         action_rename_pcap.triggered.connect(lambda: self.rename_pcap(name))
         action_delete_pcap.triggered.connect(lambda: self.delete_pcap(name))
         action_hier_stat.triggered.connect(lambda: self.hier_stat(name))
         action_port_number.triggered.connect(lambda: self.port_num(name))
+        action_statistics.triggered.connect(lambda: self.show_statistics(name))
+        action_toJson.triggered.connect(lambda: self.pcapToJson(name))
 
 
         menu.exec_(self.pcapsList_analysisManagerWindow.mapToGlobal(point))
