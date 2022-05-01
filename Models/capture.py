@@ -25,12 +25,10 @@ class Capture:
         # self.merge_pcaps()
         return self.pcaps
 
-    def del_pcap(self, old: Pcap) -> list:
-        self.pcaps.remove(old)
-        if self.pcaps:
-            self.merge_pcaps()
-        os.remove(old.path)
-        old.remove()
+    def del_pcap(self, pcapName) -> list:
+        for pcap in self.pcaps:
+            if pcap.name == pcapName:
+                self.pcaps.remove(pcap)
         return self.pcaps
 
     def merge_pcaps(self, merged_file, selected_pcaps, filename, filepath):
