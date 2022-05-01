@@ -9,7 +9,7 @@ from Models.modelClasses import Workspace
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.captureManagerWindow import Ui_CaptureManagerWindow
-from views.createWorkspace import Ui_newWorkspace_window
+from views.createWorkspaceWindow import Ui_newWorkspace_window
 import Database.DatabaseHelper
 
 
@@ -155,13 +155,13 @@ class Ui_workspace_window(object):
 
         # Add event listeners to the buttons
         self.q_button_open_analysis_manager.clicked.connect(
-            lambda: self.analysisManagerWindow(parent_window))
+            lambda: self.open_analysis_manager_button_clicked(parent_window))
         self.q_button_create_new_workspace.clicked.connect(
-            lambda: self.createWorkspaceWindow(parent_window))
+            lambda: self.create_workspace_button_clicked(parent_window))
 
         # Event listener for when workspace is double clicked
         self.q_tree_widget_workspaces_list.doubleClicked.connect(
-            lambda: self.open_workspace(parent_window))
+            lambda: self.workspace_list_item_double_clicked(parent_window))
 
         # Automate workspace generation based on passed workspace object from constructor
         self.generate_workspaces_list_window()
@@ -245,7 +245,7 @@ class Ui_workspace_window(object):
         # Update the list of workspaces
         self.generate_workspaces_list_window()
 
-    def open_workspace(self, choose_workspace_parent_window: QDialog):
+    def workspace_list_item_double_clicked(self, choose_workspace_parent_window: QDialog):
         selected_workspace_name = self.q_tree_widget_workspaces_list.selectedItems()[
             0].text(0)
         selected_workspace_object = self.db_helper.get_workspace_by_id(
@@ -268,7 +268,7 @@ class Ui_workspace_window(object):
         #   captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
         #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
 
-    def createWorkspaceWindow(self, parent_window: QDialog):
+    def create_workspace_button_clicked(self, parent_window: QDialog):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window(self.db_helper)
         createWorkspaceUI.setupCreateWorkspace(
@@ -281,7 +281,7 @@ class Ui_workspace_window(object):
         self.db_helper.create_new_workspace(workspace_name)
         self.generate_workspaces_list_window()
 
-    def analysisManagerWindow(self, workspace_Window):
+    def open_analysis_manager_button_clicked(self, workspace_Window):
         self.analysisManager_Window = QtWidgets.QMainWindow()
         self.analysisManagerWindowUI = Ui_AnalysisManagerWindow()
         self.analysisManagerWindowUI.setupAnalysisManager(

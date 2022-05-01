@@ -94,14 +94,14 @@ class Ui_databaseConfig_window(object):
 
         # Connect event listeners to buttons
         self.q_push_button_connect.clicked.connect(
-            lambda: self.connect_database(parent_window)
+            lambda: self.connect_button_clicked(parent_window)
         )
 
         self.q_push_button_cancel.clicked.connect(
             parent_window.close
         )
 
-    def connect_database(self, database_config_window):
+    def connect_button_clicked(self, database_config_window):
         try:
             temp_db_helper : Database.DatabaseHelper.SDSDatabaseHelper = Database.DatabaseHelper.SDSDatabaseHelper(
                 self.q_line_edit_port_input.text()
