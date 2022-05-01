@@ -15,10 +15,8 @@ class SDSDatabaseHelper:
     DATABASE_NAME : str = 'SDS_DB'
     WORKSPACES_COLLECTION_NAME = 'workspaces'
 
-    workspaces : Collection = None
+    workspaces_collection : Collection = None
     mongo_client : MongoClient = None
-
-    mock_database:map = {}
 
 
     def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
@@ -33,45 +31,57 @@ class SDSDatabaseHelper:
 
         db = self.mongo_client[self.DATABASE_NAME]
         workspaces = db[self.WORKSPACES_COLLECTION_NAME]
-        self.workspaces = workspaces
+        self.workspaces_collection = workspaces
 
         print(f'DatabaseHelper initialized with url: {self.DATABASE_URL} and db: {self.DATABASE_NAME}')
 
     def get_all_workspace_names(self) -> list:
         '''
-        TODO: finish this
+        Returns a list of workspace names in the database
         '''
-        # If there are 0 keys in the database, then there are no workspaces return []
-        if len(self.mock_database) == 0:
-            return []
-        
-        # Return keys
-        return list(self.mock_database.keys())
+        return self.workspaces_collection.find().distinct('_id')
 
-    def get_all_workspaces_objects(self) -> list :
+    def get_workspace_by_id(self, workspace_name:str) -> Workspace :
         '''
-        TODO: contact db to get this
+        Returns a workspace object with the given name
         '''
-        # Return map as list
-        return list(self.mock_database.values())
-
-    def get_workspace_by_id(self, id:str) -> Workspace :
-        return self.mock_database[id]
-
-    def save_workspace_obj_to_database(self, workspace : Workspace):
-        self.mock_database[workspace.name] = workspace
+        print("Getting workspace with id: " + workspace_name)
+        try:
+            result = self.workspaces_collection.find_one({'_id': workspace_name})
+            return Workspace(result['_id'], result['projects'])
+        except Exception as e:
+            print(f'dbh.get_workspace_by_id exception: {e}')
+            return None
 
     def delete_workspace(self, workspace_id):
-        self.mock_database.pop(workspace_id)
+        '''
+        Deletes the workspace with the given id
+        '''
+        print(f'delete_workspace: {workspace_id}')
+        self.workspaces_collection.delete_one({'_id': workspace_id})
 
     def rename_workspace(self, workspace_name: str, new_name: str):
-        old_workspace = self.mock_database[workspace_name]
-        old_workspace.name = new_name
-        self.mock_database[new_name] = old_workspace
-        self.mock_database.pop(workspace_name)
+        '''
+        Renames a workspace
+        '''
+        print(f'Renaming workspace {workspace_name} to {new_name}')
+        self.workspaces_collection.update_one({'_id': workspace_name}, {'$set': {'_id': new_name}})
 
     def create_new_workspace(self, workspace_name:str):
-        self.mock_database[workspace_name] = Workspace(workspace_name)
+        '''
+        Creates a new workspace with the given name
+        '''
+        print(f'Creating new workspace: {workspace_name}')
+        self.workspaces_collection.insert_one({'_id': workspace_name, 'projects': []})
+
+    def update_workspace(self, workspace:Workspace):
+        '''
+        Updates the workspace with the given name
+        '''
+        print(vars(workspace))
+        print("Saving workspace with name: " + workspace.name)
+        mongo_encoded_workspace = workspace.get_mongo_encoded_workspace()
+        self.workspaces_collection.update_one({'_id': workspace.name}, {'$set': mongo_encoded_workspace})
 
     def test_connection(self) -> bool:
         '''

@@ -250,10 +250,10 @@ class Ui_workspace_window(object):
             0].text(0)
         selected_workspace_object = self.db_helper.get_workspace_by_id(
             selected_workspace_name)
-        # Change sds_controller workspace context
-        # print(f'check if open_workspace is called')
-        # time.sleep(0.5)
-        # Set up a capture manager window and the UI for it
+
+        print("Opening workspace with name " + selected_workspace_name)
+        print("Project count is " + str(len(selected_workspace_object.projects)))
+
         capture_manager_parent_window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow(
             self.db_helper, selected_workspace_object)
@@ -273,11 +273,11 @@ class Ui_workspace_window(object):
         createWorkspaceUI = Ui_newWorkspace_window(self.db_helper)
         createWorkspaceUI.setupCreateWorkspace(
             createWorkspace_Window,
-            self.on_create_workspace_button_clicked_function
+            self.on_create_workspace_button_clicked_from_dialog_function
         )
         createWorkspace_Window.show()
 
-    def on_create_workspace_button_clicked_function(self, workspace_name:str):
+    def on_create_workspace_button_clicked_from_dialog_function(self, workspace_name:str):
         self.db_helper.create_new_workspace(workspace_name)
         self.generate_workspaces_list_window()
 

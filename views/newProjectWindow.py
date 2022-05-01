@@ -107,6 +107,7 @@ class Ui_newProject_window(object):
                 msg.setWindowTitle("Project Name Already Exists")
                 msg.setText('The Project name is already defined in the database.')
                 x = msg.exec_()
+                return
 
         # Call the create project function and close the window
         newProject = Project(project_name,project_parallel,[])

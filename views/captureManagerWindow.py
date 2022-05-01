@@ -466,8 +466,11 @@ class Ui_CaptureManagerWindow(object):
         # self.runScenarioButton_captureManagerWindow.setEnabled(False)
 
     def save_everything_button_clicked(self):
-        # Everything is already saved. So we don't really need it. YW
-        pass
+        '''
+        Updates the state of the current workspace
+        with the current state of the UI
+        '''
+        self.db_helper.update_workspace(self.workspace_object)
 
     def export_project_button_clicked(self):
         project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
@@ -481,7 +484,6 @@ class Ui_CaptureManagerWindow(object):
             return
         with open(json_path[0]) as json_file:
             project = json.load(json_file)
-   
 
     def create_project_button_clicked(self):
         newProject_Window = QtWidgets.QDialog()

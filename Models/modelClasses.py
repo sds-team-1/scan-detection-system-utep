@@ -1,52 +1,78 @@
 class Workspace:
     def __init__(self, name: str = '', projects: list = []):
-        self.name = name
-        self.projects = projects
+        self.name:str = name
+        self.projects:list = projects
 
+    def get_mongo_encoded_workspace(self):
+        return {
+            'name': self.name,
+            'projects': [project.get_mongo_encoded_project() for project in self.projects]
+        }
 
 class Project:
     def __init__(self, name: str, max_units: int, scenarios: list = []):
-        self.name = name
-        self.max_units = max_units
-        self.scenarios = scenarios
+        self.name:str = name
+        self.max_units:int = max_units
+        self.scenarios:list = scenarios
 
+    def get_mongo_encoded_project(self):
+        return {
+            'name': self.name,
+            'max_units': self.max_units,
+            'scenarios': [scenario.get_mongo_encoded_scenario() for scenario in self.scenarios]
+        }
 
 class Scenario:
-    def __init__(self, name : str, devices : list, nodes : list, networks : list=[]):
-        self.name = name
-        self.networks = networks
-        self.devices = devices
-        # self.links = links
-        self.nodes = nodes
+    def __init__(self, name : str, devices : list=[], networks : list=[]):
+        self.name:str = name
+        self.networks:list = networks
+        self.devices:list = devices
+    def get_mongo_encoded_scenario(self):
+        return {
+            'name': self.name,
+            'devices': [device.get_mongo_encoded_node() for device in self.devices],
+            'networks': [network.get_mongo_encoded_node() for network in self.networks]
+        }
 
 
-class Node:
+class Node: 
+    '''
+    Nodes that are used to define the networks
+    and devices array in a scenario
+    '''
     def __init__(
     self, 
     id: int, 
-    listening: bool, 
-    node_type: str,
     name: str,
-    ip: str, 
-    port: int, 
+    type: str,
     mac: str, 
-    network: int
+    ip: str, 
+    listening: bool, 
+    port: int, 
     ):
-        # attributes for xml
+        # CORE Attributes
         self.id = id
         self.name = name
-        self.type = node_type
+        self.type = type
         self.mac = mac
         self.ip = ip
         self.ip4_mask = "24"
 
-        # attributes for core
+        # Generic fields
         self.listening = listening
-        self.ip = ip
         self.port = port
-        # self.network = network
 
-
+    def get_mongo_encoded_node(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type': self.type,
+            'mac': self.mac,
+            'ip': self.ip,
+            'ip4_mask': self.ip4_mask,
+            'listening': self.listening,
+            'port': self.port
+        }
 
 class ScannerNode(Node):
     def __init__(self, id: int, listening: bool, node_type: str, name: str, IP: str, \
