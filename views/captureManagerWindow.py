@@ -250,7 +250,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Set up context menu for when user right clicks on a project
         self.q_tree_widget_projects_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.project_right_clicked)
+        self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.projects_tree_widget_right_clicked)
 
         # Set up event listener for when user clicks on a project on the projects list
         self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.project_item_clicked)
@@ -259,7 +259,6 @@ class Ui_CaptureManagerWindow(object):
         # Set up context menu for when user right clicks on a node
         self.q_tree_widget_nodes_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.q_tree_widget_nodes_list.customContextMenuRequested.connect(lambda point_clicked: self.node_right_clicked(point_clicked, parent_window))
-
 
         # Node button functions
         self.q_button_add_node.clicked.connect(self.add_node_button_clicked)
@@ -294,17 +293,27 @@ class Ui_CaptureManagerWindow(object):
             self.q_tree_widget_projects_list.addTopLevelItem(project_tree_item)
 
 
-    def project_right_clicked(self, point):
+    def projects_tree_widget_right_clicked(self, point):
         '''
         Triggered when user right clicks on a project
         shows the context menu
         '''
-        # TODO: finish load scenario unit
+       
         index = self.q_tree_widget_projects_list.indexAt(point)
 
         if not index.isValid():
             return
 
+
+        item = self.q_tree_widget_projects_list.itemAt(point)
+        # If the item has a parent it is a scenario
+        if item.parent() is not None:
+            self.on_scenario_unit_right_click(point)
+        else:
+            self.on_project_right_click(point)
+
+    def on_project_right_click(self, point):
+        # TODO: finish load scenario unit
         item = self.q_tree_widget_projects_list.itemAt(point)
         name = item.text(0)
 
@@ -323,6 +332,24 @@ class Ui_CaptureManagerWindow(object):
         # action_load_scenario.triggered.connect(self.load_scenario_unit)
         action_edit_project.triggered.connect(lambda: self.edit_project_name_clicked(name))
         action_delete_project.triggered.connect(lambda: self.delete_project_clicked(name))
+
+        menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
+        return
+    
+    def on_scenario_unit_right_click(self, point):
+        item = self.q_tree_widget_projects_list.itemAt(point)
+        parent_project_name = item.parent().text(0)
+        scenario_unit_name = item.text(0)
+
+        menu = QtWidgets.QMenu()
+        action_rename_scenario = QAction("Rename Scenario Unit")
+        action_delete_scenario = QAction("Rename Scenario Unit")
+
+        menu.addAction(action_rename_scenario)
+        menu.addAction(action_delete_scenario)
+
+        action_rename_scenario.triggered.connect(lambda: self.edit_scenario_unit_name_clicked(parent_project_name, scenario_unit_name))
+        action_delete_scenario.triggered.connect(lambda: self.delete_scenario_unit_clicked(parent_project_name, scenario_unit_name))
 
         menu.exec_(self.q_tree_widget_projects_list.mapToGlobal(point))
         return
@@ -417,6 +444,69 @@ class Ui_CaptureManagerWindow(object):
         project.scenarios.append(Scenario(scenario_name))
         self.render_projects_in_project_tree()
 
+    def edit_scenario_unit_name_clicked(self, parent_project_name:str, selected_scenario_unit_name:str):
+        '''
+        Triggered when user clicks on the rename scenario unit button
+        '''
+        # TODO: implement get project using a map in the
+        # workspace class definition to have O(1) lookup
+
+        valid_input: bool = False
+
+        while(not valid_input):
+            editBox = QtWidgets.QInputDialog()
+            new_name, ok = editBox.getText(editBox, "Rename Scenario Unit", "New Scenario Unit Name:", text=selected_scenario_unit_name)
+
+            if ok:
+                # Check if the new scenario unit name is not already taken
+                for project in self.workspace_object.projects:
+                    if project.name == parent_project_name:
+                        for scenario in project.scenarios:
+                            if scenario.name == new_name:
+                                # Show error message
+                                error_message = QtWidgets.QMessageBox()
+                                error_message.setText("Scenario unit name already taken under the selected project!")
+                                error_message.exec_()
+                                valid_input = False
+                                editBox.close()
+                                break
+                        # IF this is reached, the scenario unit name is not taken
+                        else:
+                            valid_input = True
+
+        for project in self.workspace_object.projects:
+            if project.name == parent_project_name:
+                for scenario in project.scenarios:
+                    if scenario.name == selected_scenario_unit_name:
+                        scenario.name = new_name
+                        self.render_projects_in_project_tree()
+                        break
+                break
+
+        
+
+    def delete_scenario_unit_clicked (self, parent_project_name:str, selected_scenario_unit_name:str):
+        '''
+        Triggered when user clicks on the delete scenario unit button
+        '''
+        # Show confimation dialog
+        msgBox = QtWidgets.QMessageBox()
+        msgBox.setText("Are you sure you want to delete this scenario unit?")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
+        ret = msgBox.exec_()
+
+        # If user picked yes, delete scenario unit
+        if ret == QtWidgets.QMessageBox.Yes:
+            for project in self.workspace_object.projects:
+                if project.name == parent_project_name:
+                    for scenario in project.scenarios:
+                        if scenario.name == selected_scenario_unit_name:
+                            project.scenarios.remove(scenario)
+                            self.render_projects_in_project_tree()
+                            break
+                    break
+
 
     def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
         '''
@@ -459,6 +549,7 @@ class Ui_CaptureManagerWindow(object):
 
 
     def project_item_clicked(self):
+        print("project item clicked")
         # print(f'checking if item_project_selected went inside')
         # Clear the window
         self.q_tree_widget_nodes_list.clear()
