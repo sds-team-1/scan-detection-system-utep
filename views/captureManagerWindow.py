@@ -306,8 +306,12 @@ class Ui_CaptureManagerWindow(object):
         populates the nodes list with the nodes of the selected project or scenario unit
         '''
 
-        # Get the selected item
-        selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+        try:
+            # Get the selected item
+            selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+        except IndexError:
+            # If no item is selected, return
+            return
 
         # If the item has a parent, it is a scenario
         if selected_item.parent() is not None:
