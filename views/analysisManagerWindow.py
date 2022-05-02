@@ -440,9 +440,22 @@ class Ui_AnalysisManagerWindow(object):
 
     def delete_pcap(self, name):
         path = self.inputPcapsDirectory_analysisManagerWindow.text()
-        subprocess.run('echo "Hello World"')
+        # File name
+        file = self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)
+  
+        # File location
+        location = self.inputPcapsDirectory_analysisManagerWindow.text()
 
-        # subprocess.run('cd %s && rm %s' % (path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+        # Path
+        path = os.path.join(location, file)
+
+        # Remove the file
+        self.test_capture.del_pcap(file)
+        os.remove(path)
+
+
+        print("%s has been removed successfully" %file)
+        self.show_pcap_list(self.test_capture)
 
 
     def port_num(self, name):
