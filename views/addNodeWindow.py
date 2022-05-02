@@ -1,450 +1,492 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 
+from Models.modelClasses import Workspace
+
+import Database.DatabaseHelper
+
+from Controllers.CaptureController import CaptureControllerService
 
 class Ui_addNode_window(object):
-    def setupAddNode(self, addNode_window, sds_controller,
-                     projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                     CentralLayout_captureManagerWindow, ip_counter, MAC, id_counter):
-        self.sds_controller = sds_controller
-        addNode_window.setObjectName("addNode_window")
-        addNode_window.setEnabled(True)
-        addNode_window.resize(487, 240)
-        addNode_window.setMinimumSize(QtCore.QSize(487, 240))
-        addNode_window.setMaximumSize(QtCore.QSize(487, 240))
-        self.AddNodeWindowLayout = QtWidgets.QGridLayout(addNode_window)
-        self.AddNodeWindowLayout.setObjectName("AddNodeWindowLayout")
-        self.mainLayout_addNodeWindow = QtWidgets.QVBoxLayout()
-        self.mainLayout_addNodeWindow.setObjectName("mainLayout_addNodeWindow")
-        self.nodeTypeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.nodeTypeLayout_addNodeWindow.setObjectName("nodeTypeLayout_addNodeWindow")
-        self.nodeTypeLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-        self.nodeTypeLabel_addNodeWindow.setObjectName("nodeTypeLabel_addNodeWindow")
-        self.nodeTypeLayout_addNodeWindow.addWidget(self.nodeTypeLabel_addNodeWindow)
-        self.nodeTypeComboBox_addNodeWindow = QtWidgets.QComboBox(addNode_window)
-        self.nodeTypeComboBox_addNodeWindow.setObjectName("nodeTypeComboBox_addNodeWindow")
-        self.nodeTypeLayout_addNodeWindow.addWidget(self.nodeTypeComboBox_addNodeWindow)
-        self.nodeTypeComboBox_addNodeWindow.addItem('CORE')
-        self.nodeTypeComboBox_addNodeWindow.addItem('VM')
-        self.nodeTypeComboBox_addNodeWindow.addItem('Docker ')
-        self.spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.nodeTypeLayout_addNodeWindow.addItem(self.spacerItem)
-        self.mainLayout_addNodeWindow.addLayout(self.nodeTypeLayout_addNodeWindow)
-        self.nodeNameLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.nodeNameLayout_addNodeWindow.setObjectName("nodeNameLayout_addNodeWindow")
-        self.nodeNameLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-        self.nodeNameLabel_addNodeWindow.setObjectName("nodeNameLabel_addNodeWindow")
-        self.nodeNameLayout_addNodeWindow.addWidget(self.nodeNameLabel_addNodeWindow)
-        self.nodeNameInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-        self.nodeNameInput_addNodeWindow.setObjectName("nodeNameInput_addNodeWindow")
-        self.nodeNameLayout_addNodeWindow.addWidget(self.nodeNameInput_addNodeWindow)
-        self.mainLayout_addNodeWindow.addLayout(self.nodeNameLayout_addNodeWindow)
-        self.nodeMACAddressLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.nodeMACAddressLayout_addNodeWindow.setObjectName("nodeMACAddressLayout_addNodeWindow")
-        self.nodeMACAddressLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-        self.nodeMACAddressLabel_addNodeWindow.setObjectName("nodeMACAddressLabel_addNodeWindow")
-        self.nodeMACAddressLayout_addNodeWindow.addWidget(self.nodeMACAddressLabel_addNodeWindow)
-        self.nodeMACAddressInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-        self.nodeMACAddressInput_addNodeWindow.setObjectName("nodeMACAddressInput_addNodeWindow")
-        self.nodeMACAddressLayout_addNodeWindow.addWidget(self.nodeMACAddressInput_addNodeWindow)
-        self.mainLayout_addNodeWindow.addLayout(self.nodeMACAddressLayout_addNodeWindow)
-        self.nodeIPAddressLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.nodeIPAddressLayout_addNodeWindow.setObjectName("nodeIPAddressLayout_addNodeWindow")
-        self.nodeIPAddressLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-        self.nodeIPAddressLabel_addNodeWindow.setObjectName("nodeIPAddressLabel_addNodeWindow")
-        self.nodeIPAddressLayout_addNodeWindow.addWidget(self.nodeIPAddressLabel_addNodeWindow)
-        self.nodeIPAddressInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-        self.nodeIPAddressInput_addNodeWindow.setObjectName("nodeIPAddressInput_addNodeWindow")
-        self.nodeIPAddressLayout_addNodeWindow.addWidget(self.nodeIPAddressInput_addNodeWindow)
-        self.mainLayout_addNodeWindow.addLayout(self.nodeIPAddressLayout_addNodeWindow)
 
-        self.nodeScannerNodeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.nodeScannerNodeLayout_addNodeWindow.setObjectName("nodeScannerNodeLayout_addNodeWindow")
-        self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.nodeScannerNodeLayout_addNodeWindow.addItem(self.spacerItem1)
-        self.nodeWebServerNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
-        self.nodeWebServerNodeCheckBox_addNodeWindow.setObjectName("nodeWebServerNodeCheckBox_addNodeWindow")
-        self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeWebServerNodeCheckBox_addNodeWindow)
-        self.nodeLogNetNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
-        self.nodeLogNetNodeCheckBox_addNodeWindow.setObjectName("nodeLogNetNodeCheckBox_addNodeWindow")
-        self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeLogNetNodeCheckBox_addNodeWindow)
-        self.nodeScannerNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
-        self.nodeScannerNodeCheckBox_addNodeWindow.setObjectName("nodeScannerNodeCheckBox_addNodeWindow")
-        self.nodeScannerNodeLayout_addNodeWindow.addWidget(self.nodeScannerNodeCheckBox_addNodeWindow)
-        self.mainLayout_addNodeWindow.addLayout(self.nodeScannerNodeLayout_addNodeWindow)
+    workspace_object : Workspace
+    db_helper : Database.DatabaseHelper.SDSDatabaseHelper
+    capture_controller: CaptureControllerService
 
-        self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-        self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
-        self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-        self.addNodeButton_addNodeWindow.setObjectName("addNodeButton_addNodeWindow")
-        self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeButton_addNodeWindow)
-        self.addNodeCancelButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-        self.addNodeCancelButton_addNodeWindow.setObjectName("addNodeCancelButton_addNodeWindow")
-        self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeCancelButton_addNodeWindow)
-        self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
-        self.AddNodeWindowLayout.addLayout(self.mainLayout_addNodeWindow, 0, 0, 1, 1)
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace_object:Workspace, capture_controller:CaptureControllerService):
+        self.db_helper = db_helper
+        self.workspace_object = workspace_object
+        self.capture_controller = capture_controller
 
-        QtCore.QMetaObject.connectSlotsByName(addNode_window)
 
-        _translate = QtCore.QCoreApplication.translate
-        addNode_window.setWindowTitle(_translate("addNode_window", "Add New Node"))
-        self.nodeTypeLabel_addNodeWindow.setText(_translate("addNode_window", "Type:                    "))
-        self.nodeNameLabel_addNodeWindow.setText(_translate("addNode_window", "Node Name:          "))
-        self.nodeMACAddressLabel_addNodeWindow.setText(_translate("addNode_window", "MAC Address:       "))
-        self.nodeIPAddressLabel_addNodeWindow.setText(_translate("addNode_window", "IP Address:            "))
-        self.nodeWebServerNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Web Server"))
-        self.nodeLogNetNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Log Network Traffic"))
-        self.nodeScannerNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Scanner Node"))
-        self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
-        self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
-
-        self.nodeScannerNodeCheckBox_addNodeWindow.toggled.connect(lambda: self.scannerNode(
-            addNode_window, _translate, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-            CentralLayout_captureManagerWindow, id_counter))
-
-        self.addNodeButton_addNodeWindow.clicked.connect(lambda: self.addNode(
-            addNode_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-            CentralLayout_captureManagerWindow, id_counter))
-        self.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_window.close)
-
-        self.nodeIPAddressInput_addNodeWindow.setText(f"1.1.{ip_counter}.2")
-
+    def setupAddNode(self, parent_window:QtWidgets.QDialog, capture_manager_window, add_node_function):
         MAC += 1
         node_mac = str(MAC)[1:]
         node_mac = f"{node_mac[0:2]}:{node_mac[2:4]}:{node_mac[4:6]}:{node_mac[6:8]}:{node_mac[8:10]}:{node_mac[10:12]}"
-        self.nodeMACAddressInput_addNodeWindow.setText(node_mac)
 
-    def scannerNode(self, addNode_window, _translate, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                    CentralLayout_captureManagerWindow, id_counter):
-        if self.nodeScannerNodeCheckBox_addNodeWindow.isChecked():
+        # Set up parent window properties
+        parent_window.setObjectName("addNode_window")
+        parent_window.setEnabled(True)
+        parent_window.resize(487, 240)
+        parent_window.setMinimumSize(QtCore.QSize(487, 240))
+        parent_window.setMaximumSize(QtCore.QSize(487, 240))
+        parent_window.setWindowTitle("parent_window", "Add New Node")
+
+        self.q_label_node_name_label = QtWidgets.QLabel(parent_window)
+        self.q_label_node_name_label.setObjectName("nodeNameLabel_addNodeWindow")
+        self.q_label_node_name_label.setText("Node Name:          ")
+
+        self.q_line_edit_node_name_input = QtWidgets.QLineEdit(parent_window)
+        self.q_line_edit_node_name_input.setObjectName("nodeNameInput_addNodeWindow")
+
+        self.q_label_node_type_label = QtWidgets.QLabel(parent_window)
+        self.q_label_node_type_label.setObjectName("nodeTypeLabel_addNodeWindow")
+        self.q_label_node_type_label.setText("Type:                    ")
+
+        self.q_combobox_node_type = QtWidgets.QComboBox(parent_window)
+        self.q_combobox_node_type.setObjectName("nodeTypeComboBox_addNodeWindow")
+        self.q_combobox_node_type.addItem('CORE')
+        self.q_combobox_node_type.addItem('VM')
+        self.q_combobox_node_type.addItem('Docker ')
+
+        self.q_label_node_MAC_Address_label = QtWidgets.QLabel(parent_window)
+        self.q_label_node_MAC_Address_label.setObjectName("nodeMACAddressLabel_addNodeWindow")
+        self.q_label_node_MAC_Address_label.setText("MAC Address:       ")
+
+        self.q_line_edit_node_MAC_address_input = QtWidgets.QLineEdit(parent_window)
+        self.q_line_edit_node_MAC_address_input.setObjectName("nodeMACAddressInput_addNodeWindow")
+        self.q_line_edit_node_MAC_address_input.setText(node_mac)
+
+        self.q_label_node_IP_address_label = QtWidgets.QLabel(parent_window)
+        self.q_label_node_IP_address_label.setObjectName("nodeIPAddressLabel_addNodeWindow")
+        self.q_label_node_IP_address_label.setText("IP Address:            ")
+
+        self.q_line_edit_node_IP_Adress_input = QtWidgets.QLineEdit(parent_window)
+        self.q_line_edit_node_IP_Adress_input.setObjectName("nodeIPAddressInput_addNodeWindow")
+        self.q_line_edit_node_IP_Adress_input.setText(f"1.1.{ip_counter}.2")
+
+        self.q_checkbox_web_server_node = QtWidgets.QCheckBox(parent_window)
+        self.q_checkbox_web_server_node.setObjectName("nodeWebServerNodeCheckBox_addNodeWindow")
+        self.q_checkbox_web_server_node.setText("Web Server")
+        self.q_checkbox_scanner_node.toggled.connect(lambda: self.scannerNode(
+            parent_window, id_counter))
+
+        self.q_checkbox_log_network_node = QtWidgets.QCheckBox(parent_window)
+        self.q_checkbox_log_network_node.setObjectName("nodeLogNetNodeCheckBox_addNodeWindow")
+        self.q_checkbox_log_network_node.setText("Log Network Traffic")
+
+        self.q_checkbox_scanner_node = QtWidgets.QCheckBox(parent_window)
+        self.q_checkbox_scanner_node.setObjectName("nodeScannerNodeCheckBox_addNodeWindow")
+        self.q_checkbox_scanner_node.setText("Scanner Node")
+        self.q_checkbox_scanner_node.toggled.connect(lambda: self.scannerNode(
+            parent_window, id_counter))
+
+        self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+        self.q_button_add_node.setObjectName("addNodeButton_addNodeWindow")
+        self.q_button_add_node.setText("Add Node")
+        self.q_button_add_node.clicked.connect(lambda: self.addNode(
+            parent_window, id_counter))
+
+        self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+        self.q_button_cancel_button.setObjectName("addNodeCancelButton_addNodeWindow")
+        self.q_button_cancel_button.setText("Cancel")
+        self.q_button_cancel_button.clicked.connect(parent_window.close)
+
+        self.q_node_type_layout = QtWidgets.QHBoxLayout()
+        self.q_node_type_layout.setObjectName("nodeTypeLayout_addNodeWindow")
+        self.q_node_type_layout.addWidget(self.q_label_node_type_label)
+        self.q_node_type_layout.addWidget(self.q_combobox_node_type)
+        self.spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.q_node_type_layout.addItem(self.spacerItem)
+
+        self.q_layout_node_name = QtWidgets.QHBoxLayout()
+        self.q_layout_node_name.setObjectName("nodeNameLayout_addNodeWindow")
+        self.q_layout_node_name.addWidget(self.q_label_node_name_label)
+        self.q_layout_node_name.addWidget(self.q_line_edit_node_name_input)
+
+        self.q_layout_node_MAC_address = QtWidgets.QHBoxLayout()
+        self.q_layout_node_MAC_address.setObjectName("nodeMACAddressLayout_addNodeWindow")
+        self.q_layout_node_MAC_address.addWidget(self.q_label_node_MAC_Address_label)
+        self.q_layout_node_MAC_address.addWidget(self.q_line_edit_node_MAC_address_input)
+
+        self.q_layout_node_IP_address = QtWidgets.QHBoxLayout()
+        self.q_layout_node_IP_address.setObjectName("nodeIPAddressLayout_addNodeWindow")     
+        self.q_layout_node_IP_address.addWidget(self.q_label_node_IP_address_label)
+        self.q_layout_node_IP_address.addWidget(self.q_line_edit_node_IP_Adress_input)
+
+        self.q_layout_scanner_node = QtWidgets.QHBoxLayout()
+        self.q_layout_scanner_node.setObjectName("nodeScannerNodeLayout_addNodeWindow")
+        self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.q_layout_scanner_node.addItem(self.spacerItem1)
+        self.q_layout_scanner_node.addWidget(self.q_checkbox_web_server_node)
+        self.q_layout_scanner_node.addWidget(self.q_checkbox_log_network_node)
+        self.q_layout_scanner_node.addWidget(self.q_checkbox_scanner_node)
+
+        self.q_layout_addnode_buttons = QtWidgets.QHBoxLayout()
+        self.q_layout_addnode_buttons.setObjectName("addNodeButtonsLayout_addNodeWindow")    
+        self.q_layout_addnode_buttons.addWidget(self.q_button_add_node)
+        self.q_layout_addnode_buttons.addWidget(self.q_button_cancel_button)
+
+        self.q_main_layout = QtWidgets.QVBoxLayout()
+        self.q_main_layout.setObjectName("mainLayout_addNodeWindow")
+        self.q_main_layout.addLayout(self.q_node_type_layout)
+        self.q_main_layout.addLayout(self.q_layout_node_name)    
+        self.q_main_layout.addLayout(self.q_layout_node_MAC_address)
+        self.q_main_layout.addLayout(self.q_layout_node_IP_address)
+        self.q_main_layout.addLayout(self.q_layout_scanner_node)
+        self.q_main_layout.addLayout(self.q_layout_addnode_buttons)
+
+        self.q_grid_main_layout = QtWidgets.QGridLayout(parent_window)
+        self.q_grid_main_layout.setObjectName("AddNodeWindowLayout")
+        self.q_grid_main_layout.addLayout(self.q_main_layout, 0, 0, 1, 1)
+        
+
+    def scannerNode(self, parent_window, id_counter):
+
+        if self.q_checkbox_scanner_node.isChecked():
+
             self.nmapFlag = False
             self.niktoFlag = False
-            addNode_window.resize(487, 490)
-            addNode_window.setMinimumSize(QtCore.QSize(487, 490))
-            addNode_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.addNodeButton_addNodeWindow.deleteLater()
-            self.addNodeCancelButton_addNodeWindow.deleteLater()
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
+            parent_window.resize(487, 490)
+            parent_window.setMinimumSize(QtCore.QSize(487, 490))
+            parent_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.nodeUserPassLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeUserPassLayout_addNodeWindow.setObjectName("nodeUserPassLayout_addNodeWindow")
-            self.nodeUserPassLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeUserPassLabel_addNodeWindow.setObjectName("nodeUserPassLabel_addNodeWindow")
-            self.nodeUserPassLayout_addNodeWindow.addWidget(self.nodeUserPassLabel_addNodeWindow)
-            self.nodeUserPassInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-            self.nodeUserPassInput_addNodeWindow.setObjectName("nodeUserPassInput_addNodeWindow")
-            self.nodeUserPassLayout_addNodeWindow.addWidget(self.nodeUserPassInput_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeUserPassLayout_addNodeWindow)
-            self.nodeScannerBinaryLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeScannerBinaryLayout_addNodeWindow.setObjectName("nodeScannerBinaryLayout_addNodeWindow")
-            self.nodeScannerBinaryLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeScannerBinaryLabel_addNodeWindow.setObjectName("nodeScannerBinaryLabel_addNodeWindow")
-            self.nodeScannerBinaryLayout_addNodeWindow.addWidget(self.nodeScannerBinaryLabel_addNodeWindow)
-            self.nodeScannerBinaryInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-            self.nodeScannerBinaryInput_addNodeWindow.setObjectName("nodeScannerBinaryInput_addNodeWindow")
-            self.nodeScannerBinaryLayout_addNodeWindow.addWidget(self.nodeScannerBinaryInput_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeScannerBinaryLayout_addNodeWindow)
+            self.q_button_add_node.deleteLater()
+            self.q_button_cancel_button.deleteLater()
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
+            
+            self.q_label_node_us_pw = QtWidgets.QLabel(parent_window)
+            self.q_label_node_us_pw.setObjectName("q_label_node_us_pw")
+            self.q_label_node_us_pw.setText("User/Pass:             ")
 
-            self.nodeScannersNNNodeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeScannersNNNodeLayout_addNodeWindow.setObjectName("nodeScannersNNNodeLayout_addNodeWindow")
-            self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Minimum)
-            self.nodeScannersNNNodeLayout_addNodeWindow.addItem(self.spacerItem1)
-            self.nodeNMapNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
-            self.nodeNMapNodeCheckBox_addNodeWindow.setObjectName("nodeNMapNodeCheckBox_addNodeWindow")
-            self.nodeScannersNNNodeLayout_addNodeWindow.addWidget(self.nodeNMapNodeCheckBox_addNodeWindow)
-            self.nodeNiktoNodeCheckBox_addNodeWindow = QtWidgets.QCheckBox(addNode_window)
-            self.nodeNiktoNodeCheckBox_addNodeWindow.setObjectName("nodeNiktoNodeCheckBox_addNodeWindow")
-            self.nodeScannersNNNodeLayout_addNodeWindow.addWidget(self.nodeNiktoNodeCheckBox_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeScannersNNNodeLayout_addNodeWindow)
+            self.q_line_edit_node_us_pw_input = QtWidgets.QLineEdit(parent_window)
+            self.q_line_edit_node_us_pw_input.setObjectName("q_line_edit_node_us_pw_input")
+            
+            self.q_label_node_scanner_binary = QtWidgets.QLabel(parent_window)
+            self.q_label_node_scanner_binary.setObjectName("q_label_node_scanner_binary")
+            self.q_label_node_scanner_binary.setText("Scanner-Binary:    ")
+        
+            self.q_line_edit_node_scanner_binary_input = QtWidgets.QLineEdit(parent_window)
+            self.q_line_edit_node_scanner_binary_input.setObjectName("q_line_edit_node_scanner_binary_input")
+    
+            self.q_checkbox_nmap_node = QtWidgets.QCheckBox(parent_window)
+            self.q_checkbox_nmap_node.setObjectName("q_checkbox_nmap_node")
+            self.q_checkbox_nmap_node.setText("NMap")
+            self.q_checkbox_nmap_node.toggled.connect(self.nmapSignal)
 
-            self.nodeNMapNodeCheckBox_addNodeWindow.toggled.connect(self.nmapSignal)
-            self.nodeNiktoNodeCheckBox_addNodeWindow.toggled.connect(self.niktoSignal)
+            self.q_checkbox_nikto_node = QtWidgets.QCheckBox(parent_window)
+            self.q_checkbox_nikto_node.setObjectName("q_checkbox_nikto_node")
+            self.q_checkbox_nikto_node.setText("Nikto")
+            self.q_checkbox_nikto_node.toggled.connect(self.niktoSignal)
+            
+            self.q_label_nmap_arguments = QtWidgets.QLabel(parent_window)
+            self.q_label_nmap_arguments.setObjectName("q_label_nmap_arguments")
+            self.q_label_nmap_arguments.setText("NMap Arguments: ")
+            self.q_line_edit_nmap_arguments_input = QtWidgets.QLineEdit(parent_window)
+            self.q_line_edit_nmap_arguments_input.setObjectName("q_line_edit_nmap_arguments_input")
+            self.q_line_edit_nmap_arguments_input.setDisabled(True)
 
-            self.nodeNMapArgumentsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeNMapArgumentsLayout_addNodeWindow.setObjectName("nodeNMapArgumentsLayout_addNodeWindow")
-            self.nodeNMapArgumentsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeNMapArgumentsLabel_addNodeWindow.setObjectName("nodeNMapArgumentsLabel_addNodeWindow")
-            self.nodeNMapArgumentsLayout_addNodeWindow.addWidget(self.nodeNMapArgumentsLabel_addNodeWindow)
-            self.nodeNMapArgumentsInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-            self.nodeNMapArgumentsInput_addNodeWindow.setObjectName("nodeNMapArgumentsInput_addNodeWindow")
-            self.nodeNMapArgumentsLayout_addNodeWindow.addWidget(self.nodeNMapArgumentsInput_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeNMapArgumentsLayout_addNodeWindow)
-            self.nodeNMapArgumentsInput_addNodeWindow.setDisabled(True)
+            self.q_label_nikto_arguments = QtWidgets.QLabel(parent_window)
+            self.q_label_nikto_arguments.setObjectName("q_label_nikto_arguments")
+            self.q_label_nikto_arguments.setText("Nikto Arguments:  ")
+            self.q_line_edit_nikto_arguments_input = QtWidgets.QLineEdit(parent_window)
+            self.q_line_edit_nikto_arguments_input.setObjectName("q_line_edit_nikto_arguments_input")
+            self.q_line_edit_nikto_arguments_input.setDisabled(True)
+            
+            self.q_label_iterations_number = QtWidgets.QLabel(parent_window)
+            self.q_label_iterations_number.setObjectName("q_label_iterations_number")
+            self.q_label_iterations_number.setText("Number-Iterations:")
+            self.q_spinbox_iterations_number = QtWidgets.QSpinBox(parent_window)
+            self.q_spinbox_iterations_number.setObjectName("q_spinbox_iterations_number")
+            self.q_spinbox_iterations_number.setValue(1)
+                   
+            self.q_label_max_parallel_runs = QtWidgets.QLabel(parent_window)
+            self.q_label_max_parallel_runs.setObjectName("q_label_max_parallel_runs")
+            self.q_label_max_parallel_runs.setText("Max-Parallel-Runs:")
+            self.q_spinbox_max_parallel_runs = QtWidgets.QSpinBox(parent_window)
+            self.q_spinbox_max_parallel_runs.setObjectName("q_spinbox_max_parallel_runs")
+            self.q_spinbox_max_parallel_runs.setValue(1)
+        
+            self.q_label_end_condition = QtWidgets.QLabel(parent_window)
+            self.q_label_end_condition.setObjectName("q_label_end_condition")
+            self.q_label_end_condition.setText("End-Condition:       ")
 
-            self.nodeNiktoArgumentsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeNiktoArgumentsLayout_addNodeWindow.setObjectName("nodeNiktoArgumentsLayout_addNodeWindow")
-            self.nodeNiktoArgumentsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeNiktoArgumentsLabel_addNodeWindow.setObjectName("nodeNiktoArgumentsLabel_addNodeWindow")
-            self.nodeNiktoArgumentsLayout_addNodeWindow.addWidget(self.nodeNiktoArgumentsLabel_addNodeWindow)
-            self.nodeNiktoArgumentsInput_addNodeWindow = QtWidgets.QLineEdit(addNode_window)
-            self.nodeNiktoArgumentsInput_addNodeWindow.setObjectName("nodeNiktoArgumentsInput_addNodeWindow")
-            self.nodeNiktoArgumentsLayout_addNodeWindow.addWidget(self.nodeNiktoArgumentsInput_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeNiktoArgumentsLayout_addNodeWindow)
-            self.nodeNiktoArgumentsInput_addNodeWindow.setDisabled(True)
+            self.q_combobox_end_condition = QtWidgets.QComboBox(parent_window)
+            self.q_combobox_end_condition.setObjectName("q_combobox_end_condition")
+            self.q_combobox_end_condition.addItem('on-scan-complete')
+            self.q_combobox_end_condition.addItem('Time...')
+            self.q_combobox_end_condition.currentIndexChanged.connect(lambda: self.end_condition_changed(
+                parent_window, id_counter))
+            
+            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+            self.q_button_add_node.setObjectName("q_button_add_node")
+            self.q_button_add_node.setText("Add Node")
+            self.q_button_add_node.clicked.connect(lambda: self.addNode(
+                parent_window, id_counter))
 
-            self.nodeNumIterationsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeNumIterationsLayout_addNodeWindow.setObjectName("nodeNumIterationsLayout_addNodeWindow")
-            self.nodeNumIterationsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeNumIterationsLabel_addNodeWindow.setObjectName("nodeNumIterationsLabel_addNodeWindow")
-            self.nodeNumIterationsLayout_addNodeWindow.addWidget(self.nodeNumIterationsLabel_addNodeWindow)
-            self.nodeNumIterationsSpinBox_addNodeWindow = QtWidgets.QSpinBox(addNode_window)
-            self.nodeNumIterationsSpinBox_addNodeWindow.setObjectName("nodeNumIterationsSpinBox_addNodeWindow")
-            self.nodeNumIterationsSpinBox_addNodeWindow.setValue(1)
-            self.nodeNumIterationsLayout_addNodeWindow.addWidget(self.nodeNumIterationsSpinBox_addNodeWindow)
-            self.spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Minimum)
-            self.nodeNumIterationsLayout_addNodeWindow.addItem(self.spacerItem2)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeNumIterationsLayout_addNodeWindow)
-            self.nodeMaxParallelRunsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeMaxParallelRunsLayout_addNodeWindow.setObjectName("nodeMaxParallelRunsLayout_addNodeWindow")
-            self.nodeMaxParallelRunsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeMaxParallelRunsLabel_addNodeWindow.setObjectName("nodeMaxParallelRunsLabel_addNodeWindow")
-            self.nodeMaxParallelRunsLayout_addNodeWindow.addWidget(self.nodeMaxParallelRunsLabel_addNodeWindow)
-            self.nodeMaxParallelRunsSpinBox_addNodeWindow = QtWidgets.QSpinBox(addNode_window)
-            self.nodeMaxParallelRunsSpinBox_addNodeWindow.setObjectName("nodeMaxParallelRunsSpinBox_addNodeWindow")
-            self.nodeMaxParallelRunsSpinBox_addNodeWindow.setValue(1)
-            self.nodeMaxParallelRunsLayout_addNodeWindow.addWidget(self.nodeMaxParallelRunsSpinBox_addNodeWindow)
-            self.spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Minimum)
-            self.nodeMaxParallelRunsLayout_addNodeWindow.addItem(self.spacerItem3)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeMaxParallelRunsLayout_addNodeWindow)
+            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
+            self.q_button_cancel_button.setText("Cancel")
+            self.q_button_cancel_button.clicked.connect(parent_window.close)
 
-            self.nodeEndConditionLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeEndConditionLayout_addNodeWindow.setObjectName("nodeEndConditionLayout_addNodeWindow")
-            self.nodeEndConditionLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.nodeEndConditionLabel_addNodeWindow.setObjectName("nodeEndConditionLabel_addNodeWindow")
-            self.nodeEndConditionLayout_addNodeWindow.addWidget(self.nodeEndConditionLabel_addNodeWindow)
+            self.q_layout_node_us_pw = QtWidgets.QHBoxLayout()
+            self.q_layout_node_us_pw.setObjectName("q_layout_node_us_pw")
+            self.q_layout_node_us_pw.addWidget(self.q_label_node_us_pw)
+            self.q_layout_node_us_pw.addWidget(self.q_line_edit_node_us_pw_input)
 
-            self.nodeEndConditionCombobox_addNodeWindow = QtWidgets.QComboBox(addNode_window)
-            self.nodeEndConditionCombobox_addNodeWindow.setObjectName("nodeEndConditionCombobox_addNodeWindow")
-            self.nodeEndConditionCombobox_addNodeWindow.addItem('on-scan-complete')
-            self.nodeEndConditionCombobox_addNodeWindow.addItem('Time...')
-            self.nodeEndConditionLayout_addNodeWindow.addWidget(self.nodeEndConditionCombobox_addNodeWindow)
-            self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Minimum)
-            self.nodeEndConditionLayout_addNodeWindow.addItem(self.spacerItem4)
+            self.q_layout_node_scanner_binary = QtWidgets.QHBoxLayout()
+            self.q_layout_node_scanner_binary.setObjectName("q_layout_node_scanner_binary")
+            self.q_layout_node_scanner_binary.addWidget(self.q_label_node_scanner_binary)
+            self.q_layout_node_scanner_binary.addWidget(self.q_line_edit_node_scanner_binary_input)
 
-            self.nodeEndConditionCombobox_addNodeWindow.currentIndexChanged.connect(lambda: self.end_condition_changed(
-                addNode_window, _translate, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter))
+            self.q_layout_node_scanner_nikto_nmap = QtWidgets.QHBoxLayout()
+            self.q_layout_node_scanner_nikto_nmap.setObjectName("q_layout_node_scanner_nikto_nmap")
+            self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+            self.q_layout_node_scanner_nikto_nmap.addItem(self.spacerItem1)
+            self.q_layout_node_scanner_nikto_nmap.addWidget(self.q_checkbox_nmap_node)
+            self.q_layout_node_scanner_nikto_nmap.addWidget(self.q_checkbox_nikto_node)
 
-            self.mainLayout_addNodeWindow.addLayout(self.nodeEndConditionLayout_addNodeWindow)
+            self.q_layout_nmap_arguments = QtWidgets.QHBoxLayout()
+            self.q_layout_nmap_arguments.setObjectName("q_layout_nmap_arguments")
+            self.q_layout_nmap_arguments.addWidget(self.q_label_nmap_arguments)
+            self.q_layout_nmap_arguments.addWidget(self.q_line_edit_nmap_arguments_input)
 
-            self.nodeUserPassLabel_addNodeWindow.setText(_translate("addNode_window", "User/Pass:             "))
-            self.nodeScannerBinaryLabel_addNodeWindow.setText(_translate("addNode_window", "Scanner-Binary:    "))
+            self.q_layout_nikto_arguments = QtWidgets.QHBoxLayout()
+            self.q_layout_nikto_arguments.setObjectName("q_layout_nikto_arguments")
+            self.q_layout_nikto_arguments.addWidget(self.q_label_nikto_arguments)
+            self.q_layout_nikto_arguments.addWidget(self.q_line_edit_nikto_arguments_input)
 
-            self.nodeNMapNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "NMap"))
-            self.nodeNiktoNodeCheckBox_addNodeWindow.setText(_translate("addNode_window", "Nikto"))
+            self.q_layout_iterations_number = QtWidgets.QHBoxLayout()
+            self.q_layout_iterations_number.setObjectName("q_layout_iterations_number")
+            self.q_layout_iterations_number.addWidget(self.q_label_iterations_number)
+            self.q_layout_iterations_number.addWidget(self.q_spinbox_iterations_number)
+            self.spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
+            self.q_layout_iterations_number.addItem(self.spacerItem2)
 
-            self.nodeNMapArgumentsLabel_addNodeWindow.setText(_translate("addNode_window", "NMap Arguments: "))
-            self.nodeNiktoArgumentsLabel_addNodeWindow.setText(_translate("addNode_window", "Nikto Arguments:  "))
+            self.q_layout_max_parallel_runs = QtWidgets.QHBoxLayout()
+            self.q_layout_max_parallel_runs.setObjectName("q_layout_max_parallel_runs")
+            self.q_layout_max_parallel_runs.addWidget(self.q_label_max_parallel_runs)
+            self.q_layout_max_parallel_runs.addWidget(self.q_spinbox_max_parallel_runs)
+            self.spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
+            self.q_layout_max_parallel_runs.addItem(self.spacerItem3)
 
-            self.nodeNumIterationsLabel_addNodeWindow.setText(_translate("addNode_window", "Number-Iterations:"))
-            self.nodeMaxParallelRunsLabel_addNodeWindow.setText(_translate("addNode_window", "Max-Parallel-Runs:"))
-            self.nodeEndConditionLabel_addNodeWindow.setText(_translate("addNode_window", "End-Condition:       "))
+            self.q_layout_end_condition = QtWidgets.QHBoxLayout()
+            self.q_layout_end_condition.setObjectName("q_layout_end_condition")
+            self.q_layout_end_condition.addWidget(self.q_label_end_condition)
+            self.q_layout_end_condition.addWidget(self.q_combobox_end_condition)
+            self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
+            self.q_layout_end_condition.addItem(self.spacerItem4)
 
-            self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
-            self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeButton_addNodeWindow.setObjectName("addNodeButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeButton_addNodeWindow)
-            self.addNodeCancelButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeCancelButton_addNodeWindow.setObjectName("addNodeCancelButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeCancelButton_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
-            self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
-            self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+            self.q_layout_addnode_buttons = QtWidgets.QHBoxLayout()
+            self.q_layout_addnode_buttons.setObjectName("q_layout_addnode_buttons")
+            self.q_layout_addnode_buttons.addWidget(self.q_button_add_node)
+            self.q_layout_addnode_buttons.addWidget(self.q_button_cancel_button)
 
-            self.addNodeButton_addNodeWindow.clicked.connect(lambda: self.addNode(
-                addNode_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter))
-            self.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_window.close)
+            self.q_main_layout.addLayout(self.q_layout_node_us_pw)
+            self.q_main_layout.addLayout(self.q_layout_node_scanner_binary)
+            self.q_main_layout.addLayout(self.q_layout_node_scanner_nikto_nmap)
+            self.q_main_layout.addLayout(self.q_layout_nmap_arguments)
+            self.q_main_layout.addLayout(self.q_layout_nikto_arguments)
+            self.q_main_layout.addLayout(self.q_layout_iterations_number)
+            self.q_main_layout.addLayout(self.q_layout_max_parallel_runs)
+            self.q_main_layout.addLayout(self.q_layout_end_condition)
+            self.q_main_layout.addLayout(self.q_layout_addnode_buttons)  
 
         else:
-            addNode_window.resize(487, 240)
-            addNode_window.setMinimumSize(QtCore.QSize(487, 240))
-            addNode_window.setMaximumSize(QtCore.QSize(487, 240))
 
-            self.nodeUserPassLabel_addNodeWindow.deleteLater()
-            self.nodeUserPassInput_addNodeWindow.deleteLater()
-            self.nodeScannerBinaryLabel_addNodeWindow.deleteLater()
-            self.nodeScannerBinaryInput_addNodeWindow.deleteLater()
+            parent_window.resize(487, 240)
+            parent_window.setMinimumSize(QtCore.QSize(487, 240))
+            parent_window.setMaximumSize(QtCore.QSize(487, 240))
 
-            self.nodeNMapArgumentsLabel_addNodeWindow.deleteLater()
-            self.nodeNMapArgumentsInput_addNodeWindow.deleteLater()
+            self.q_label_node_us_pw.deleteLater()
+            self.q_line_edit_node_us_pw_input.deleteLater()
+            self.q_label_node_scanner_binary.deleteLater()
+            self.q_line_edit_node_scanner_binary_input.deleteLater()
 
-            self.nodeNiktoArgumentsLabel_addNodeWindow.deleteLater()
-            self.nodeNiktoArgumentsInput_addNodeWindow.deleteLater()
+            self.q_label_nmap_arguments.deleteLater()
+            self.q_line_edit_nmap_arguments_input.deleteLater()
 
-            self.nodeNMapNodeCheckBox_addNodeWindow.deleteLater()
-            self.nodeNiktoNodeCheckBox_addNodeWindow.deleteLater()
+            self.q_label_nikto_arguments.deleteLater()
+            self.q_line_edit_nikto_arguments_input.deleteLater()
 
-            self.nodeNumIterationsLabel_addNodeWindow.deleteLater()
-            self.nodeNumIterationsSpinBox_addNodeWindow.deleteLater()
-            self.nodeMaxParallelRunsLabel_addNodeWindow.deleteLater()
-            self.nodeMaxParallelRunsSpinBox_addNodeWindow.deleteLater()
-            self.nodeEndConditionLabel_addNodeWindow.deleteLater()
-            if self.nodeEndConditionCombobox_addNodeWindow.currentText() == 'Time...':
-                self.minutesSpinbox_addNodeWindow.deleteLater()
-                self.minutesLabel_addNodeWindow.deleteLater()
-                self.secondsSpinbox_addNodeWindow.deleteLater()
-                self.secondsLabel_addNodeWindow.deleteLater()
-                self.mainLayout_addNodeWindow.removeItem(self.nodeTimeLayout_addNodeWindow)
-            self.nodeEndConditionCombobox_addNodeWindow.deleteLater()
+            self.q_checkbox_nmap_node.deleteLater()
+            self.q_checkbox_nikto_node.deleteLater()
 
-            self.mainLayout_addNodeWindow.removeItem(self.nodeUserPassLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeScannerBinaryLayout_addNodeWindow)
+            self.q_label_iterations_number.deleteLater()
+            self.q_spinbox_iterations_number.deleteLater()
+            self.q_label_max_parallel_runs.deleteLater()
+            self.q_spinbox_max_parallel_runs.deleteLater()
+            self.q_label_end_condition.deleteLater()
 
-            self.mainLayout_addNodeWindow.removeItem(self.nodeNMapArgumentsLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeNiktoArgumentsLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeScannersNNNodeLayout_addNodeWindow)
+            if self.q_combobox_end_condition.currentText() == 'Time...':
 
-            self.mainLayout_addNodeWindow.removeItem(self.nodeNumIterationsLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeMaxParallelRunsLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeEndConditionLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
+                self.q_spinbox_end_condition_minutes.deleteLater()
+                self.q_label_end_condition_minutes.deleteLater()
+                self.q_spinbox_end_condition_seconds.deleteLater()
+                self.q_label_end_condition_seconds.deleteLater()
+                self.q_main_layout.removeItem(self.q_layout_end_condition_time)
 
-            self.addNodeButton_addNodeWindow.deleteLater()
-            self.addNodeCancelButton_addNodeWindow.deleteLater()
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
+            self.q_combobox_end_condition.deleteLater()
 
-            self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
-            self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeButton_addNodeWindow.setObjectName("addNodeButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeButton_addNodeWindow)
-            self.addNodeCancelButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeCancelButton_addNodeWindow.setObjectName("addNodeCancelButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeCancelButton_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
-            self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
-            self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+            self.q_main_layout.removeItem(self.q_layout_node_us_pw)
+            self.q_main_layout.removeItem(self.q_layout_node_scanner_binary)
 
-            self.addNodeButton_addNodeWindow.clicked.connect(lambda: self.addNode(
-                addNode_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter))
-            self.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_window.close)
+            self.q_main_layout.removeItem(self.q_layout_nmap_arguments)
+            self.q_main_layout.removeItem(self.q_layout_nikto_arguments)
+            self.q_main_layout.removeItem(self.q_layout_node_scanner_nikto_nmap)
 
-    def end_condition_changed(self, addNode_window, _translate, projectsList_captureManagerWindow,
+            self.q_main_layout.removeItem(self.q_layout_iterations_number)
+            self.q_main_layout.removeItem(self.q_layout_max_parallel_runs)
+            self.q_main_layout.removeItem(self.q_layout_end_condition)
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
+
+            self.q_button_add_node.deleteLater()
+            self.q_button_cancel_button.deleteLater()
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
+
+            
+            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+            self.q_button_add_node.setObjectName("q_button_add_node")
+            self.q_button_add_node.setText("Add Node")
+            self.q_button_add_node.clicked.connect(lambda: self.addNode(
+                parent_window, id_counter))
+
+            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
+            self.q_button_cancel_button.setText("Cancel")
+            self.q_button_cancel_button.clicked.connect(parent_window.close)
+
+            self.q_layout_addnode_buttons = QtWidgets.QHBoxLayout()
+            self.q_layout_addnode_buttons.setObjectName("q_layout_addnode_buttons")
+            self.q_layout_addnode_buttons.addWidget(self.q_button_add_node)
+            self.q_layout_addnode_buttons.addWidget(self.q_button_cancel_button)
+
+            self.q_main_layout.addLayout(self.q_layout_addnode_buttons)
+
+    def end_condition_changed(self, parent_window, _translate, projectsList_captureManagerWindow,
                               nodesList_captureManagerWindow, CentralLayout_captureManagerWindow, id_counter):
-        if self.nodeEndConditionCombobox_addNodeWindow.currentText() == 'Time...':
-            addNode_window.resize(487, 490)
-            addNode_window.setMinimumSize(QtCore.QSize(487, 490))
-            addNode_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.addNodeButton_addNodeWindow.deleteLater()
-            self.addNodeCancelButton_addNodeWindow.deleteLater()
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
+        if self.q_combobox_end_condition.currentText() == 'Time...':
 
-            self.nodeTimeLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.nodeTimeLayout_addNodeWindow.setObjectName("nodeTimeLayout_addNodeWindow")
-            self.minutesLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.minutesLabel_addNodeWindow.setObjectName("minutesLabel_addNodeWindow")
-            self.nodeTimeLayout_addNodeWindow.addWidget(self.minutesLabel_addNodeWindow)
-            self.minutesSpinbox_addNodeWindow = QtWidgets.QSpinBox(addNode_window)
-            self.minutesSpinbox_addNodeWindow.setObjectName("minutesSpinbox_addNodeWindow")
-            self.minutesSpinbox_addNodeWindow.setMaximum(59)
-            self.nodeTimeLayout_addNodeWindow.addWidget(self.minutesSpinbox_addNodeWindow)
-            self.secondsLabel_addNodeWindow = QtWidgets.QLabel(addNode_window)
-            self.secondsLabel_addNodeWindow.setObjectName("secondsLabel_addNodeWindow")
-            self.nodeTimeLayout_addNodeWindow.addWidget(self.secondsLabel_addNodeWindow)
-            self.secondsSpinbox_addNodeWindow = QtWidgets.QSpinBox(addNode_window)
-            self.secondsSpinbox_addNodeWindow.setObjectName("secondsSpinbox_addNodeWindow")
-            self.secondsSpinbox_addNodeWindow.setMaximum(59)
-            self.nodeTimeLayout_addNodeWindow.addWidget(self.secondsSpinbox_addNodeWindow)
-            self.spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Minimum)
-            self.nodeTimeLayout_addNodeWindow.addItem(self.spacerItem5)
-            self.mainLayout_addNodeWindow.addLayout(self.nodeTimeLayout_addNodeWindow)
+            parent_window.resize(487, 490)
+            parent_window.setMinimumSize(QtCore.QSize(487, 490))
+            parent_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
-            self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeButton_addNodeWindow.setObjectName("addNodeButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeButton_addNodeWindow)
-            self.addNodeCancelButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeCancelButton_addNodeWindow.setObjectName("addNodeCancelButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeCancelButton_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
-            self.minutesLabel_addNodeWindow.setText(_translate("addNode_window", "Minutes:"))
-            self.secondsLabel_addNodeWindow.setText(_translate("addNode_window", "Seconds:"))
-            self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
-            self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+            self.q_button_add_node.deleteLater()
+            self.q_button_cancel_button.deleteLater()
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
+            
+            self.q_label_end_condition_minutes = QtWidgets.QLabel(parent_window)
+            self.q_label_end_condition_minutes.setObjectName("q_label_end_condition_minutes")
+            self.q_label_end_condition_minutes.setText("Minutes:")
+            
+            self.q_spinbox_end_condition_minutes = QtWidgets.QSpinBox(parent_window)
+            self.q_spinbox_end_condition_minutes.setObjectName("q_spinbox_end_condition_minutes")
+            self.q_spinbox_end_condition_minutes.setMaximum(59)
+            
+            self.q_label_end_condition_seconds = QtWidgets.QLabel(parent_window)
+            self.q_label_end_condition_seconds.setObjectName("q_label_end_condition_seconds")
+            self.q_label_end_condition_seconds.setText("Seconds:")
+            
+            self.q_spinbox_end_condition_seconds = QtWidgets.QSpinBox(parent_window)
+            self.q_spinbox_end_condition_seconds.setObjectName("q_spinbox_end_condition_seconds")
+            self.q_spinbox_end_condition_seconds.setMaximum(59)
+        
+            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+            self.q_button_add_node.setObjectName("q_button_add_node")
+            self.q_button_add_node.setText("Add Node")
+            self.q_button_add_node.clicked.connect(lambda: self.addNode(
+                parent_window, id_counter))
+            
+            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
+            self.q_button_cancel_button.setText("Cancel")
+            self.q_button_cancel_button.clicked.connect(parent_window.close)
 
-            self.addNodeButton_addNodeWindow.clicked.connect(lambda: self.addNode(
-                addNode_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter))
-            self.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_window.close)
+            self.q_layout_end_condition_time = QtWidgets.QHBoxLayout()
+            self.q_layout_end_condition_time.setObjectName("q_layout_end_condition_time")
+            self.q_layout_end_condition_time.addWidget(self.q_label_end_condition_minutes)
+            self.q_layout_end_condition_time.addWidget(self.q_spinbox_end_condition_minutes)
+            self.q_layout_end_condition_time.addWidget(self.q_label_end_condition_seconds)
+            self.q_layout_end_condition_time.addWidget(self.q_spinbox_end_condition_seconds)
+            self.spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+            self.q_layout_end_condition_time.addItem(self.spacerItem5)
 
+            self.q_layout_addnode_buttons = QtWidgets.QHBoxLayout()
+            self.q_layout_addnode_buttons.setObjectName("q_layout_addnode_buttons")
+            self.q_layout_addnode_buttons.addWidget(self.q_button_add_node)
+            self.q_layout_addnode_buttons.addWidget(self.q_button_cancel_button)
+
+            self.q_main_layout.addLayout(self.q_layout_end_condition_time)
+            self.q_main_layout.addLayout(self.q_layout_addnode_buttons)
+        
         else:
-            addNode_window.resize(487, 460)
-            addNode_window.setMinimumSize(QtCore.QSize(487, 460))
-            addNode_window.setMaximumSize(QtCore.QSize(487, 460))
 
-            self.minutesLabel_addNodeWindow.deleteLater()
-            self.minutesSpinbox_addNodeWindow.deleteLater()
-            self.secondsLabel_addNodeWindow.deleteLater()
-            self.secondsSpinbox_addNodeWindow.deleteLater()
+            parent_window.resize(487, 460)
+            parent_window.setMinimumSize(QtCore.QSize(487, 460))
+            parent_window.setMaximumSize(QtCore.QSize(487, 460))
 
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
-            self.mainLayout_addNodeWindow.removeItem(self.nodeTimeLayout_addNodeWindow)
+            self.q_label_end_condition_minutes.deleteLater()
+            self.q_spinbox_end_condition_minutes.deleteLater()
+            self.q_label_end_condition_seconds.deleteLater()
+            self.q_spinbox_end_condition_seconds.deleteLater()
 
-            self.addNodeButton_addNodeWindow.deleteLater()
-            self.addNodeCancelButton_addNodeWindow.deleteLater()
-            self.mainLayout_addNodeWindow.removeItem(self.addNodeButtonsLayout_addNodeWindow)
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
+            self.q_main_layout.removeItem(self.q_layout_end_condition_time)
 
-            self.addNodeButtonsLayout_addNodeWindow = QtWidgets.QHBoxLayout()
-            self.addNodeButtonsLayout_addNodeWindow.setObjectName("addNodeButtonsLayout_addNodeWindow")
-            self.addNodeButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeButton_addNodeWindow.setObjectName("addNodeButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeButton_addNodeWindow)
-            self.addNodeCancelButton_addNodeWindow = QtWidgets.QPushButton(addNode_window)
-            self.addNodeCancelButton_addNodeWindow.setObjectName("addNodeCancelButton_addNodeWindow")
-            self.addNodeButtonsLayout_addNodeWindow.addWidget(self.addNodeCancelButton_addNodeWindow)
-            self.mainLayout_addNodeWindow.addLayout(self.addNodeButtonsLayout_addNodeWindow)
-            self.addNodeButton_addNodeWindow.setText(_translate("addNode_window", "Add Node"))
-            self.addNodeCancelButton_addNodeWindow.setText(_translate("addNode_window", "Cancel"))
+            self.q_button_add_node.deleteLater()
+            self.q_button_cancel_button.deleteLater()
+            self.q_main_layout.removeItem(self.q_layout_addnode_buttons)
 
-            self.addNodeButton_addNodeWindow.clicked.connect(lambda: self.addNode(
-                addNode_window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter))
-            self.addNodeCancelButton_addNodeWindow.clicked.connect(addNode_window.close)
+            self.q_layout_addnode_buttons = QtWidgets.QHBoxLayout()
+            self.q_layout_addnode_buttons.setObjectName("q_layout_addnode_buttons")
+            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+            self.q_button_add_node.setObjectName("q_button_add_node")
+            self.q_layout_addnode_buttons.addWidget(self.q_button_add_node)
+            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
+            self.q_layout_addnode_buttons.addWidget(self.q_button_cancel_button)
+            self.q_main_layout.addLayout(self.q_layout_addnode_buttons)
+            self.q_button_add_node.setText(_translate("parent_window", "Add Node"))
+            self.q_button_cancel_button.setText(_translate("parent_window", "Cancel"))
+
+            self.q_button_add_node.clicked.connect(lambda: self.addNode(
+                parent_window, id_counter))
+            self.q_button_cancel_button.clicked.connect(parent_window.close)
 
     def nmapSignal(self):
         if self.nmapFlag is True:
-            self.nodeNMapArgumentsInput_addNodeWindow.setEnabled(False)
+            self.q_line_edit_nmap_arguments_input.setEnabled(False)
             self.nmapFlag = False
         else:
-            self.nodeNMapArgumentsInput_addNodeWindow.setEnabled(True)
+            self.q_line_edit_nmap_arguments_input.setEnabled(True)
             self.nmapFlag = True
 
     def niktoSignal(self):
         if self.niktoFlag is True:
-            self.nodeNiktoArgumentsInput_addNodeWindow.setEnabled(False)
+            self.q_line_edit_nikto_arguments_input.setEnabled(False)
             self.niktoFlag = False
         else:
-            self.nodeNiktoArgumentsInput_addNodeWindow.setEnabled(True)
+            self.q_line_edit_nikto_arguments_input.setEnabled(True)
             self.niktoFlag = True
 
-    def addNode(self, addNode_Window, projectsList_captureManagerWindow, nodesList_captureManagerWindow,
-                CentralLayout_captureManagerWindow, id_counter):
+    def addNode(self, addNode_Window, id_counter):
         # TODO: Implement this
         subnet = '0'
         log = ''
-        if self.nodeLogNetNodeCheckBox_addNodeWindow.isChecked():
+        if self.q_checkbox_log_network_node.isChecked():
             log = 'True'
         else:
             log = 'False'
-        type = self.nodeTypeComboBox_addNodeWindow.currentText()
+        type = self.q_combobox_node_type.currentText()
         if type == 'CORE' or type == 'VM':
             type = 'PC'
         elif type == 'VM' or type == 'Docker':
             type = 'PC'  # temp solution
-        name = self.nodeNameInput_addNodeWindow.text()
-        MAC = self.nodeMACAddressInput_addNodeWindow.text()
-        IP = self.nodeIPAddressInput_addNodeWindow.text()
+        name = self.q_line_edit_node_name_input.text()
+        MAC = self.q_line_edit_node_MAC_address_input.text()
+        IP = self.q_line_edit_node_IP_Adress_input.text()
         IP_parse = IP.split(".")
         ip_counter = int(IP_parse[2]) + 1
         # subnet = addNodeWindowUI.nodeSeparateSubNetNodeCheckBox_addNodeWindow.isChecked()
@@ -454,23 +496,23 @@ class Ui_addNode_window(object):
         num_iterations = 1
         max_parallel_runs = 1
         end_condition = ''
-        scanning = self.nodeScannerNodeCheckBox_addNodeWindow.isChecked()
+        scanning = self.q_checkbox_scanner_node.isChecked()
         if scanning:
-            user_pw = self.nodeUserPassInput_addNodeWindow.text()
-            scanner_bin = self.nodeScannerBinaryInput_addNodeWindow.text()
-            arguments = self.nodeNMapArgumentsInput_addNodeWindow.text() + "$$$" + \
-                        self.nodeNiktoArgumentsInput_addNodeWindow.text()
-            num_iterations = self.nodeNumIterationsSpinBox_addNodeWindow.value()
-            max_parallel_runs = self.nodeMaxParallelRunsSpinBox_addNodeWindow.value()
-            if self.nodeEndConditionCombobox_addNodeWindow.currentText() == 'on-scan-complete':
+            user_pw = self.q_line_edit_node_us_pw_input.text()
+            scanner_bin = self.q_line_edit_node_scanner_binary_input.text()
+            arguments = self.q_line_edit_nmap_arguments_input.text() + "$$$" + \
+                        self.q_line_edit_nikto_arguments_input.text()
+            num_iterations = self.q_spinbox_iterations_number.value()
+            max_parallel_runs = self.q_spinbox_max_parallel_runs.value()
+            if self.q_combobox_end_condition.currentText() == 'on-scan-complete':
                 end_condition = 'on-scan-complete'
             else:
                 # TODO: Handle minutes and seconds.
-                minutes = str(self.minutesSpinbox_addNodeWindow.value())
-                seconds = str(self.secondsSpinbox_addNodeWindow.value())
+                minutes = str(self.q_spinbox_end_condition_minutes.value())
+                seconds = str(self.q_spinbox_end_condition_seconds.value())
                 end_condition = f'time-{minutes}:{seconds}'
-            toolButton = QtWidgets.QToolButton(CentralLayout_captureManagerWindow)
-            toolButton.setText('Scanner')
+            #toolButton = QtWidgets.QToolButton(CentralLayout_captureManagerWindow)
+            #toolButton.setText('Scanner')
             # node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
             # nodesList_captureManagerWindow.addTopLevelItem(node_item)
             # nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
