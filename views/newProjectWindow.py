@@ -105,7 +105,7 @@ class Ui_newProject_window(object):
             if project.name ==  project_name:
                 msg = QMessageBox()
                 msg.setWindowTitle("Project Name Already Exists")
-                msg.setText('The Project name is already defined in the database.')
+                msg.setText('The Project name is already defined under this workspace.')
                 x = msg.exec_()
                 return
 

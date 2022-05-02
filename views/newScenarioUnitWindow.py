@@ -2,8 +2,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem, QMessageBox
 from Models.modelClasses import Project
 
-from views.missingFieldsWindow import Ui_missingFields_window
-
 
 class Ui_newScenarioUnit_window(object):
     def setupNewScenarioUnit(self, parent_window:QtWidgets.QDialog, selected_project:Project, create_new_scenario_function):
@@ -67,7 +65,7 @@ class Ui_newScenarioUnit_window(object):
         )
 
         self.q_button_cancel_button.clicked.connect(
-            parent_window.destroy
+            lambda: parent_window.destroy()
         )
 
     def createScenario(
@@ -78,6 +76,17 @@ class Ui_newScenarioUnit_window(object):
         ):
 
         scenario_name = self.q_line_input_scenario_name.text()
+
+        # Check if the scenario name already exists
+        for scenario in selected_project.scenarios:
+            if scenario.name == scenario_name:
+                # If the scenario name already exists, show a message box
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("The scenario name already exists.")
+                msg.setWindowTitle("Error")
+                msg.exec_()
+                return
 
         if scenario_name == "":
             msg = QMessageBox()

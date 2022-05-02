@@ -8,7 +8,7 @@ from Models.modelClasses import Workspace, Project, Scenario, Node
 from views.addNodeWindow import Ui_addNode_window
 from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
-from views.setNodesWindow import Ui_addSetNodes_window
+from views.addSetOfNodesWindow import Ui_addSetNodes_window
 
 import Database.DatabaseHelper
 
