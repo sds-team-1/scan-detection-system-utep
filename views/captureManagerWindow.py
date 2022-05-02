@@ -257,7 +257,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_projects_list.customContextMenuRequested.connect(self.projects_tree_widget_right_clicked)
 
         # Set up event listener for when user clicks on a project on the projects list
-        self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.project_item_clicked)
+        self.q_tree_widget_projects_list.itemSelectionChanged.connect(self.project_tree_widget_left_clicked)
 
 
         # Set up context menu for when user right clicks on a node
@@ -299,6 +299,64 @@ class Ui_CaptureManagerWindow(object):
         # Automatically expand
         self.q_tree_widget_projects_list.expandAll()
 
+
+    def project_tree_widget_left_clicked(self):
+        '''
+        Triggered when the user left clicks on a project or a scenario unit
+        populates the nodes list with the nodes of the selected project or scenario unit
+        '''
+
+        # Get the selected item
+        selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+
+        # If the item has a parent, it is a scenario
+        if selected_item.parent() is not None:
+            self.on_scenario_unit_left_clicked(selected_item)
+        else:
+            self.on_project_left_clicked(selected_item)
+    
+    def on_scenario_unit_left_clicked(self, selected_scenario_item:QTreeWidgetItem):
+        print("scenario unit left clicked " + selected_scenario_item.text(0))
+        
+        pass
+
+    def on_project_left_clicked(self, selected_project_item:QTreeWidgetItem):
+        print("project item left clicked " + selected_project_item.text(0))
+        # print(f'checking if item_project_selected went inside')
+        # Clear the window
+        self.q_tree_widget_nodes_list.clear()
+        # if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
+        #     # This condition is for projects. Works with the project list which...
+        #     # contains projects and scenarios
+        #     # TODO: Check add node button(I was not able to create a project)
+        #     self.exportButton_captureManagerWindow.setEnabled(True)
+        #     self.addNodeButton_captureManagerWindow.setEnabled(False)
+        #     self.addSetNodeButton_captureManagerWindow.setEnabled(False)
+        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
+        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
+        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
+        # else:
+        #     # print(f'checking if else checked')
+        #     self.exportButton_captureManagerWindow.setEnabled(False)
+        #     self.addNodeButton_captureManagerWindow.setEnabled(True)
+        #     self.addSetNodeButton_captureManagerWindow.setEnabled(True)
+        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
+        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
+        #     # Get all the nodes
+
+
+        # scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
+        # print(f'checking scenario id: {scenario_ID}')
+    
+        #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
+        #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
+        # print(f'checking if nodes list is anything: {node_list}')
+        # Insert all the nodes into the UI
+
+
+        self.q_tree_widget_nodes_list.header().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
     # Q tree widget projects list right clicked functions
     def projects_tree_widget_right_clicked(self, point):
@@ -586,44 +644,6 @@ class Ui_CaptureManagerWindow(object):
 
             return
 
-
-    def project_item_clicked(self):
-        print("project item clicked")
-        # print(f'checking if item_project_selected went inside')
-        # Clear the window
-        self.q_tree_widget_nodes_list.clear()
-        # if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
-        #     # This condition is for projects. Works with the project list which...
-        #     # contains projects and scenarios
-        #     # TODO: Check add node button(I was not able to create a project)
-        #     self.exportButton_captureManagerWindow.setEnabled(True)
-        #     self.addNodeButton_captureManagerWindow.setEnabled(False)
-        #     self.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
-        # else:
-        #     # print(f'checking if else checked')
-        #     self.exportButton_captureManagerWindow.setEnabled(False)
-        #     self.addNodeButton_captureManagerWindow.setEnabled(True)
-        #     self.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
-        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
-        #     # Get all the nodes
-
-
-        # scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-        # print(f'checking scenario id: {scenario_ID}')
-    
-        #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
-        #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
-        # print(f'checking if nodes list is anything: {node_list}')
-        # Insert all the nodes into the UI
-
-
-        self.q_tree_widget_nodes_list.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents)
     
 
     # Capture controller functions
