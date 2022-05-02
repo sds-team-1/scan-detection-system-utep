@@ -1,10 +1,12 @@
 class Workspace:
     def __init__(self, name: str = '', projects: list = []):
+        self._id:str = name
         self.name:str = name
         self.projects:list = projects
 
     def get_mongo_encoded_workspace(self):
         return {
+            '_id': self._id,
             'name': self.name,
             'projects': [project.get_mongo_encoded_project() for project in self.projects]
         }

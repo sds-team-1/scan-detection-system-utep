@@ -1,4 +1,5 @@
 import json
+from logging.config import valid_ident
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox
@@ -335,18 +336,33 @@ class Ui_CaptureManagerWindow(object):
         Triggered when user clicks on the edit project name button
         '''
         # new_name, ok = editBox.getText(self, "Rename Project", "New Project Name:", text=selected_project.name)
-        new_q_dialog = QtWidgets.QInputDialog()
-        editBox = QtWidgets.QInputDialog()
-        new_name, ok = editBox.getText(new_q_dialog, "Rename Project", "New Project Name:", text=selected_project_name)
+        valid_input: bool = False
 
-        if ok:
-            for project in self.workspace_object.projects:
-                if project.name == selected_project_name:
-                    project.name = new_name
-                    self.render_projects_in_project_tree()
-                    break
-            self.render_projects_in_project_tree()
-        
+        while(not valid_input):
+            new_q_dialog = QtWidgets.QInputDialog()
+            editBox = QtWidgets.QInputDialog()
+            new_name, ok = editBox.getText(new_q_dialog, "Rename Project", "New Project Name:", text=selected_project_name)
+
+            if ok:
+                # Check if the new project name is not already taken
+                for project in self.workspace_object.projects:
+                    if project.name == new_name:
+                        # Show error message
+                        error_message = QtWidgets.QMessageBox()
+                        error_message.setText("Project name already taken!")
+                        error_message.exec_()
+                        valid_input = False
+                        new_q_dialog.close()
+                        break
+                    else:
+                        valid_input = True
+
+        for project in self.workspace_object.projects:
+            if project.name == selected_project_name:
+                project.name = new_name
+                self.render_projects_in_project_tree()
+                break
+        self.render_projects_in_project_tree()
 
 
     def delete_project_clicked(self, selected_project_name):
@@ -441,7 +457,7 @@ class Ui_CaptureManagerWindow(object):
     def delete_node(self, selected_node):
         pass
 
-    
+
     def project_item_clicked(self):
         # print(f'checking if item_project_selected went inside')
         # Clear the window
