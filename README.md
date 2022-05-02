@@ -70,20 +70,35 @@ The directory must exists in order to run mongo with the arguments above
 One database and several collections need to be created.
 
 1. Check if the mongo daemon is running.
+
 `sudo systemctl status mongod`
+
 2. Start the daemon if needed. Make sure it says active by checking the status again.
+
 `sudo systemctl start mongod`
+
 3. Go into the Mongo shell.
+
 `mongo`
+
 4. Create a new database.
+
 `use SDS`
+
 5. Create the following collections.
+
 `db.createCollection('workspaces')`
+
 `db.createCollection('projects')`
+
 `db.createCollection('scenarios')`
+
 `db.scenarios.createIndex({'scenario_name': 1}, {unique: true})`
+
 `db.createCollection('networks')`
+
 `db.createCollection('devices')`
+
 `db.createCollection('links')`
 
 ## install virtualbox for python3
@@ -96,17 +111,24 @@ https://www.virtualbox.org/wiki/Downloads
 Next unzip the file and open a vscode in the unzipped files directory
 
 Go to line 57 of the vboxapisetup.py file and change this line
+
 `vboxDest = os.environ.get("VBOX_MSI_INSTALL_PATH", None)`
 
 To this
+
 `vboxDest = os.environ.get("VBOX_MSI_INSTALL_PATH", "/usr/lib/virtualbox")`
 
 Once done, run the following command and you should have virtualbox installed
+
 `sudo python3 vboxapisetup.py install`
 
 
 If you get an error like
+
 `bin/ls: cannot open directory 'media/sf_new-shared-folder': Permission denied`
-Then you have to go into the vm and make sure you run `sudo usermod -aG vboxsf ubuntu`
+
+Then you have to go into the vm and make sure you run 
+
+`sudo usermod -aG vboxsf ubuntu`
 
 I believe you also need to install the VirtualBox Guest Additions
