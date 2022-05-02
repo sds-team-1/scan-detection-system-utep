@@ -4,9 +4,6 @@ import uuid
 
 from PyQt5 import QtCore, QtWidgets
 
-# from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
-# from views.databaseErrorWindow import Ui_databaseError_window
-
 import Database.DatabaseHelper
 from views.chooseWorkspace import Ui_workspace_window
 

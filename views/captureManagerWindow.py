@@ -5,6 +5,8 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox
 from Models.modelClasses import Workspace, Project, Scenario, Node
 
+from Controllers.CaptureController import CaptureControllerService
+
 from views.addNodeWindow import Ui_addNode_window
 from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
@@ -16,10 +18,12 @@ class Ui_CaptureManagerWindow(object):
     
     workspace_object : Workspace
     db_helper:Database.DatabaseHelper.SDSDatabaseHelper
+    capture_controller: CaptureControllerService
 
-    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace_object:Workspace):
+    def __init__(self, db_helper:Database.DatabaseHelper.SDSDatabaseHelper, workspace_object:Workspace, capture_controller:CaptureControllerService):
         self.db_helper = db_helper
         self.workspace_object = workspace_object
+        self.capture_controller = capture_controller
 
     def setupCaptureManager(self, parent_window:QMainWindow, choose_workspace_parent_window:QDialog):
         '''
@@ -224,8 +228,8 @@ class Ui_CaptureManagerWindow(object):
         # Now we set up event listeners
 
         # Add event listeners to project buttons
-        self.q_button_new_project.clicked.connect(self.create_project_button_clicked)
         self.q_button_save_project.clicked.connect(self.save_everything_button_clicked)
+        self.q_button_new_project.clicked.connect(self.create_project_button_clicked)
         self.q_button_export_project.clicked.connect(self.export_project_button_clicked)
         self.q_button_import_project.clicked.connect(lambda: self.import_project_button_clicked(parent_window))
 
@@ -239,7 +243,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_stop_and_restore_scenario.clicked.connect(self.stop_and_restore_scenario_button_clicked)
 
         # Start services button
-        self.q_button_start_services_button.clicked.connect(lambda: print("Not yet implemented!"))
+        self.q_button_start_services_button.clicked.connect(self.start_services_button_clicked)
 
         # Close workspace button
         self.q_button_close_workspace_button.clicked.connect(
@@ -296,6 +300,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_projects_list.expandAll()
 
 
+    # Q tree widget projects list right clicked functions
     def projects_tree_widget_right_clicked(self, point):
         '''
         Triggered when user right clicks on a project
@@ -358,6 +363,53 @@ class Ui_CaptureManagerWindow(object):
         return
 
 
+    # Project button functions
+    def save_everything_button_clicked(self):
+        '''
+        Updates the state of the current workspace
+        with the current state of the UI
+        '''
+        self.db_helper.update_workspace(self.workspace_object)
+        # Show a pop up that the workspace has been saved
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("Workspace Saved")
+        msg.setWindowTitle("The current workspace has been saved")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+
+    def create_project_button_clicked(self):
+        newProject_Window = QtWidgets.QDialog()
+        newProjectWindowUI = Ui_newProject_window()
+        newProjectWindowUI.setupNewProjectWindowUi(
+            newProject_Window,
+            self,
+            self.create_project
+        )
+        newProject_Window.show()
+    
+    def create_project(self, project_to_add:Project):
+        '''
+        Takes in a Project object and adds it to the
+        list of projects in the workspace.
+        '''
+        self.workspace_object.projects.append(project_to_add)
+        self.render_projects_in_project_tree()
+
+    def export_project_button_clicked(self):
+        project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
+        export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
+        print(f'export path is: {export_path}')
+
+    def import_project_button_clicked(self, captureManager_Window):
+        dialog = QFileDialog()
+        json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+        if not json_path[0]:
+            return
+        with open(json_path[0]) as json_file:
+            project = json.load(json_file)
+
+
     def load_scenario_unit(self):
         pass
 
@@ -413,14 +465,6 @@ class Ui_CaptureManagerWindow(object):
                     self.workspace_object.projects.remove(project)
                     self.render_projects_in_project_tree()
                     break
-
-    #TODO: Start the UI dialog
-    def edit_scenario_unit(self, selected_scenario_unit):
-        ''' Starts the UI and edits the scenario unit.'''
-        pass
-
-    def delete_scenario_unit(self, selected_scenario_unit):
-        pass
 
     def add_scenario_for_project_clicked(self, project_name):
         '''
@@ -542,14 +586,6 @@ class Ui_CaptureManagerWindow(object):
 
             return
 
-    #TODO: Add the UI and functionality.
-    def edit_node(self, selected_node):
-        '''Starts the UI window for editing a node then changes it for the db.'''
-        pass
-
-    def delete_node(self, selected_node):
-        pass
-
 
     def project_item_clicked(self):
         print("project item clicked")
@@ -588,33 +624,24 @@ class Ui_CaptureManagerWindow(object):
 
         self.q_tree_widget_nodes_list.header().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeToContents)
+    
 
+    # Capture controller functions
     def start_vm_button_clicked(self):
         pass
-        # Get input
-        # store input into workspace
-       
-        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
-        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
 
     def shut_down_vm_button_clicked(self):
         print("shutdown virtual machine")
 
         # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
-    def stop_scenario_unit(self):
+    def stop_and_restore_scenario_button_clicked(self):
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
         # self.runScenarioButton_captureManagerWindow.setEnabled(True)
         pass
 
-    def restore_scenario_unit(self):
-        pass
-
-    def stop_and_restore_scenario_button_clicked(self):
-        pass
-
-    def start_services(self):
+    def start_services_button_clicked(self):
         pass
 
     def run_scenario_button_clicked(self):
@@ -624,51 +651,6 @@ class Ui_CaptureManagerWindow(object):
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
         # self.runScenarioButton_captureManagerWindow.setEnabled(False)
-
-    def save_everything_button_clicked(self):
-        '''
-        Updates the state of the current workspace
-        with the current state of the UI
-        '''
-        self.db_helper.update_workspace(self.workspace_object)
-        # Show a pop up that the workspace has been saved
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setText("Workspace Saved")
-        msg.setWindowTitle("The current workspace has been saved")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec_()
-
-    def export_project_button_clicked(self):
-        project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
-        export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
-        print(f'export path is: {export_path}')
-
-    def import_project_button_clicked(self, captureManager_Window):
-        dialog = QFileDialog()
-        json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
-        if not json_path[0]:
-            return
-        with open(json_path[0]) as json_file:
-            project = json.load(json_file)
-
-    def create_project_button_clicked(self):
-        newProject_Window = QtWidgets.QDialog()
-        newProjectWindowUI = Ui_newProject_window()
-        newProjectWindowUI.setupNewProjectWindowUi(
-            newProject_Window,
-            self,
-            self.create_project
-        )
-        newProject_Window.show()
-
-    def create_project(self, project_to_add:Project):
-        '''
-        Takes in a Project object and adds it to the
-        list of projects in the workspace.
-        '''
-        self.workspace_object.projects.append(project_to_add)
-        self.render_projects_in_project_tree()
 
 
     def add_node_button_clicked(self):

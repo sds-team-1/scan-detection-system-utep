@@ -1,6 +1,6 @@
-from Controllers.CaptureController import CaptureController
+from Controllers.CaptureController import CaptureControllerService
 
-class DubCaptureController(CaptureController):
+class DubCaptureController(CaptureControllerService):
     
     def __init__(self):
         super().__init__()

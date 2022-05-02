@@ -4,12 +4,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import Database
 
-from Database.databaseFunctions import generate_workspaces_list_window
-from views.captureManagerWindow import Ui_CaptureManagerWindow
-
-from Database.databaseFunctions import generate_workspaces_list_window
-
-
 class Ui_newWorkspace_window(object):
     db_helper: Database.DatabaseHelper.SDSDatabaseHelper
 

@@ -261,10 +261,6 @@ class Ui_workspace_window(object):
         capture_manager_parent_window.show()
         choose_workspace_parent_window.close()
 
-        # Insert core options if saved
-        #   captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
-        #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
-
     def create_workspace_button_clicked(self, parent_window: QDialog):
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window(self.db_helper)
