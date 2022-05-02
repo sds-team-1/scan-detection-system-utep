@@ -686,7 +686,6 @@ class Ui_CaptureManagerWindow(object):
                                      self.ip_counter, self.MAC, self.id_counter)
         addNode_Window.show()
 
-
     def add_set_node_button_clicked(self):
         addSetNodes_Window = QtWidgets.QDialog()
         addSetNodesWindowUI = Ui_addSetNodes_window()
