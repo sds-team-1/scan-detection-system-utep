@@ -37,19 +37,27 @@ class Ui_AnalysisManagerWindow(object):
 
         self.upperLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
         self.upperLayout_analysisManagerWindow.setObjectName("upperLayout_analysisManagerWindow")
+
         self.centralSectionLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.centralSectionLayout_analysisManagerWindow.setObjectName("centralSectionLayout_analysisManagerWindow")
+
+        # Pcap Filee List
         self.pcapsList_analysisManagerWindow = QtWidgets.QTreeWidget(self.CentralLayout_analysisManagerWindow)
         self.pcapsList_analysisManagerWindow.setMinimumSize(QtCore.QSize(220, 0))
         self.pcapsList_analysisManagerWindow.setMaximumSize(QtCore.QSize(220, 16777215))
         self.pcapsList_analysisManagerWindow.setObjectName("pcapsList_analysisManagerWindow")
+
         self.centralSectionLayout_analysisManagerWindow.addWidget(self.pcapsList_analysisManagerWindow)
+
         self.scenariosLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
         self.scenariosLayout_analysisManagerWindow.setObjectName("scenariosLayout_analysisManagerWindow")
+
         self.pcapsLayout_analysisManagerWindow = QtWidgets.QVBoxLayout()
         self.pcapsLayout_analysisManagerWindow.setObjectName("pcapsLayout_analysisManagerWindow")
+
         self.pcapsTabWidget_analysisManagerWindow = QtWidgets.QTabWidget(self.CentralLayout_analysisManagerWindow)
         self.pcapsTabWidget_analysisManagerWindow.setObjectName("pcapsTabWidget_analysisManagerWindow")
+
         self.pcapsLayout_analysisManagerWindow.addWidget(self.pcapsTabWidget_analysisManagerWindow)
         self.scenariosLayout_analysisManagerWindow.addLayout(self.pcapsLayout_analysisManagerWindow)
 
@@ -57,25 +65,36 @@ class Ui_AnalysisManagerWindow(object):
 
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
 
+        # Button Row
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
+
+        # Merge Button
         self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
+
+        # Export Button
         self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
+
+        # Close Analysis Manager Button
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
             self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
         self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
+
         self.upperLayout_analysisManagerWindow.addLayout(self.buttonsLayout_analysisManagerWindow)
 
+        # Pcaps Directory Line Edit
         self.layoutPcapsDirectory_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.layoutPcapsDirectory_analysisManagerWindow.setObjectName("layoutPcapsDirectory_analysisManagerWindow")
         self.inputPcapsDirectory_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
         self.inputPcapsDirectory_analysisManagerWindow.setObjectName("inputPcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.inputPcapsDirectory_analysisManagerWindow)
+
+        # Browse Pcaps Button
         self.browsePcapsDirectory_analysisManagerWindow = QtWidgets.QPushButton(
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
@@ -89,6 +108,7 @@ class Ui_AnalysisManagerWindow(object):
 
         QtCore.QMetaObject.connectSlotsByName(AnalysisManagerWindow)
 
+        # Setst title of window
         _translate = QtCore.QCoreApplication.translate
         AnalysisManagerWindow.setWindowTitle(
             _translate("AnalysisManagerWindow", "Scan Detection System - Analysis Manager"))
@@ -98,30 +118,25 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsList_analysisManagerWindow.setSortingEnabled(False)
         self.pcapsList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
 
+        # Sets text for buttons
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
         self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
         self.closeAnalysisManager_analysisManagerWindow.setText(
             _translate("AnalysisManagerWindow", "Close Analysis Manager"))
 
+        # Sets actions for buttons
         self.pcapsList_analysisManagerWindow.clicked.connect(self.selectedPcapCheckbox)
-
         self.pcapsList_analysisManagerWindow.doubleClicked.connect(lambda: self.open_tab(_translate))
-
         self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge())
-
         self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
-
         self.mergeButton_analysisManagerWindow.setEnabled(False)
         self.exportButton_analysisManagerWindow.setEnabled(False)
-
         self.browsePcapsDirectory_analysisManagerWindow.clicked.connect(self.browsePcapDir)
-
         AnalysisManagerWindow.closeEvent = self.CloseEvent
 
         self.pcapsTabWidget_analysisManagerWindow.setTabsClosable(True)
         self.pcapsTabWidget_analysisManagerWindow.tabCloseRequested.connect(self.closeTab)
-
         self.pcapsList_analysisManagerWindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.pcapsList_analysisManagerWindow.customContextMenuRequested.connect(self.context_menu_pcaps)
 
