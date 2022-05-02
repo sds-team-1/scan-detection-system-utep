@@ -679,12 +679,12 @@ class Ui_CaptureManagerWindow(object):
 
     def add_node_button_clicked(self):
         addNode_Window = QtWidgets.QDialog()
-        addNodeWindowUI = Ui_addNode_window()
-        addNodeWindowUI.setupAddNode(addNode_Window,
-                                     self.q_tree_widget_projects_list, self.q_tree_widget_nodes_list,
-                                     self.CentralLayout_captureManagerWindow,
-                                     self.ip_counter, self.MAC, self.id_counter)
+        addNodeWindowUI = Ui_addNode_window(self.workspace_object)
+        addNodeWindowUI.setupAddNode(addNode_Window, self, self.add_node)
         addNode_Window.show()
+
+    def add_node(node:Node):
+        print("node added")
 
     def add_set_node_button_clicked(self):
         addSetNodes_Window = QtWidgets.QDialog()
