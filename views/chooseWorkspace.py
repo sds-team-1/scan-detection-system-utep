@@ -5,6 +5,7 @@ from venv import create
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QMessageBox, QAbstractButton, QDialog
+from Controllers.CaptureController import CaptureControllerService
 from Models.modelClasses import Workspace
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
@@ -13,11 +14,13 @@ from views.createWorkspaceWindow import Ui_newWorkspace_window
 import Database.DatabaseHelper
 
 
-class Ui_workspace_window(object):
+class Ui_choose_workspace_window(object):
     db_helper: Database.DatabaseHelper.SDSDatabaseHelper
+    capture_controller_service: CaptureControllerService
 
-    def __init__(self, db_helper: Database.DatabaseHelper.SDSDatabaseHelper):
+    def __init__(self, db_helper: Database.DatabaseHelper.SDSDatabaseHelper, capture_controller_service: CaptureControllerService):
         self.db_helper = db_helper
+        self.capture_controller_service = CaptureControllerService()
 
     def setupWorkspaceUI(self, parent_window: QtWidgets.QDialog):
         # Setup parent window fields
@@ -253,7 +256,9 @@ class Ui_workspace_window(object):
 
         capture_manager_parent_window = QtWidgets.QMainWindow()
         captureManagerWindowUI = Ui_CaptureManagerWindow(
-            self.db_helper, selected_workspace_object)
+            self.db_helper, selected_workspace_object,
+            self.capture_controller_service
+        )
         captureManagerWindowUI.setupCaptureManager(
             capture_manager_parent_window, choose_workspace_parent_window)
         # captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()

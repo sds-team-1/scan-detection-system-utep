@@ -1,6 +1,5 @@
 import sys
 from PyQt5 import QtWidgets
-from views.chooseWorkspace import Ui_workspace_window
 import json
 import Database.DatabaseHelper
 from views.databaseConfigWindow import Ui_databaseConfig_window
