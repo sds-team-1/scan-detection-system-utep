@@ -292,6 +292,9 @@ class Ui_CaptureManagerWindow(object):
 
             self.q_tree_widget_projects_list.addTopLevelItem(project_tree_item)
 
+        # Automatically expand
+        self.q_tree_widget_projects_list.expandAll()
+
 
     def projects_tree_widget_right_clicked(self, point):
         '''
@@ -343,7 +346,7 @@ class Ui_CaptureManagerWindow(object):
 
         menu = QtWidgets.QMenu()
         action_rename_scenario = QAction("Rename Scenario Unit")
-        action_delete_scenario = QAction("Rename Scenario Unit")
+        action_delete_scenario = QAction("Delete Scenario Unit")
 
         menu.addAction(action_rename_scenario)
         menu.addAction(action_delete_scenario)
