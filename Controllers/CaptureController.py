@@ -18,7 +18,7 @@ python3 captureController.py run "bin/sh" "/home/ubuntu/core/Files/StartServices
 '''
 TODO: Use enums to keep track of capture controller
 '''
-class CaptureController:
+class CaptureControllerService:
 
     scenario_dict = None
 
@@ -265,7 +265,7 @@ class CaptureController:
 
 
 if __name__ == "__main__":
-    cc = CaptureController()
+    cc = CaptureControllerService()
 
     if len(sys.argv) == 1:
         print("Please provide a command, use -h for help")

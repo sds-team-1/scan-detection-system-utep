@@ -3,12 +3,10 @@ import os
 import uuid
 
 from PyQt5 import QtCore, QtWidgets
-
-# from Database.databaseFunctions import set_up_database_connection, connect_subsystems_and_database
-# from views.databaseErrorWindow import Ui_databaseError_window
+from Controllers.CaptureController import CaptureControllerService
 
 import Database.DatabaseHelper
-from views.chooseWorkspace import Ui_workspace_window
+from views.chooseWorkspace import Ui_choose_workspace_window
 
 
 class Ui_databaseConfig_window(object):
@@ -115,9 +113,11 @@ class Ui_databaseConfig_window(object):
             self.q_label_error_message.repaint()
             return
 
-        # At this point the connection succeeded, create workspace window
+        # At this point the connection succeeded, create workspace window and the capture controller service
+        capture_controller_service = CaptureControllerService()
+
         choose_workspace_window = QtWidgets.QDialog()
-        workspaceWindowUI = Ui_workspace_window(db_helper=temp_db_helper)
+        workspaceWindowUI = Ui_choose_workspace_window(db_helper=temp_db_helper, capture_controller_service=capture_controller_service)
         workspaceWindowUI.setupWorkspaceUI(choose_workspace_window)
         choose_workspace_window.show()   
         database_config_window.close()
