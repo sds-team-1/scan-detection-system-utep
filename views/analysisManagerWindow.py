@@ -599,18 +599,19 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        f = open("temp.json", "w")
+        open_filename = f'{name}.json'
+        f = open(open_filename, "w")
         f.write(output)
         packets.close()
 
         # Open with the right editor by OS. 
         the_os = str(platform)
         if the_os == 'windows':
-            os.system('temp.json')
+            os.system(f'{open_filename}')
         elif the_os == 'Darwin':
-            os.system('textedit temp.json &')
+            os.system(f'openpath -a textedit {open_filename} &')
         else:
-            os.system(f'gedit temp.json &')
+            os.system(f'gedit {open_filename} &')
 
         msg = QMessageBox()
         msg.setWindowTitle("Packet")
