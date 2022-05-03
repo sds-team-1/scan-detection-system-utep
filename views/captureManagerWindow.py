@@ -105,6 +105,8 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_shutdown_vm = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.q_button_shutdown_vm.setObjectName("shutdownVMButton_captureManagerWindow")
         self.q_button_shutdown_vm.setText("Shutdown VM")
+        # Disabled by default
+        self.q_button_shutdown_vm.setEnabled(False)
 
         # button for run scenario
         self.q_button_run_scenario = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
@@ -663,11 +665,14 @@ class Ui_CaptureManagerWindow(object):
     # Capture controller functions
     def start_vm_button_clicked(self):
         self.capture_controller.start_vm()
+        self.q_button_start_vm.setEnabled(False)
+        self.q_button_shutdown_vm.setEnabled(True)
 
     def shut_down_vm_button_clicked(self):
         print("shutdown virtual machine")
         self.capture_controller.shutdown_vm()
-        self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+        self.q_button_start_vm.setEnabled(True)
+        self.q_button_shutdown_vm.setEnabled(False)
 
     def stop_and_restore_scenario_button_clicked(self):
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
