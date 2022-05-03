@@ -135,7 +135,7 @@ class Ui_CaptureManagerWindow(object):
         # TODO: it is not good ui design to have this button next to the other buttons, perhaps put it somewhere else
         self.q_button_close_workspace_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.q_button_close_workspace_button.setObjectName("closeWorkspaceButton_captureManagerWindow")
-        self.q_button_close_workspace_button.setText("Close workspace button")
+        self.q_button_close_workspace_button.setText("Close Capture Manager")
         
         # Spacer item
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -155,15 +155,15 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_scenario_buttons_row.addItem(spacerItem1)
 
 
-        # Label for scenario status
-        self.q_label_scenario_status_label = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.q_label_scenario_status_label.setObjectName("scenarioStatusLabel_captureManagerWindow")
-        self.q_label_scenario_status_label.setText("Scenario Status:")
+        # # Label for scenario status
+        # self.q_label_scenario_status_label = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        # self.q_label_scenario_status_label.setObjectName("scenarioStatusLabel_captureManagerWindow")
+        # self.q_label_scenario_status_label.setText("Scenario Status:")
 
-        # Label to hold the value of the scenario status
-        self.q_label_scenario_status_value = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.q_label_scenario_status_value.setObjectName("scenarioStatus_captureManagerWindow")
-        self.q_label_scenario_status_value.setText("This is the text area for holding the value of the scenario status")
+        # # Label to hold the value of the scenario status
+        # self.q_label_scenario_status_value = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        # self.q_label_scenario_status_value.setObjectName("scenarioStatus_captureManagerWindow")
+        # self.q_label_scenario_status_value.setText("This is the text area for holding the value of the scenario status")
 
         # Spacer item
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -183,7 +183,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_buttons_node_buttons = QtWidgets.QHBoxLayout()
         self.q_row_buttons_node_buttons.setObjectName("nodeLayout_captureManagerWindow")
         # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
-        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
+        # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
         self.q_row_buttons_node_buttons.addItem(spacerItem2)
         self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
         #self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
