@@ -471,9 +471,17 @@ class Ui_CaptureManagerWindow(object):
         self.render_projects_in_project_tree()
 
     def export_project_button_clicked(self):
+        try:
         project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
         export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
-        print(f'export path is: {export_path}')
+        project_dict = {}
+        for project in self.workspace_object.projects:
+            if project.name == project_name:
+                project_dict = project.get_mongo_encoded_project()
+        f = open(export_path[0], 'w')
+        json.dump(project_dict, f)
+        except:
+            print('****Project not selected****')
 
     def import_project_button_clicked(self, captureManager_Window):
         dialog = QFileDialog()
