@@ -576,18 +576,25 @@ class Ui_AnalysisManagerWindow(object):
 
     # Opens selected packets in non modal json format ---------Not working
     def openPacketJson(self, name):
+        # Gets the path of the two 
         path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        print(f'openPacketJson path {path}')
         packets = ''
         temp_cap = ''
         i_open_file = ''
+        # Temporary pcap file. Remove if there is already one
         if os.path.exists("%s\\temp_cap.pcap" % path):
             os.remove("%s\\temp_cap.pcap" % path)
+        print(f'openPacketJson self.test_capture.pcaps {self.test_capture.pcaps}')
+        # Iterate through each loaded pcap model objects
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
+                # 
                 packets = self.test_capture.iterate_file('', pcap.name)
                 temp_cap = PcapWriter("%s\\temp_cap.pcap" % path, append=True)
                 i_open_file = PcapReader(pcap.path)
                 packet = i_open_file.read_packet()
+                break
         for p in packets:
             packet = i_open_file.read_packet()
             if str(p.no) in self.selected_packets:
@@ -595,8 +602,8 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        # f = open("temp.json", "w")
-        # f.write(output)
+        f = open("temp.json", "w")
+        f.write(output)
 
         packets.close()
 
@@ -604,7 +611,7 @@ class Ui_AnalysisManagerWindow(object):
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        print(output)
+        #print(output)
 
         x = msg.exec()
 

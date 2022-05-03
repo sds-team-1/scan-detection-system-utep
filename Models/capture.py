@@ -74,8 +74,8 @@ class Capture:
             new_pcap = Pcap(new_name, self.path + "pcaps", new_name)
             self.add_pcap(new_pcap)
 
-    # Opens pcap and returns iterable object of packets
     def iterate_file(self, filter: str, name: str):
+        ''' Opens pcap and returns iterable object of packets'''
         if any(x.name == name for x in self.pcaps):
             cap = pyshark.FileCapture(self.path + name, display_filter=filter,
                                       only_summaries=True)
