@@ -149,6 +149,13 @@ class Ui_workspace_window(object):
         captureManager_Window.show()
         workspace_Window.close()
         # Get all project names related to workspace
+        self.populate_projectsList(captureManagerWindowUI.projectsList_captureManagerWindow, selected_workspace)
+        # Insert core options if saved
+    #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
+    #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
+
+    def populate_projectsList(self, projectsList_captureManagerWindow, selected_workspace):
+        # Get all project names related to workspace
         project_names = self.sds_controller.list_all_projects(selected_workspace)
         for project_name in project_names:
             # Make TreeWidgetItem
@@ -160,12 +167,9 @@ class Ui_workspace_window(object):
                 scenario_tree = QTreeWidgetItem([scenario_name])
                 # Add scenario tree to project tree
                 project_tree_item.addChild(scenario_tree)
-            captureManagerWindowUI.projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
+            projectsList_captureManagerWindow.addTopLevelItem(project_tree_item)
 
-        captureManagerWindowUI.projectsList_captureManagerWindow.expandAll()
-        # Insert core options if saved
-    #    captureManagerWindowUI.corePortNumberInput_captureManagerWindow.setText(sds_controller.get_core_port())
-    #   captureManagerWindowUI.coreSdsServiceInput_captureManagerWindow.setText(sds_controller.get_core_ip())
+        projectsList_captureManagerWindow.expandAll()
 
     def createWorkspaceWindow(self, workspace_window):
         createWorkspace_Window = QtWidgets.QDialog()
