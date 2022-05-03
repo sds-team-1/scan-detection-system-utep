@@ -1,20 +1,105 @@
 # DatabaseHelper 
 from pprint import pprint
 from typing import List
+from matplotlib.collections import Collection
 from matplotlib.style import context
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-class SDSDatabaseHelper:
-    url = "mongodb://localhost:27017"
-    TIMEOUT_MS = 5000
-    db_name = 'SDS_DB'
+from Models.modelClasses import Project, Scenario, Workspace
 
-    def __init__(self, ip_port: str):
-        self.url = ip_port
-        client = MongoClient(self.url, serverSelectionTimeoutMS = self.TIMEOUT_MS)
-        db = client.SDS
-        serverStatusResult = db.command("serverStatus")
+class SDSDatabaseHelper:
+    TIMEOUT_MS = 5000
+
+    DATABASE_URL : str = "mongodb://localhost:27017"
+    DATABASE_NAME : str = 'SDS_DB'
+    WORKSPACES_COLLECTION_NAME = 'workspaces'
+
+    workspaces_collection : Collection = None
+    mongo_client : MongoClient = None
+
+
+    def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
+        '''
+        Appends port number to url if it is not already there
+        '''
+
+        self.DATABASE_URL = url
+        self.DATABASE_NAME = db_name
+
+        self.mongo_client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
+
+        db = self.mongo_client[self.DATABASE_NAME]
+        workspaces = db[self.WORKSPACES_COLLECTION_NAME]
+        self.workspaces_collection = workspaces
+
+        print(f'DatabaseHelper initialized with url: {self.DATABASE_URL} and db: {self.DATABASE_NAME}')
+
+    def get_all_workspace_names(self) -> list:
+        '''
+        Returns a list of workspace names in the database
+        '''
+        return self.workspaces_collection.find().distinct('_id')
+
+    def get_workspace_by_id(self, workspace_name:str) -> Workspace :
+        '''
+        Returns a workspace object with the given name
+        '''
+        print("Getting workspace with id: " + workspace_name)
+        try:
+            result = self.workspaces_collection.find_one({'_id': workspace_name})
+            return Workspace.create_workspace_from_mongo_encoded_workspace(result)
+        except Exception as e:
+            print(f'dbh.get_workspace_by_id exception: {e}')
+            return None
+
+    def delete_workspace(self, workspace_id):
+        '''
+        Deletes the workspace with the given id
+        '''
+        print(f'delete_workspace: {workspace_id}')
+        self.workspaces_collection.delete_one({'_id': workspace_id})
+
+    def rename_workspace(self, workspace_name: str, new_name: str):
+        '''
+        Renames a workspace
+        '''
+        print(f'Renaming workspace {workspace_name} to {new_name}')
+        self.workspaces_collection.update_one({'_id': workspace_name}, {'$set': {'_id': new_name}})
+
+    def create_new_workspace(self, workspace_name:str):
+        '''
+        Creates a new workspace with the given name
+        '''
+        print(f'Creating new workspace: {workspace_name}')
+        self.workspaces_collection.insert_one({'_id': workspace_name, 'name': workspace_name, 'projects': []})
+
+    def update_workspace(self, workspace:Workspace):
+        '''
+        Updates the workspace with the given name
+        '''
+        print(vars(workspace))
+        print("Saving workspace with name: " + workspace.name)
+        mongo_encoded_workspace = workspace.get_mongo_encoded_workspace()
+        self.workspaces_collection.update_one({'_id': workspace.name}, {'$set': mongo_encoded_workspace})
+
+    def test_connection(self) -> bool:
+        '''
+        Attempts to connect to 
+        the provided url, returns
+        true if successful,
+        false otherwise
+        '''
+        print("Trying to connect to db with url" + self.DATABASE_URL)
+
+        client = MongoClient(self.DATABASE_URL, serverSelectionTimeoutMS = self.TIMEOUT_MS)
+        try:
+            client.server_info()
+            return True
+        # throw exception if connection fails
+        except:
+            raise Exception("Could not connect to database")
+
 
     """Create Project scenario"""
     def create_workspace(self, workspace_name) -> bool:
