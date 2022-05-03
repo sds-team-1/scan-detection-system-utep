@@ -2,6 +2,7 @@ import os
 import subprocess
 # import qjsonmodel
 import numpy as np
+import platform
 from PyQt5 import QtCore, QtWidgets, Qt
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
 from scapy.all import *
@@ -598,16 +599,24 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        f = open("temp.json", "w")
+        open_filename = f'{name}.txt'
+        f = open(open_filename, "w")
         f.write(output)
-
         packets.close()
+
+        # Open with the right editor by OS. 
+        the_os = str(platform)
+        if the_os == 'Windows':
+            os.system(f'{open_filename}')
+        elif the_os == 'Darwin':
+            os.system(f'openpath -a textedit {open_filename} &')
+        else:
+            os.system(f'gedit {open_filename} &')
 
         msg = QMessageBox()
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        #print(output)
 
         x = msg.exec()
 
