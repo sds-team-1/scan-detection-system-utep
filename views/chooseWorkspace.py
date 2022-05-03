@@ -274,12 +274,12 @@ class Ui_choose_workspace_window(object):
                     error_message.setText("Project name already taken!")
                     error_message.exec_()
                     valid_input = False
-                    new_q_dialog.close()
-                    break
+                    new_q_dialog.destroy()
                 else:
                     # break from while loop
                     valid_input = True
-            
+        
+        print("Renaming worksapce")
         # Rename workspace
         self.db_helper.rename_workspace(selected_workspace_name, new_name)
         self.generate_workspaces_list_window()
