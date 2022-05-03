@@ -626,7 +626,7 @@ class Ui_AnalysisManagerWindow(object):
         if the_os == 'Windows':
             os.system(f'{open_filename}')
         elif the_os == 'Darwin':
-            os.system(f'open {open_filename} -a TextEdit &')
+            os.system(f'open -a TextEdit {open_filename} &')
         else:
             os.system(f'gedit {open_filename} &')
 
