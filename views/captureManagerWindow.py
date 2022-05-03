@@ -489,7 +489,7 @@ class Ui_CaptureManagerWindow(object):
             with open(json_path[0]) as json_file:
                 project = json.load(json_file)
                 # Check if the fields are valid
-                if project['name'] == '' or project['max_units'] < 1 or len(project['scenarios']) > 0 or len(project.keys()) != 3:
+                if project['name'] == '' or project['max_units'] < 1 or len(project.keys()) != 3:
                     raise Exception
                 project_model = Project.create_project_from_mongo_encoded_project(project)
                 self.workspace_object.projects.append(project_model)
