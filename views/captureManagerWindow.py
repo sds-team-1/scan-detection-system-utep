@@ -182,7 +182,7 @@ class Ui_CaptureManagerWindow(object):
         # Set up a row to hold the label for scenario status and the add node/ set nodes buttons
         self.q_row_buttons_node_buttons = QtWidgets.QHBoxLayout()
         self.q_row_buttons_node_buttons.setObjectName("nodeLayout_captureManagerWindow")
-        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
+        # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
         self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
         self.q_row_buttons_node_buttons.addItem(spacerItem2)
         self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
@@ -197,8 +197,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.headerItem().setText(2, "Name")
         self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
         self.q_tree_widget_nodes_list.headerItem().setText(4, "IP")
-        self.q_tree_widget_nodes_list.headerItem().setText(5, "Scanner/Victim")
-        self.q_tree_widget_nodes_list.headerItem().setText(6, "ID")
+        self.q_tree_widget_nodes_list.headerItem().setText(5, "ID")
 
 
 
@@ -853,12 +852,12 @@ class Ui_CaptureManagerWindow(object):
         for node in selected_scenario.networks:
             is_tcp_running = "No"
             node_item = QTreeWidgetItem([is_tcp_running,
-                                         node.type, node.name, node.mac, node.ip, 'No', node.id])
+                                         node.type, node.name, node.mac, node.ip, node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
         for node in selected_scenario.devices:
             is_tcp_running = "Yes"
             node_item = QTreeWidgetItem([is_tcp_running,
-                                         node.type, node.name, node.mac, node.ip, 'No', node.id])
+                                         node.type, node.name, node.mac, node.ip, node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 

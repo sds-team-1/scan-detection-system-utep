@@ -117,9 +117,11 @@ class CaptureControllerService:
 
 
         # wait 10 seconds for the vm to start
-        for i in range(10):
-            print("Waiting for core to start..." + str(i))
+        for i in range(30):
+            print("Waiting for vm to start..." + str(i))
             time.sleep(1)
+
+        
 
         #  start the other vm
         if external_vm_dictionary is not None:
@@ -130,11 +132,6 @@ class CaptureControllerService:
                 external_vm_dictionary["vm_binary_path"],
                 external_vm_dictionary["vm_args"]
             )
-
-        # wait 10 seconds for the core to start
-        for i in range(15):
-            print("Waiting 15 for core to start..." + str(i))
-            time.sleep(1)
 
         # run the command to start the services
 
