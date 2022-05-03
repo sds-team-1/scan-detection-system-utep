@@ -149,22 +149,28 @@ class Ui_AnalysisManagerWindow(object):
 
     # iterates through pcap file and returns packets
     def iterate_packets(self, capture, filter, pcap):
-        self.packetsList_analysisManagerWindow.clear()
-        packets = capture.iterate_file(filter, pcap)
+        try:
+            self.packetsList_analysisManagerWindow.clear()
+            packets = capture.iterate_file(filter, pcap)
 
-        for pkt in packets:
-            l = []
-            l.append(str(pkt.no))
-            l.append(str(pkt.time))
-            l.append(str(pkt.source))
-            l.append(str(pkt.destination))
-            l.append(str(pkt.protocol))
-            l.append(str(pkt.length))
-            l.append(str(pkt.info))
-            l1 = QTreeWidgetItem(l)
-            l1.setCheckState(0, QtCore.Qt.Unchecked)
-            self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
-        packets.close()
+            for pkt in packets:
+                l = []
+                l.append(str(pkt.no))
+                l.append(str(pkt.time))
+                l.append(str(pkt.source))
+                l.append(str(pkt.destination))
+                l.append(str(pkt.protocol))
+                l.append(str(pkt.length))
+                l.append(str(pkt.info))
+                l1 = QTreeWidgetItem(l)
+                l1.setCheckState(0, QtCore.Qt.Unchecked)
+                self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
+            packets.close()
+        except:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Error packets, please try again")
+            x = msg.exec_()
 
     #saves a new pcap file with the included display filter
     def save_filter(self, capture, filter, pcap):
