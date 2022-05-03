@@ -662,12 +662,12 @@ class Ui_CaptureManagerWindow(object):
 
     # Capture controller functions
     def start_vm_button_clicked(self):
-        pass
+        self.capture_controller.start_vm()
 
     def shut_down_vm_button_clicked(self):
         print("shutdown virtual machine")
-
-        # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
+        self.capture_controller.shutdown_vm()
+        self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
 
     def stop_and_restore_scenario_button_clicked(self):
         # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)

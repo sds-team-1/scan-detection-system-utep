@@ -65,27 +65,10 @@ class Ui_AnalysisManagerWindow(object):
 
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
 
-        # Button Row
-        self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
-        self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-
-        # Merge Button
-        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
-
         # Export Button
-        self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
-
-        # Close Analysis Manager Button
-        self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
-            self.CentralLayout_analysisManagerWindow)
-        self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
-
-        self.upperLayout_analysisManagerWindow.addLayout(self.buttonsLayout_analysisManagerWindow)
+        #self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        #self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
+        #self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
 
         # Pcaps Directory Line Edit
         self.layoutPcapsDirectory_analysisManagerWindow = QtWidgets.QHBoxLayout()
@@ -99,6 +82,18 @@ class Ui_AnalysisManagerWindow(object):
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
+        self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
+        
+        # Merge Button
+        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
+
+        # Close Analysis Manager Button
+        self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
+            self.CentralLayout_analysisManagerWindow)
+        self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
 
         self.gridLayout_2.addLayout(self.upperLayout_analysisManagerWindow, 0, 0, 1, 1)
@@ -119,8 +114,9 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
 
         # Sets text for buttons
+
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
-        self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
+        #self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
         self.closeAnalysisManager_analysisManagerWindow.setText(
             _translate("AnalysisManagerWindow", "Close Analysis Manager"))
@@ -131,7 +127,7 @@ class Ui_AnalysisManagerWindow(object):
         self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge())
         self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
         self.mergeButton_analysisManagerWindow.setEnabled(False)
-        self.exportButton_analysisManagerWindow.setEnabled(False)
+        #self.exportButton_analysisManagerWindow.setEnabled(False)
         self.browsePcapsDirectory_analysisManagerWindow.clicked.connect(self.browsePcapDir)
         AnalysisManagerWindow.closeEvent = self.CloseEvent
 
@@ -196,11 +192,11 @@ class Ui_AnalysisManagerWindow(object):
 
         if checked > 1:
             self.mergeButton_analysisManagerWindow.setEnabled(True)
-            self.exportButton_analysisManagerWindow.setEnabled(True)
+            #self.exportButton_analysisManagerWindow.setEnabled(True)
 
         else:
             self.mergeButton_analysisManagerWindow.setEnabled(False)
-            self.exportButton_analysisManagerWindow.setEnabled(False)
+            #self.exportButton_analysisManagerWindow.setEnabled(False)
 
     # creates logic for when packets are checked
     def selectedPacketCheckbox(self):
@@ -413,7 +409,7 @@ class Ui_AnalysisManagerWindow(object):
         action_hier_stat = QAction("Protocol Stats")
         action_port_number = QAction("Port Number")
         action_statistics = QAction("Statistics Graph")
-        action_toJson = QAction("Convert To Json")
+        action_toJson = QAction("Export To Json")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_delete_pcap)
@@ -576,18 +572,25 @@ class Ui_AnalysisManagerWindow(object):
 
     # Opens selected packets in non modal json format ---------Not working
     def openPacketJson(self, name):
+        # Gets the path of the two 
         path = self.inputPcapsDirectory_analysisManagerWindow.text()
+        print(f'openPacketJson path {path}')
         packets = ''
         temp_cap = ''
         i_open_file = ''
+        # Temporary pcap file. Remove if there is already one
         if os.path.exists("%s\\temp_cap.pcap" % path):
             os.remove("%s\\temp_cap.pcap" % path)
+        print(f'openPacketJson self.test_capture.pcaps {self.test_capture.pcaps}')
+        # Iterate through each loaded pcap model objects
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
+                # 
                 packets = self.test_capture.iterate_file('', pcap.name)
                 temp_cap = PcapWriter("%s\\temp_cap.pcap" % path, append=True)
                 i_open_file = PcapReader(pcap.path)
                 packet = i_open_file.read_packet()
+                break
         for p in packets:
             packet = i_open_file.read_packet()
             if str(p.no) in self.selected_packets:
@@ -595,8 +598,8 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        # f = open("temp.json", "w")
-        # f.write(output)
+        f = open("temp.json", "w")
+        f.write(output)
 
         packets.close()
 
@@ -604,7 +607,7 @@ class Ui_AnalysisManagerWindow(object):
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        print(output)
+        #print(output)
 
         x = msg.exec()
 

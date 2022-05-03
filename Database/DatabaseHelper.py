@@ -144,6 +144,22 @@ class SDSDatabaseHelper:
         except:
             return False
 
+    def edit_workspace_name(self, old_name: str, new_name: str):
+        ''' Change workspace name.'''
+        client = MongoClient(self.url)
+        db = client[self.db_name]
+        collection = db['workspaces']
+        try:
+            ''' Might just have to create a new workspace and copy it all over'''
+            doc = collection.find_one({'_id': old_name})
+            print(doc)
+            doc['_id'] = new_name
+            collection.insert_one(doc)
+            collection.delete_one({'_id': old_name})
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def save_workspace(self, workspace_name: str, data: dict):
         client = MongoClient(self.url)
@@ -251,6 +267,26 @@ class SDSDatabaseHelper:
         query = {'_id': workspace_name}
         success = collection.update_one(query, update)
         return False if success == 0 else True
+    
+    def edit_project(self, workspace_name: str, old_name: str, new_name: str, par_units: int):
+        '''Edits a project'''
+        client = MongoClient(self.url)
+        db = client[self.db_name]
+        collection = db['workspaces']
+        # Pull old project
+        try:
+            doc = db['projects'].find_one_and_delete({'_id': old_name})
+            # Change the name and parallel units
+            doc['_id'] = new_name
+            doc['parallel_units'] = par_units
+            # Create a new project in the database
+            self.create_project(workspace_name, project=doc)
+            # Pull out the old project name
+            collection.update_many({'projects': old_name}, {'$pull': {'projects': old_name}})
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def retrieve_workspaces(self) -> List[str]:
         client = MongoClient(self.url)
@@ -263,11 +299,7 @@ class SDSDatabaseHelper:
         client = MongoClient(self.url)
         db = client[self.db_name]
         collection = db['workspaces']
-        print("workspace context " +  workspace_name)
-        
         workspace_dict = collection.find_one({'_id': workspace_name})
-        print("workspace context " +  workspace_name)
-        
         # Replace all projects with data
         if 'projects' not in workspace_dict.keys():
             return workspace_dict
@@ -362,7 +394,6 @@ class SDSDatabaseHelper:
             #Replace subdata w/ arrays for inserting to db
             nodes = data['nodes']
             data['nodes'] = []
-
             #Saves the scenario and retrieves the id
             print(f'{data}')
             scenario_objid = collection.insert_one(data).inserted_id
@@ -405,6 +436,18 @@ class SDSDatabaseHelper:
         except: 
             return False
 
+    def edit_scenario_unit(self, scenario_id, new_scenario_name):
+        client = MongoClient(self.url)
+        db = client[self.db_name]
+        collection = db['scenarios']
+        try:
+            scenario_id = ObjectId(scenario_id)
+            result = collection.update_one({'_id': scenario_id}, {'$set': {'scenario_name': new_scenario_name}})
+            return True if result.matched_count else False
+        except Exception as e:
+            print(e)
+            return False
+    
     #TODO: Test this
     def create_node(self, scenario_object_id, node_data: dict) -> bool:
         # Insert the node to the database
