@@ -169,7 +169,7 @@ class Ui_AnalysisManagerWindow(object):
         except:
             msg = QMessageBox()
             msg.setWindowTitle("Error")
-            msg.setText("Error packets, please try again")
+            msg.setText("Error iterating packets, please try again")
             x = msg.exec_()
 
     #saves a new pcap file with the included display filter
