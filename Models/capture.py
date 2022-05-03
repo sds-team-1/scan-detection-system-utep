@@ -20,19 +20,20 @@ class Capture:
         self.create_folder()
         # self.create_merge_file()
 
+    # adds pcap to pcap list
     def add_pcap(self, new: Pcap) -> list:
         self.pcaps.append(new)
         # self.merge_pcaps()
         return self.pcaps
 
-    def del_pcap(self, old: Pcap) -> list:
-        self.pcaps.remove(old)
-        if self.pcaps:
-            self.merge_pcaps()
-        os.remove(old.path)
-        old.remove()
+    # removes pcap from pcaps list
+    def del_pcap(self, pcapName) -> list:
+        for pcap in self.pcaps:
+            if pcap.name == pcapName:
+                self.pcaps.remove(pcap)
         return self.pcaps
 
+    # merges selected pcap files
     def merge_pcaps(self, merged_file, selected_pcaps, filename, filepath):
         pcap_paths = ""
         for pcap in self.pcaps:
@@ -46,11 +47,13 @@ class Capture:
         new_pcap = Pcap(filename, filepath + "pcaps", filename)
         self.add_pcap(new_pcap)
 
+    # creates folder
     def create_folder(self) -> str:
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
         return self.path
 
+    # creates initial new merged file
     def create_merged_file(self):
         filename = "merged_pcap" + ".pcap"
         path = os.path.join(self.path, filename)
@@ -58,52 +61,23 @@ class Capture:
         fp = open(path, 'a')
         fp.close()
 
-    def save(self, f) -> None:
-        f.write('{"name": "%s", "totalPackets": %s, "pcaps": [' % (self.name, self.totalPackets))
-        for a in self.pcaps:
-            a.save(f)
-            if a != self.pcaps[-1]:
-                f.write(',')
-        f.write(']}')
+    # creates new pcap based on inputted display filter
+    def save_filter_file(self, filter:str,name:str, new_name:str):
+        if any(x.name == name for x in self.pcaps):
+            print("reached here")
+            cap = pyshark.FileCapture(self.path + name, display_filter=filter,
+                                      output_file= new_name)
+            cap.load_packets()
+            cap.close()
+            new_name = new_name.split('/')
+            new_name = new_name[-1]
+            new_pcap = Pcap(new_name, self.path + "pcaps", new_name)
+            self.add_pcap(new_pcap)
 
     def iterate_file(self, filter: str, name: str):
+        ''' Opens pcap and returns iterable object of packets'''
         if any(x.name == name for x in self.pcaps):
             cap = pyshark.FileCapture(self.path + name, display_filter=filter,
                                       only_summaries=True)
+            return cap
 
-        pktlist = []
-        file_list = []
-        # for pkt in cap:
-        #     pktlist.append(pkt.protocol)
-        #     file_list.append(str(pkt.no))
-        #     file_list.append(str(pkt.time))
-        #     file_list.append(str(pkt.source))
-        #     file_list.append(str(pkt.destination))
-        #     file_list.append(str(pkt.protocol))
-        #     file_list.append(str(pkt.length))
-        #     file_list.append(str(pkt.info))
-
-        # counter = collections.Counter(pktlist)
-        #
-        # plt.style.use('ggplot')
-        # y_pos = np.arange(len(list(counter.keys())))
-        # plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
-        # plt.xticks(y_pos, list(counter.keys()))
-        # plt.ylabel("Frequency")
-        # plt.xlabel("Protocol Name")
-        # plt.savefig("ProtocolGraph.png")
-        # plt.show()
-        return cap
-
-# test_pcap = pcap.Pcap("test_pcap.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap.pcapng")
-# test_pcap.create_json_file()
-# test_pcap.to_json()
-# test_pcap_2 = pcap.Pcap("test_pcap_2.pcapng", "C:\\Users\\Luis\\Downloads\\", "test_pcap_2.pcapng")
-# test_pcap.create_json_file()
-# test_pcap.to_json()
-# test_capture = Capture("scenario", "C:\\Users\\Luis\\Downloads\\")
-# test_capture.add_pcap(test_pcap)
-# test_capture.add_pcap(test_pcap_2)
-# test_capture.create_merged_file()
-# test_capture.merge_pcaps()
-# test_capture.iterate_file("ip.src == 192.168.200.21")

@@ -18,9 +18,9 @@ python3 captureController.py run "bin/sh" "/home/ubuntu/core/Files/StartServices
 '''
 TODO: Use enums to keep track of capture controller
 '''
-class CaptureController:
+class CaptureControllerService:
 
-    scenario_dict = None
+    scenario_dict:dict = None
 
     def __init__(self):
         self.state = "stopped"
@@ -52,10 +52,16 @@ class CaptureController:
         '''
         print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
-        # Wait 10 seconds
-        for i in range(10):
-            print(f"Waiting 10 seconds -> {i} seconds")
-            time.sleep(1)
+
+        # self.copy_from("pcaps", "/tmp/pcaps/*")
+
+        # get the nodes object from scneario dict
+        nodes_array = self.scenario_dict["devices"]
+
+        # iterate through the nodes list and copy the pcaps using the name.pcap
+        for node in nodes_array:
+            self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}.pcap")
+
 
         # TODO: Fix this to get all the pcap files, use the tmp directory as mentioned by Dr.Acosta
         # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
@@ -70,6 +76,19 @@ class CaptureController:
 
         # Run the CoreStart.sh script
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
+
+        # wait 15 seconds for the core to start
+        for i in range(15):
+            print("Waiting for core to start..." + str(i))
+            time.sleep(1)
+
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CopyServices.sh")
+
+        # wait 5 seconds for the core to start
+        for i in range(5):
+            print("Waiting for core to start..." + str(i))
+            time.sleep(1)
+
 
         # Decide wether we need to wait or not
         # # wait 15 seconds
@@ -138,8 +157,7 @@ class CaptureController:
         if self.state != "running":
             print("Cannot start, vm is not powered on")
             return
-        
-        topology_dict["name"] =  topology_dict["scenario_name"]
+    
 
         # if 'networks' key is not in the dict, set it to empty list
         if 'networks' not in topology_dict:
@@ -265,7 +283,7 @@ class CaptureController:
 
 
 if __name__ == "__main__":
-    cc = CaptureController()
+    cc = CaptureControllerService()
 
     if len(sys.argv) == 1:
         print("Please provide a command, use -h for help")
