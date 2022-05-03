@@ -66,30 +66,10 @@ class Ui_AnalysisManagerWindow(object):
 
         self.gridLayout_2.addLayout(self.centralSectionLayout_analysisManagerWindow, 1, 0, 1, 1)
 
-        # Button Row
-        self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
-        self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
-        # Spacer Item
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.buttonsLayout_analysisManagerWindow.addItem(spacerItem)
-
-        # Merge Button
-        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
-
         # Export Button
         #self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
         #self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
         #self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
-
-        # Close Analysis Manager Button
-        self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
-            self.CentralLayout_analysisManagerWindow)
-        self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
-
-        self.upperLayout_analysisManagerWindow.addLayout(self.buttonsLayout_analysisManagerWindow)
 
         # Pcaps Directory Line Edit
         self.layoutPcapsDirectory_analysisManagerWindow = QtWidgets.QHBoxLayout()
@@ -103,6 +83,18 @@ class Ui_AnalysisManagerWindow(object):
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
+        self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
+        
+        # Merge Button
+        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
+
+        # Close Analysis Manager Button
+        self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
+            self.CentralLayout_analysisManagerWindow)
+        self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
 
         self.gridLayout_2.addLayout(self.upperLayout_analysisManagerWindow, 0, 0, 1, 1)

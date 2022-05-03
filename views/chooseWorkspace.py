@@ -185,8 +185,7 @@ class Ui_choose_workspace_window(object):
         '''
         Sets up context menu (right click) for the workspace window
         is generated when a workspace is right clicked (or double clicked)
-        Currently only delete is set up, rename workspace was moved to
-        the capture manager window
+        Show options for delete and rename
         '''
 
         index = self.q_tree_widget_workspaces_list.indexAt(point)
@@ -200,14 +199,19 @@ class Ui_choose_workspace_window(object):
 
         # Set up QAction
         action_delete_workspace = QAction("Delete Workspace")
+        action_rename_workspace = QAction("Rename Workspace")
 
         # set up a menu to hold the q actions
         menu = QtWidgets.QMenu()
         menu.addAction(action_delete_workspace)
+        menu.addAction(action_rename_workspace)
 
         # Add event listeners to the actions
         action_delete_workspace.triggered.connect(
             lambda: self.create_workspace_delete_confirmation_window(selected_workspace_name))
+
+        action_rename_workspace.triggered.connect(
+            lambda: self.create_workspace_rename_window(selected_workspace_name))
 
         menu.exec_(self.q_tree_widget_workspaces_list.mapToGlobal(point))
 
@@ -247,6 +251,39 @@ class Ui_choose_workspace_window(object):
 
         # Update the list of workspaces
         self.generate_workspaces_list_window()
+
+    def create_workspace_rename_window(self, selected_workspace_name: str):
+        '''
+        Triggered when the user clicks on the rename workspace button
+        '''
+        # Valid input to keep while loop showing
+        valid_input: bool = False
+
+        while(not valid_input):
+            # Show a dialog box
+            new_q_dialog = QtWidgets.QInputDialog()
+            editBox = QtWidgets.QInputDialog()
+            new_name, ok = editBox.getText(new_q_dialog, "Rename Workspace", "New Workspace Name:", text=selected_workspace_name)
+
+            if ok:
+                # Check if the new workspace name is not already taken
+                # if you can find it in the db the it is already taken
+                if self.db_helper.get_workspace_by_id(new_name) is not None:
+                    # Show error message
+                    error_message = QtWidgets.QMessageBox()
+                    error_message.setText("Project name already taken!")
+                    error_message.exec_()
+                    valid_input = False
+                    new_q_dialog.close()
+                    break
+                else:
+                    # break from while loop
+                    valid_input = True
+            
+        # Rename workspace
+        self.db_helper.rename_workspace(selected_workspace_name, new_name)
+        self.generate_workspaces_list_window()
+        
 
     def workspace_list_item_double_clicked(self, choose_workspace_parent_window: QDialog):
         selected_workspace_name = self.q_tree_widget_workspaces_list.selectedItems()[

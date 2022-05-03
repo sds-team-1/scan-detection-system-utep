@@ -383,6 +383,11 @@ class Ui_CaptureManagerWindow(object):
             self.on_project_right_click(point)
 
     def on_project_right_click(self, point):
+        '''
+        Triggered when user right clicks on a project
+        show options for addings a scenario, renaming the project
+        or deleting the project
+        '''
         # TODO: finish load scenario unit
         item = self.q_tree_widget_projects_list.itemAt(point)
         name = item.text(0)
@@ -407,6 +412,10 @@ class Ui_CaptureManagerWindow(object):
         return
     
     def on_scenario_unit_right_click(self, point):
+        '''
+        Triggerd when user right clicks on a scenario unit
+        show options for renaming a scenario, deleting a scenario
+        '''
         item = self.q_tree_widget_projects_list.itemAt(point)
         parent_project_name = item.parent().text(0)
         scenario_unit_name = item.text(0)
@@ -428,8 +437,9 @@ class Ui_CaptureManagerWindow(object):
     # Project button functions
     def save_everything_button_clicked(self):
         '''
-        Updates the state of the current workspace
-        with the current state of the UI
+        Updates the state of the corresponding workspace
+        object in the mongoDB
+        with the current state of the workspace_object value
         '''
         self.db_helper.update_workspace(self.workspace_object)
         # Show a pop up that the workspace has been saved
