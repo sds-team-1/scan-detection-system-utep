@@ -64,8 +64,8 @@ class Scenario:
     def create_scenario_from_mongo_encoded_scenario(mongo_encoded_scenario):
         return Scenario(
             name=mongo_encoded_scenario['name'],
-            devices=[Device.create_device_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['devices']],
-            networks=[Network.create_network_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['networks']]
+            devices=[Node.create_device_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['devices']],
+            networks=[Node.create_network_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['networks']]
         )
 
 
@@ -81,8 +81,12 @@ class Node:
     type: str,
     mac: str, 
     ip: str, 
-    listening: bool, 
-    port: int, 
+    core_listening: bool = True,
+    vm_node_name: str = '',
+    vm_node_username: str = '',
+    vm_node_password: str = '',
+    vm_binary_path: str = '',
+    vm_args: str = ''
     ):
         # CORE Attributes
         self.id = id
@@ -92,9 +96,15 @@ class Node:
         self.ip = ip
         self.ip4_mask = "24"
 
-        # Generic fields
-        self.listening = listening
-        self.port = port
+        # core fields
+        self.core_listeniing = core_listening
+
+        # vm fields
+        self.vm_node_name = vm_node_name
+        self.vm_node_username = vm_node_username
+        self.vm_node_password = vm_node_password
+        self.binary_path = vm_binary_path
+        self.args = vm_args
 
     def get_mongo_encoded_node(self):
         return {
@@ -104,7 +114,7 @@ class Node:
             'mac': self.mac,
             'ip': self.ip,
             'ip4_mask': self.ip4_mask,
-            'listening': self.listening,
+            'listening': self.core_listeniing,
             'port': self.port
         }
     
@@ -117,7 +127,7 @@ class Node:
             mac=mongo_encoded_node['mac'],
             ip=mongo_encoded_node['ip'],
             ip4_mask=mongo_encoded_node['ip4_mask'],
-            listening=mongo_encoded_node['listening'],
+            core_listening=mongo_encoded_node['listening'],
             port=mongo_encoded_node['port']
         )
 
