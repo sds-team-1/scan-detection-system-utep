@@ -684,12 +684,39 @@ class Ui_CaptureManagerWindow(object):
         pass
 
     def run_scenario_button_clicked(self):
-        scenario_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
-        # vm_ip = self.vmSdsServiceInput_captureManagerWindow.text()
-        # docker_ip = self.dockerSdsServiceInput_captureManagerWindow.text()
-        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(False)
-        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(False)
-        # self.runScenarioButton_captureManagerWindow.setEnabled(False)
+        # Check if scenario is selected
+        try:
+            selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+
+            # If there is no parent object in the tree, then the selected item is a project
+            if selected_item.parent() is None:
+                raise Exception()
+            
+            # If there is a parent object in the tree, then the selected item is a scenario
+            selected_scenario_project_name = selected_item.parent().text(0)
+            selected_scenario_name = selected_item.text(0)
+
+            # Get the scenario object
+            for project in self.workspace_object.projects:
+                if project.name == selected_scenario_project_name:
+                    for scenario in project.scenarios:
+                        if scenario.name == selected_scenario_name:
+                            selected_scenario:Scenario = scenario
+                            break
+                    break
+
+        except Exception:
+            # Show window that there is no scenario selected
+            error_message = QMessageBox()
+            error_message.setText("Please select a scenario to add a node to!")
+            error_message.setIcon(QMessageBox.Critical)
+            error_message.exec_()
+            return
+
+        # Valid scenario selected
+        print("run scenario with name " + selected_scenario.name)
+        # TODO: implement scenario run
+        # self.capture_controller.run_scenario(selected_scenario)
 
 
     def add_node_button_clicked(self):
