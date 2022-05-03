@@ -2,13 +2,13 @@ import json
 from logging.config import valid_ident
 import traceback
 
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox
+from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox, QPushButton
 from Models.modelClasses import Workspace, Project, Scenario, Node
 
 from Controllers.CaptureController import CaptureControllerService
 
-from views.addNodeWindow import Ui_addNode_window
+from views.addCoreNodeWindow import Ui_addCoreNodes_window
 from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.addSetOfNodesWindow import Ui_addSetNodes_window
@@ -783,11 +783,51 @@ class Ui_CaptureManagerWindow(object):
             error_message.exec_()
             return
 
+        # addNode_Window = QtWidgets.QDialog()
+        # addNodeWindowUI = Ui_addNode_window()
+        # addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
+        # addNode_Window.show()
 
-        addNode_Window = QtWidgets.QDialog()
-        addNodeWindowUI = Ui_addNode_window()
-        addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
-        addNode_Window.show()
+        # Open up a context menu with 3 options
+        # 1. Add VM
+        # 2. Add Core Node
+        # 3. Cancel
+
+        # Setup project name
+        project_name = selected_item.parent().text(0)
+
+        # Create a message with the 3 options
+        msgBox = QMessageBox()
+        msgBox.setText('What to do?')
+        msgBox.addButton(QPushButton('Add Core Node'), QMessageBox.YesRole) # ret is 0
+        msgBox.addButton(QPushButton('Add VM Node'), QMessageBox.NoRole) # ret is 1
+        msgBox.addButton(QPushButton('Cancel'), QMessageBox.RejectRole) # ret is 2
+        ret = msgBox.exec_()
+        
+        if ret == 0:
+            # Add core node
+            self.add_core_node_button_clicked(selected_scenario)
+        elif ret == 1:
+            # Add VM node
+            self.add_vm_button_clicked(selected_scenario)
+        else:
+            # Cancel
+            msgBox.destroy()
+
+    def add_vm_button_clicked(self, selected_scenario:Scenario):
+        print("add vm")
+    
+    def add_core_node_button_clicked(self, selected_scenario:Scenario):
+        addCoreNodeWindow = QtWidgets.QDialog()
+        addCoreNodeWindowUI = Ui_addCoreNodes_window()
+        addCoreNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow, selected_scenario, self.add_core_node)
+        addCoreNodeWindow.show()
+
+    def add_core_node(self, scenario:Scenario, node:Node):
+        print("adding core node")
+        scenario.devices.append(node)
+        self.render_nodes_in_node_tree()
+
 
     def add_set_node_button_clicked(self):
         # TODO: i dont think well have time but this checking
