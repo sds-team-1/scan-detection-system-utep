@@ -81,9 +81,6 @@ class CaptureControllerService:
             print("Waiting for core to start..." + str(i))
             time.sleep(1)
 
-        # Run the StartServices.sh script
-        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh")
-
 
         # Decide wether we need to wait or not
         # # wait 15 seconds
