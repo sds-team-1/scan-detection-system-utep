@@ -192,7 +192,7 @@ class Ui_CaptureManagerWindow(object):
         # Q tree widget for holding nodes
         self.q_tree_widget_nodes_list = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
         self.q_tree_widget_nodes_list.setObjectName("nodesList_captureManagerWindow")
-        self.q_tree_widget_nodes_list.headerItem().setText(0, "Log Net Traffic")
+        self.q_tree_widget_nodes_list.headerItem().setText(0, "Running tcpdump")
         self.q_tree_widget_nodes_list.headerItem().setText(1, "Type")
         self.q_tree_widget_nodes_list.headerItem().setText(2, "Name")
         self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
@@ -648,6 +648,8 @@ class Ui_CaptureManagerWindow(object):
                             self.render_projects_in_project_tree()
                             break
                     break
+            # clear the nodes list
+            self.q_tree_widget_nodes_list.clear()
 
 
     def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
@@ -849,12 +851,14 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.clear()
 
         for node in selected_scenario.networks:
-            node_item = QTreeWidgetItem([str(node.core_listening),
+            is_tcp_running = "No"
+            node_item = QTreeWidgetItem([is_tcp_running,
                                          node.type, node.name, node.mac, node.ip, 'No', node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
         for node in selected_scenario.devices:
-            node_item = QTreeWidgetItem([str(node.core_listening),
+            is_tcp_running = "Yes"
+            node_item = QTreeWidgetItem([is_tcp_running,
                                          node.type, node.name, node.mac, node.ip, 'No', node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 

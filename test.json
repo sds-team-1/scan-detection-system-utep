@@ -1,0 +1,10 @@
+{
+  "name": "a",
+  "max_units": 1,
+  "scenarios": [
+    { "name": "asd", "devices": [], "networks": [] },
+    { "name": "fdsa", "devices": [], "networks": [] },
+    { "name": "lasd", "devices": [], "networks": [] },
+    { "name": "lasdfdsa", "devices": [], "networks": [] }
+  ]
+}
