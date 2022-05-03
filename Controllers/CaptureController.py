@@ -46,6 +46,22 @@ class CaptureControllerService:
         
         subprocess.Popen(command_string, shell=True, close_fds=True)
 
+    def run_command_using_name_username_password_command_and_args(self, vm_name, username, password, command, args=""):
+        '''
+        Runs the command in a new subprocess
+        '''
+        command_string = f"VBoxManage guestcontrol {vm_name} --username {username} --password {password} run {command} {args}"
+        subprocess.Popen(command_string, shell=True, close_fds=True)
+        
+        # VBoxManage guestcontrol Scanner --username ubuntu --password ubuntu run nmap --system-dns 172.19.203.179"
+    def start_vm_by_name(self, vm_name):
+        '''
+        Starts the vm by name
+        '''
+        command_string = f"VBoxManage startvm {vm_name}"
+        subprocess.Popen(command_string, shell=True, close_fds=True)
+    
+
     def core_cleanup(self):
         '''
         Runs the CoreCleanup.sh script
@@ -54,14 +70,17 @@ class CaptureControllerService:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
 
         # self.copy_from("pcaps", "/tmp/pcaps/*")
+        
+        try:
 
-        # get the nodes object from scneario dict
-        nodes_array = self.scenario_dict["devices"]
+            # get the nodes object from scneario dict
+            nodes_array = self.scenario_dict["devices"]
 
-        # iterate through the nodes list and copy the pcaps using the name.pcap
-        for node in nodes_array:
-            self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}.pcap")
-
+            # iterate through the nodes list and copy the pcaps using the name.pcap
+            for node in nodes_array:
+                self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}.pcap")
+        except Exception as e:
+            print("Could not copy files")
 
         # TODO: Fix this to get all the pcap files, use the tmp directory as mentioned by Dr.Acosta
         # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
@@ -73,6 +92,13 @@ class CaptureControllerService:
         '''
         # Run Core Cleanup, a sleep will run for 10 seconds
         # self.core_cleanup()
+
+                # get the sacnner node name
+        if self.scenario_dict["networks"][0] is not None:
+            external_vm_dictionary = self.scenario_dict["networks"][0]
+
+        if external_vm_dictionary is not None:
+            self.start_vm_by_name(external_vm_dictionary["name"])
 
         # Run the CoreStart.sh script
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
@@ -88,6 +114,29 @@ class CaptureControllerService:
         for i in range(5):
             print("Waiting for core to start..." + str(i))
             time.sleep(1)
+
+
+        # wait 10 seconds for the vm to start
+        for i in range(30):
+            print("Waiting for vm to start..." + str(i))
+            time.sleep(1)
+
+        
+
+        #  start the other vm
+        if external_vm_dictionary is not None:
+            self.run_command_using_name_username_password_command_and_args(
+                external_vm_dictionary["vm_node_name"],
+                external_vm_dictionary["vm_node_username"],
+                external_vm_dictionary["vm_node_password"],
+                external_vm_dictionary["vm_binary_path"],
+                external_vm_dictionary["vm_args"]
+            )
+
+        # run the command to start the services
+
+
+
 
 
         # Decide wether we need to wait or not

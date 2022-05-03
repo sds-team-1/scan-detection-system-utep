@@ -68,7 +68,7 @@ class Ui_addVmNode_window(object):
         # Label for IP
         self.label_ip = QtWidgets.QLabel(parent_window)
         self.label_ip.setGeometry(QtCore.QRect(10, 130, 100, 30))
-        self.label_ip.setText("Starting IP:")
+        self.label_ip.setText("IP:")
 
         # Line edit for IP
         self.line_edit_ip = QtWidgets.QLineEdit(parent_window)
