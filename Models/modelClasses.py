@@ -97,7 +97,7 @@ class Node:
         self.ip4_mask = "24"
 
         # core fields
-        self.core_listeniing = core_listening
+        self.core_listening = core_listening
 
         # vm fields
         self.vm_node_name = vm_node_name
@@ -114,8 +114,12 @@ class Node:
             'mac': self.mac,
             'ip': self.ip,
             'ip4_mask': self.ip4_mask,
-            'listening': self.core_listeniing,
-            'port': self.port
+            'core_listening': self.core_listening,
+            'vm_node_name': self.vm_node_name,
+            'vm_node_username': self.vm_node_username,
+            'vm_node_password': self.vm_node_password,
+            'binary_path': self.binary_path,
+            'args': self.args
         }
     
     @staticmethod

@@ -511,10 +511,6 @@ class Ui_CaptureManagerWindow(object):
             msg.setText('Incorrect Project structure or values.')
             x = msg.exec_()
 
-
-    def load_scenario_unit(self):
-        pass
-
     def edit_project_name_clicked(self, selected_project_name):
         '''
         Triggered when user clicks on the edit project name button
@@ -793,8 +789,6 @@ class Ui_CaptureManagerWindow(object):
         # 2. Add Core Node
         # 3. Cancel
 
-        # Setup project name
-        project_name = selected_item.parent().text(0)
 
         # Create a message with the 3 options
         msgBox = QMessageBox()
@@ -806,27 +800,22 @@ class Ui_CaptureManagerWindow(object):
         
         if ret == 0:
             # Add core node
-            self.add_core_node_button_clicked(selected_scenario)
+            addCoreNodeWindow = QtWidgets.QDialog()
+            addCoreNodeWindowUI = Ui_addCoreNodes_window()
+            addCoreNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow, selected_scenario, self.add_core_node)
+            addCoreNodeWindow.show()
         elif ret == 1:
             # Add VM node
-            self.add_vm_button_clicked(selected_scenario)
+            print("add vm clicked")
         else:
             # Cancel
             msgBox.destroy()
-
-    def add_vm_button_clicked(self, selected_scenario:Scenario):
-        print("add vm")
     
-    def add_core_node_button_clicked(self, selected_scenario:Scenario):
-        addCoreNodeWindow = QtWidgets.QDialog()
-        addCoreNodeWindowUI = Ui_addCoreNodes_window()
-        addCoreNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow, selected_scenario, self.add_core_node)
-        addCoreNodeWindow.show()
 
     def add_core_node(self, scenario:Scenario, node:Node):
         print("adding core node")
         scenario.devices.append(node)
-        self.render_nodes_in_node_tree()
+        self.render_nodes_in_node_tree(scenario)
 
 
     def add_set_node_button_clicked(self):
@@ -883,14 +872,21 @@ class Ui_CaptureManagerWindow(object):
         
         self.render_nodes_in_node_tree(selected_scenario)
 
-    def render_nodes_in_node_tree(self, selected_scenario):
+    def render_nodes_in_node_tree(self, selected_scenario:Scenario):
+        '''
+        For the scenario provided, this function will render the nodes in the node tree
+        '''
+
+        # Clear the node tree
+        self.q_tree_widget_nodes_list.clear()
+        
         for node in selected_scenario.networks:
             node_item = QTreeWidgetItem([str(node.listening),
                                          node.type, node.name, node.mac, node.ip, 'No'])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
         for node in selected_scenario.devices:
-            node_item = QTreeWidgetItem([str(node.listening),
+            node_item = QTreeWidgetItem([str(node.core_listening),
                                          node.type, node.name, node.mac, node.ip, 'No'])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
