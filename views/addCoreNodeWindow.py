@@ -11,10 +11,10 @@ class Ui_addCoreNodes_window(object):
     id_counter = 0
     MAC = 0
 
-    def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, selected_scenario_unit:Scenario, create_new_nodes_function):
+    def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, create_new_nodes_function):
         # Setup parent window
         self.parent_window = parent_window
-        self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + selected_scenario_unit.name)
+        self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
         parent_window.resize(400, 600)
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
@@ -128,20 +128,27 @@ class Ui_addCoreNodes_window(object):
         self.button_cancel.clicked.connect(lambda: parent_window.destroy())
         self.button_add.clicked.connect(lambda: self.add_node_button_clicked(
             parent_window, 
-            selected_scenario_unit=selected_scenario_unit, 
-            add_node_function=create_new_nodes_function))
+            selected_project_name=project_name,
+            selected_scenario_unit_name=scenario_name, 
+            add_nodes_function=create_new_nodes_function))
 
 
-    def add_node_button_clicked(self, parent_window, selected_scenario_unit:Scenario, add_node_function):
-        
-        core_node = Node(
-            self.line_edit_id.text(),
-            self.line_edit_name.text(),
-            "PC",
-            mac=self.line_edit_mac.text(),
-            ip=self.line_edit_ip.text(),
-            core_listening=True
-        )
+    def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_nodes_function):
+        nodes_list = []
+
+        node_to_add = Node(
+                self.line_edit_id.text() + "_",
+                self.line_edit_name.text() + "_",
+                "PC",
+                mac=self.line_edit_mac.text(),
+                ip=self.line_edit_ip.text(),
+                core_listening=False
+            )
+
+        print("selected_project_name:", selected_project_name)
+        print("selected_scenario_unit_name:", selected_scenario_unit_name)
 
         # Add the core node to the scenario
-        add_node_function(selected_scenario_unit, core_node)
+        add_nodes_function(selected_project_name, selected_scenario_unit_name, node_to_add, self.spin_box_number_of_nodes.value())
+
+        parent_window.destroy()

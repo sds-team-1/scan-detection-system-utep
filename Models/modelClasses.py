@@ -54,6 +54,10 @@ class Scenario:
         self.name:str = name
         self.networks:list = networks
         self.devices:list = devices
+
+        print("scenario created with name: " + self.name)
+        print("scenario created withcount devices: " + str(len(self.devices)))
+        print("scenario created withcount networks: " + str(len(self.networks)))
     def get_mongo_encoded_scenario(self):
         return {
             'name': self.name,
@@ -64,8 +68,8 @@ class Scenario:
     def create_scenario_from_mongo_encoded_scenario(mongo_encoded_scenario):
         return Scenario(
             name=mongo_encoded_scenario['name'],
-            devices=[Node.create_device_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['devices']],
-            networks=[Node.create_network_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['networks']]
+            devices=[Node.create_node_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['devices']],
+            networks=[Node.create_node_from_mongo_encoded_node(mongo_encoded_node) for mongo_encoded_node in mongo_encoded_scenario['networks']]
         )
 
 
@@ -80,7 +84,8 @@ class Node:
     name: str,
     type: str,
     mac: str, 
-    ip: str, 
+    ip: str,
+    ip4_mask: str="24",
     core_listening: bool = True,
     vm_node_name: str = '',
     vm_node_username: str = '',
@@ -88,13 +93,13 @@ class Node:
     vm_binary_path: str = '',
     vm_args: str = ''
     ):
-        # CORE Attributes
+        # General Attributes
         self.id = id
         self.name = name
         self.type = type
         self.mac = mac
         self.ip = ip
-        self.ip4_mask = "24"
+        self.ip4_mask = ip4_mask
 
         # core fields
         self.core_listening = core_listening
@@ -103,8 +108,8 @@ class Node:
         self.vm_node_name = vm_node_name
         self.vm_node_username = vm_node_username
         self.vm_node_password = vm_node_password
-        self.binary_path = vm_binary_path
-        self.args = vm_args
+        self.vm_binary_path = vm_binary_path
+        self.vm_args = vm_args
 
     def get_mongo_encoded_node(self):
         return {
@@ -118,8 +123,8 @@ class Node:
             'vm_node_name': self.vm_node_name,
             'vm_node_username': self.vm_node_username,
             'vm_node_password': self.vm_node_password,
-            'binary_path': self.binary_path,
-            'args': self.args
+            'vm_binary_path': self.vm_binary_path,
+            'vm_args': self.vm_args
         }
     
     @staticmethod
@@ -131,18 +136,26 @@ class Node:
             mac=mongo_encoded_node['mac'],
             ip=mongo_encoded_node['ip'],
             ip4_mask=mongo_encoded_node['ip4_mask'],
-            core_listening=mongo_encoded_node['listening'],
-            port=mongo_encoded_node['port']
+            core_listening=mongo_encoded_node['core_listening'],
+            vm_node_name=mongo_encoded_node['vm_node_name'],
+            vm_node_username=mongo_encoded_node['vm_node_username'],
+            vm_node_password=mongo_encoded_node['vm_node_password'],
+            vm_binary_path=mongo_encoded_node['vm_binary_path'],
+            vm_args=mongo_encoded_node['vm_args']
         )
 
-class ScannerNode(Node):
-    def __init__(self, id: int, listening: bool, node_type: str, name: str, IP: str, \
-                 port: int, MAC: str, network: int, us_pas, scanner_binary, arguments, \
-                 iterations, max_parallel_runs, end_condition):
-        super().__init__(id, listening, node_type, name, IP, port, MAC, network)
-        self.us_pas = us_pas
-        self.scanner_binary = scanner_binary
-        self.arguments = arguments
-        self.iterations = iterations
-        self.max_parallel_runs = max_parallel_runs
-        self.end_condition = end_condition
+    def get_copy_of_node(self):
+        return Node(
+            id=self.id,
+            name=self.name,
+            type=self.type,
+            mac=self.mac,
+            ip=self.ip,
+            ip4_mask=self.ip4_mask,
+            core_listening=self.core_listening,
+            vm_node_name=self.vm_node_name,
+            vm_node_username=self.vm_node_username,
+            vm_node_password=self.vm_node_password,
+            vm_binary_path=self.vm_binary_path,
+            vm_args=self.vm_args
+        )
