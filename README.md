@@ -56,7 +56,13 @@ If using Windows 10, use the Git Bash terminal from now on.
 
 `https://drive.google.com/uc?export=download&id=1bbdw8_pDO4eXvqUg7PgyIsW9fomhfpJt`
 
-## To start, open terminal on the root folder and run the following command to install requirements
+### Clone this repo and change to the new directory
+
+`git clone git@github.com:team-1-architecture/gdrive.git`
+
+`cd scan-detection-system-utep`
+
+### To start, open terminal on the root folder and run the following command to install requirements
 
 `pip3 install -r ./requirements.txt`
 
@@ -83,25 +89,9 @@ One database and several collections need to be created.
 
 4. Create a new database.
 
-`use SDS`
+`use SDS_DB`
 
-5. Create the following collections.
-
-`db.createCollection('workspaces')`
-
-`db.createCollection('projects')`
-
-`db.createCollection('scenarios')`
-
-`db.scenarios.createIndex({'scenario_name': 1}, {unique: true})`
-
-`db.createCollection('networks')`
-
-`db.createCollection('devices')`
-
-`db.createCollection('links')`
-
-## install virtualbox for python3
+### install virtualbox for python3
 Taken from here
 https://stackoverflow.com/questions/44477318/is-it-possible-to-use-the-python3-bindings-for-virtualbox
 
