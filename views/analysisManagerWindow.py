@@ -92,7 +92,7 @@ class Ui_AnalysisManagerWindow(object):
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
-        self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
+        #self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
         
         # Close Analysis Manager Button
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
@@ -299,18 +299,13 @@ class Ui_AnalysisManagerWindow(object):
             # self.packetsList_analysisManagerWindow.headerItem().setData()
             self.packetsList_analysisManagerWindow.setSortingEnabled(True)
 
-<<<<<<< HEAD
-
-            self.packetsList_analysisManagerWindow.setSortingEnabled(True)
-=======
             # Row of buttons
->>>>>>> 2785f1abd565f51be1ee378aaf14954e89167023
             self.buttonsPacketLayout_captureManagerWindow = QtWidgets.QHBoxLayout()
             self.buttonsPacketLayout_captureManagerWindow.setObjectName("buttonsPacketLayout_captureManagerWindow")
 
             # Open in Wireshark Button
             self.openPacketWiresharkButton_captureManagerWindow = QtWidgets.QPushButton(
-                self.CentralLayout_analysisManagerWindow)
+            self.CentralLayout_analysisManagerWindow)
             self.openPacketWiresharkButton_captureManagerWindow.setObjectName(
                 "openPacketWiresharkButton_captureManagerWindow")
             self.buttonsPacketLayout_captureManagerWindow.addWidget(self.openPacketWiresharkButton_captureManagerWindow)
@@ -686,6 +681,8 @@ class Ui_AnalysisManagerWindow(object):
             if str(p.no) not in self.selected_packets:
                 temp_cap.write(packet)
         packets.close()
+        temp_cap.close()
+        i_open_file.close()
         path_new = path.replace("temp_cap.pcap", name)
         os.remove(path_new)
         os.rename(path, path_new)
