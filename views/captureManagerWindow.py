@@ -1,5 +1,6 @@
 import json
 from logging.config import valid_ident
+import traceback
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox
@@ -472,6 +473,8 @@ class Ui_CaptureManagerWindow(object):
 
     def export_project_button_clicked(self):
         try:
+            if self.q_tree_widget_projects_list.selectedItems()[0].parent() is not None:
+                raise Exception
             project_name = self.q_tree_widget_projects_list.selectedItems()[0].text(0)
             export_path = QFileDialog().getSaveFileName(caption='Export Project', directory='~/untitled.json')
             project_dict = {}
@@ -480,8 +483,13 @@ class Ui_CaptureManagerWindow(object):
                     project_dict = project.get_mongo_encoded_project()
             f = open(export_path[0], 'w')
             json.dump(project_dict, f)
-        except:
-            print('****Project not selected****')
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            msg = QMessageBox()
+            msg.setWindowTitle("Export Error")
+            msg.setText('Project is not selected. Please left click a project and click Export again.')
+            x = msg.exec_()
 
     def import_project_button_clicked(self, captureManager_Window):
         dialog = QFileDialog()
