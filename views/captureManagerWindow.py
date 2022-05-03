@@ -709,7 +709,7 @@ class Ui_CaptureManagerWindow(object):
             # Show window that there is no scenario selected
             error_message = QMessageBox()
             error_message.setText("Please select a scenario to add a node to!")
-            error_message.setIcon(QMessageBox.Critical)
+            error_message.setIcon(QMessageBox.Warning)
             error_message.exec_()
             return
 
@@ -745,7 +745,7 @@ class Ui_CaptureManagerWindow(object):
             # Show window that there is no scenario selected
             error_message = QtWidgets.QMessageBox()
             error_message.setText("Please select a scenario to add a node to!")
-            error_message.setIcon(QtWidgets.QMessageBox.warning)
+            error_message.setIcon(QtWidgets.QMessageBox.Warning)
             error_message.exec_()
             return
 
