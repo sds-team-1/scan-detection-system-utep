@@ -169,9 +169,9 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_add_node.setText("Add Node")
 
         # Add set of victim nodes button
-        self.q_button_add_set_of_victim_nodes = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.q_button_add_set_of_victim_nodes.setObjectName("addSetNodeButton_captureManagerWindow")
-        self.q_button_add_set_of_victim_nodes.setText("Add Set of Victim Nodes")
+        #self.q_button_add_set_of_victim_nodes = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        #self.q_button_add_set_of_victim_nodes.setObjectName("addSetNodeButton_captureManagerWindow")
+        #self.q_button_add_set_of_victim_nodes.setText("Add Set of Victim Nodes")
         
 
         # Set up a row to hold the label for scenario status and the add node/ set nodes buttons
@@ -181,7 +181,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
         self.q_row_buttons_node_buttons.addItem(spacerItem2)
         self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
-        self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
+        #self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
 
 
         # Q tree widget for holding nodes
@@ -269,7 +269,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Node button functions
         self.q_button_add_node.clicked.connect(self.add_node_button_clicked)
-        self.q_button_add_set_of_victim_nodes.clicked.connect(self.add_set_node_button_clicked)
+        #self.q_button_add_set_of_victim_nodes.clicked.connect(self.add_set_node_button_clicked)
 
 
         # This doesnt work, idk why
