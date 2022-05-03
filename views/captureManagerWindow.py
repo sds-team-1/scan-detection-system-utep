@@ -492,12 +492,24 @@ class Ui_CaptureManagerWindow(object):
             x = msg.exec_()
 
     def import_project_button_clicked(self, captureManager_Window):
-        dialog = QFileDialog()
-        json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
-        if not json_path[0]:
-            return
-        with open(json_path[0]) as json_file:
-            project = json.load(json_file)
+        try:
+            dialog = QFileDialog()
+            json_path = dialog.getOpenFileName(captureManager_Window, 'Select JSON File', filter='*.json')
+            if not json_path[0]:
+                return
+            with open(json_path[0]) as json_file:
+                project = json.load(json_file)
+                # Check if the fields are valid
+                if project['name'] == '' or project['max_units'] < 1 or len(project['scenarios']) > 0 or len(project.keys()) != 3:
+                    raise Exception
+                project_model = Project.create_project_from_mongo_encoded_project(project)
+                self.workspace_object.projects.append(project_model)
+                self.render_projects_in_project_tree()
+        except Exception:
+            msg = QMessageBox()
+            msg.setWindowTitle('Import Project Error')
+            msg.setText('Incorrect Project structure or values.')
+            x = msg.exec_()
 
 
     def load_scenario_unit(self):
@@ -528,6 +540,9 @@ class Ui_CaptureManagerWindow(object):
                         break
                     else:
                         valid_input = True
+            else:
+                valid_input = True
+                return
 
         for project in self.workspace_object.projects:
             if project.name == selected_project_name:
@@ -610,6 +625,9 @@ class Ui_CaptureManagerWindow(object):
                         # IF this is reached, the scenario unit name is not taken
                         else:
                             valid_input = True
+            else:
+                valid_input = True
+                return
 
         for project in self.workspace_object.projects:
             if project.name == parent_project_name:

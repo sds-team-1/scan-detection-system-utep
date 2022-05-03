@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QAction, QTreeWidgetItem
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.captureManagerWindow import Ui_CaptureManagerWindow
-from views.createWorkspace import Ui_newWorkspace_window
+from views.createWorkspaceWindow import Ui_newWorkspace_window
 from views.databaseConfigWindow import Ui_databaseConfig_window
 
 
