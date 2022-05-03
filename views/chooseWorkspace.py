@@ -278,8 +278,11 @@ class Ui_choose_workspace_window(object):
                 else:
                     # break from while loop
                     valid_input = True
+            
+            else:
+                valid_input = True
+                return
         
-        print("Renaming worksapce")
         # Rename workspace
         self.db_helper.rename_workspace(selected_workspace_name, new_name)
         self.generate_workspaces_list_window()

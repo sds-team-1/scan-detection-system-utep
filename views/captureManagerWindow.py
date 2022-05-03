@@ -540,6 +540,9 @@ class Ui_CaptureManagerWindow(object):
                         break
                     else:
                         valid_input = True
+            else:
+                valid_input = True
+                return
 
         for project in self.workspace_object.projects:
             if project.name == selected_project_name:
@@ -622,6 +625,9 @@ class Ui_CaptureManagerWindow(object):
                         # IF this is reached, the scenario unit name is not taken
                         else:
                             valid_input = True
+            else:
+                valid_input = True
+                return
 
         for project in self.workspace_object.projects:
             if project.name == parent_project_name:
