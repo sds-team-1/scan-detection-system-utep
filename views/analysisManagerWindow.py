@@ -68,6 +68,9 @@ class Ui_AnalysisManagerWindow(object):
         # Button Row
         self.buttonsLayout_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.buttonsLayout_analysisManagerWindow.setObjectName("buttonsLayout_analysisManagerWindow")
+        # Spacer Item
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.buttonsLayout_analysisManagerWindow.addItem(spacerItem)
 
         # Merge Button
         self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
@@ -75,9 +78,9 @@ class Ui_AnalysisManagerWindow(object):
         self.buttonsLayout_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
 
         # Export Button
-        self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
-        self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
+        #self.exportButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        #self.exportButton_analysisManagerWindow.setObjectName("exportButton_analysisManagerWindow")
+        #self.buttonsLayout_analysisManagerWindow.addWidget(self.exportButton_analysisManagerWindow)
 
         # Close Analysis Manager Button
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
@@ -119,8 +122,9 @@ class Ui_AnalysisManagerWindow(object):
         self.pcapsList_analysisManagerWindow.setSortingEnabled(__sortingEnabled)
 
         # Sets text for buttons
+
         self.mergeButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Merge Pcaps      "))
-        self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
+        #self.exportButton_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "      Export Pcaps      "))
         self.browsePcapsDirectory_analysisManagerWindow.setText(_translate("AnalysisManagerWindow", "    Browse   "))
         self.closeAnalysisManager_analysisManagerWindow.setText(
             _translate("AnalysisManagerWindow", "Close Analysis Manager"))
@@ -131,7 +135,7 @@ class Ui_AnalysisManagerWindow(object):
         self.mergeButton_analysisManagerWindow.clicked.connect(lambda: self.merge())
         self.inputPcapsDirectory_analysisManagerWindow.setReadOnly(True)
         self.mergeButton_analysisManagerWindow.setEnabled(False)
-        self.exportButton_analysisManagerWindow.setEnabled(False)
+        #self.exportButton_analysisManagerWindow.setEnabled(False)
         self.browsePcapsDirectory_analysisManagerWindow.clicked.connect(self.browsePcapDir)
         AnalysisManagerWindow.closeEvent = self.CloseEvent
 
@@ -196,11 +200,11 @@ class Ui_AnalysisManagerWindow(object):
 
         if checked > 1:
             self.mergeButton_analysisManagerWindow.setEnabled(True)
-            self.exportButton_analysisManagerWindow.setEnabled(True)
+            #self.exportButton_analysisManagerWindow.setEnabled(True)
 
         else:
             self.mergeButton_analysisManagerWindow.setEnabled(False)
-            self.exportButton_analysisManagerWindow.setEnabled(False)
+            #self.exportButton_analysisManagerWindow.setEnabled(False)
 
     # creates logic for when packets are checked
     def selectedPacketCheckbox(self):
@@ -413,7 +417,7 @@ class Ui_AnalysisManagerWindow(object):
         action_hier_stat = QAction("Protocol Stats")
         action_port_number = QAction("Port Number")
         action_statistics = QAction("Statistics Graph")
-        action_toJson = QAction("Convert To Json")
+        action_toJson = QAction("Export To Json")
 
         menu.addAction(action_open_pcap)
         menu.addAction(action_delete_pcap)
