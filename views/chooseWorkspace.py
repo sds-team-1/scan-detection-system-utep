@@ -278,6 +278,8 @@ class Ui_choose_workspace_window(object):
                 else:
                     # break from while loop
                     valid_input = True
+
+            
         
         print("Renaming worksapce")
         # Rename workspace
