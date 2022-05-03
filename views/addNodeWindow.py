@@ -1,21 +1,15 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 
-from Models.modelClasses import Scenario, Workspace
+from Models.modelClasses import Scenario, Workspace, Node
 
 import Database.DatabaseHelper
 
 class Ui_addNode_window(object):
 
-    workspace_object : Workspace
-
     ip_counter = 0
     id_counter = 0
     MAC = 0
-
-    def __init__(self, workspace_object:Workspace):
-        self.workspace_object = workspace_object
-
 
     def setupAddNode(self, parent_window:QtWidgets.QDialog, selected_scenario_unit:Scenario, create_new_node_function):
         self.MAC += 1
@@ -38,7 +32,6 @@ class Ui_addNode_window(object):
         # Line edit that holds the node name
         self.q_line_edit_node_name_input = QtWidgets.QLineEdit(parent_window)
         self.q_line_edit_node_name_input.setObjectName("nodeNameInput_addNodeWindow")
-
 
         # Row to hold the node name and label
         self.q_row_node_name_label_and_input = QtWidgets.QHBoxLayout()
@@ -66,7 +59,6 @@ class Ui_addNode_window(object):
         self.q_row_node_type_label_and_combobox.addWidget(self.q_combobox_node_type)
         self.q_row_node_type_label_and_combobox.addItem(self.spacerItem)
 
-
         # label for mac address
         self.q_label_node_MAC_Address_label = QtWidgets.QLabel(parent_window)
         self.q_label_node_MAC_Address_label.setObjectName("nodeMACAddressLabel_addNodeWindow")
@@ -82,7 +74,6 @@ class Ui_addNode_window(object):
         self.q_row_node_MAC_address.setObjectName("nodeMACAddressLayout_addNodeWindow")
         self.q_row_node_MAC_address.addWidget(self.q_label_node_MAC_Address_label)
         self.q_row_node_MAC_address.addWidget(self.q_line_edit_node_MAC_address_input)
-
 
         # Label for ip address 
         self.q_label_node_IP_address_label = QtWidgets.QLabel(parent_window)
@@ -100,7 +91,6 @@ class Ui_addNode_window(object):
         self.q_layout_node_IP_address.addWidget(self.q_label_node_IP_address_label)
         self.q_layout_node_IP_address.addWidget(self.q_line_edit_node_IP_Adress_input)
 
-
         # Check box for web server
         self.q_checkbox_web_server_node = QtWidgets.QCheckBox(parent_window)
         self.q_checkbox_web_server_node.setObjectName("nodeWebServerNodeCheckBox_addNodeWindow")
@@ -116,10 +106,6 @@ class Ui_addNode_window(object):
         self.q_checkbox_scanner_node.setObjectName("nodeScannerNodeCheckBox_addNodeWindow")
         self.q_checkbox_scanner_node.setText("Scanner Node")
 
-
-
-
-
         self.spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         
         # Row to hold the check boxes
@@ -130,25 +116,6 @@ class Ui_addNode_window(object):
         self.q_row_checkboxes.addWidget(self.q_checkbox_log_network_node)
         self.q_row_checkboxes.addWidget(self.q_checkbox_scanner_node)
 
-
-        #  Button for add node
-        self.q_button_add_node = QtWidgets.QPushButton(parent_window)
-        self.q_button_add_node.setObjectName("addNodeButton_addNodeWindow")
-        self.q_button_add_node.setText("Add Node")
-        
-
-        # Button for cancel
-        self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
-        self.q_button_cancel_button.setObjectName("addNodeCancelButton_addNodeWindow")
-        self.q_button_cancel_button.setText("Cancel")
-
-        # Row to hold the buttons
-        self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
-        self.q_row_layout_addnode_and_cancel_buttons.setObjectName("addNodeButtonsLayout_addNodeWindow")    
-        self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
-        self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
-
-
         # Main column layout
         self.q_col_main_layout = QtWidgets.QVBoxLayout()
         self.q_col_main_layout.setObjectName("mainLayout_addNodeWindow")
@@ -157,25 +124,19 @@ class Ui_addNode_window(object):
         self.q_col_main_layout.addLayout(self.q_row_node_MAC_address)
         self.q_col_main_layout.addLayout(self.q_layout_node_IP_address)
         self.q_col_main_layout.addLayout(self.q_row_checkboxes)
-        self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)
+        
+        self.add_buttons_layout(parent_window, self.id_counter, selected_scenario_unit, create_new_node_function)
 
         # Set the main layout
         self.q_grid_main_layout = QtWidgets.QGridLayout(parent_window)
         self.q_grid_main_layout.setObjectName("AddNodeWindowLayout")
         self.q_grid_main_layout.addLayout(self.q_col_main_layout, 0, 0, 1, 1)
         
-
         # Connect event listeners
         self.q_checkbox_scanner_node.toggled.connect(lambda: self.scanner_node_check_box_clicked(
-            parent_window, self.id_counter))
+            parent_window, self.id_counter, selected_scenario_unit, create_new_node_function))
 
-        self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
-            parent_window, self.id_counter))
-
-        self.q_button_cancel_button.clicked.connect(parent_window.close)
-
-
-    def scanner_node_check_box_clicked(self, parent_window, id_counter):
+    def scanner_node_check_box_clicked(self, parent_window, id_counter, selected_scenario_unit, create_new_node_function):
         if self.q_checkbox_scanner_node.isChecked():
 
             self.nmapFlag = False
@@ -185,9 +146,7 @@ class Ui_addNode_window(object):
             parent_window.setMinimumSize(QtCore.QSize(487, 490))
             parent_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.q_button_add_node.deleteLater()
-            self.q_button_cancel_button.deleteLater()
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
+            self.remove_buttons_layout()
             
             self.q_label_node_us_pw = QtWidgets.QLabel(parent_window)
             self.q_label_node_us_pw.setObjectName("q_label_node_us_pw")
@@ -216,6 +175,7 @@ class Ui_addNode_window(object):
             self.q_label_nmap_arguments = QtWidgets.QLabel(parent_window)
             self.q_label_nmap_arguments.setObjectName("q_label_nmap_arguments")
             self.q_label_nmap_arguments.setText("NMap Arguments: ")
+
             self.q_line_edit_nmap_arguments_input = QtWidgets.QLineEdit(parent_window)
             self.q_line_edit_nmap_arguments_input.setObjectName("q_line_edit_nmap_arguments_input")
             self.q_line_edit_nmap_arguments_input.setDisabled(True)
@@ -250,18 +210,7 @@ class Ui_addNode_window(object):
             self.q_combobox_end_condition.addItem('on-scan-complete')
             self.q_combobox_end_condition.addItem('Time...')
             self.q_combobox_end_condition.currentIndexChanged.connect(lambda: self.end_condition_changed(
-                parent_window, id_counter))
-            
-            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
-            self.q_button_add_node.setObjectName("q_button_add_node")
-            self.q_button_add_node.setText("Add Node")
-            self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
-                parent_window, id_counter))
-
-            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
-            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
-            self.q_button_cancel_button.setText("Cancel")
-            self.q_button_cancel_button.clicked.connect(parent_window.close)
+                parent_window, id_counter, selected_scenario_unit))
 
             self.q_layout_node_us_pw = QtWidgets.QHBoxLayout()
             self.q_layout_node_us_pw.setObjectName("q_layout_node_us_pw")
@@ -311,11 +260,6 @@ class Ui_addNode_window(object):
             self.spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Minimum)
             self.q_layout_end_condition.addItem(self.spacerItem4)
 
-            self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
-            self.q_row_layout_addnode_and_cancel_buttons.setObjectName("q_layout_addnode_buttons")
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
-
             self.q_col_main_layout.addLayout(self.q_layout_node_us_pw)
             self.q_col_main_layout.addLayout(self.q_layout_node_scanner_binary)
             self.q_col_main_layout.addLayout(self.q_layout_node_scanner_nikto_nmap)
@@ -324,7 +268,8 @@ class Ui_addNode_window(object):
             self.q_col_main_layout.addLayout(self.q_layout_iterations_number)
             self.q_col_main_layout.addLayout(self.q_layout_max_parallel_runs)
             self.q_col_main_layout.addLayout(self.q_layout_end_condition)
-            self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)  
+
+            self.add_buttons_layout(parent_window, id_counter, create_new_node_function)
 
         else:
             parent_window.resize(487, 240)
@@ -353,11 +298,7 @@ class Ui_addNode_window(object):
 
             if self.q_combobox_end_condition.currentText() == 'Time...':
 
-                self.q_spinbox_end_condition_minutes.deleteLater()
-                self.q_label_end_condition_minutes.deleteLater()
-                self.q_spinbox_end_condition_seconds.deleteLater()
-                self.q_label_end_condition_seconds.deleteLater()
-                self.q_col_main_layout.removeItem(self.q_layout_end_condition_time)
+                self.remove_buttons_layout()
 
             self.q_combobox_end_condition.deleteLater()
 
@@ -371,33 +312,13 @@ class Ui_addNode_window(object):
             self.q_col_main_layout.removeItem(self.q_layout_iterations_number)
             self.q_col_main_layout.removeItem(self.q_layout_max_parallel_runs)
             self.q_col_main_layout.removeItem(self.q_layout_end_condition)
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
 
-            self.q_button_add_node.deleteLater()
-            self.q_button_cancel_button.deleteLater()
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
+            self.remove_buttons_layout()
 
+            self.add_buttons_layout(parent_window, id_counter, create_new_node_function)
             
-            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
-            self.q_button_add_node.setObjectName("q_button_add_node")
-            self.q_button_add_node.setText("Add Node")
-            self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
-                parent_window, id_counter))
 
-            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
-            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
-            self.q_button_cancel_button.setText("Cancel")
-            self.q_button_cancel_button.clicked.connect(parent_window.close)
-
-            self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
-            self.q_row_layout_addnode_and_cancel_buttons.setObjectName("q_layout_addnode_buttons")
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
-
-            self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)
-
-    def end_condition_changed(self, parent_window, _translate, projectsList_captureManagerWindow,
-                              nodesList_captureManagerWindow, CentralLayout_captureManagerWindow, id_counter):
+    def end_condition_changed(self, parent_window, id_counter, selected_scenario_unit, create_new_node_function):
 
         if self.q_combobox_end_condition.currentText() == 'Time...':
 
@@ -405,9 +326,7 @@ class Ui_addNode_window(object):
             parent_window.setMinimumSize(QtCore.QSize(487, 490))
             parent_window.setMaximumSize(QtCore.QSize(487, 490))
 
-            self.q_button_add_node.deleteLater()
-            self.q_button_cancel_button.deleteLater()
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
+            self.remove_buttons_layout()
             
             self.q_label_end_condition_minutes = QtWidgets.QLabel(parent_window)
             self.q_label_end_condition_minutes.setObjectName("q_label_end_condition_minutes")
@@ -424,17 +343,6 @@ class Ui_addNode_window(object):
             self.q_spinbox_end_condition_seconds = QtWidgets.QSpinBox(parent_window)
             self.q_spinbox_end_condition_seconds.setObjectName("q_spinbox_end_condition_seconds")
             self.q_spinbox_end_condition_seconds.setMaximum(59)
-        
-            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
-            self.q_button_add_node.setObjectName("q_button_add_node")
-            self.q_button_add_node.setText("Add Node")
-            self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
-                parent_window, id_counter))
-            
-            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
-            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
-            self.q_button_cancel_button.setText("Cancel")
-            self.q_button_cancel_button.clicked.connect(parent_window.close)
 
             self.q_layout_end_condition_time = QtWidgets.QHBoxLayout()
             self.q_layout_end_condition_time.setObjectName("q_layout_end_condition_time")
@@ -445,13 +353,9 @@ class Ui_addNode_window(object):
             self.spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
             self.q_layout_end_condition_time.addItem(self.spacerItem5)
 
-            self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
-            self.q_row_layout_addnode_and_cancel_buttons.setObjectName("q_layout_addnode_buttons")
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
-
             self.q_col_main_layout.addLayout(self.q_layout_end_condition_time)
-            self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)
+            
+            self.add_buttons_layout(parent_window, id_counter, create_new_node_function)
         
         else:
 
@@ -459,33 +363,11 @@ class Ui_addNode_window(object):
             parent_window.setMinimumSize(QtCore.QSize(487, 460))
             parent_window.setMaximumSize(QtCore.QSize(487, 460))
 
-            self.q_label_end_condition_minutes.deleteLater()
-            self.q_spinbox_end_condition_minutes.deleteLater()
-            self.q_label_end_condition_seconds.deleteLater()
-            self.q_spinbox_end_condition_seconds.deleteLater()
+            self.remove_end_condition_layout()
 
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
-            self.q_col_main_layout.removeItem(self.q_layout_end_condition_time)
+            self.remove_buttons_layout()
 
-            self.q_button_add_node.deleteLater()
-            self.q_button_cancel_button.deleteLater()
-            self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
-
-            self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
-            self.q_row_layout_addnode_and_cancel_buttons.setObjectName("q_layout_addnode_buttons")
-            self.q_button_add_node = QtWidgets.QPushButton(parent_window)
-            self.q_button_add_node.setObjectName("q_button_add_node")
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
-            self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
-            self.q_button_cancel_button.setObjectName("q_button_cancel_button")
-            self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
-            self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)
-            self.q_button_add_node.setText(_translate("parent_window", "Add Node"))
-            self.q_button_cancel_button.setText(_translate("parent_window", "Cancel"))
-
-            self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
-                parent_window, id_counter))
-            self.q_button_cancel_button.clicked.connect(parent_window.close)
+            self.add_buttons_layout(parent_window, id_counter, create_new_node_function)
 
     def nmapSignal(self):
         if self.nmapFlag is True:
@@ -503,7 +385,41 @@ class Ui_addNode_window(object):
             self.q_line_edit_nikto_arguments_input.setEnabled(True)
             self.niktoFlag = True
 
-    def add_node_button_clicked(self, addNode_Window, id_counter):
+    def add_buttons_layout(self, parent_window, id_counter, selected_scenario_unit, create_new_node_function):
+        #  Button for add node
+        self.q_button_add_node = QtWidgets.QPushButton(parent_window)
+        self.q_button_add_node.setObjectName("q_button_add_node")
+        self.q_button_add_node.setText("Add Node")
+        self.q_button_add_node.clicked.connect(lambda: self.add_node_button_clicked(
+                parent_window, id_counter, selected_scenario_unit, create_new_node_function))
+
+        # Button for cancel
+        self.q_button_cancel_button = QtWidgets.QPushButton(parent_window)
+        self.q_button_cancel_button.setObjectName("q_button_cancel_button")
+        self.q_button_cancel_button.setText("Cancel")
+        self.q_button_cancel_button.clicked.connect(parent_window.close)
+
+        # Row to hold the buttons
+        self.q_row_layout_addnode_and_cancel_buttons = QtWidgets.QHBoxLayout()
+        self.q_row_layout_addnode_and_cancel_buttons.setObjectName("q_layout_addnode_buttons")
+        self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_add_node)
+        self.q_row_layout_addnode_and_cancel_buttons.addWidget(self.q_button_cancel_button)
+
+        self.q_col_main_layout.addLayout(self.q_row_layout_addnode_and_cancel_buttons)
+
+    def remove_buttons_layout(self):
+        self.q_button_add_node.deleteLater()
+        self.q_button_cancel_button.deleteLater()
+        self.q_col_main_layout.removeItem(self.q_row_layout_addnode_and_cancel_buttons)
+
+    def remove_end_condition_layout(self):
+        self.q_spinbox_end_condition_minutes.deleteLater()
+        self.q_label_end_condition_minutes.deleteLater()
+        self.q_label_end_condition_seconds.deleteLater()
+        self.q_spinbox_end_condition_seconds.deleteLater()
+        self.q_col_main_layout.removeItem(self.q_layout_end_condition_time)
+
+    def add_node_button_clicked(self, addNode_Window, id_counter, selected_scenario_unit, create_new_node_function):
         # TODO: Implement this
         subnet = '0'
         log = ''
@@ -512,10 +428,10 @@ class Ui_addNode_window(object):
         else:
             log = 'False'
         type = self.q_combobox_node_type.currentText()
-        if type == 'CORE' or type == 'VM':
+        if type == 'CORE':
             type = 'PC'
         elif type == 'VM' or type == 'Docker':
-            type = 'PC'  # temp solution
+            type = 'RJ45'  # temp solution
         name = self.q_line_edit_node_name_input.text()
         MAC = self.q_line_edit_node_MAC_address_input.text()
         IP = self.q_line_edit_node_IP_Adress_input.text()
@@ -543,24 +459,17 @@ class Ui_addNode_window(object):
                 minutes = str(self.q_spinbox_end_condition_minutes.value())
                 seconds = str(self.q_spinbox_end_condition_seconds.value())
                 end_condition = f'time-{minutes}:{seconds}'
+
+            #node = Node(project_name,project_parallel,[])  -   HANDLE SCANNER
             #toolButton = QtWidgets.QToolButton(CentralLayout_captureManagerWindow)
             #toolButton.setText('Scanner')
             # node_item = QTreeWidgetItem([subnet, log, type, name, MAC, IP])
             # nodesList_captureManagerWindow.addTopLevelItem(node_item)
             # nodesList_captureManagerWindow.setItemWidget(node_item, 6, toolButton)
-        scenario_name = projectsList_captureManagerWindow.selectedItems()[0].text(0)
-        scenario_id = self.sds_controller.get_scenario_id(scenario_name)
-        nodes_list = self.sds_controller.get_all_nodes(scenario_name)
         id_counter += 1
-        self.sds_controller.insert_node(scenario_id, id_counter, log, type, name, IP, MAC,
-                                        subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations),
-                                        max_parallel_runs, end_condition)
-        nodes_list = self.sds_controller.get_all_nodes(scenario_name)
-        nodesList_captureManagerWindow.clear()
-        for node in nodes_list:
-            node_item = QTreeWidgetItem([str(node['listening']),
-                                         node['type'], node['name'], node['mac'], node['ip'], str(node['scanning'])])
-            nodesList_captureManagerWindow.addTopLevelItem(node_item)
+        node = Node(name, name, type, MAC, IP, log, None)
+        create_new_node_function(node, selected_scenario_unit)
+        # self.sds_controller.insert_node(scenario_id, id_counter, log, type, name, IP, MAC,
+        #                                 subnet, scanning, user_pw, scanner_bin, arguments, int(num_iterations),
+        #                                 max_parallel_runs, end_condition)
         addNode_Window.close()
-        nodesList_captureManagerWindow.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents)

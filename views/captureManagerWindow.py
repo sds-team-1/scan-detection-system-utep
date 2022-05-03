@@ -719,12 +719,30 @@ class Ui_CaptureManagerWindow(object):
 
 
         addNode_Window = QtWidgets.QDialog()
-        addNodeWindowUI = Ui_addNode_window(self.workspace_object)
+        addNodeWindowUI = Ui_addNode_window()
         addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
         addNode_Window.show()
 
-    def add_node(node:Node):
-        print("node added")
+    def add_node(self, node:Node, selected_scenario):
+        if node.type == 'PC':
+            selected_scenario.devices.append(node)
+        if node.type == 'RJ45':
+            selected_scenario.networks.append(node)
+        
+        self.render_nodes_in_node_tree(selected_scenario)
+
+    def render_nodes_in_node_tree(self, selected_scenario):
+        for node in selected_scenario.networks:
+            node_item = QTreeWidgetItem([str(node.listening),
+                                         node.type, node.name, node.mac, node.ip, 'No'])
+            self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
+
+        for node in selected_scenario.devices:
+            node_item = QTreeWidgetItem([str(node.listening),
+                                         node.type, node.name, node.mac, node.ip, 'No'])
+            self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
+
+
 
     def add_set_node_button_clicked(self):
         addSetNodes_Window = QtWidgets.QDialog()

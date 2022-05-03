@@ -152,22 +152,28 @@ class Ui_AnalysisManagerWindow(object):
 
     # iterates through pcap file and returns packets
     def iterate_packets(self, capture, filter, pcap):
-        self.packetsList_analysisManagerWindow.clear()
-        packets = capture.iterate_file(filter, pcap)
+        try:
+            self.packetsList_analysisManagerWindow.clear()
+            packets = capture.iterate_file(filter, pcap)
 
-        for pkt in packets:
-            l = []
-            l.append(str(pkt.no))
-            l.append(str(pkt.time))
-            l.append(str(pkt.source))
-            l.append(str(pkt.destination))
-            l.append(str(pkt.protocol))
-            l.append(str(pkt.length))
-            l.append(str(pkt.info))
-            l1 = QTreeWidgetItem(l)
-            l1.setCheckState(0, QtCore.Qt.Unchecked)
-            self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
-        packets.close()
+            for pkt in packets:
+                l = []
+                l.append(str(pkt.no))
+                l.append(str(pkt.time))
+                l.append(str(pkt.source))
+                l.append(str(pkt.destination))
+                l.append(str(pkt.protocol))
+                l.append(str(pkt.length))
+                l.append(str(pkt.info))
+                l1 = QTreeWidgetItem(l)
+                l1.setCheckState(0, QtCore.Qt.Unchecked)
+                self.packetsList_analysisManagerWindow.addTopLevelItem(l1)
+            packets.close()
+        except:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Error iterating packets, please try again")
+            x = msg.exec_()
 
     #saves a new pcap file with the included display filter
     def save_filter(self, capture, filter, pcap):
@@ -489,15 +495,17 @@ class Ui_AnalysisManagerWindow(object):
 
     # retrieves packet statistics for pcap file
     def hier_stat(self, name):
-        path = self.inputPcapsDirectory_analysisManagerWindow.text()
-        output = subprocess.getoutput('cd %s && tshark -r %s -q -z io,phs' % (
-        path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        # print (output)
-        # Modal PopUp
-        msg = QMessageBox()
-        msg.setWindowTitle("Hierarchy")
-        msg.setText(output)
-        x = msg.exec_()
+
+            path = self.inputPcapsDirectory_analysisManagerWindow.text()
+            output = subprocess.getoutput('cd %s && tshark -r %s -q -z io,phs' % (
+            path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
+            # print (output)
+            # Modal PopUp
+            msg = QMessageBox()
+            msg.setWindowTitle("Hierarchy")
+            msg.setText(output)
+            x = msg.exec_()
+
 
     # opens selected pcap in wireshark
     def open_pcap_wireshark(self, name):
@@ -507,36 +515,42 @@ class Ui_AnalysisManagerWindow(object):
 
     # shows procotol statitistic graph for the selected pcap
     def show_statistics(self, name):
-        packets = ''
-        temp_cap = ''
-        i_open_file = ''
+        try:
+            packets = ''
+            temp_cap = ''
+            i_open_file = ''
 
-        for pcap in self.test_capture.pcaps:
-            if pcap.name == name:
-                packets = self.test_capture.iterate_file('', pcap.name)
-        pktlist = []
-        file_list = []
-        for pkt in packets:
-            pktlist.append(pkt.protocol)
-            file_list.append(str(pkt.no))
-            file_list.append(str(pkt.time))
-            file_list.append(str(pkt.source))
-            file_list.append(str(pkt.destination))
-            file_list.append(str(pkt.protocol))
-            file_list.append(str(pkt.length))
-            file_list.append(str(pkt.info))
+            for pcap in self.test_capture.pcaps:
+                if pcap.name == name:
+                    packets = self.test_capture.iterate_file('', pcap.name)
+            pktlist = []
+            file_list = []
+            for pkt in packets:
+                pktlist.append(pkt.protocol)
+                file_list.append(str(pkt.no))
+                file_list.append(str(pkt.time))
+                file_list.append(str(pkt.source))
+                file_list.append(str(pkt.destination))
+                file_list.append(str(pkt.protocol))
+                file_list.append(str(pkt.length))
+                file_list.append(str(pkt.info))
 
-        packets.close()
-        counter = collections.Counter(pktlist)
-        plt.title(name)
-        plt.style.use('ggplot')
-        y_pos = np.arange(len(list(counter.keys())))
-        plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
-        plt.xticks(y_pos, list(counter.keys()))
-        plt.ylabel("Frequency")
-        plt.xlabel("Protocol Name")
-        plt.savefig("ProtocolGraph.png")
-        plt.show()
+            packets.close()
+            counter = collections.Counter(pktlist)
+            plt.title(name)
+            plt.style.use('ggplot')
+            y_pos = np.arange(len(list(counter.keys())))
+            plt.bar(y_pos, list(counter.values()), align='center', alpha=0.5, color=['b', 'g', 'r', 'c', 'm'])
+            plt.xticks(y_pos, list(counter.keys()))
+            plt.ylabel("Frequency")
+            plt.xlabel("Protocol Name")
+            plt.savefig("ProtocolGraph.png")
+            plt.show()
+        except:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Cannot show statistics graph, please try again")
+            x = msg.exec_()
 
     # exports selected pcap to a json file
     def pcapToJson(self, name):
