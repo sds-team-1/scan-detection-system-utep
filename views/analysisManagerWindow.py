@@ -614,6 +614,7 @@ class Ui_AnalysisManagerWindow(object):
         else:
             os.system(f'gedit {open_filename} &')
 
+        os.remove(open_filename)
         msg = QMessageBox()
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
