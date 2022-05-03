@@ -237,7 +237,7 @@ class XmlHelper:
 
         for i in range(len(networksList)):
             self.networks_str = self.networks_str + xmltodict.unparse(
-                {'network': {'@id': networksList[i]["id"], '@name': networksList[i]["name"],
+                {'network': {'@id': networksList[i]["id"], '@name': "enp0s3",
                              '@icon': "", "@canvas": "1", "@type": networksList[i]["type"],
                              "position": self.format_position()}}, short_empty_elements=True).replace(
                 '<?xml version="1.0" encoding="utf-8"?>\n', "")
@@ -283,49 +283,19 @@ class XmlHelper:
 
 test_input = {"name": "ScenarioA", #any name will do
               "networks":[
-                #   {"id": "12", # for all ids they must be greated than 10, this allows for at least 10 switches if we want more make sure the ids start with a larger number
-                #    "name": "Docker",
-                #    "type": "RJ45",
-                #    "mac": "aa:aa:aa:aa:aa:aa",
-                #    "ip": "10.10.10.10",
-                #    "ip4_mask": "24"},
+                  {"id": "12", # for all ids they must be greated than 10, this allows for at least 10 switches if we want more make sure the ids start with a larger number
+                   "name": "enp0s3",
+                   "type": "RJ45",
+                   "mac": "aa:aa:aa:aa:aa:aa",
+                   "ip": "172.19.203.120",
+                   "ip4_mask": "24"},
                   ],
               "devices":[ # Core would be of type PC
                   {"id": "14",
-                   "name": "n1s1",
+                   "name": "n1",
                    "type": "PC",
                    "mac": "aa:aa:aa:aa:aa:ac",
-                   "ip": "10.10.1.2",
-                   "ip4_mask": "24"},
-                   {"id": "15",
-                   "name": "n2s1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ae",
-                   "ip": "10.10.1.3",
-                   "ip4_mask": "24"},
-                    {"id": "16",
-                   "name": "n3s1",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:ad",
-                   "ip": "10.10.1.4",
-                   "ip4_mask": "24"},
-                   {"id": "17",
-                   "name": "n4s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:af",
-                   "ip": "10.10.2.2",
-                   "ip4_mask": "24"},
-                    {"id": "18",
-                   "name": "n5s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1c",
-                   "ip": "10.10.2.4",
-                   "ip4_mask": "24"},
-                   {"id": "19",
-                   "name": "n6s2",
-                   "type": "PC",
-                   "mac": "aa:aa:aa:aa:aa:1e",
-                   "ip": "10.10.2.3",
+                   "ip": "172.19.203.121",
                    "ip4_mask": "24"}
                   ]
               }
