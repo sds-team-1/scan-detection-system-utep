@@ -19,9 +19,12 @@ class SDSDatabaseHelper:
     mongo_client : MongoClient = None
 
 
-    def __init__(self, url:str = "mongodb://localhost:27017", db_name: str = 'SDS_DB'):
+    def __init__(self, url:str = DATABASE_URL , db_name: str = DATABASE_NAME):
         '''
-        Appends port number to url if it is not already there
+        Initializes the database helper and makes a connection to 
+        mongoDB with the provided url and database name.
+        Updates the workspaces_collection variable with the
+        workspaces collection from the database.
         '''
 
         self.DATABASE_URL = url
@@ -62,10 +65,20 @@ class SDSDatabaseHelper:
 
     def rename_workspace(self, workspace_name: str, new_name: str):
         '''
-        Renames a workspace
+        Renames a workspace, gets the workspace with the given name
+        and updates the name to the new name
         '''
         print(f'Renaming workspace {workspace_name} to {new_name}')
-        self.workspaces_collection.update_one({'_id': workspace_name}, {'$set': {'_id': new_name}})
+        # Get the old workspace
+        workspace:Workspace = self.get_workspace_by_id(workspace_name)
+        # Delete the old workspace
+        self.delete_workspace(workspace.name)
+        # Update the name and the _id
+        workspace.name = new_name
+        workspace._id = new_name
+        # Upload to db as new item
+        self.create_new_workspace_from_workspace_class(workspace)
+
 
     def create_new_workspace(self, workspace_name:str):
         '''
@@ -74,9 +87,17 @@ class SDSDatabaseHelper:
         print(f'Creating new workspace: {workspace_name}')
         self.workspaces_collection.insert_one({'_id': workspace_name, 'name': workspace_name, 'projects': []})
 
+    def create_new_workspace_from_workspace_class(self, workspace_obj:Workspace):
+        '''
+        Creates a new workspace with the given workspace object
+        used when importing or when renaming a workspace
+        '''
+        print(f'Creating new workspace: {workspace_obj.name}')
+        self.workspaces_collection.insert_one(workspace_obj.get_mongo_encoded_workspace())
+
     def update_workspace(self, workspace:Workspace):
         '''
-        Updates the workspace with the given name
+        Updates the workspace with the given workspace object
         '''
         print(vars(workspace))
         print("Saving workspace with name: " + workspace.name)

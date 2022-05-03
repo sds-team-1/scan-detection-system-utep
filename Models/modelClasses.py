@@ -5,6 +5,10 @@ class Workspace:
         self.projects:list = projects
 
     def get_mongo_encoded_workspace(self):
+        '''
+        Returns a dictionary that
+        can be understood by mongoDB
+        '''
         return {
             '_id': self._id,
             'name': self.name,
@@ -13,10 +17,16 @@ class Workspace:
     
     @staticmethod
     def create_workspace_from_mongo_encoded_workspace(mongo_encoded_workspace):
+        '''
+        Returns a Workspace object from a mongo_encoded_workspace (dictionary)
+        '''
         return Workspace(
             name=mongo_encoded_workspace['name'],
             projects=[Project.create_project_from_mongo_encoded_project(mongo_encoded_project) for mongo_encoded_project in mongo_encoded_workspace['projects']]
         )
+
+
+# The methods for the classes below have the same logic as the ones in the Workspace class
 
 class Project:
     def __init__(self, name: str, max_units: int, scenarios: list = []):
