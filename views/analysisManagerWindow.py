@@ -1,8 +1,9 @@
 import os
 import subprocess
+from typing import Counter
 # import qjsonmodel
 import numpy as np
-import platform
+import platform as plat
 from PyQt5 import QtCore, QtWidgets, Qt
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
 from scapy.all import *
@@ -10,6 +11,8 @@ from scapy.all import *
 from Models.capture import Capture
 from Models.pcap import Pcap
 
+global counter
+counter = 1
 
 class Ui_AnalysisManagerWindow(object):
 
@@ -590,23 +593,22 @@ class Ui_AnalysisManagerWindow(object):
     def openPacketJson(self, name):
         # Gets the path of the two 
         path = self.inputPcapsDirectory_analysisManagerWindow.text()
-        print(f'openPacketJson path {path}')
         packets = ''
         temp_cap = ''
         i_open_file = ''
         # Temporary pcap file. Remove if there is already one
         if os.path.exists("%s\\temp_cap.pcap" % path):
             os.remove("%s\\temp_cap.pcap" % path)
-        print(f'openPacketJson self.test_capture.pcaps {self.test_capture.pcaps}')
         # Iterate through each loaded pcap model objects
+        global counter
+        counter += 1
+        open_filename = f'{counter}.txt'
         for pcap in self.test_capture.pcaps:
             if pcap.name == name:
-                # 
                 packets = self.test_capture.iterate_file('', pcap.name)
                 temp_cap = PcapWriter("%s\\temp_cap.pcap" % path, append=True)
                 i_open_file = PcapReader(pcap.path)
                 packet = i_open_file.read_packet()
-                break
         for p in packets:
             packet = i_open_file.read_packet()
             if str(p.no) in self.selected_packets:
@@ -614,21 +616,19 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        open_filename = f'{name}.txt'
         f = open(open_filename, "w")
         f.write(output)
+        f.close()
         packets.close()
 
         # Open with the right editor by OS. 
-        the_os = str(platform)
+        the_os = plat.system()
         if the_os == 'Windows':
             os.system(f'{open_filename}')
         elif the_os == 'Darwin':
             os.system(f'open {open_filename} -a TextEdit &')
         else:
             os.system(f'gedit {open_filename} &')
-
-        
 
 
     # Creates new pcap file based on the selected packets
@@ -674,7 +674,6 @@ class Ui_AnalysisManagerWindow(object):
                 temp_cap = PcapWriter(path, append=True)
                 i_open_file = PcapReader(pcap.path)
                 packet = i_open_file.read_packet()
-                break
             else:
                 index += 1
         for p in packets:
