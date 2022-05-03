@@ -628,12 +628,7 @@ class Ui_AnalysisManagerWindow(object):
         else:
             os.system(f'gedit {open_filename} &')
 
-        msg = QMessageBox()
-        msg.setWindowTitle("Packet")
-        msg.setWindowModality(False)
-        msg.setWindowModality(False)
-
-        x = msg.exec()
+        
 
 
     # Creates new pcap file based on the selected packets
