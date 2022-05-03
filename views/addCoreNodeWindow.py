@@ -142,3 +142,6 @@ class Ui_addCoreNodes_window(object):
             ip=self.line_edit_ip.text(),
             core_listening=True
         )
+
+        # Add the core node to the scenario
+        add_node_function(selected_scenario_unit, core_node)
