@@ -755,6 +755,52 @@ class Ui_CaptureManagerWindow(object):
         addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
         addNode_Window.show()
 
+    def add_set_node_button_clicked(self):
+        # TODO: i dont think well have time but this checking
+        # if a scenario is selected is repeated multiple times
+        # make it into a function
+        # Check if scenario is selected
+        try:
+            selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+
+            # If there is no parent object in the tree, then the selected item is a project
+            if selected_item.parent() is None:
+                raise Exception()
+            
+            # If there is a parent object in the tree, then the selected item is a scenario
+            selected_scenario_project_name = selected_item.parent().text(0)
+            selected_scenario_name = selected_item.text(0)
+
+            # Get the scenario object
+            for project in self.workspace_object.projects:
+                if project.name == selected_scenario_project_name:
+                    for scenario in project.scenarios:
+                        if scenario.name == selected_scenario_name:
+                            selected_scenario:Scenario = scenario
+                            break
+                    break
+
+        except Exception:
+            # Show window that there is no scenario selected
+            error_message = QtWidgets.QMessageBox()
+            error_message.setText("Please select a scenario to add a node to!")
+            error_message.setIcon(QtWidgets.QMessageBox.Warning)
+            error_message.exec_()
+            return
+
+        
+        addSetNodes_Window = QtWidgets.QDialog()
+        addSetNodesWindowUI = Ui_addSetNodes_window()
+        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window, selected_scenario, self.add_set_nodes)
+        addSetNodes_Window.show()
+
+    def add_set_nodes(self, selected_scenario:Scenario, node_to_clone:Node, times_node_is_cloned:int):
+        print("add set nodes not yet implemented")
+
+    def close_workspace_button_clicked(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
+        capture_manager_window.close()
+        choose_workspace_window.show()
+
     def add_node(self, node:Node, selected_scenario):
         if node.type == 'PC':
             selected_scenario.devices.append(node)
@@ -774,16 +820,3 @@ class Ui_CaptureManagerWindow(object):
                                          node.type, node.name, node.mac, node.ip, 'No'])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
-
-
-    def add_set_node_button_clicked(self):
-        addSetNodes_Window = QtWidgets.QDialog()
-        addSetNodesWindowUI = Ui_addSetNodes_window()
-        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window,
-                                             self.q_tree_widget_projects_list, self.q_tree_widget_nodes_list,
-                                             self.ip_counter, self.MAC, self.id_counter)
-        addSetNodes_Window.show()
-
-    def close_workspace_button_clicked(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
-        capture_manager_window.close()
-        choose_workspace_window.show()
