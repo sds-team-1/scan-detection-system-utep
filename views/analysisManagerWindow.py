@@ -92,7 +92,6 @@ class Ui_AnalysisManagerWindow(object):
             self.CentralLayout_analysisManagerWindow)
         self.browsePcapsDirectory_analysisManagerWindow.setObjectName("browsePcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
-        #self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
         
         # Close Analysis Manager Button
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
@@ -171,8 +170,8 @@ class Ui_AnalysisManagerWindow(object):
             packets.close()
         except:
             msg = QMessageBox()
-            msg.setWindowTitle("Error")
-            msg.setText("Error iterating packets, please try again")
+            msg.setWindowTitle("Message")
+            msg.setText("Opening Pcap")
             x = msg.exec_()
 
     #saves a new pcap file with the included display filter
@@ -557,6 +556,7 @@ class Ui_AnalysisManagerWindow(object):
         filtered_file, _ = QFileDialog.getSaveFileName(
             self.convertPacketsButton_captureManagerWindow, "Save pcap file", '', "json Files (*.json)")
         if filtered_file:
+            print (self.test_capture.path + name)
             os.system('tshark -r %s -T json > %s' % (self.test_capture.path + name, filtered_file))
 
         pass
