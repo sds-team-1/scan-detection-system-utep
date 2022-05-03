@@ -678,9 +678,39 @@ class Ui_CaptureManagerWindow(object):
 
 
     def add_node_button_clicked(self):
+        # Check if scenario is selected
+        try:
+            selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
+
+            # If there is no parent object in the tree, then the selected item is a project
+            if selected_item.parent() is None:
+                raise Exception()
+            
+            # If there is a parent object in the tree, then the selected item is a scenario
+            selected_scenario_project_name = selected_item.parent().text(0)
+            selected_scenario_name = selected_item.text(0)
+
+            # Get the scenario object
+            for project in self.workspace_object.projects:
+                if project.name == selected_scenario_project_name:
+                    for scenario in project.scenarios:
+                        if scenario.name == selected_scenario_name:
+                            selected_scenario:Scenario = scenario
+                            break
+                    break
+
+        except Exception:
+            # Show window that there is no scenario selected
+            error_message = QtWidgets.QMessageBox()
+            error_message.setText("Please select a scenario to add a node to!")
+            error_message.setIcon(QtWidgets.QMessageBox.warning)
+            error_message.exec_()
+            return
+
+
         addNode_Window = QtWidgets.QDialog()
         addNodeWindowUI = Ui_addNode_window(self.workspace_object)
-        addNodeWindowUI.setupAddNode(addNode_Window, self, self.add_node)
+        addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
         addNode_Window.show()
 
     def add_node(node:Node):
