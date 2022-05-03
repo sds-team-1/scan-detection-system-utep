@@ -20,7 +20,7 @@ TODO: Use enums to keep track of capture controller
 '''
 class CaptureControllerService:
 
-    scenario_dict = None
+    scenario_dict:dict = None
 
     def __init__(self):
         self.state = "stopped"
@@ -53,7 +53,15 @@ class CaptureControllerService:
         print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
 
-        self.copy_from("pcaps", "/tmp/pcaps/*")
+        # self.copy_from("pcaps", "/tmp/pcaps/*")
+
+        # get the nodes object from scneario dict
+        nodes_array = self.scenario_dict["devices"]
+
+        # iterate through the nodes list and copy the pcaps using the name.pcap
+        for node in nodes_array:
+            self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}.pcap")
+
 
         # TODO: Fix this to get all the pcap files, use the tmp directory as mentioned by Dr.Acosta
         # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
