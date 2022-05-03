@@ -2,6 +2,7 @@ import os
 import subprocess
 # import qjsonmodel
 import numpy as np
+import platform
 from PyQt5 import QtCore, QtWidgets, Qt
 from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
 from scapy.all import *
@@ -608,14 +609,19 @@ class Ui_AnalysisManagerWindow(object):
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
         f = open("temp.json", "w")
         f.write(output)
-
         packets.close()
+
+        # Open with the right editor by OS. 
+        the_os = str(platform)
+        if the_os == 'windows':
+            os.system('temp.json')
+        else:
+            os.system(f'gedit temp.json &')
 
         msg = QMessageBox()
         msg.setWindowTitle("Packet")
         msg.setWindowModality(False)
         msg.setWindowModality(False)
-        #print(output)
 
         x = msg.exec()
 
