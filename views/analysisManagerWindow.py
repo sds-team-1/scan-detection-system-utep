@@ -74,6 +74,12 @@ class Ui_AnalysisManagerWindow(object):
         # Pcaps Directory Line Edit
         self.layoutPcapsDirectory_analysisManagerWindow = QtWidgets.QHBoxLayout()
         self.layoutPcapsDirectory_analysisManagerWindow.setObjectName("layoutPcapsDirectory_analysisManagerWindow")
+        
+        # Merge Button
+        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
+        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
+        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
+        
         self.inputPcapsDirectory_analysisManagerWindow = QtWidgets.QLineEdit(self.CentralLayout_analysisManagerWindow)
         self.inputPcapsDirectory_analysisManagerWindow.setObjectName("inputPcapsDirectory_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.inputPcapsDirectory_analysisManagerWindow)
@@ -85,14 +91,9 @@ class Ui_AnalysisManagerWindow(object):
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.browsePcapsDirectory_analysisManagerWindow)
         self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
         
-        # Merge Button
-        self.mergeButton_analysisManagerWindow = QtWidgets.QPushButton(self.CentralLayout_analysisManagerWindow)
-        self.mergeButton_analysisManagerWindow.setObjectName("mergeButton_analysisManagerWindow")
-        self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.mergeButton_analysisManagerWindow)
-
         # Close Analysis Manager Button
         self.closeAnalysisManager_analysisManagerWindow = QtWidgets.QPushButton(
-            self.CentralLayout_analysisManagerWindow)
+        self.CentralLayout_analysisManagerWindow)
         self.closeAnalysisManager_analysisManagerWindow.setObjectName("closeAnalysisManager_analysisManagerWindow")
         self.layoutPcapsDirectory_analysisManagerWindow.addWidget(self.closeAnalysisManager_analysisManagerWindow)
         self.upperLayout_analysisManagerWindow.addLayout(self.layoutPcapsDirectory_analysisManagerWindow)
