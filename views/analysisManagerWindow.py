@@ -599,14 +599,14 @@ class Ui_AnalysisManagerWindow(object):
         # subprocess.Popen(["wireshark", "-r", "temp_cap.pcap"])
         output = subprocess.getoutput('cd %s && tshark -r %s -l -n -T json' % (
         path, self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)))
-        open_filename = f'{name}.json'
+        open_filename = f'{name}.txt'
         f = open(open_filename, "w")
         f.write(output)
         packets.close()
 
         # Open with the right editor by OS. 
         the_os = str(platform)
-        if the_os == 'windows':
+        if the_os == 'Windows':
             os.system(f'{open_filename}')
         elif the_os == 'Darwin':
             os.system(f'openpath -a textedit {open_filename} &')
