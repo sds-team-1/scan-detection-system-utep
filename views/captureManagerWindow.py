@@ -12,6 +12,7 @@ from views.addCoreNodeWindow import Ui_addCoreNodes_window
 from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.addSetOfNodesWindow import Ui_addSetNodes_window
+from views.addVmNodeWindow import Ui_addVmNode_window
 
 import Database.DatabaseHelper
 
@@ -778,7 +779,10 @@ class Ui_CaptureManagerWindow(object):
             addCoreNodeWindow.show()
         elif ret == 1:
             # Add VM node
-            print("add vm clicked")
+            addVmNodeWindow = QtWidgets.QDialog()
+            addVmNodeWindowUI = Ui_addVmNode_window()
+            addVmNodeWindowUI.setupAddVMNode(addVmNodeWindow, selected_scenario_project_name, selected_scenario_name, self.add_vm_node)
+            addVmNodeWindow.show()
         else:
             # Cancel
             msgBox.destroy()
@@ -796,14 +800,30 @@ class Ui_CaptureManagerWindow(object):
                         for i in range(count):
                             # get copy of node
                             node_copy = node_to_add.get_copy_of_node()
-                            node_copy.id + "_" + str(i)
-                            node_copy.name + "_" + str(i)
+                            # append iterantio to .name and .id
+                            node_copy.name = node_copy.name + str(i)
+                            node_copy.id = node_copy.id + str(i)
+
                             selected_scenario.devices.append(node_copy)
                         break
                 break       
         
         self.render_nodes_in_node_tree(selected_scenario)
 
+
+    def add_vm_node(self, selected_project_name, selected_scenario_name, vm_to_add:Node):
+        for project in self.workspace_object.projects:
+            if project.name == selected_project_name:
+                for scenario in project.scenarios:
+                    if scenario.name == selected_scenario_name:
+                        selected_scenario:Scenario = scenario
+                        # get copy of node
+                        vm_copy = vm_to_add.get_copy_of_node()
+                        selected_scenario.networks.append(vm_copy)
+                        break
+                break
+        
+        self.render_nodes_in_node_tree(selected_scenario)
     def render_nodes_in_node_tree(self, selected_scenario:Scenario):
         '''
         For the scenario provided, this function will render the nodes in the node tree
@@ -813,7 +833,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.clear()
 
         for node in selected_scenario.networks:
-            node_item = QTreeWidgetItem([str(node.listening),
+            node_item = QTreeWidgetItem([str(node.core_listening),
                                          node.type, node.name, node.mac, node.ip, 'No'])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
