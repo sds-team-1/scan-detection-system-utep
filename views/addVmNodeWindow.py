@@ -9,7 +9,7 @@ class Ui_addVmNode_window(object):
 
     ip_counter = 0
     id_counter = 0
-    ID = str(random.randint(1000, 1000000))
+    ID = str(random.randint(11, 998))
     MAC = str(RandMac("00:00:00:00:00:00"))
 
     def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, add_vm_node_function):
@@ -185,7 +185,7 @@ class Ui_addVmNode_window(object):
         node_to_add = Node(
             self.line_edit_id.text(),
             self.line_edit_name.text(),
-            "VM",
+            "RJ45",
             self.line_edit_mac.text(),
             self.line_edit_ip.text(),
             "24",

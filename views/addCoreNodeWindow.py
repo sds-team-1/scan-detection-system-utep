@@ -9,7 +9,7 @@ class Ui_addCoreNodes_window(object):
 
     ip_counter = 0
     id_counter = 0
-    ID = str(random.randint(1000, 1000000))
+    ID = str(random.randint(11, 998))
     MAC = str(RandMac("00:00:00:00:00:00"))
 
     def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, create_new_nodes_function):
@@ -138,8 +138,8 @@ class Ui_addCoreNodes_window(object):
         nodes_list = []
 
         node_to_add = Node(
-                self.line_edit_id.text() + "_",
-                self.line_edit_name.text() + "_",
+                self.line_edit_id.text(),
+                self.line_edit_name.text(),
                 "PC",
                 mac=self.line_edit_mac.text(),
                 ip=self.line_edit_ip.text(),

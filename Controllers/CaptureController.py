@@ -52,10 +52,8 @@ class CaptureControllerService:
         '''
         print("Running CoreCleanup...")
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreCleanup.sh")
-        # Wait 10 seconds
-        for i in range(10):
-            print(f"Waiting 10 seconds -> {i} seconds")
-            time.sleep(1)
+
+        self.copy_from("pcaps", "/tmp/pcaps/*")
 
         # TODO: Fix this to get all the pcap files, use the tmp directory as mentioned by Dr.Acosta
         # self.copy_from("pcaps", "/home/ubuntu/core/Files/pcaps/hello1.pcap")
@@ -70,6 +68,22 @@ class CaptureControllerService:
 
         # Run the CoreStart.sh script
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
+
+        # wait 15 seconds for the core to start
+        for i in range(15):
+            print("Waiting for core to start..." + str(i))
+            time.sleep(1)
+
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/CopyServices.sh")
+
+        # wait 5 seconds for the core to start
+        for i in range(5):
+            print("Waiting for core to start..." + str(i))
+            time.sleep(1)
+
+        # Run the StartServices.sh script
+        self.run_command("bin/sh", "/home/ubuntu/core/Files/StartServices.sh")
+
 
         # Decide wether we need to wait or not
         # # wait 15 seconds
@@ -138,8 +152,7 @@ class CaptureControllerService:
         if self.state != "running":
             print("Cannot start, vm is not powered on")
             return
-        
-        topology_dict["name"] =  topology_dict["scenario_name"]
+    
 
         # if 'networks' key is not in the dict, set it to empty list
         if 'networks' not in topology_dict:

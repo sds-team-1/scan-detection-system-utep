@@ -198,6 +198,8 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
         self.q_tree_widget_nodes_list.headerItem().setText(4, "IP")
         self.q_tree_widget_nodes_list.headerItem().setText(5, "Scanner/Victim")
+        self.q_tree_widget_nodes_list.headerItem().setText(6, "ID")
+
 
 
         # Create a column and the scenario buttons row, the q tree widget and the row for the nodes buttons
@@ -694,10 +696,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_shutdown_vm.setEnabled(False)
 
     def stop_and_restore_scenario_button_clicked(self):
-        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
-        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
-        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
-        pass
+        self.capture_controller.core_cleanup()
 
     def start_services_button_clicked(self):
         pass
@@ -732,10 +731,17 @@ class Ui_CaptureManagerWindow(object):
             error_message.exec_()
             return
 
+
+        # write the scenario to a json file called current_scenario.json
+        with open("current_scenario.json", "w") as json_file:
+            json.dump(selected_scenario.get_mongo_encoded_scenario(), json_file)
+
         # Valid scenario selected
         print("run scenario with name " + selected_scenario.name)
         # TODO: implement scenario run
-        # self.capture_controller.run_scenario(selected_scenario)
+        self.capture_controller.core_start_from_dictionary(selected_scenario.get_mongo_encoded_scenario())
+
+
 
 
     def add_node_button_clicked(self):
@@ -805,8 +811,8 @@ class Ui_CaptureManagerWindow(object):
                             # get copy of node
                             node_copy = node_to_add.get_copy_of_node()
                             # append iterantio to .name and .id
-                            node_copy.name = node_copy.name + str(i)
                             node_copy.id = node_copy.id + str(i)
+                            node_copy.name = node_copy.name + str(i)
                             node_copy.mac = str(RandMac("00:00:00:00:00:00"))
 
                             # get the last part of the ip address
@@ -844,11 +850,11 @@ class Ui_CaptureManagerWindow(object):
 
         for node in selected_scenario.networks:
             node_item = QTreeWidgetItem([str(node.core_listening),
-                                         node.type, node.name, node.mac, node.ip, 'No'])
+                                         node.type, node.name, node.mac, node.ip, 'No', node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
         for node in selected_scenario.devices:
             node_item = QTreeWidgetItem([str(node.core_listening),
-                                         node.type, node.name, node.mac, node.ip, 'No'])
+                                         node.type, node.name, node.mac, node.ip, 'No', node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 

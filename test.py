@@ -1,5 +1,6 @@
 from randmac import RandMac
 
 macTemplate = "00:00:00:00:00:00"
-randomMAC = RandMac(macTemplate)
+randomMAC = str(RandMac(macTemplate))
+print(type(randomMAC))
 print(randomMAC)
