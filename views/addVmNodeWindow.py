@@ -2,14 +2,15 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 import random
 from Models.modelClasses import Scenario, Workspace, Node
-
+from randmac import RandMac
 import Database.DatabaseHelper
 
 class Ui_addVmNode_window(object):
 
     ip_counter = 0
     id_counter = 0
-    MAC = 0
+    ID = str(random.randint(1000, 1000000))
+    MAC = str(RandMac("00:00:00:00:00:00"))
 
     def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, add_vm_node_function):
         # Setup parent window
@@ -19,7 +20,6 @@ class Ui_addVmNode_window(object):
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
 
-
         # Label for ID
         self.label_id = QtWidgets.QLabel(parent_window)
         self.label_id.setGeometry(QtCore.QRect(10, 10, 100, 30))
@@ -28,7 +28,7 @@ class Ui_addVmNode_window(object):
         # Line edit for ID
         self.line_edit_id = QtWidgets.QLineEdit(parent_window)
         self.line_edit_id.setGeometry(QtCore.QRect(110, 10, 100, 30))
-        self.line_edit_id.setText("")
+        self.line_edit_id.setText(self.ID)
 
         # Row to hold ID
         self.row_id = QtWidgets.QHBoxLayout()
@@ -58,7 +58,7 @@ class Ui_addVmNode_window(object):
         # Line edit for MAC
         self.line_edit_mac = QtWidgets.QLineEdit(parent_window)
         self.line_edit_mac.setGeometry(QtCore.QRect(110, 90, 100, 30))
-        self.line_edit_mac.setText("")
+        self.line_edit_mac.setText(self.MAC)
 
         # Row to hold MAC
         self.row_mac = QtWidgets.QHBoxLayout()
@@ -182,11 +182,8 @@ class Ui_addVmNode_window(object):
     def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_vm_node_function):
         nodes_list = []
 
-        # make id random number between 10 and 10000
-        id = random.randint(10, 10000)
-
         node_to_add = Node(
-            id,
+            self.line_edit_id.text(),
             self.line_edit_name.text(),
             "VM",
             self.line_edit_mac.text(),

@@ -2,6 +2,10 @@ import json
 from logging.config import valid_ident
 import traceback
 
+
+import random
+from randmac import RandMac
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox, QPushButton
 from Models.modelClasses import Workspace, Project, Scenario, Node
@@ -803,6 +807,12 @@ class Ui_CaptureManagerWindow(object):
                             # append iterantio to .name and .id
                             node_copy.name = node_copy.name + str(i)
                             node_copy.id = node_copy.id + str(i)
+                            node_copy.mac = str(RandMac("00:00:00:00:00:00"))
+
+                            # get the last part of the ip address
+                            ip_address_parts = node_copy.ip.split(".")
+                            ip_address_parts[3] = str(int(ip_address_parts[3]) + i)
+                            node_copy.ip = ".".join(ip_address_parts)
 
                             selected_scenario.devices.append(node_copy)
                         break

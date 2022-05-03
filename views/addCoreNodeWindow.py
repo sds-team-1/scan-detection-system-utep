@@ -2,14 +2,15 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 
 from Models.modelClasses import Scenario, Workspace, Node
-
-import Database.DatabaseHelper
+import random
+from randmac import RandMac
 
 class Ui_addCoreNodes_window(object):
 
     ip_counter = 0
     id_counter = 0
-    MAC = 0
+    ID = str(random.randint(1000, 1000000))
+    MAC = str(RandMac("00:00:00:00:00:00"))
 
     def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, create_new_nodes_function):
         # Setup parent window
@@ -28,7 +29,7 @@ class Ui_addCoreNodes_window(object):
         # Line edit for ID
         self.line_edit_id = QtWidgets.QLineEdit(parent_window)
         self.line_edit_id.setGeometry(QtCore.QRect(110, 10, 100, 30))
-        self.line_edit_id.setText("")
+        self.line_edit_id.setText(self.ID)
 
         # Row to hold ID
         self.row_id = QtWidgets.QHBoxLayout()
@@ -58,7 +59,7 @@ class Ui_addCoreNodes_window(object):
         # Line edit for MAC
         self.line_edit_mac = QtWidgets.QLineEdit(parent_window)
         self.line_edit_mac.setGeometry(QtCore.QRect(110, 90, 100, 30))
-        self.line_edit_mac.setText("")
+        self.line_edit_mac.setText(self.MAC)
 
         # Row to hold MAC
         self.row_mac = QtWidgets.QHBoxLayout()
