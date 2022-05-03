@@ -607,6 +607,8 @@ class Ui_AnalysisManagerWindow(object):
         the_os = str(platform)
         if the_os == 'windows':
             os.system('temp.json')
+        elif the_os == 'Darwin':
+            os.system('temp.json')
         else:
             os.system(f'gedit temp.json &')
 
