@@ -2,6 +2,10 @@ import json
 from logging.config import valid_ident
 import traceback
 
+
+import random
+from randmac import RandMac
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox, QPushButton
 from Models.modelClasses import Workspace, Project, Scenario, Node
@@ -12,6 +16,7 @@ from views.addCoreNodeWindow import Ui_addCoreNodes_window
 from views.newProjectWindow import Ui_newProject_window
 from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
 from views.addSetOfNodesWindow import Ui_addSetNodes_window
+from views.addVmNodeWindow import Ui_addVmNode_window
 
 import Database.DatabaseHelper
 
@@ -130,7 +135,7 @@ class Ui_CaptureManagerWindow(object):
         # TODO: it is not good ui design to have this button next to the other buttons, perhaps put it somewhere else
         self.q_button_close_workspace_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
         self.q_button_close_workspace_button.setObjectName("closeWorkspaceButton_captureManagerWindow")
-        self.q_button_close_workspace_button.setText("Close workspace button")
+        self.q_button_close_workspace_button.setText("Close Capture Manager")
         
         # Spacer item
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -150,15 +155,15 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_scenario_buttons_row.addItem(spacerItem1)
 
 
-        # Label for scenario status
-        self.q_label_scenario_status_label = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.q_label_scenario_status_label.setObjectName("scenarioStatusLabel_captureManagerWindow")
-        self.q_label_scenario_status_label.setText("Scenario Status:")
+        # # Label for scenario status
+        # self.q_label_scenario_status_label = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        # self.q_label_scenario_status_label.setObjectName("scenarioStatusLabel_captureManagerWindow")
+        # self.q_label_scenario_status_label.setText("Scenario Status:")
 
-        # Label to hold the value of the scenario status
-        self.q_label_scenario_status_value = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
-        self.q_label_scenario_status_value.setObjectName("scenarioStatus_captureManagerWindow")
-        self.q_label_scenario_status_value.setText("This is the text area for holding the value of the scenario status")
+        # # Label to hold the value of the scenario status
+        # self.q_label_scenario_status_value = QtWidgets.QLabel(self.CentralLayout_captureManagerWindow)
+        # self.q_label_scenario_status_value.setObjectName("scenarioStatus_captureManagerWindow")
+        # self.q_label_scenario_status_value.setText("This is the text area for holding the value of the scenario status")
 
         # Spacer item
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -177,8 +182,8 @@ class Ui_CaptureManagerWindow(object):
         # Set up a row to hold the label for scenario status and the add node/ set nodes buttons
         self.q_row_buttons_node_buttons = QtWidgets.QHBoxLayout()
         self.q_row_buttons_node_buttons.setObjectName("nodeLayout_captureManagerWindow")
-        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
-        self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
+        # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
+        # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
         self.q_row_buttons_node_buttons.addItem(spacerItem2)
         self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
         #self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
@@ -187,12 +192,13 @@ class Ui_CaptureManagerWindow(object):
         # Q tree widget for holding nodes
         self.q_tree_widget_nodes_list = QtWidgets.QTreeWidget(self.CentralLayout_captureManagerWindow)
         self.q_tree_widget_nodes_list.setObjectName("nodesList_captureManagerWindow")
-        self.q_tree_widget_nodes_list.headerItem().setText(0, "Log Net Traffic")
+        self.q_tree_widget_nodes_list.headerItem().setText(0, "Running tcpdump")
         self.q_tree_widget_nodes_list.headerItem().setText(1, "Type")
         self.q_tree_widget_nodes_list.headerItem().setText(2, "Name")
         self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
         self.q_tree_widget_nodes_list.headerItem().setText(4, "IP")
-        self.q_tree_widget_nodes_list.headerItem().setText(5, "Scanner/Victim")
+        self.q_tree_widget_nodes_list.headerItem().setText(5, "ID")
+
 
 
         # Create a column and the scenario buttons row, the q tree widget and the row for the nodes buttons
@@ -308,7 +314,6 @@ class Ui_CaptureManagerWindow(object):
         Triggered when the user left clicks on a project or a scenario unit
         populates the nodes list with the nodes of the selected project or scenario unit
         '''
-
         try:
             # Get the selected item
             selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
@@ -324,46 +329,31 @@ class Ui_CaptureManagerWindow(object):
     
     def on_scenario_unit_left_clicked(self, selected_scenario_item:QTreeWidgetItem):
         print("scenario unit left clicked " + selected_scenario_item.text(0))
-        
-        pass
+
+        # get the project name
+        project_name = selected_scenario_item.parent().text(0)
+
+        # get the scenario name
+        scenario_name = selected_scenario_item.text(0)
+
+
+        print("project name: " + project_name)
+        print("scenario name: " + scenario_name)
+
+        # load the scenario
+        for project in self.workspace_object.projects:
+            if project.name == project_name:
+                for scenario in project.scenarios:
+                    if scenario.name == scenario_name:
+                        self.render_nodes_in_node_tree(scenario)
+                        print("found scenario with amount of nodes: " + str(len(scenario.devices)))
+                        return
 
     def on_project_left_clicked(self, selected_project_item:QTreeWidgetItem):
+        # idk what to do here so we just print
         print("project item left clicked " + selected_project_item.text(0))
-        # print(f'checking if item_project_selected went inside')
-        # Clear the window
-        self.q_tree_widget_nodes_list.clear()
-        # if self.projectsList_captureManagerWindow.selectedItems()[0].parent() is None:
-        #     # This condition is for projects. Works with the project list which...
-        #     # contains projects and scenarios
-        #     # TODO: Check add node button(I was not able to create a project)
-        #     self.exportButton_captureManagerWindow.setEnabled(True)
-        #     self.addNodeButton_captureManagerWindow.setEnabled(False)
-        #     self.addSetNodeButton_captureManagerWindow.setEnabled(False)
-        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(False)
-        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(False)
-        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(False)
-        # else:
-        #     # print(f'checking if else checked')
-        #     self.exportButton_captureManagerWindow.setEnabled(False)
-        #     self.addNodeButton_captureManagerWindow.setEnabled(True)
-        #     self.addSetNodeButton_captureManagerWindow.setEnabled(True)
-        #     # self.startVirtualMachineButton_captureManagerWindow.setEnabled(True)
-        #     # self.stopScenarioButton_captureManagerWindow.setEnabled(True)
-        #     # self.restoreScenarioButton_captureManagerWindow.setEnabled(True)
-        #     # Get all the nodes
-
-
-        # scenario_ID = self.projectsList_captureManagerWindow.selectedItems()[0].text(0)
-        # print(f'checking scenario id: {scenario_ID}')
-    
-        #        captureManagerWindowUI.vmSdsServiceInput_captureManagerWindow.setText(vm_ip)
-        #       captureManagerWindowUI.dockerSdsServiceInput_captureManagerWindow.setText(docker_ip)
-        # print(f'checking if nodes list is anything: {node_list}')
-        # Insert all the nodes into the UI
-
-
-        self.q_tree_widget_nodes_list.header().setSectionResizeMode(
-            QtWidgets.QHeaderView.ResizeToContents)
+        return
+        
 
     # Q tree widget projects list right clicked functions
     def projects_tree_widget_right_clicked(self, point):
@@ -376,7 +366,6 @@ class Ui_CaptureManagerWindow(object):
 
         if not index.isValid():
             return
-
 
         item = self.q_tree_widget_projects_list.itemAt(point)
         # If the item has a parent it is a scenario
@@ -500,7 +489,7 @@ class Ui_CaptureManagerWindow(object):
             with open(json_path[0]) as json_file:
                 project = json.load(json_file)
                 # Check if the fields are valid
-                if project['name'] == '' or project['max_units'] < 1 or len(project['scenarios']) > 0 or len(project.keys()) != 3:
+                if project['name'] == '' or project['max_units'] < 1 or len(project.keys()) != 3:
                     raise Exception
                 project_model = Project.create_project_from_mongo_encoded_project(project)
                 self.workspace_object.projects.append(project_model)
@@ -577,7 +566,8 @@ class Ui_CaptureManagerWindow(object):
         for project in self.workspace_object.projects:
             if project.name == project_name:
                 # Start the UI dialog
-                selected_project = project
+                selected_project:Project = project
+                break
 
         newScenarioUnit_Window = QtWidgets.QDialog()
         newScenarioUnitWindowUI = Ui_newScenarioUnit_window()
@@ -589,7 +579,7 @@ class Ui_CaptureManagerWindow(object):
         Called from the UI dialog when the user clicks the create scenario unit button
         Creates a new scenario unit and adds it to the project
         '''
-        project.scenarios.append(Scenario(scenario_name))
+        project.scenarios.append(Scenario(scenario_name, [], []))
         self.render_projects_in_project_tree()
 
     def edit_scenario_unit_name_clicked(self, parent_project_name:str, selected_scenario_unit_name:str):
@@ -657,6 +647,8 @@ class Ui_CaptureManagerWindow(object):
                             self.render_projects_in_project_tree()
                             break
                     break
+            # clear the nodes list
+            self.q_tree_widget_nodes_list.clear()
 
 
     def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
@@ -705,10 +697,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_shutdown_vm.setEnabled(False)
 
     def stop_and_restore_scenario_button_clicked(self):
-        # self.vmSdsServiceInput_captureManagerWindow.setEnabled(True)
-        # self.dockerSdsServiceInput_captureManagerWindow.setEnabled(True)
-        # self.runScenarioButton_captureManagerWindow.setEnabled(True)
-        pass
+        self.capture_controller.core_cleanup()
 
     def start_services_button_clicked(self):
         pass
@@ -743,10 +732,17 @@ class Ui_CaptureManagerWindow(object):
             error_message.exec_()
             return
 
+
+        # write the scenario to a json file called current_scenario.json
+        with open("current_scenario.json", "w") as json_file:
+            json.dump(selected_scenario.get_mongo_encoded_scenario(), json_file)
+
         # Valid scenario selected
         print("run scenario with name " + selected_scenario.name)
         # TODO: implement scenario run
-        # self.capture_controller.run_scenario(selected_scenario)
+        self.capture_controller.core_start_from_dictionary(selected_scenario.get_mongo_encoded_scenario())
+
+
 
 
     def add_node_button_clicked(self):
@@ -762,15 +758,6 @@ class Ui_CaptureManagerWindow(object):
             selected_scenario_project_name = selected_item.parent().text(0)
             selected_scenario_name = selected_item.text(0)
 
-            # Get the scenario object
-            for project in self.workspace_object.projects:
-                if project.name == selected_scenario_project_name:
-                    for scenario in project.scenarios:
-                        if scenario.name == selected_scenario_name:
-                            selected_scenario:Scenario = scenario
-                            break
-                    break
-
         except Exception:
             # Show window that there is no scenario selected
             error_message = QtWidgets.QMessageBox()
@@ -779,16 +766,10 @@ class Ui_CaptureManagerWindow(object):
             error_message.exec_()
             return
 
-        # addNode_Window = QtWidgets.QDialog()
-        # addNodeWindowUI = Ui_addNode_window()
-        # addNodeWindowUI.setupAddNode(addNode_Window, selected_scenario, self.add_node)
-        # addNode_Window.show()
-
         # Open up a context menu with 3 options
         # 1. Add VM
         # 2. Add Core Node
         # 3. Cancel
-
 
         # Create a message with the 3 options
         msgBox = QMessageBox()
@@ -797,81 +778,69 @@ class Ui_CaptureManagerWindow(object):
         msgBox.addButton(QPushButton('Add VM Node'), QMessageBox.NoRole) # ret is 1
         msgBox.addButton(QPushButton('Cancel'), QMessageBox.RejectRole) # ret is 2
         ret = msgBox.exec_()
+
+        print("Selected option scenario name " + selected_scenario_name)
+        print("selected project name " + selected_scenario_project_name)
         
         if ret == 0:
             # Add core node
             addCoreNodeWindow = QtWidgets.QDialog()
             addCoreNodeWindowUI = Ui_addCoreNodes_window()
-            addCoreNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow, selected_scenario, self.add_core_node)
+            addCoreNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow, selected_scenario_project_name, selected_scenario_name, self.add_nodes)
             addCoreNodeWindow.show()
         elif ret == 1:
             # Add VM node
-            print("add vm clicked")
+            addVmNodeWindow = QtWidgets.QDialog()
+            addVmNodeWindowUI = Ui_addVmNode_window()
+            addVmNodeWindowUI.setupAddVMNode(addVmNodeWindow, selected_scenario_project_name, selected_scenario_name, self.add_vm_node)
+            addVmNodeWindow.show()
         else:
             # Cancel
             msgBox.destroy()
     
-
-    def add_core_node(self, scenario:Scenario, node:Node):
-        print("adding core node")
-        scenario.devices.append(node)
-        self.render_nodes_in_node_tree(scenario)
-
-
-    def add_set_node_button_clicked(self):
-        # TODO: i dont think well have time but this checking
-        # if a scenario is selected is repeated multiple times
-        # make it into a function
-        # Check if scenario is selected
-        try:
-            selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
-
-            # If there is no parent object in the tree, then the selected item is a project
-            if selected_item.parent() is None:
-                raise Exception()
-            
-            # If there is a parent object in the tree, then the selected item is a scenario
-            selected_scenario_project_name = selected_item.parent().text(0)
-            selected_scenario_name = selected_item.text(0)
-
-            # Get the scenario object
-            for project in self.workspace_object.projects:
-                if project.name == selected_scenario_project_name:
-                    for scenario in project.scenarios:
-                        if scenario.name == selected_scenario_name:
-                            selected_scenario:Scenario = scenario
-                            break
-                    break
-
-        except Exception:
-            # Show window that there is no scenario selected
-            error_message = QtWidgets.QMessageBox()
-            error_message.setText("Please select a scenario to add a node to!")
-            error_message.setIcon(QtWidgets.QMessageBox.Warning)
-            error_message.exec_()
-            return
-
-        
-        addSetNodes_Window = QtWidgets.QDialog()
-        addSetNodesWindowUI = Ui_addSetNodes_window()
-        addSetNodesWindowUI.setupAddSetNodes(addSetNodes_Window, selected_scenario, self.add_set_nodes)
-        addSetNodes_Window.show()
-
-    def add_set_nodes(self, selected_scenario:Scenario, node_to_clone:Node, times_node_is_cloned:int):
-        print("add set nodes not yet implemented")
-
     def close_workspace_button_clicked(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
         capture_manager_window.close()
         choose_workspace_window.show()
 
-    def add_node(self, node:Node, selected_scenario):
-        if node.type == 'PC':
-            selected_scenario.devices.append(node)
-        if node.type == 'RJ45':
-            selected_scenario.networks.append(node)
+    def add_nodes(self, selected_project_name, selected_scenario_name, node_to_add:Node, count:int):
+        for project in self.workspace_object.projects:
+            if project.name == selected_project_name:
+                for scenario in project.scenarios:
+                    if scenario.name == selected_scenario_name:
+                        selected_scenario:Scenario = scenario
+                        for i in range(count):
+                            # get copy of node
+                            node_copy = node_to_add.get_copy_of_node()
+                            # append iterantio to .name and .id
+                            node_copy.id = node_copy.id + str(i)
+                            node_copy.name = node_copy.name + str(i)
+                            node_copy.mac = str(RandMac("00:00:00:00:00:00"))
+
+                            # get the last part of the ip address
+                            ip_address_parts = node_copy.ip.split(".")
+                            ip_address_parts[3] = str(int(ip_address_parts[3]) + i)
+                            node_copy.ip = ".".join(ip_address_parts)
+
+                            selected_scenario.devices.append(node_copy)
+                        break
+                break       
         
         self.render_nodes_in_node_tree(selected_scenario)
 
+
+    def add_vm_node(self, selected_project_name, selected_scenario_name, vm_to_add:Node):
+        for project in self.workspace_object.projects:
+            if project.name == selected_project_name:
+                for scenario in project.scenarios:
+                    if scenario.name == selected_scenario_name:
+                        selected_scenario:Scenario = scenario
+                        # get copy of node
+                        vm_copy = vm_to_add.get_copy_of_node()
+                        selected_scenario.networks.append(vm_copy)
+                        break
+                break
+        
+        self.render_nodes_in_node_tree(selected_scenario)
     def render_nodes_in_node_tree(self, selected_scenario:Scenario):
         '''
         For the scenario provided, this function will render the nodes in the node tree
@@ -879,14 +848,16 @@ class Ui_CaptureManagerWindow(object):
 
         # Clear the node tree
         self.q_tree_widget_nodes_list.clear()
-        
+
         for node in selected_scenario.networks:
-            node_item = QTreeWidgetItem([str(node.listening),
-                                         node.type, node.name, node.mac, node.ip, 'No'])
+            is_tcp_running = "No"
+            node_item = QTreeWidgetItem([is_tcp_running,
+                                         node.type, node.name, node.mac, node.ip, node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
         for node in selected_scenario.devices:
-            node_item = QTreeWidgetItem([str(node.core_listening),
-                                         node.type, node.name, node.mac, node.ip, 'No'])
+            is_tcp_running = "Yes"
+            node_item = QTreeWidgetItem([is_tcp_running,
+                                         node.type, node.name, node.mac, node.ip, node.id])
             self.q_tree_widget_nodes_list.addTopLevelItem(node_item)
 
