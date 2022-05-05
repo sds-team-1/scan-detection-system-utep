@@ -12,15 +12,6 @@ databaseConfig_Window = QtWidgets.QDialog()
 databaseConfigWindowUI = Ui_databaseConfig_window()
 databaseConfigWindowUI.setupDatabaseConfig(databaseConfig_Window)
 
-# Commenting out for now to prevent dependencies
-# with open('conf/db_config.json') as mongo_ip_file:
-#     database_ip_dict = json.load(mongo_ip_file)
-#     ip = database_ip_dict['ip']
-#     databaseConfigWindowUI.databaseConfigIPInput_databaseConfigWindow.setText(ip)
-#     port = database_ip_dict['port']
-#     databaseConfigWindowUI.databaseConfigPortInput_databaseConfigWindow.setText(port)
-
-
 # Use the deaults to autofill the input boxes
 
 databaseConfig_Window.show()
