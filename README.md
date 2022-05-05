@@ -92,10 +92,13 @@ One database and several collections need to be created.
 `use SDS_DB`
 
 ### install virtualbox for python3
+
 Taken from here
+
 https://stackoverflow.com/questions/44477318/is-it-possible-to-use-the-python3-bindings-for-virtualbox
 
 Download the virtual box sdk here
+
 https://www.virtualbox.org/wiki/Downloads
 
 Next unzip the file and open a vscode in the unzipped files directory
