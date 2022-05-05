@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
+from PyQt5.QtWidgets import QListWidgetItem, QLabel, QComboBox
 
 from Models.modelClasses import Scenario, Workspace, Node
 import random
@@ -92,6 +93,14 @@ class Ui_addCoreNodes_window(object):
         self.spin_box_number_of_nodes.setMinimum(1)
         self.spin_box_number_of_nodes.setMaximum(100)
         self.spin_box_number_of_nodes.setValue(1)
+
+        # List Widget for end condition
+        self.end_cond_combo= QtWidgets.QComboBox(parent_window)
+        self.end_cond_combo.setGeometry(20, 30, 150, 60)
+        # List of options
+        self.end_cond_combo.addItem('Time')
+        self.label_end_cond = QLabel("End Condition", parent_window)
+        self.label_end_cond.setGeometry(QtCore.QRect(110, 170, 100, 30))
 
         # Row to hold number of nodes to add
         self.row_number_of_nodes = QtWidgets.QHBoxLayout()

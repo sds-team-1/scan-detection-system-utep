@@ -785,7 +785,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Create a message with the 3 options
         msgBox = QMessageBox()
-        msgBox.setText('What to do?')
+        msgBox.setText('Please select your type of Node.')
         msgBox.addButton(QPushButton('Add Core Node'), QMessageBox.YesRole) # ret is 0
         msgBox.addButton(QPushButton('Add VM Node'), QMessageBox.NoRole) # ret is 1
         msgBox.addButton(QPushButton('Cancel'), QMessageBox.RejectRole) # ret is 2
