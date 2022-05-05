@@ -4,6 +4,7 @@ import traceback
 
 
 import random
+from typing import List
 from randmac import RandMac
 
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -820,6 +821,12 @@ class Ui_CaptureManagerWindow(object):
                 for scenario in project.scenarios:
                     if scenario.name == selected_scenario_name:
                         selected_scenario:Scenario = scenario
+                        scanning_devices: List = [d.vm_binary_path != '' for d in selected_scenario.devices]
+                        scanning_networks: List = [n.vm_binary_path != '' for n in selected_scenario.networks]
+                        if not scanning_devices and not scanning_networks:
+                            return False
+                        del scanning_devices
+                        del scanning_networks
                         for i in range(count):
                             # get copy of node
                             node_copy = node_to_add.get_copy_of_node()
@@ -838,6 +845,7 @@ class Ui_CaptureManagerWindow(object):
                 break       
         
         self.render_nodes_in_node_tree(selected_scenario)
+        return True
 
 
     def add_vm_node(self, selected_project_name, selected_scenario_name, vm_to_add:Node):

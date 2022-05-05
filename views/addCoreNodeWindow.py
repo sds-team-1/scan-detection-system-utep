@@ -94,14 +94,6 @@ class Ui_addCoreNodes_window(object):
         self.spin_box_number_of_nodes.setMaximum(100)
         self.spin_box_number_of_nodes.setValue(1)
 
-        # List Widget for end condition
-        self.end_cond_combo= QtWidgets.QComboBox(parent_window)
-        self.end_cond_combo.setGeometry(20, 30, 150, 60)
-        # List of options
-        self.end_cond_combo.addItem('Time')
-        self.label_end_cond = QLabel("End Condition", parent_window)
-        self.label_end_cond.setGeometry(QtCore.QRect(110, 170, 100, 30))
-
         # Row to hold number of nodes to add
         self.row_number_of_nodes = QtWidgets.QHBoxLayout()
         self.row_number_of_nodes.addWidget(self.label_number_of_nodes)
@@ -159,6 +151,12 @@ class Ui_addCoreNodes_window(object):
         print("selected_scenario_unit_name:", selected_scenario_unit_name)
 
         # Add the core node to the scenario
-        add_nodes_function(selected_project_name, selected_scenario_unit_name, node_to_add, self.spin_box_number_of_nodes.value())
+        success: bool = add_nodes_function(selected_project_name, selected_scenario_unit_name, node_to_add, self.spin_box_number_of_nodes.value())
+        if not success:
+            node_insert_error = QtWidgets.QMessageBox()
+            node_insert_error.setText("You must first add a scanning node to add a victim node!")
+            node_insert_error.setIcon(QtWidgets.QMessageBox.Warning)
+            node_insert_error.exec_()
+            return
 
         parent_window.destroy()
