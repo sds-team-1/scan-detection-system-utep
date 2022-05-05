@@ -275,10 +275,16 @@ class Ui_choose_workspace_window(object):
                     error_message.exec_()
                     valid_input = False
                     new_q_dialog.destroy()
+                if len(new_name) < 1:
+                    # Show error message
+                    error_message = QtWidgets.QMessageBox()
+                    error_message.setText("Project name cannot be empty!")
+                    error_message.exec_()
+                    valid_input = False
+                    new_q_dialog.destroy()
                 else:
                     # break from while loop
                     valid_input = True
-            
             else:
                 valid_input = True
                 return
