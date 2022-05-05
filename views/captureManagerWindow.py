@@ -525,6 +525,12 @@ class Ui_CaptureManagerWindow(object):
                         break
                     else:
                         valid_input = True
+                if len(new_name) < 1:
+                    error_message = QtWidgets.QMessageBox()
+                    error_message.setText('Project name cannot be empty!')
+                    error_message.exec_()
+                    valid_input = False
+                    new_q_dialog.close()
             else:
                 valid_input = True
                 return
@@ -611,6 +617,12 @@ class Ui_CaptureManagerWindow(object):
                         # IF this is reached, the scenario unit name is not taken
                         else:
                             valid_input = True
+                if len(new_name) < 1:
+                    error_message = QtWidgets.QMessageBox()
+                    error_message.setText('Scenario Unit name cannot be empty!')
+                    error_message.exec_()
+                    valid_input = False
+                    editBox.close()
             else:
                 valid_input = True
                 return
