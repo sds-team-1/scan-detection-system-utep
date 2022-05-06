@@ -1,25 +1,20 @@
 import json
-from logging.config import valid_ident
-import traceback
-
-
 import random
 from typing import List
-from randmac import RandMac
-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox, QPushButton
-from Models.modelClasses import Workspace, Project, Scenario, Node
-
-from Controllers.CaptureController import CaptureControllerService
-
-from views.addCoreNodeWindow import Ui_addCoreNodes_window
-from views.newProjectWindow import Ui_newProject_window
-from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
-from views.addSetOfNodesWindow import Ui_addSetNodes_window
-from views.addVmNodeWindow import Ui_addVmNode_window
 
 import Database.DatabaseHelper
+from Controllers.CaptureController import CaptureControllerService
+from Models.modelClasses import Node, Project, Scenario, Workspace
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import (QAction, QDialog, QFileDialog, QMainWindow,
+                             QMessageBox, QPushButton, QTreeWidgetItem)
+from randmac import RandMac
+
+from views.addCoreNodeWindow import Ui_addCoreNodes_window
+from views.addVmNodeWindow import Ui_addVmNode_window
+from views.newProjectWindow import Ui_newProject_window
+from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
+
 
 class Ui_CaptureManagerWindow(object):
     
@@ -279,13 +274,6 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_add_node.clicked.connect(self.add_node_button_clicked)
         #self.q_button_add_set_of_victim_nodes.clicked.connect(self.add_set_node_button_clicked)
 
-
-        # This doesnt work, idk why
-        # What i thought this was for is to show the choose workspace window
-        # when the user clicks on the close window button (not the close button defined above)
-        # instead it just ends the program lmao
-        # parent_window.closeEvent = choose_workspace_parent_window.show()
-
         # Lastly we populate the projects list
         self.render_projects_in_project_tree()
 
@@ -376,6 +364,10 @@ class Ui_CaptureManagerWindow(object):
             self.on_project_left_clicked(selected_item)
     
     def on_scenario_unit_left_clicked(self, selected_scenario_item:QTreeWidgetItem):
+        '''
+        Triggered when the user left clicks on a scenario unit.
+        Finds the scenario unit and populates the nodes list with the nodes of the selected scenario unit
+        '''
         print("scenario unit left clicked " + selected_scenario_item.text(0))
 
         # get the project name
@@ -398,7 +390,9 @@ class Ui_CaptureManagerWindow(object):
                         return
 
     def on_project_left_clicked(self, selected_project_item:QTreeWidgetItem):
-        # idk what to do here so we just print
+        '''
+        Triggered when the user left clicks on a project.
+        '''
         print("project item left clicked " + selected_project_item.text(0))
         return
         
@@ -428,7 +422,6 @@ class Ui_CaptureManagerWindow(object):
         show options for addings a scenario, renaming the project
         or deleting the project
         '''
-        # TODO: finish load scenario unit
         item = self.q_tree_widget_projects_list.itemAt(point)
         name = item.text(0)
 
@@ -742,27 +735,41 @@ class Ui_CaptureManagerWindow(object):
 
             return
 
-    
-
     # Capture controller functions
     def start_vm_button_clicked(self):
+        '''
+        Triggered when user clicks on the start vm button,
+        calls the start vm function from the capture controller service
+        '''
         self.capture_controller.start_vm()
         self.q_button_start_vm.setEnabled(False)
         self.q_button_shutdown_vm.setEnabled(True)
 
     def shut_down_vm_button_clicked(self):
+        '''
+        Triggered when user clicks on the shut down vm button,
+        calls the shut down vm function from the capture controller service
+        '''
         print("shutdown virtual machine")
         self.capture_controller.shutdown_vm()
         self.q_button_start_vm.setEnabled(True)
         self.q_button_shutdown_vm.setEnabled(False)
 
     def stop_and_restore_scenario_button_clicked(self):
+        '''
+        Triggered when user clicks on the stop and restore scenario button,
+        calls the core_cleanup function from the capture controller service
+        '''
         self.capture_controller.core_cleanup()
 
     def start_services_button_clicked(self):
         pass
 
     def run_scenario_button_clicked(self):
+        '''
+        Triggered when user clicks on the run scenario button,
+        calls the core_start function from the capture controller service
+        '''
         # Check if scenario is selected
         try:
             selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
@@ -799,13 +806,18 @@ class Ui_CaptureManagerWindow(object):
 
         # Valid scenario selected
         print("run scenario with name " + selected_scenario.name)
-        # TODO: implement scenario run
+
         self.capture_controller.core_start_from_dictionary(selected_scenario.get_mongo_encoded_scenario())
 
 
 
 
     def add_node_button_clicked(self):
+        '''
+        Triggered when user clicks on the add node button,
+        Ensures that a scenario is selected,
+        then shows the add node dialog
+        '''
         # Check if scenario is selected
         try:
             selected_item = self.q_tree_widget_projects_list.selectedItems()[0]
@@ -833,7 +845,7 @@ class Ui_CaptureManagerWindow(object):
 
         # Create a message with the 3 options
         msgBox = QMessageBox()
-        msgBox.setText('Please select your type of Node.')
+        msgBox.setText('Select the type of node to add')
         msgBox.addButton(QPushButton('Add Core Node'), QMessageBox.YesRole) # ret is 0
         msgBox.addButton(QPushButton('Add VM Node'), QMessageBox.NoRole) # ret is 1
         msgBox.addButton(QPushButton('Cancel'), QMessageBox.RejectRole) # ret is 2
@@ -859,10 +871,18 @@ class Ui_CaptureManagerWindow(object):
             msgBox.destroy()
     
     def close_workspace_button_clicked(self, capture_manager_window:QMainWindow, choose_workspace_window:QDialog):
+        '''
+        Triggered when user clicks on the close workspace button,
+        closes the workspace and opens the choose workspace window
+        '''
         capture_manager_window.close()
         choose_workspace_window.show()
 
     def add_nodes(self, selected_project_name, selected_scenario_name, node_to_add:Node, count:int):
+        '''
+        Triggered when user clicks on the add node button (from the addCoreNodeWindow),
+        receives the project and selected scenario name to add the node to, adds 'count' amount of nodes to the scenario
+        '''
         for project in self.workspace_object.projects:
             if project.name == selected_project_name:
                 for scenario in project.scenarios:
@@ -896,6 +916,10 @@ class Ui_CaptureManagerWindow(object):
 
 
     def add_vm_node(self, selected_project_name, selected_scenario_name, vm_to_add:Node):
+        '''
+        Triggered when user clicks on the add node button (from the addVmNodeWindow),
+        receives the project and selected scenario name to add the node to.
+        '''
         for project in self.workspace_object.projects:
             if project.name == selected_project_name:
                 for scenario in project.scenarios:
@@ -908,7 +932,7 @@ class Ui_CaptureManagerWindow(object):
                 break
         
         self.render_nodes_in_node_tree(selected_scenario)
-
+        
     def render_nodes_in_node_tree(self, selected_scenario:Scenario):
         '''
         For the scenario provided, this function will render the nodes in the node tree

@@ -1,8 +1,9 @@
 import time
 
+import Database
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
-import Database
+
 
 class Ui_newWorkspace_window(object):
     db_helper: Database.DatabaseHelper.SDSDatabaseHelper

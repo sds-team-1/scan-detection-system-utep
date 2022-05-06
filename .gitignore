@@ -136,3 +136,6 @@ dmypy.json
 test/output/
 
 temp_cap.pcap
+
+# Ignore pcaps folder
+pcaps/

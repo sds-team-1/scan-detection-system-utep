@@ -1,12 +1,13 @@
 # DatabaseHelper 
 from pprint import pprint
 from typing import List
+
+from bson.objectid import ObjectId
 from matplotlib.collections import Collection
 from matplotlib.style import context
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-
 from Models.modelClasses import Project, Scenario, Workspace
+from pymongo import MongoClient
+
 
 class SDSDatabaseHelper:
     TIMEOUT_MS = 5000
@@ -109,7 +110,7 @@ class SDSDatabaseHelper:
         Attempts to connect to 
         the provided url, returns
         true if successful,
-        false otherwise
+        raises exception otherwise
         '''
         print("Trying to connect to db with url" + self.DATABASE_URL)
 

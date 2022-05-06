@@ -1,9 +1,11 @@
+import random
+
+import Database.DatabaseHelper
+from Models.modelClasses import Node, Scenario, Workspace
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
-import random
-from Models.modelClasses import Scenario, Workspace, Node
 from randmac import RandMac
-import Database.DatabaseHelper
+
 
 class Ui_addVmNode_window(object):
 
@@ -202,6 +204,16 @@ class Ui_addVmNode_window(object):
             pass
 
     def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_vm_node_function):
+        '''
+        This function is called when the add node button is clicked.
+        Sets up a node that takes in the user input
+        then calls the add_vm_node_function and passes the
+        selected project name, selected scenario unit name,
+        the node object, and the number of nodes to add.
+        Sets the type to "RJ45"
+        '''
+        nodes_list = []
+
         node_to_add = Node(
             self.line_edit_id.text(),
             self.line_edit_name.text(),

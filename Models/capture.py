@@ -1,10 +1,12 @@
-import os
-import shutil
-import platform
-import pyshark
 import collections
+import os
+import platform
+import shutil
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pyshark
+
 from Models.pcap import Pcap
 
 
