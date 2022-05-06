@@ -182,6 +182,14 @@ class Ui_addVmNode_window(object):
 
 
     def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_vm_node_function):
+        '''
+        This function is called when the add node button is clicked.
+        Sets up a node that takes in the user input
+        then calls the add_vm_node_function and passes the
+        selected project name, selected scenario unit name,
+        the node object, and the number of nodes to add.
+        Sets the type to "RJ45"
+        '''
         nodes_list = []
 
         node_to_add = Node(

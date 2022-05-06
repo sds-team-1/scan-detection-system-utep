@@ -136,6 +136,14 @@ class Ui_addCoreNodes_window(object):
 
 
     def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_nodes_function):
+        '''
+        This function is called when the add node button is clicked.
+        Sets up a node that takes in the user input
+        then calls the add_nodes_function and passes the
+        selected project name, selected scenario unit name,
+        the node object, and the number of nodes to add.
+        Sets the type to "PC"
+        '''
         nodes_list = []
 
         node_to_add = Node(

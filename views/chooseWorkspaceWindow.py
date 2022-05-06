@@ -20,6 +20,9 @@ class Ui_choose_workspace_window(object):
     capture_controller_service: CaptureControllerService
 
     def __init__(self, db_helper: Database.DatabaseHelper.SDSDatabaseHelper, capture_controller_service: CaptureControllerService):
+        '''
+        Initializes the choose workspace window
+        '''
         self.db_helper = db_helper
         self.capture_controller_service = CaptureControllerService()
 
@@ -296,6 +299,10 @@ class Ui_choose_workspace_window(object):
         
 
     def workspace_list_item_double_clicked(self, choose_workspace_parent_window: QDialog):
+        '''
+        Triggered when a workspace is double clicked, looks for the workspace in the db that matches the name
+        and opens the capture manager window for that workspace
+        '''
         selected_workspace_name = self.q_tree_widget_workspaces_list.selectedItems()[
             0].text(0)
         selected_workspace_object = self.db_helper.get_workspace_by_id(
@@ -314,6 +321,11 @@ class Ui_choose_workspace_window(object):
         choose_workspace_parent_window.close()
 
     def create_workspace_button_clicked(self, parent_window: QDialog):
+        '''
+        Triggered when the user clicks on the create workspace button
+        Shows the create workspace window, sends a created parent window as parameter
+        as well as a function to call when the user clicks on the create workspace button
+        '''
         createWorkspace_Window = QtWidgets.QDialog()
         createWorkspaceUI = Ui_newWorkspace_window(self.db_helper)
         createWorkspaceUI.setupCreateWorkspace(
@@ -323,10 +335,18 @@ class Ui_choose_workspace_window(object):
         createWorkspace_Window.show()
 
     def on_create_workspace_button_clicked_from_dialog_function(self, workspace_name:str):
+        '''
+        Triggered when the user clicks on the create workspace button from the create workspace window
+        adds a blank workspace with the provided workspace name
+        '''
         self.db_helper.create_new_workspace(workspace_name)
         self.generate_workspaces_list_window()
 
     def open_analysis_manager_button_clicked(self, workspace_Window):
+        '''
+        Triggered when the user clicks on the open analysis manager button
+        Shows the analysis manager window
+        '''
         self.analysisManager_Window = QtWidgets.QMainWindow()
         self.analysisManagerWindowUI = Ui_AnalysisManagerWindow()
         self.analysisManagerWindowUI.setupAnalysisManager(

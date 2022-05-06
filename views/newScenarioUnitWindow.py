@@ -62,19 +62,24 @@ class Ui_newScenarioUnit_window(object):
 
         # Connect event listeners
         self.q_button_create_new_scenario.clicked.connect(
-            lambda: self.createScenario(parent_window, selected_project, create_new_scenario_function)
+            lambda: self.on_create_scenario_button_clicked(parent_window, selected_project, create_new_scenario_function)
         )
 
         self.q_button_cancel_button.clicked.connect(
             lambda: parent_window.destroy()
         )
 
-    def createScenario(
+    def on_create_scenario_button_clicked(
             self, 
             create_new_scenario_window:QtWidgets.QDialog, 
             selected_project:Project,
             create_new_scenario_function
         ):
+        '''
+        This function is called when the create scenario button is clicked.
+        Gets the name of the scenario unit from the input and creates a new scenario unit.
+        Checks that the scenario does not already exist in the project that it is being created under
+        '''
 
         scenario_name = self.q_line_input_scenario_name.text()
 
