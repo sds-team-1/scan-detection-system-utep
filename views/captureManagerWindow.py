@@ -330,7 +330,7 @@ class Ui_CaptureManagerWindow(object):
         # Output error if no node object found
         if selected_node_object is None:
             error_message = QtWidgets.QMessageBox()
-            error_message.setText(f'Cannot find node object')
+            error_message.setText(f'Cannot find node object. Save your workspace!')
             error_message.setIcon(QtWidgets.QMessageBox.Warning)
             error_message.exec_()
             return
