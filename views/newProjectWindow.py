@@ -1,5 +1,5 @@
-from PyQt5 import QtCore, QtWidgets
 from Models.modelClasses import Project
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 

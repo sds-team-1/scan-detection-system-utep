@@ -1,7 +1,8 @@
 from typing import List
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtWidgets import QTreeWidgetItem, QMessageBox
+
 from Models.modelClasses import Project
+from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtWidgets import QMessageBox, QTreeWidgetItem
 
 
 class Ui_newScenarioUnit_window(object):

@@ -2,10 +2,10 @@ import json
 import os
 import uuid
 
-from PyQt5 import QtCore, QtWidgets
-from Controllers.CaptureController import CaptureControllerService
-
 import Database.DatabaseHelper
+from Controllers.CaptureController import CaptureControllerService
+from PyQt5 import QtCore, QtWidgets
+
 from views.chooseWorkspaceWindow import Ui_choose_workspace_window
 
 

@@ -1,24 +1,21 @@
 import json
-from logging.config import valid_ident
-import traceback
-
-
 import random
-from randmac import RandMac
-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QFileDialog, QMainWindow, QDialog, QMessageBox, QPushButton
-from Models.modelClasses import Workspace, Project, Scenario, Node
-
-from Controllers.CaptureController import CaptureControllerService
-
-from views.addCoreNodeWindow import Ui_addCoreNodes_window
-from views.newProjectWindow import Ui_newProject_window
-from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
-from views.addSetOfNodesWindow import Ui_addSetNodes_window
-from views.addVmNodeWindow import Ui_addVmNode_window
+import traceback
+from logging.config import valid_ident
 
 import Database.DatabaseHelper
+from Controllers.CaptureController import CaptureControllerService
+from Models.modelClasses import Node, Project, Scenario, Workspace
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import (QAction, QDialog, QFileDialog, QMainWindow,
+                             QMessageBox, QPushButton, QTreeWidgetItem)
+from randmac import RandMac
+
+from views.addCoreNodeWindow import Ui_addCoreNodes_window
+from views.addVmNodeWindow import Ui_addVmNode_window
+from views.newProjectWindow import Ui_newProject_window
+from views.newScenarioUnitWindow import Ui_newScenarioUnit_window
+
 
 class Ui_CaptureManagerWindow(object):
     

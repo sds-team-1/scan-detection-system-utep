@@ -2,16 +2,17 @@ import json
 import time
 from venv import create
 
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QAction, QTreeWidgetItem, QMessageBox, QAbstractButton, QDialog
+import Database.DatabaseHelper
 from Controllers.CaptureController import CaptureControllerService
 from Models.modelClasses import Workspace
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import (QAbstractButton, QAction, QDialog, QMessageBox,
+                             QTreeWidgetItem)
 
 from views.analysisManagerWindow import Ui_AnalysisManagerWindow
 from views.captureManagerWindow import Ui_CaptureManagerWindow
 from views.createWorkspaceWindow import Ui_newWorkspace_window
-import Database.DatabaseHelper
 
 
 class Ui_choose_workspace_window(object):

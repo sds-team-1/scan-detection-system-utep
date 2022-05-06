@@ -1,9 +1,10 @@
+import random
+
+from Models.modelClasses import Node, Scenario, Workspace
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
-
-from Models.modelClasses import Scenario, Workspace, Node
-import random
 from randmac import RandMac
+
 
 class Ui_addCoreNodes_window(object):
 

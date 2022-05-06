@@ -1,9 +1,11 @@
+import random
+
+import Database.DatabaseHelper
+from Models.modelClasses import Node, Scenario, Workspace
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
-import random
-from Models.modelClasses import Scenario, Workspace, Node
 from randmac import RandMac
-import Database.DatabaseHelper
+
 
 class Ui_addVmNode_window(object):
 
