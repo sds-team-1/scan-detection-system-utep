@@ -15,7 +15,6 @@ class Ui_newScenarioUnit_window(object):
         parent_window.setMaximumSize(QtCore.QSize(513, 115))
         parent_window.setWindowTitle("New Scenario Unit")
 
-
         # Label that says "Scenario Name"
         self.q_label_new_scenario_label = QtWidgets.QLabel(parent_window)
         self.q_label_new_scenario_label.setObjectName("newScenarioUnitNameLabel_newScenarioUnitWindow")
