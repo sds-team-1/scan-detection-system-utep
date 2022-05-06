@@ -463,23 +463,29 @@ class Ui_AnalysisManagerWindow(object):
 
     #deletes pcap from file system as well as pcaps list
     def delete_pcap(self, name):
-        path = self.inputPcapsDirectory_analysisManagerWindow.text()
-        # File name
-        file = self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)
-  
-        # File location
-        location = self.inputPcapsDirectory_analysisManagerWindow.text()
+        try:
+            path = self.inputPcapsDirectory_analysisManagerWindow.text()
+            # File name
+            file = self.pcapsList_analysisManagerWindow.selectedItems()[0].text(0)
 
-        # Path
-        path = os.path.join(location, file)
+            # File location
+            location = self.inputPcapsDirectory_analysisManagerWindow.text()
 
-        # Remove the file
-        self.test_capture.del_pcap(file)
-        os.remove(path)
+            # Path
+            path = os.path.join(location, file)
+
+            # Remove the file
+            self.test_capture.del_pcap(file)
+            os.remove(path)
 
 
-        print("%s has been removed successfully" %file)
-        self.show_pcap_list(self.test_capture)
+            print("%s has been removed successfully" %file)
+            self.show_pcap_list(self.test_capture)
+        except:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Error Deleting File")
+            x = msg.exec_()
 
     # retrieves statistics about ports form pcap file
     def port_num(self, name):
