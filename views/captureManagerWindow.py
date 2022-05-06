@@ -199,6 +199,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_tree_widget_nodes_list.headerItem().setText(3, "MAC")
         self.q_tree_widget_nodes_list.headerItem().setText(4, "IP")
         self.q_tree_widget_nodes_list.headerItem().setText(5, "ID")
+        
 
 
 
@@ -313,9 +314,8 @@ class Ui_CaptureManagerWindow(object):
                         addVMNodeWindow = QtWidgets.QDialog()
                         addNodeWindowUI = Ui_addVmNode_window()
                         addNodeWindowUI.setupAddVMNode(addVMNodeWindow,
-                            project.name, scenario.name, self.add_nodes, network)
+                            project.name, scenario, self.render_nodes_in_node_tree, network)
                         addVMNodeWindow.show()
-                        self.render_nodes_in_node_tree(scenario)
                 for device in list(scenario.devices):
                     print(f'nodes_double: device name={device.name}')
                     if device.name == selected_node_name:
@@ -324,9 +324,8 @@ class Ui_CaptureManagerWindow(object):
                         addCoreNodeWindow = QtWidgets.QDialog()
                         addNodeWindowUI = Ui_addCoreNodes_window()
                         addNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow,
-                            project.name, scenario.name, self.add_nodes, device)
+                            project.name, scenario, self.render_nodes_in_node_tree, device)
                         addCoreNodeWindow.show()
-                        self.render_nodes_in_node_tree(scenario)
         # Output error if no node object found
         if selected_node_object is None:
             error_message = QtWidgets.QMessageBox()

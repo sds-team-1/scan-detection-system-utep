@@ -13,10 +13,13 @@ class Ui_addCoreNodes_window(object):
     ID = str(random.randint(11, 998))
     MAC = str(RandMac("00:00:00:00:00:00"))
 
-    def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, create_new_nodes_function, node_to_edit:Node = None):
+    def setupAddCoreNodes(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name, create_new_nodes_function, node_to_edit:Node = None):
         # Setup parent window
         self.parent_window = parent_window
-        self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
+        if type(scenario_name) is str:
+            self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
+        else:
+            self.parent_window.setWindowTitle("Editing Core Node to scenario -> " + scenario_name.name)
         parent_window.resize(400, 600)
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
@@ -183,9 +186,10 @@ class Ui_addCoreNodes_window(object):
         parent_window.destroy()
         return success
 
-    def edit_node_button_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name: str, add_vm_node_function, old_node: Node):
+    def edit_node_button_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, add_vm_node_function, old_node: Node):
         old_node.id = self.line_edit_id.text()
         old_node.name = self.line_edit_name.text()
         old_node.mac = self.line_edit_mac.text()
         old_node.ip = self.line_edit_ip.text()
+        add_vm_node_function(selected_scenario_unit_name)
         parent_window.destroy()

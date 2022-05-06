@@ -1,3 +1,4 @@
+from platform import node
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QTreeWidgetItem
 import random
@@ -12,10 +13,13 @@ class Ui_addVmNode_window(object):
     ID = str(random.randint(11, 998))
     MAC = str(RandMac("00:00:00:00:00:00"))
 
-    def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, add_vm_node_function, node_to_edit: Node = None):
+    def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name, add_vm_node_function, node_to_edit: Node = None):
         # Setup parent window
         self.parent_window = parent_window
-        self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
+        if type(scenario_name) is str:
+            self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
+        else:
+            self.parent_window.setWindowTitle("Editing VM Node o scenario -> ")
         parent_window.resize(400, 600)
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
@@ -192,12 +196,12 @@ class Ui_addVmNode_window(object):
             self.line_edit_password.setText(node_to_edit.vm_node_password)
             self.line_edit_username.setText(node_to_edit.vm_node_username)
 
-            self.button_add.clicked.connect(lambda: self.edit_node_button_clicked(
+            self.button_add.clicked.connect(lambda: self.edit_vm_node_clicked(
                 parent_window,
                 selected_project_name=project_name,
                 selected_scenario_unit_name=scenario_name,
-                add_vm_node_function=add_vm_node_function
-
+                add_vm_node_function=add_vm_node_function,
+                old_node=node_to_edit
             ))
             pass
 
@@ -224,7 +228,7 @@ class Ui_addVmNode_window(object):
 
         parent_window.destroy()
 
-    def edit_vm_node_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name: str, add_vm_node_function, old_node: Node):
+    def edit_vm_node_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, add_vm_node_function, old_node: Node):
         ''' Get the text of the form and save everything to the node.'''
         old_node.id = self.line_edit_id.text()
         old_node.name = self.line_edit_name.text()
@@ -235,4 +239,5 @@ class Ui_addVmNode_window(object):
         old_node.vm_node_password = self.line_edit_password.text()
         old_node.vm_binary_path = self.line_edit_bin.text()
         old_node.vm_args = self.line_edit_args.text()
+        add_vm_node_function(selected_scenario_unit_name)
         parent_window.destroy()
