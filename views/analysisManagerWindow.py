@@ -1,15 +1,15 @@
 import os
+import platform as plat
 import subprocess
 from typing import Counter
+
 # import qjsonmodel
 import numpy as np
-import platform as plat
-from PyQt5 import QtCore, QtWidgets, Qt
-from PyQt5.QtWidgets import QTreeWidgetItem, QFileDialog, QAction, QMessageBox
-from scapy.all import *
-
 from Models.capture import Capture
 from Models.pcap import Pcap
+from PyQt5 import Qt, QtCore, QtWidgets
+from PyQt5.QtWidgets import QAction, QFileDialog, QMessageBox, QTreeWidgetItem
+from scapy.all import *
 
 global counter
 counter = 1

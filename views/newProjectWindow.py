@@ -1,5 +1,5 @@
-from PyQt5 import QtCore, QtWidgets
 from Models.modelClasses import Project
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
 
@@ -87,11 +87,14 @@ class Ui_newProject_window(object):
 
         # Connect the buttons to the functions
         self.q_button_create_project.clicked.connect(
-            lambda: self.createProject(capture_manager_window, parent_window, create_project_function))
+            lambda: self.on_create_project_button_clicked(capture_manager_window, parent_window, create_project_function))
 
         self.q_button_cancel_button.clicked.connect(parent_window.close)
 
-    def createProject(self, capture_manager_window, new_project_window, create_project_function):
+    def on_create_project_button_clicked(self, capture_manager_window, new_project_window, create_project_function):
+        '''
+        Triggerd when the create project button is clicked, validates the input and then calls the create project function
+        '''
         project_name = self.q_line_edit_project_name_input.text()
         project_parallel = self.q_spin_box_max_units_value.value()
 

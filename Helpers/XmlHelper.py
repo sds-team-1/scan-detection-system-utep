@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
-import xmltodict
 import os
+
+import xmltodict
+
 
 # Helper class to create an xml string from a given dictionary.
 # Node IDs must be larger than 10 (this allows a max of 10 switches or subnets, if more are required then make sure the node ids are large)
