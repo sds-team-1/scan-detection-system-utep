@@ -14,7 +14,7 @@ class Ui_addVmNode_window(object):
     ID = str(random.randint(11, 998))
     MAC = str(RandMac("00:00:00:00:00:00"))
 
-    def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, add_vm_node_function):
+    def setupAddVMNode(self, parent_window:QtWidgets.QDialog, project_name:str, scenario_name:str, add_vm_node_function, node_to_edit: Node = None):
         # Setup parent window
         self.parent_window = parent_window
         self.parent_window.setWindowTitle("Adding Core Node to scenario -> " + scenario_name)
@@ -174,12 +174,34 @@ class Ui_addVmNode_window(object):
         
         # Connect signals
         self.button_cancel.clicked.connect(lambda: parent_window.destroy())
-        self.button_add.clicked.connect(lambda: self.add_node_button_clicked(
-            parent_window, 
-            selected_project_name=project_name,
-            selected_scenario_unit_name=scenario_name, 
-            add_vm_node_function=add_vm_node_function))
 
+        if node_to_edit is None:
+            self.button_add.setText("Add")
+            self.button_add.clicked.connect(lambda: self.add_node_button_clicked(
+                parent_window, 
+                selected_project_name=project_name,
+                selected_scenario_unit_name=scenario_name, 
+                add_vm_node_function=add_vm_node_function))
+        else:
+            self.button_add.setText("Save")
+            # Set the texts for the window
+            self.line_edit_id.setText(node_to_edit.id)
+            self.line_edit_name.setText(node_to_edit.name)
+            self.line_edit_args.setText(node_to_edit.vm_args)
+            self.line_edit_bin.setText(node_to_edit.vm_binary_path)
+            self.line_edit_ip.setText(node_to_edit.ip)
+            self.line_edit_mac.setText(node_to_edit.mac)
+            self.line_edit_password.setText(node_to_edit.vm_node_password)
+            self.line_edit_username.setText(node_to_edit.vm_node_username)
+
+            self.button_add.clicked.connect(lambda: self.edit_node_button_clicked(
+                parent_window,
+                selected_project_name=project_name,
+                selected_scenario_unit_name=scenario_name,
+                add_vm_node_function=add_vm_node_function
+
+            ))
+            pass
 
     def add_node_button_clicked(self, parent_window, selected_project_name:str, selected_scenario_unit_name:str, add_vm_node_function):
         '''
@@ -212,4 +234,17 @@ class Ui_addVmNode_window(object):
         # Add the core node to the scenario
         add_vm_node_function(selected_project_name, selected_scenario_unit_name, node_to_add)
 
+        parent_window.destroy()
+
+    def edit_vm_node_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name: str, add_vm_node_function, old_node: Node):
+        ''' Get the text of the form and save everything to the node.'''
+        old_node.id = self.line_edit_id.text()
+        old_node.name = self.line_edit_name.text()
+        old_node.mac = self.line_edit_mac.text()
+        old_node.ip = self.line_edit_ip.text()
+        old_node.vm_node_name = self.line_edit_name.text()
+        old_node.vm_node_username = self.line_edit_username.text()
+        old_node.vm_node_password = self.line_edit_password.text()
+        old_node.vm_binary_path = self.line_edit_bin.text()
+        old_node.vm_args = self.line_edit_args.text()
         parent_window.destroy()

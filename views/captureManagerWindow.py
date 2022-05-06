@@ -1,7 +1,6 @@
 import json
 import random
-import traceback
-from logging.config import valid_ident
+from typing import List
 
 import Database.DatabaseHelper
 from Controllers.CaptureController import CaptureControllerService
@@ -269,6 +268,7 @@ class Ui_CaptureManagerWindow(object):
         # Set up context menu for when user right clicks on a node
         self.q_tree_widget_nodes_list.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.q_tree_widget_nodes_list.customContextMenuRequested.connect(lambda point_clicked: self.node_right_clicked(point_clicked, parent_window))
+        self.q_tree_widget_nodes_list.doubleClicked.connect(lambda: self.nodes_list_item_double_clicked(parent_window))
 
         # Node button functions
         self.q_button_add_node.clicked.connect(self.add_node_button_clicked)
@@ -276,6 +276,52 @@ class Ui_CaptureManagerWindow(object):
 
         # Lastly we populate the projects list
         self.render_projects_in_project_tree()
+
+
+    def nodes_list_item_double_clicked(self, window):
+        # Get selected node
+        selected_nodes = self.q_tree_widget_nodes_list.selectedItems()
+        # Get node name
+        selected_node_name = selected_nodes[0].text(2)
+        #TODO: Check if more than one node is selected. If it is give a warning
+        if len(selected_nodes) > 1:
+            error_message = QtWidgets.QMessageBox()
+            error_message.setText(f'Multiple nodes selected!\nUsing {selected_node_name}')
+            error_message.setIcon(QtWidgets.QMessageBox.Warning)
+            error_message.exec_()
+        # Get node name
+        selected_node_object = None
+        # Search for the node object
+        for project in self.workspace_object.projects:
+            for scenario in project.scenarios:
+                for network in list(scenario.networks):
+                    if network.name == selected_node_name:
+                        selected_node_object = network
+                        # Open the addNode window
+                        addVMNodeWindow = QtWidgets.QDialog()
+                        addNodeWindowUI = Ui_addVmNode_window()
+                        addNodeWindowUI.setupAddVMNode(addVMNodeWindow,
+                            project.name, scenario.name, self.add_nodes, network)
+                        addVMNodeWindow.show()
+                        self.render_nodes_in_node_tree(scenario)
+                for device in list(scenario.devices):
+                    print(f'nodes_double: device name={device.name}')
+                    if device.name == selected_node_name:
+                        selected_node_object = device
+                        #Open the addNode window
+                        addCoreNodeWindow = QtWidgets.QDialog()
+                        addNodeWindowUI = Ui_addCoreNodes_window()
+                        addNodeWindowUI.setupAddCoreNodes(addCoreNodeWindow,
+                            project.name, scenario.name, self.add_nodes, device)
+                        addCoreNodeWindow.show()
+                        self.render_nodes_in_node_tree(scenario)
+        # Output error if no node object found
+        if selected_node_object is None:
+            error_message = QtWidgets.QMessageBox()
+            error_message.setText(f'Cannot find node object. Save your workspace!')
+            error_message.setIcon(QtWidgets.QMessageBox.Warning)
+            error_message.exec_()
+            return
 
 
     def render_projects_in_project_tree(self):
@@ -842,6 +888,12 @@ class Ui_CaptureManagerWindow(object):
                 for scenario in project.scenarios:
                     if scenario.name == selected_scenario_name:
                         selected_scenario:Scenario = scenario
+                        scanning_devices: List = [d.vm_binary_path != '' for d in selected_scenario.devices]
+                        scanning_networks: List = [n.vm_binary_path != '' for n in selected_scenario.networks]
+                        if not scanning_devices and not scanning_networks:
+                            return False
+                        del scanning_devices
+                        del scanning_networks
                         for i in range(count):
                             # get copy of node
                             node_copy = node_to_add.get_copy_of_node()
@@ -860,6 +912,7 @@ class Ui_CaptureManagerWindow(object):
                 break       
         
         self.render_nodes_in_node_tree(selected_scenario)
+        return True
 
 
     def add_vm_node(self, selected_project_name, selected_scenario_name, vm_to_add:Node):
