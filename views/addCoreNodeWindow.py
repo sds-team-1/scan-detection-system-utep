@@ -153,7 +153,7 @@ class Ui_addCoreNodes_window(object):
                 parent_window,
                 selected_project_name = project_name,
                 selected_scenario_unit_name = scenario_name,
-                add_vm_node_function = create_new_nodes_function,
+                render_nodes_function = create_new_nodes_function,
                 old_node=node_to_edit
             ))
 
@@ -168,6 +168,7 @@ class Ui_addCoreNodes_window(object):
         Sets the type to "PC"
         '''
         nodes_list = []
+
 
         node_to_add = Node(
                 self.line_edit_id.text(),
@@ -193,10 +194,10 @@ class Ui_addCoreNodes_window(object):
         parent_window.destroy()
         return success
 
-    def edit_node_button_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, add_vm_node_function, old_node: Node):
+    def edit_node_button_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, render_nodes_function, old_node: Node):
         old_node.id = self.line_edit_id.text()
         old_node.name = self.line_edit_name.text()
         old_node.mac = self.line_edit_mac.text()
         old_node.ip = self.line_edit_ip.text()
-        add_vm_node_function(selected_scenario_unit_name)
+        render_nodes_function(selected_scenario_unit_name)
         parent_window.destroy()
