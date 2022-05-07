@@ -78,7 +78,10 @@ class CaptureControllerService:
 
             # iterate through the nodes list and copy the pcaps using the name.pcap
             for node in nodes_array:
-                self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}.pcap")
+                self.copy_from(f"pcaps/{node['name']}.pcap", f"/tmp/pcaps/{node['name']}*.pcap")
+                
+
+
         except Exception as e:
             print("Could not copy files")
 
