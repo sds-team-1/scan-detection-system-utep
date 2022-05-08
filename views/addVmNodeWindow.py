@@ -201,7 +201,7 @@ class Ui_addVmNode_window(object):
                 parent_window,
                 selected_project_name=project_name,
                 selected_scenario_unit_name=scenario_name,
-                add_vm_node_function=add_vm_node_function,
+                render_nodes_function=add_vm_node_function,
                 old_node=node_to_edit
             ))
             pass
@@ -239,7 +239,7 @@ class Ui_addVmNode_window(object):
 
         parent_window.destroy()
 
-    def edit_vm_node_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, add_vm_node_function, old_node: Node):
+    def edit_vm_node_clicked(self, parent_window, selected_project_name: str, selected_scenario_unit_name, render_nodes_function, old_node: Node):
         ''' Get the text of the form and save everything to the node.'''
         old_node.id = self.line_edit_id.text()
         old_node.name = self.line_edit_name.text()
@@ -250,5 +250,5 @@ class Ui_addVmNode_window(object):
         old_node.vm_node_password = self.line_edit_password.text()
         old_node.vm_binary_path = self.line_edit_bin.text()
         old_node.vm_args = self.line_edit_args.text()
-        add_vm_node_function(selected_scenario_unit_name)
+        render_nodes_function(selected_scenario_unit_name)
         parent_window.destroy()
