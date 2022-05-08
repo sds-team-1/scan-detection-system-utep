@@ -58,7 +58,7 @@ If using Windows 10, use the Git Bash terminal from now on.
 
 ### Clone this repo and change to the new directory
 
-`git clone git@github.com:team-1-architecture/gdrive.git`
+`git clone git@github.com:sds-team-1/scan-detection-system-utep.git`
 
 `cd scan-detection-system-utep`
 
