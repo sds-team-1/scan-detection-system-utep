@@ -102,8 +102,33 @@ class SDSDatabaseHelper:
         '''
         print(vars(workspace))
         print("Saving workspace with name: " + workspace.name)
-        mongo_encoded_workspace = workspace.get_mongo_encoded_workspace()
-        self.workspaces_collection.update_one({'_id': workspace.name}, {'$set': mongo_encoded_workspace})
+        # Check workspace for any unique collissions
+        message = ''
+        for project in workspace.projects:
+            for scenario in project.scenarios:
+                # Check all if there is any unqiue collissions
+                devices = [device for device in scenario.devices]
+                network = [network for network in scenario.networks]
+                nodes = devices + network
+                nodes_len = len(nodes)
+                for i in range(nodes_len):
+                    for j in range(i + 1, nodes_len):
+                        node_a = nodes[i]
+                        node_b = nodes[j]
+                        if node_a.id == node_b.id:
+                            message = f'{message}\nID collision:{node_a.name}={node_a.id} & {node_b.name}={node_b.id}'
+                        if node_a.name == node_b.name:
+                            message = f'{message}\nName collision:{node_a.name} & {node_b.name}'
+                        if node_a.ip == node_b.ip:
+                            message = f'{message}\nIP collision:{node_a.name}={node_a.ip} & {node_b.name}={node_b.ip}'
+                        if node_a.mac == node_b.mac:
+                            message = f'{message}\nMAC collision:{node_a.name}={node_a.mac} & {node_b.name}={node_b.mac}'
+        if not message:
+            mongo_encoded_workspace = workspace.get_mongo_encoded_workspace()
+            self.workspaces_collection.update_one({'_id': workspace.name}, {'$set': mongo_encoded_workspace})
+            return ''
+        else:
+            return message
 
     def test_connection(self) -> bool:
         '''

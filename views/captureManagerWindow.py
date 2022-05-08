@@ -473,14 +473,21 @@ class Ui_CaptureManagerWindow(object):
         object in the mongoDB
         with the current state of the workspace_object value
         '''
-        self.db_helper.update_workspace(self.workspace_object)
-        # Show a pop up that the workspace has been saved
-        msg = QMessageBox()
-        msg.setIcon(QMessageBox.Information)
-        msg.setText("Workspace Saved")
-        msg.setWindowTitle("The current workspace has been saved")
-        msg.setStandardButtons(QMessageBox.Ok)
-        msg.exec_()
+        result = self.db_helper.update_workspace(self.workspace_object)
+        if result:
+            save_error = QMessageBox()
+            save_error.setIcon(QMessageBox.Warning)
+            save_error.setText(f'Saving error: {result}\nDid not save!')
+            save_error.setWindowTitle('Save Error')
+            save_error.exec_()
+        if not result:
+            # Show a pop up that the workspace has been saved
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Workspace Saved")
+            msg.setWindowTitle("The current workspace has been saved")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
 
     def create_project_button_clicked(self):
         newProject_Window = QtWidgets.QDialog()
@@ -885,27 +892,94 @@ class Ui_CaptureManagerWindow(object):
         for project in self.workspace_object.projects:
             if project.name == selected_project_name:
                 for scenario in project.scenarios:
+                    # Check if there is already a scanning node.
                     if scenario.name == selected_scenario_name:
                         selected_scenario:Scenario = scenario
                         scanning_devices: List = [d.vm_binary_path != '' for d in selected_scenario.devices]
                         scanning_networks: List = [n.vm_binary_path != '' for n in selected_scenario.networks]
                         if not scanning_devices and not scanning_networks:
-                            return False
+                            return 'no-scan'
                         del scanning_devices
                         del scanning_networks
+                        # Padding in case of collision of uniqueness
+                        padding = 0
                         for i in range(count):
                             # get copy of node
                             node_copy = node_to_add.get_copy_of_node()
                             # append iterantio to .name and .id
-                            node_copy.id = node_copy.id + str(i)
-                            node_copy.name = node_copy.name + str(i)
+                            node_copy.id = node_copy.id + str(i+padding)
+                            if count != 1:
+                                node_copy.name = node_copy.name + str(i+padding)
                             node_copy.mac = str(RandMac("00:00:00:00:00:00"))
 
                             # get the last part of the ip address
                             ip_address_parts = node_copy.ip.split(".")
-                            ip_address_parts[3] = str(int(ip_address_parts[3]) + i)
+                            ip_address_parts[3] = str(int(ip_address_parts[3]) + i + padding)
                             node_copy.ip = ".".join(ip_address_parts)
 
+                            #Check if node has collision. 
+                            for device in scenario.devices:
+                                if node_copy.id == device.id:
+                                    padding += 1
+                                    node_copy.id = node_copy.id + str(i + padding)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('ID collision. Changed ID by 1')
+                                    err_add.exec_()
+                                if node_copy.name == device.name:
+                                    padding += 1
+                                    node_copy.name = node_copy.name + str(i +padding)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('Name collision. Changed name by appending')
+                                    err_add.exec_()
+                                if node_copy.mac == device.mac:
+                                    padding += 1
+                                    node_copy.mac = str(RandMac('000:00:00:00:00:00'))
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('MAC collision. Randomized again')
+                                    err_add.exec_()
+                                if node_copy.ip == device.ip:
+                                    padding += 1
+                                    ip_address_parts = node_copy.ip.split('.')
+                                    ip_address_parts[3] = str(int(ip_address_parts[3]) + i + padding)
+                                    node_copy.ip = '.'.join(ip_address_parts)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('IP collision. Changed IP by 1')
+                                    err_add.exec_()
+                            for network in scenario.networks:
+                                if node_copy.id == network.id:
+                                    padding += 1
+                                    node_copy.id = node_copy.id + str(i + padding)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('ID collision. Changed ID by 1')
+                                    err_add.exec_()
+                                if node_copy.name == network.name:
+                                    padding += 1
+                                    node_copy.name = node_copy.name + str(i +padding)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('Name collision. Changed name by appending')
+                                    err_add.exec_()
+                                if node_copy.mac == network.mac:
+                                    padding += 1
+                                    node_copy.mac = str(RandMac('000:00:00:00:00:00'))
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('MAC collision. Randomized again')
+                                    err_add.exec_()
+                                if node_copy.ip == network.ip:
+                                    padding += 1
+                                    ip_address_parts = node_copy.ip.split('.')
+                                    ip_address_parts[3] = str(int(ip_address_parts[3]) + i + padding)
+                                    node_copy.ip = '.'.join(ip_address_parts)
+                                    err_add = QtWidgets.QMessageBox()
+                                    err_add.setWindowTitle('Warning Adding Node')
+                                    err_add.setText('IP collision. Changed IP by 1')
+                                    err_add.exec_()
                             selected_scenario.devices.append(node_copy)
                         break
                 break       
