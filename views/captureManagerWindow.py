@@ -181,7 +181,7 @@ class Ui_CaptureManagerWindow(object):
         # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_label)
         # self.q_row_buttons_node_buttons.addWidget(self.q_label_scenario_status_value)
         self.q_row_buttons_node_buttons.addItem(spacerItem2)
-        self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)          
+        self.q_row_buttons_node_buttons.addWidget(self.q_button_add_node)
         #self.q_row_buttons_node_buttons.addWidget(self.q_button_add_set_of_victim_nodes)
 
 
@@ -414,6 +414,18 @@ class Ui_CaptureManagerWindow(object):
             self.on_scenario_unit_right_click(point)
         else:
             self.on_project_right_click(point)
+        
+    def nodes_tree_widget_right_clicked(self, point):
+        '''
+        Triggered when the user right clicks on a node to show the context
+        menu.'''
+        index = self.q_tree_widget_nodes_list.indexAt(point)
+
+        if not index.isValid():
+            return
+
+        item = self.q_tree_widget_nodes_list.itemAt(point)
+        self.on_node_right_click(point)
 
     def on_project_right_click(self, point):
         '''
@@ -710,7 +722,7 @@ class Ui_CaptureManagerWindow(object):
             self.q_tree_widget_nodes_list.clear()
 
 
-    def node_right_clicked(self, point, capture_manager_window:QtWidgets.QMainWindow):
+    def node_right_clicked(self, point, parent_window):
         '''
         Triggered when user right clicks on a node
         shows the context menu that has edit node,
@@ -719,14 +731,16 @@ class Ui_CaptureManagerWindow(object):
         index = self.q_tree_widget_nodes_list.indexAt(point)
 
         if not index.isValid():
+            print(f'not index.isValid()')
             return
 
-        if not index.isValid() or index.parent().isValid():
+        if index.isValid() or index.parent().isValid():
             item = self.q_tree_widget_nodes_list.itemAt(point)
             if not item:
+                print(f'if not item: {item}')
                 return
             name = item.text(2)
-
+            print(f'inside main condition')
             menu = QtWidgets.QMenu()
             action_edit_node = QAction("Edit Node")
             action_delete_node = QAction("Delete Node")
@@ -734,12 +748,36 @@ class Ui_CaptureManagerWindow(object):
             menu.addAction(action_edit_node)
             menu.addAction(action_delete_node)
 
-            action_edit_node.triggered.connect(lambda: self.edit_node(name))
+            action_edit_node.triggered.connect(lambda: self.nodes_list_item_double_clicked(parent_window))
             action_delete_node.triggered.connect(lambda: self.delete_node(name))
 
             menu.exec_(self.q_tree_widget_nodes_list.mapToGlobal(point))
 
             return
+
+    def delete_node(self, node_name):
+        # Delete from object
+        scenario_o = None
+        break_flag = False
+        for project in self.workspace_object.projects:
+            if break_flag: 
+                break
+            for scenario in project.scenarios:
+                if break_flag:
+                    break
+                for device in list(scenario.devices):
+                    if device.name == node_name:
+                        scenario_o = scenario
+                        scenario.devices.remove(device)
+                        break
+                for network in list(scenario.networks):
+                    if network.name == node_name:
+                        scenario_o = scenario
+                        scenario.networks.remove(network)
+                        break
+        if scenario_o:
+            self.save_everything_button_clicked()
+            self.render_nodes_in_node_tree(scenario_o)
 
     # Capture controller functions
     def start_vm_button_clicked(self):
