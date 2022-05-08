@@ -23,6 +23,10 @@ class Ui_addCoreNodes_window(object):
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
 
+        # Generate random ID and random MAc
+        self.ID = self.generate_id()
+        self.MAC = self.generate_mac()
+
 
         # Label for ID
         self.label_id = QtWidgets.QLabel(parent_window)
@@ -200,3 +204,9 @@ class Ui_addCoreNodes_window(object):
         old_node.ip = self.line_edit_ip.text()
         add_vm_node_function(selected_scenario_unit_name)
         parent_window.destroy()
+
+    def generate_id(self):
+        return str(random.randint(11, 998))
+
+    def generate_mac(self):
+        return str(RandMac("00:00:00:00:00:00"))
