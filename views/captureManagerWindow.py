@@ -122,9 +122,9 @@ class Ui_CaptureManagerWindow(object):
 
 
         # Button for starting service
-        self.q_button_start_services_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
-        self.q_button_start_services_button.setObjectName("startServicesButton_captureManagerWindow")
-        self.q_button_start_services_button.setText("Start Services")
+        #self.q_button_start_services_button = QtWidgets.QPushButton(self.CentralLayout_captureManagerWindow)
+        #self.q_button_start_services_button.setObjectName("startServicesButton_captureManagerWindow")
+        #self.q_button_start_services_button.setText("Start Services")
 
 
         # Button for clsing the workspace
@@ -249,7 +249,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_button_stop_and_restore_scenario.clicked.connect(self.stop_and_restore_scenario_button_clicked)
 
         # Start services button
-        self.q_button_start_services_button.clicked.connect(self.start_services_button_clicked)
+        #self.q_button_start_services_button.clicked.connect(self.start_services_button_clicked)
 
         # Close workspace button
         self.q_button_close_workspace_button.clicked.connect(
