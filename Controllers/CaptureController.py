@@ -74,8 +74,13 @@ class CaptureControllerService:
         try:
             # get the nodes object from scneario dict
             nodes_array = self.scenario_dict["devices"]
+            scenario_folder = self.scenario_dict["name"]
+            print(f"scenarion_name {scenario_folder}")
+            if not os.path.isdir(f"pcaps/{scenario_folder}"):
+                os.mkdir(f"pcaps/{scenario_folder}")
+            self.copy_from_recursive(f"pcaps/{scenario_folder}/", f"/tmp/pcaps/")
 
-            self.copy_from_recursive(f"pcaps/", f"/tmp/pcaps/")
+            #self.copy_from_recursive(f"pcaps/", f"/tmp/pcaps/")
 
                 
 
