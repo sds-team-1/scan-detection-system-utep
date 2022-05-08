@@ -146,7 +146,7 @@ class Ui_CaptureManagerWindow(object):
         self.q_row_scenario_buttons_row.addWidget(self.q_button_shutdown_vm)
         self.q_row_scenario_buttons_row.addWidget(self.q_button_run_scenario)
         self.q_row_scenario_buttons_row.addWidget(self.q_button_stop_and_restore_scenario)
-        self.q_row_scenario_buttons_row.addWidget(self.q_button_start_services_button)
+        #self.q_row_scenario_buttons_row.addWidget(self.q_button_start_services_button)
         self.q_row_scenario_buttons_row.addWidget(self.q_button_close_workspace_button)
         self.q_row_scenario_buttons_row.addItem(spacerItem1)
 
