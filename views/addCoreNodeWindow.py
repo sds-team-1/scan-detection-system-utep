@@ -23,6 +23,7 @@ class Ui_addCoreNodes_window(object):
         parent_window.setMinimumSize(QtCore.QSize(400, 600))
         parent_window.setMaximumSize(QtCore.QSize(400, 600))
 
+        self.ID = str(random.randint(11, 998))
 
         # Label for ID
         self.label_id = QtWidgets.QLabel(parent_window)
