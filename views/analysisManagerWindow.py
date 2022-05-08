@@ -396,12 +396,12 @@ class Ui_AnalysisManagerWindow(object):
     # takes user input to set the folder for reading pcaps
     def browsePcapDir(self):
         dialog = QFileDialog()
-        directory = dialog.getExistingDirectory(self.inputPcapsDirectory_analysisManagerWindow,
+        self.directory = dialog.getExistingDirectory(self.inputPcapsDirectory_analysisManagerWindow,
                                                 'Select Pcaps Directory')
 
-        if directory:
-            self.inputPcapsDirectory_analysisManagerWindow.setText(directory)
-            self.test_capture = Capture("", directory)
+        if self.directory:
+            self.inputPcapsDirectory_analysisManagerWindow.setText(self.directory)
+            self.test_capture = Capture("", self.directory)
             add_pcaps(self.test_capture)
             self.show_pcap_list(self.test_capture)
 
@@ -697,8 +697,12 @@ class Ui_AnalysisManagerWindow(object):
 
         new_pcap = Pcap(name, self.test_capture.path, name)
         self.test_capture.pcaps.insert(index, new_pcap)
+        #self.show_pcap_list(self.test_capture)
+        #self.browsePcapDir()
+
+        self.test_capture = Capture("", self.directory)
+        add_pcaps(self.test_capture)
         self.show_pcap_list(self.test_capture)
-        self.browsePcapDir()
 
         while True:
             if self.check(packets_list) is True:
