@@ -39,7 +39,7 @@ class Ui_CaptureManagerWindow(object):
 
         parent_window.setObjectName("CaptureManagerWindow")
         parent_window.resize(1400, 700)
-        parent_window.setMinimumSize(QtCore.QSize(1400, 700))
+        parent_window.setMinimumSize(QtCore.QSize(1500, 800))
         parent_window.setWindowTitle(self.workspace_object.name + " - Capture Manager")
 
         self.CentralLayout_captureManagerWindow = QtWidgets.QWidget(parent_window)

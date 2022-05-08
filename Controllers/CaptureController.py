@@ -50,7 +50,7 @@ class CaptureControllerService:
         '''
         Runs the command in a new subprocess
         '''
-        command_string = f"VBoxManage guestcontrol {vm_name} --username {username} --password {password} run {command} {args}"
+        command_string = f'VBoxManage guestcontrol {vm_name} --username {username} --password {password} run "{command} {args}"'
         subprocess.Popen(command_string, shell=True, close_fds=True)
         
         # VBoxManage guestcontrol Scanner --username ubuntu --password ubuntu run nmap --system-dns 172.19.203.179"
