@@ -698,6 +698,7 @@ class Ui_AnalysisManagerWindow(object):
         new_pcap = Pcap(name, self.test_capture.path, name)
         self.test_capture.pcaps.insert(index, new_pcap)
         self.show_pcap_list(self.test_capture)
+        self.browsePcapDir()
 
         while True:
             if self.check(packets_list) is True:
