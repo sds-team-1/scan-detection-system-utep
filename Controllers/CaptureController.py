@@ -50,7 +50,7 @@ class CaptureControllerService:
         '''
         Runs the command in a new subprocess
         '''
-        command_string = f'VBoxManage guestcontrol {vm_name} --username {username} --password {password} run "{command} {args}"'
+        command_string = f'VBoxManage guestcontrol {vm_name} --username {username} --password {password} run {command} {args}'
         subprocess.Popen(command_string, shell=True, close_fds=True)
         
         # VBoxManage guestcontrol Scanner --username ubuntu --password ubuntu run nmap --system-dns 172.19.203.179"
@@ -110,7 +110,7 @@ class CaptureControllerService:
         self.run_command("bin/sh", "/home/ubuntu/core/Files/CoreStart.sh")
 
         # wait 15 seconds for the core to start
-        for i in range(15):
+        for i in range(10):
             print("Waiting for core to start..." + str(i))
             time.sleep(1)
 
@@ -125,7 +125,7 @@ class CaptureControllerService:
         try:
             external_vm_dictionary["vm_node_name"]
             # wait 10 seconds for the vm to start
-            for i in range(30):
+            for i in range(10):
                 print("Waiting for vm to start..." + str(i) + "/30")
                 time.sleep(1)
         except Exception as e:
